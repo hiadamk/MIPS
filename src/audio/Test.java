@@ -6,7 +6,7 @@ public class Test {
 	
 	public static void main(String[] args) {
 		Sounds audioController=Sounds.intro;
-		test2(audioController);
+		test3(audioController);
 		sleep(10);
 	}
 	
@@ -14,13 +14,40 @@ public class Test {
 		try {
 			TimeUnit.SECONDS.sleep(x);
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
+	private  static  void test3(Sounds audioController) {
+		audioController.playSound(Sounds.death);
+		sleep(3);
+		audioController.setSoundVolume(0.25);
+		audioController.playSound(Sounds.death);
+		sleep(3);
+		audioController.setSoundVolume(1);
+		audioController.playSound(Sounds.death);
+		sleep(3);
+		audioController.playMusic(Sounds.intro);
+		sleep(3);
+		audioController.setMusicVolume(0.2);
+		sleep(3);
+		audioController.setMusicVolume(1);
+		sleep(3);
+		audioController.setMusicVolume(0.7);
+		sleep(3);
+		audioController.setMusicVolume(0.4);
+		sleep(3);
+	}
 	private  static  void test2(Sounds audioController) {
 		System.out.println("Playing intro sound as music");
 		audioController.playMusic(Sounds.intro);
 		sleep(5);
+		System.out.println("muting");
+		audioController.toggleMute();
+		sleep(2);
+		System.out.println("un muting");
+		audioController.toggleMute();
+		sleep(2);
 		audioController.playSound(Sounds.death);
 		sleep(2);
 		audioController.playSound(Sounds.death);

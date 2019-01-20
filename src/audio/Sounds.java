@@ -17,10 +17,24 @@ public enum Sounds {
 	private Boolean mute;
 	private Clip music;
 	
+	public void setMusicVolume(double musicVolume) {
+		this.musicVolume=musicVolume;
+		refreshMusic();
+	}
+	
+	public void setSoundVolume(double soundVolume) {
+		this.soundVolume=soundVolume;
+	}
+	
+	private double musicVolume;
+	private double soundVolume;
+	
 	Sounds(String path){
 		this.path = path;
 		mute = false;
 		music = null;
+		musicVolume = 0.5;
+		soundVolume = 0.5;
 	}
 	
 	/**
@@ -29,6 +43,12 @@ public enum Sounds {
 	 */
 	public void toggleMute(){
 		mute = !mute;
+		refreshMusic();
+	}
+	
+	private void refreshMusic() {
+		if(music == null) return;
+		setClipVolume(music, mute ? 0 : musicVolume);
 	}
 	
 	/**
@@ -43,6 +63,7 @@ public enum Sounds {
 			DataLine.Info info = new DataLine.Info(Clip.class, stream.getFormat());
 			Clip clip = (Clip) AudioSystem.getLine(info);
 			clip.open(stream);
+			setClipVolume(clip, soundVolume);
 			clip.start();
 		}
 		catch (Exception e){
@@ -50,6 +71,22 @@ public enum Sounds {
 		}
 	}
 	
+	/**
+	 * <p>Sets the volume of the given clip</p>
+	 * @param clip The clip to set the volume of
+	 * @param volume the volume (between 0.0 and 1.0)
+	 */
+	public void setClipVolume(Clip clip, double volume) {
+		if(clip == null) {
+			// Change to logging once setup
+			System.err.println(" null clip sent to set volume");
+			return;
+		}
+		if(volume > 1.0) volume = 1.0;
+		if(volume < 0.0) volume = 0.0;
+		FloatControl control = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+		control.setValue((float) (Math.log(volume) / Math.log(10.0) * 20.0));
+	}
 	/**
 	 * <p>This plays the given sound as the background music (playing it until told to stop or play other music)</p>
 	 * @param sound file for the music
@@ -66,6 +103,7 @@ public enum Sounds {
 				music.close();
 			}
 			music = clip;
+			setClipVolume(music, musicVolume);
 			music.loop(Clip.LOOP_CONTINUOUSLY);
 		}
 		catch (Exception e){
