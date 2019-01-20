@@ -15,10 +15,12 @@ public enum Sounds {
 	death ("files/pacman_death.wav");
 	private final String path;
 	private Boolean mute;
+	private Clip music;
 	
 	Sounds(String path){
 		this.path = path;
 		mute = false;
+		music = null;
 	}
 	
 	/**
@@ -47,4 +49,28 @@ public enum Sounds {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * <p>This plays the given sound as the background music (playing it until told to stop or play other music)</p>
+	 * @param sound file for the music
+	 */
+	public void playMusic(Sounds sound) {
+		File audioFile = new File(sound.path);
+		try {
+			AudioInputStream stream=AudioSystem.getAudioInputStream(audioFile);
+			DataLine.Info info = new DataLine.Info(Clip.class, stream.getFormat());
+			Clip clip = (Clip) AudioSystem.getLine(info);
+			clip.open(stream);
+			if(music != null){
+				music.stop();
+				music.close();
+			}
+			music = clip;
+			music.loop(Clip.LOOP_CONTINUOUSLY);
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+	
 }
