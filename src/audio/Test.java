@@ -6,6 +6,7 @@ public class Test {
 	
 	public static void main(String[] args) {
 		Sounds audioController=Sounds.intro;
+		audioController.enableCloser();
 		test3(audioController);
 		sleep(10);
 	}

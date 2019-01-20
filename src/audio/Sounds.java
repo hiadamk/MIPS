@@ -2,6 +2,9 @@ package audio;
 
 import javax.sound.sampled.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * <p>A simple system for playing sounds in the clients currently just for events
@@ -16,18 +19,10 @@ public enum Sounds {
 	private final String path;
 	private Boolean mute;
 	private Clip music;
-	
-	public void setMusicVolume(double musicVolume) {
-		this.musicVolume=musicVolume;
-		refreshMusic();
-	}
-	
-	public void setSoundVolume(double soundVolume) {
-		this.soundVolume=soundVolume;
-	}
-	
+	private ArrayList<Clip> openClips;
 	private double musicVolume;
 	private double soundVolume;
+	private ClipCloser clipCloser;
 	
 	Sounds(String path){
 		this.path = path;
@@ -37,6 +32,22 @@ public enum Sounds {
 		soundVolume = 0.5;
 	}
 	
+	public void enableCloser(){
+		if(clipCloser!=null) return;
+		openClips = new ArrayList<>();
+		clipCloser = new ClipCloser(openClips);
+		System.out.println("1");
+		clipCloser.start();
+		System.out.println("1");
+	}
+	public void setMusicVolume(double musicVolume) {
+		this.musicVolume=musicVolume;
+		refreshMusic();
+	}
+	
+	public void setSoundVolume(double soundVolume) {
+		this.soundVolume=soundVolume;
+	}
 	/**
 	 * <p>This toggles the mute boolean on and off to be called
 	 * by the ui when a mute button is pressed (can become a Setter</p>
@@ -65,6 +76,7 @@ public enum Sounds {
 			clip.open(stream);
 			setClipVolume(clip, soundVolume);
 			clip.start();
+			openClips.add(clip);
 		}
 		catch (Exception e){
 			e.printStackTrace();
@@ -105,10 +117,33 @@ public enum Sounds {
 			music = clip;
 			setClipVolume(music, musicVolume);
 			music.loop(Clip.LOOP_CONTINUOUSLY);
+			openClips.add(music);
 		}
 		catch (Exception e){
 			e.printStackTrace();
 		}
 	}
 	
+	private class ClipCloser extends Thread {
+		private  ArrayList<Clip> clips;
+		private Boolean running;
+		ClipCloser(ArrayList<Clip> clips){
+			this.clips = clips;
+		}
+		
+		@Override
+		public void run() {
+			running = true;
+			Collection<Clip> remove = new ArrayList<>();
+			while(running){
+				remove.clear();
+				for(Clip clip : clips){
+					if(!clip.isRunning()) clip.close();
+					remove.add(clip);
+				}
+				clips.removeAll(remove);
+				try{Thread.sleep(10000);} catch (Exception e) {running = false;}
+			}
+		}
+	}
 }
