@@ -5,8 +5,7 @@ import java.util.concurrent.TimeUnit;
 public class Test {
 	
 	public static void main(String[] args) {
-		Sounds audioController=Sounds.intro;
-		audioController.enableCloser();
+		AudioController audioController= new AudioController();
 		test3(audioController);
 		sleep(10);
 	}
@@ -19,7 +18,7 @@ public class Test {
 		}
 	}
 	
-	private  static  void test3(Sounds audioController) {
+	private  static  void test3(AudioController audioController) {
 		audioController.playSound(Sounds.death);
 		sleep(3);
 		audioController.setSoundVolume(0.25);
@@ -39,7 +38,7 @@ public class Test {
 		audioController.setMusicVolume(0.4);
 		sleep(3);
 	}
-	private  static  void test2(Sounds audioController) {
+	private  static  void test2(AudioController audioController) {
 		System.out.println("Playing intro sound as music");
 		audioController.playMusic(Sounds.intro);
 		sleep(5);
@@ -56,7 +55,7 @@ public class Test {
 		audioController.playMusic(Sounds.death);
 	}
 	
-	private  static  void test1(Sounds audioController) {
+	private  static  void test1(AudioController audioController) {
 		System.out.println("Playing intro sound");
 		audioController.playSound(Sounds.intro);
 		sleep(10);
