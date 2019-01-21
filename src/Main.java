@@ -62,12 +62,19 @@ public class Main extends Application {
         
         Button musicBtn = new Button();
         StackPane.setAlignment(musicBtn, Pos.CENTER_LEFT);
-        StackPane.setMargin(quitBtn, new Insets(0,0, 25, 50));
+        StackPane.setMargin(quitBtn, new Insets(0,0, 25, 0));
         musicBtn.setStyle("-fx-background-color: transparent;");
         root.getChildren().add(musicBtn);
         Image musicOn = new Image("images/Music-On.png");
         musicBtn.setGraphic(new ImageView(musicOn));
-        
+    
+        Button soundFxBtn = new Button();
+        StackPane.setAlignment(soundFxBtn, Pos.CENTER_LEFT);
+        StackPane.setMargin(soundFxBtn, new Insets(150,0, 0, 0));
+        soundFxBtn.setStyle("-fx-background-color: transparent;");
+        root.getChildren().add(soundFxBtn);
+        Image soundFXOn = new Image("images/SoundFX-On.png");
+        soundFxBtn.setGraphic(new ImageView(soundFXOn));
         
         primaryStage.setTitle("M.I.P.S");
         primaryStage.setScene(new Scene(root, 1920, 1080));
