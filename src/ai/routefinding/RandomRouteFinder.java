@@ -8,7 +8,7 @@ import shared.GameAgent;
 import shared.enums.Directions;
 import shared.enums.GameAgentEnum;
 
-public class RandomRouteFinder extends RouteFinder {
+public class RandomRouteFinder implements RouteFinder {
 	private static final Random R = new Random();
 	private static final Directions DEFAULT = Directions.UP;
 	private boolean agentsSet;

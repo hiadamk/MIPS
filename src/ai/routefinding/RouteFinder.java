@@ -4,9 +4,7 @@ import java.util.ArrayList;
 
 import shared.enums.Directions;
 
-public abstract class RouteFinder {
+public interface RouteFinder {
 
-	public ArrayList<Directions> getRoute() {
-		return null;
-	}
+	public ArrayList<Directions> getRoute();
 }
