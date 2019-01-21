@@ -10,13 +10,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.io.FileInputStream;
 
 public class Main extends Application {
     
     @Override
     public void start(Stage primaryStage) throws Exception{
-//        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         
         StackPane root = new StackPane();
         root.setPrefSize(1920,1080);
@@ -51,7 +49,6 @@ public class Main extends Application {
         settingsView.setFitWidth(50);
         settingsView.setPreserveRatio(true);
         settingsBtn.setGraphic(settingsView);
-        
         root.getChildren().add(settingsBtn);
         
         
@@ -62,6 +59,15 @@ public class Main extends Application {
         root.getChildren().add(quitBtn);
         Image quitImg = new Image("images/quit.png");
         quitBtn.setGraphic(new ImageView(quitImg));
+        
+        Button musicBtn = new Button();
+        StackPane.setAlignment(musicBtn, Pos.CENTER_LEFT);
+        StackPane.setMargin(quitBtn, new Insets(0,0, 25, 50));
+        musicBtn.setStyle("-fx-background-color: transparent;");
+        root.getChildren().add(musicBtn);
+        Image musicOn = new Image("images/Music-On.png");
+        musicBtn.setGraphic(new ImageView(musicOn));
+        
         
         primaryStage.setTitle("M.I.P.S");
         primaryStage.setScene(new Scene(root, 1920, 1080));
