@@ -10,6 +10,11 @@ import utils.enums.Controls;
 public class KeyController implements EventHandler<KeyEvent>{
 	
 	private Controls mapping;
+	
+	public Controls getActiveKey() {
+		return activeKey;
+	}
+	
 	private Controls activeKey;
 	
 	

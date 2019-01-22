@@ -1,5 +1,6 @@
 package client;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -25,10 +26,17 @@ public class Client extends Application{
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		scene.setOnKeyPressed(keyController);
+		new AnimationTimer() {
+			@Override
+			public void handle(long now) {
+				processInput();
+			}
+		}.start();
 	}
 	
-	public void processInput(Controls direction){
-		switch (direction) {
+	public void processInput(){
+		if(keyController.getActiveKey() == null) return;
+		switch (keyController.getActiveKey()) {
 			case UP: System.out.println("Direction up");break;
 			case DOWN: System.out.println("Direction down");break;
 			case LEFT: System.out.println("Direction left");break;

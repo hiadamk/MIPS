@@ -4,10 +4,10 @@ import javafx.scene.input.KeyCode;
 import utils.enums.Controls;
 
 public class Settings {
-	static private KeyCode up;
-	static private KeyCode down;
-	static private KeyCode left;
-	static private KeyCode right;
+	static private KeyCode up = KeyCode.UP;
+	static private KeyCode down = KeyCode.DOWN;
+	static private KeyCode left = KeyCode.LEFT;
+	static private KeyCode right = KeyCode.RIGHT;
 	
 	public static KeyCode getKey(Controls c) {
 		switch (c) {
