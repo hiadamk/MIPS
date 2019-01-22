@@ -5,13 +5,17 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 
 public class Main extends Application {
+    
+    private boolean viewSettings = false;
     
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -24,11 +28,12 @@ public class Main extends Application {
         bg.fitWidthProperty().bind(primaryStage.widthProperty());
         root.getChildren().add(bg);
         StackPane.setAlignment(bg, Pos.CENTER);
-        
-        
+//        final Font f = Font.loadFont(new FileInputStream(new File("./src/Utils/ARCADEPI.TTF")), 12);
         Button playBtn = new Button();
         StackPane.setAlignment(playBtn, Pos.CENTER);
         StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
+//        playBtn.setFont(f);
+//        playBtn.setText("Play");
         Image playImg = new Image("images/play.png");
         playBtn.setGraphic(new ImageView(playImg));
         playBtn.setStyle("-fx-background-color: transparent;");
@@ -38,6 +43,38 @@ public class Main extends Application {
             }
         });
         root.getChildren().add(playBtn);
+    
+    
+        Button musicBtn = new Button();
+        StackPane.setAlignment(musicBtn, Pos.CENTER_LEFT);
+        StackPane.setMargin(musicBtn, new Insets(0,0, 25, 0));
+        musicBtn.setStyle("-fx-background-color: transparent;");
+        root.getChildren().add(musicBtn);
+        Image musicOn = new Image("images/Music-On.png");
+        musicBtn.setGraphic(new ImageView(musicOn));
+        musicBtn.setVisible(false);
+    
+        Button soundFxBtn = new Button();
+        StackPane.setAlignment(soundFxBtn, Pos.CENTER_LEFT);
+        StackPane.setMargin(soundFxBtn, new Insets(150,0, 0, 0));
+        soundFxBtn.setStyle("-fx-background-color: transparent;");
+        root.getChildren().add(soundFxBtn);
+        Image soundFXOn = new Image("images/SoundFX-On.png");
+        soundFxBtn.setGraphic(new ImageView(soundFXOn));
+        soundFxBtn.setVisible(false);
+        
+        
+        Button creditsBtn = new Button();
+        StackPane.setAlignment(creditsBtn, Pos.BOTTOM_CENTER);
+        StackPane.setMargin(creditsBtn, new Insets(0,0,50, 0));
+        creditsBtn.setStyle("-fx-background-color: transparent;");
+        root.getChildren().add(creditsBtn);
+        Image creditsImg = new Image("images/Credits.png");
+        creditsBtn.setGraphic(new ImageView(creditsImg));
+        creditsBtn.setVisible(false);
+        
+        GaussianBlur gaussianBlur = new GaussianBlur();
+        gaussianBlur.setRadius(11);
         
         Button settingsBtn = new Button();
         settingsBtn.setStyle("-fx-background-color: transparent;");
@@ -49,6 +86,26 @@ public class Main extends Application {
         settingsView.setFitWidth(50);
         settingsView.setPreserveRatio(true);
         settingsBtn.setGraphic(settingsView);
+        settingsBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(!viewSettings){
+                    musicBtn.setVisible(true);
+                    soundFxBtn.setVisible(true);
+                    creditsBtn.setVisible(true);
+                    viewSettings = true;
+                    bg.setEffect(gaussianBlur);
+                }else{
+                    musicBtn.setVisible(false);
+                    soundFxBtn.setVisible(false);
+                    viewSettings = false;
+                    creditsBtn.setVisible(false);
+                    bg.setEffect(null);
+                    
+                }
+            
+            }
+        });
         root.getChildren().add(settingsBtn);
         
         
@@ -60,21 +117,7 @@ public class Main extends Application {
         Image quitImg = new Image("images/quit.png");
         quitBtn.setGraphic(new ImageView(quitImg));
         
-        Button musicBtn = new Button();
-        StackPane.setAlignment(musicBtn, Pos.CENTER_LEFT);
-        StackPane.setMargin(quitBtn, new Insets(0,0, 25, 0));
-        musicBtn.setStyle("-fx-background-color: transparent;");
-        root.getChildren().add(musicBtn);
-        Image musicOn = new Image("images/Music-On.png");
-        musicBtn.setGraphic(new ImageView(musicOn));
-    
-        Button soundFxBtn = new Button();
-        StackPane.setAlignment(soundFxBtn, Pos.CENTER_LEFT);
-        StackPane.setMargin(soundFxBtn, new Insets(150,0, 0, 0));
-        soundFxBtn.setStyle("-fx-background-color: transparent;");
-        root.getChildren().add(soundFxBtn);
-        Image soundFXOn = new Image("images/SoundFX-On.png");
-        soundFxBtn.setGraphic(new ImageView(soundFXOn));
+        
         
         primaryStage.setTitle("M.I.P.S");
         primaryStage.setScene(new Scene(root, 1920, 1080));
