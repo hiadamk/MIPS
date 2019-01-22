@@ -9,13 +9,14 @@ import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 
 public class Main extends Application {
     
     private boolean viewSettings = false;
+    private boolean soundFX = true;
+    private boolean music = true;
     
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -51,8 +52,22 @@ public class Main extends Application {
         musicBtn.setStyle("-fx-background-color: transparent;");
         root.getChildren().add(musicBtn);
         Image musicOn = new Image("images/Music-On.png");
+        Image musicOff = new Image("images/Music-Off.png");
         musicBtn.setGraphic(new ImageView(musicOn));
         musicBtn.setVisible(false);
+        musicBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(music){
+                    musicBtn.setGraphic(new ImageView(musicOff));
+                    music = false;
+                }else{
+                    musicBtn.setGraphic(new ImageView(musicOn));
+                    music = true;
+                }
+        
+            }
+        });
     
         Button soundFxBtn = new Button();
         StackPane.setAlignment(soundFxBtn, Pos.CENTER_LEFT);
@@ -60,8 +75,22 @@ public class Main extends Application {
         soundFxBtn.setStyle("-fx-background-color: transparent;");
         root.getChildren().add(soundFxBtn);
         Image soundFXOn = new Image("images/SoundFX-On.png");
+        Image soundFXOff = new Image("images/SoundFX-Off.png");
         soundFxBtn.setGraphic(new ImageView(soundFXOn));
         soundFxBtn.setVisible(false);
+        soundFxBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(soundFX){
+                    soundFxBtn.setGraphic(new ImageView(soundFXOff));
+                    soundFX = false;
+                }else{
+                    soundFxBtn.setGraphic(new ImageView(soundFXOn));
+                    soundFX = true;
+                }
+            
+            }
+        });
         
         
         Button creditsBtn = new Button();
@@ -101,13 +130,10 @@ public class Main extends Application {
                     viewSettings = false;
                     creditsBtn.setVisible(false);
                     bg.setEffect(null);
-                    
                 }
-            
             }
         });
         root.getChildren().add(settingsBtn);
-        
         
         Button quitBtn = new Button();
         StackPane.setAlignment(quitBtn, Pos.TOP_RIGHT);
@@ -116,8 +142,6 @@ public class Main extends Application {
         root.getChildren().add(quitBtn);
         Image quitImg = new Image("images/quit.png");
         quitBtn.setGraphic(new ImageView(quitImg));
-        
-        
         
         primaryStage.setTitle("M.I.P.S");
         primaryStage.setScene(new Scene(root, 1920, 1080));
