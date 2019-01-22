@@ -1,9 +1,9 @@
 package ai.routefinding;
 
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.Random;
 
+import ai.AILoopControl;
 import shared.GameAgent;
 import shared.enums.Directions;
 import shared.enums.GameAgentEnum;
@@ -11,62 +11,77 @@ import shared.enums.GameAgentEnum;
 public class RandomRouteFinder implements RouteFinder {
 	private static final Random R = new Random();
 	private static final Directions DEFAULT = Directions.UP;
-	private boolean agentsSet;
 	private GameAgent[] gameAgents;
 	private GameAgentEnum myAgent;
+	private boolean agentsSet;
 	
 	public RandomRouteFinder() {
 		this.agentsSet = false;
 	}
 	
 	public void setAgents(GameAgent[] gameAgents, GameAgentEnum myAgent) {
+		if (!AILoopControl.validGameAgentArray(gameAgents)) {
+			throw new IllegalArgumentException("gameAgents array must have exactly one of each GameAgentEnum.");
+		}
+		if (this.agentsSet) {
+			throw new IllegalStateException("gameAgents already assigned.");
+		}
 		this.gameAgents = gameAgents;
 		this.myAgent = myAgent;
-		agentsSet = true;
+		this.agentsSet = true;
 	}
 	
 	@Override
-	public ArrayList<Directions> getRoute() {
-		ArrayList<Directions> dirList = new ArrayList<Directions>();
+	public Directions getRoute() {
+		if (!agentsSet) {
+			throw new IllegalStateException("Agents have not been set.");
+		}
+		Directions dir;
 		int dirValue = R.nextInt(6);
 		switch (dirValue) {
-		case (0):{
-			dirList.add(Directions.UP);
+		case 0: {
+			dir = Directions.UP;
+			break;
 		}
-		case (1): {
-			dirList.add(Directions.DOWN);
+		case 1: {
+			dir = Directions.DOWN;
+			break;
 		}
-		case (2): {
-			dirList.add(Directions.LEFT);
+		case 2: {
+			dir = Directions.LEFT;
+			break;
 		}
-		case (3): {
-			dirList.add(Directions.RIGHT);
+		case 3: {
+			dir = Directions.RIGHT;
+			break;
 		}
-		case (4): {
+		case 4: {
 			Point mmanPos = gameAgents[GameAgentEnum.MIPSMAN.getNumVal()].getCurrentPosition();
 			Point myPos = gameAgents[myAgent.getNumVal()].getCurrentPosition();
 			if (myPos.getY()>mmanPos.getY()) {
-				dirList.add(Directions.UP);
+				dir = Directions.UP;
 			}
 			else {
-				dirList.add(Directions.DOWN);
+				dir = Directions.DOWN;
 			}
+			break;
 		}
-		case (5): {
+		case 5: {
 			Point mmanPos = gameAgents[GameAgentEnum.MIPSMAN.getNumVal()].getCurrentPosition();
 			Point myPos = gameAgents[myAgent.getNumVal()].getCurrentPosition();
 			if (myPos.getX()>mmanPos.getX()) {
-				dirList.add(Directions.LEFT);
+				dir = Directions.LEFT;
 			}
 			else {
-				dirList.add(Directions.RIGHT);
+				dir = Directions.RIGHT;
 			}
+			break;
 		}
 		default: {
 			System.err.println("Value out of range. Default value given: " + DEFAULT);
-			dirList.add(DEFAULT);
+			dir = DEFAULT;
 		}
 		}
-		return dirList;
+		return dir;
 	}
 }

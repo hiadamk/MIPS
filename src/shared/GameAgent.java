@@ -4,6 +4,7 @@ import java.awt.Point;
 
 import ai.routefinding.RandomRouteFinder;
 import ai.routefinding.RouteFinder;
+import shared.enums.Directions;
 import shared.enums.GameAgentEnum;
 
 public class GameAgent {
@@ -37,5 +38,11 @@ public class GameAgent {
 		return currentPosition;
 	}
 	
+	public GameAgentEnum getMyId() {
+		return id;
+	}
 	
+	public Directions getDirections() {
+		return rf.getRoute();
+	}
 }
