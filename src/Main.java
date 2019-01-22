@@ -3,6 +3,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.effect.GaussianBlur;
@@ -18,6 +19,11 @@ public class Main extends Application {
     private boolean soundFX = true;
     private boolean music = true;
     
+    //TODO Create array lists of groups of components which can be iterated over to perform group hiding and showing
+    
+    
+    //TODO Move all code into Menu MenuController Class
+    
     @Override
     public void start(Stage primaryStage) throws Exception{
         
@@ -29,6 +35,48 @@ public class Main extends Application {
         bg.fitWidthProperty().bind(primaryStage.widthProperty());
         root.getChildren().add(bg);
         StackPane.setAlignment(bg, Pos.CENTER);
+        
+        Button singleplayerBtn =  new Button();
+        StackPane.setAlignment(singleplayerBtn, Pos.CENTER);
+        StackPane.setMargin(singleplayerBtn, new Insets(160, 0,0,0));
+        Image singleplayerImg = new Image("images/Single-Player.png");
+        singleplayerBtn.setGraphic(new ImageView(singleplayerImg));
+        singleplayerBtn.setStyle("-fx-background-color: transparent;");
+        singleplayerBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+            }
+        });
+        
+        root.getChildren().add(singleplayerBtn);
+        singleplayerBtn.setVisible(false);
+        
+        Button multiplayerBtn = new Button();
+        StackPane.setAlignment(multiplayerBtn, Pos.CENTER);
+        StackPane.setMargin(multiplayerBtn, new Insets(320, 0,0,0));
+        Image multiplayerImg = new Image("images/Multiplayer.png");
+        multiplayerBtn.setGraphic(new ImageView(multiplayerImg));
+        multiplayerBtn.setStyle("-fx-background-color: transparent;");
+        multiplayerBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+            }
+        });
+        root.getChildren().add(multiplayerBtn);
+        multiplayerBtn.setVisible(false);
+        
+        Button backBtn = new Button();
+        StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);
+        StackPane.setMargin(backBtn, new Insets(0,0,100,0));
+        Image backImg = new Image("images/back.png");
+        backBtn.setGraphic(new ImageView(backImg));
+        backBtn.setStyle("-fx-background-color: transparent;");
+        backBtn.setOnAction(new EventHandler<ActionEvent>() {
+            //TODO Take all hide items in currently viewable array list and clear then show items in previously shown and cle
+            @Override
+            public void handle(ActionEvent event) {
+            
+        
+            }
+        });
 //        final Font f = Font.loadFont(new FileInputStream(new File("./src/Utils/ARCADEPI.TTF")), 12);
         Button playBtn = new Button();
         StackPane.setAlignment(playBtn, Pos.CENTER);
@@ -40,7 +88,9 @@ public class Main extends Application {
         playBtn.setStyle("-fx-background-color: transparent;");
         playBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-                System.out.println("Clicked");
+                playBtn.setVisible(false);
+                singleplayerBtn.setVisible(true);
+                multiplayerBtn.setVisible(true);
             }
         });
         root.getChildren().add(playBtn);
