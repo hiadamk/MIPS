@@ -11,11 +11,19 @@ public class Server {
 	
 	public Server() {
 		inputs = new LinkedBlockingQueue<>();
-		
+		makeConnections();
+		startGame();
 	}
 	
 	public void addInput(Input in) {
 		inputs.add(in);
 	}
 	
+	public void startGame() {
+		//TODO implement
+	}
+	
+	public void makeConnections() {
+		//TODO implement
+	}
 }

@@ -5,7 +5,6 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import utils.enums.Controls;
 
 
 public class Client extends Application{
@@ -37,10 +36,14 @@ public class Client extends Application{
 	public void processInput(){
 		if(keyController.getActiveKey() == null) return;
 		switch (keyController.getActiveKey()) {
-			case UP: System.out.println("Direction up");break;
-			case DOWN: System.out.println("Direction down");break;
-			case LEFT: System.out.println("Direction left");break;
-			case RIGHT: System.out.println("Direction right");break;
+			case UP: //Add code here
+				System.out.println("Direction up");break;
+			case DOWN: //Add code here
+				System.out.println("Direction down");break;
+			case LEFT: //Add code here
+				System.out.println("Direction left");break;
+			case RIGHT: //Add code here
+				System.out.println("Direction right");break;
 		}
 		
 	}

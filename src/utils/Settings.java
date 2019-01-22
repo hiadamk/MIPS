@@ -1,7 +1,7 @@
 package utils;
 
 import javafx.scene.input.KeyCode;
-import utils.enums.Controls;
+import utils.enums.Direction;
 
 public class Settings {
 	static private KeyCode up = KeyCode.UP;
@@ -9,7 +9,7 @@ public class Settings {
 	static private KeyCode left = KeyCode.LEFT;
 	static private KeyCode right = KeyCode.RIGHT;
 	
-	public static KeyCode getKey(Controls c) {
+	public static KeyCode getKey(Direction c) {
 		switch (c) {
 			case UP: return up;
 			case DOWN: return down;
@@ -21,7 +21,7 @@ public class Settings {
 		
 	}
 	
-	public static void setKey(Controls c, KeyCode key) {
+	public static void setKey(Direction c, KeyCode key) {
 		switch (c) {
 			case UP: up = key; break;
 			case DOWN: down = key; break;

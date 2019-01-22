@@ -1,5 +1,5 @@
 package utils.enums;
 
-public enum Controls {
+public enum Direction {
 	UP,DOWN,LEFT,RIGHT;
 }

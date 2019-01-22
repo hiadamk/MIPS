@@ -1,21 +1,21 @@
 package utils;
 
-import utils.enums.Controls;
+import utils.enums.Direction;
 
 public class Input {
 	
 	private int clientID;
-	private Controls move;
+	private Direction move;
 	
 	public int getClientID() {
 		return clientID;
 	}
 	
-	public Controls getMove() {
+	public Direction getMove() {
 		return move;
 	}
 	
-	public  Input(int id, Controls move) {
+	public  Input(int id, Direction move) {
 		this.clientID = id;
 		this.move = move;
 	}

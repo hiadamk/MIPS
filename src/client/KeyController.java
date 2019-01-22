@@ -3,19 +3,19 @@ package client;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
 import utils.Settings;
-import utils.enums.Controls;
+import utils.enums.Direction;
 
 
 
 public class KeyController implements EventHandler<KeyEvent>{
 	
-	private Controls mapping;
+	private Direction mapping;
 	
-	public Controls getActiveKey() {
+	public Direction getActiveKey() {
 		return activeKey;
 	}
 	
-	private Controls activeKey;
+	private Direction activeKey;
 	
 	
 	public KeyController() {
@@ -30,14 +30,14 @@ public class KeyController implements EventHandler<KeyEvent>{
 			mapping=null;
 			return;
 		}
-		if(e.getCode() == Settings.getKey(Controls.UP)) {
-			activeKey = Controls.UP;
-		}else if(e.getCode() == Settings.getKey(Controls.DOWN)) {
-			activeKey = Controls.DOWN;
-		}else if(e.getCode() == Settings.getKey(Controls.LEFT)) {
-			activeKey = Controls.LEFT;
-		}else if(e.getCode() == Settings.getKey(Controls.RIGHT)) {
-			activeKey = Controls.RIGHT;
+		if(e.getCode() == Settings.getKey(Direction.UP)) {
+			activeKey = Direction.UP;
+		}else if(e.getCode() == Settings.getKey(Direction.DOWN)) {
+			activeKey = Direction.DOWN;
+		}else if(e.getCode() == Settings.getKey(Direction.LEFT)) {
+			activeKey = Direction.LEFT;
+		}else if(e.getCode() == Settings.getKey(Direction.RIGHT)) {
+			activeKey = Direction.RIGHT;
 		}
 	}
 }
