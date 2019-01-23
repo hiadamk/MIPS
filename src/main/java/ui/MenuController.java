@@ -15,6 +15,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class MenuController {
@@ -27,10 +28,30 @@ public class MenuController {
     private Stack backTree = new Stack();
     private ArrayList<Node> itemsOnScreen = new ArrayList<>();
     
+    private Button singlePlayerBtn;
+    private Button multiplayerBtn;
+    private Button startGameBtn;
+    private Button backBtn;
+    private Button playBtn;
+    private Button musicBtn;
+    private Button soundFxBtn;
+    private Button creditsBtn;
+    private Button settingsBtn;
+    private Button quitBtn;
+    
     public MenuController(AudioController audio, Stage stage) {
         this.audioController = audio;
         this.primaryStage = stage;
         
+    }
+    
+    private void moveItemsToBackTree() {
+        for(Node item : itemsOnScreen){
+            item.setVisible(false);
+        }
+        List<Node> components = new ArrayList<>(itemsOnScreen);
+        backTree.push(components);
+        itemsOnScreen.clear();
     }
     
     public Node createMainMenu() {
@@ -43,36 +64,52 @@ public class MenuController {
         root.getChildren().add(bg);
         StackPane.setAlignment(bg, Pos.CENTER);
         
-        Button singleplayerBtn = new Button();
-        StackPane.setAlignment(singleplayerBtn, Pos.CENTER);
-        StackPane.setMargin(singleplayerBtn, new Insets(160, 0, 0, 0));
+        
+        startGameBtn = new Button();
+        StackPane.setAlignment(startGameBtn, Pos.CENTER);
+        StackPane.setMargin(startGameBtn, new Insets(160, 0, 0, 0));
+        Image startImg = new Image("menuImages/start.png");
+        startGameBtn.setGraphic(new ImageView(startImg));
+        startGameBtn.setStyle("-fx-background-color: transparent;");
+        root.getChildren().add(startGameBtn);
+        startGameBtn.setVisible(false);
+        
+        
+        this.singlePlayerBtn = new Button();
+        StackPane.setAlignment(this.singlePlayerBtn, Pos.CENTER);
+        StackPane.setMargin(this.singlePlayerBtn, new Insets(160, 0, 0, 0));
         Image singleplayerImg = new Image("menuImages/Single-Player.png");
-        singleplayerBtn.setGraphic(new ImageView(singleplayerImg));
-        singleplayerBtn.setStyle("-fx-background-color: transparent;");
-        singleplayerBtn.setOnAction(new EventHandler<ActionEvent>() {
+        this.singlePlayerBtn.setGraphic(new ImageView(singleplayerImg));
+        this.singlePlayerBtn.setStyle("-fx-background-color: transparent;");
+        this.singlePlayerBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
+                moveItemsToBackTree();
+                itemsOnScreen.add(startGameBtn);
+                startGameBtn.setVisible(true);
             }
         });
         
-        root.getChildren().add(singleplayerBtn);
-        singleplayerBtn.setVisible(false);
+        root.getChildren().add(this.singlePlayerBtn);
+        this.singlePlayerBtn.setVisible(false);
         
-        Button multiplayerBtn = new Button();
-        StackPane.setAlignment(multiplayerBtn, Pos.CENTER);
-        StackPane.setMargin(multiplayerBtn, new Insets(320, 0, 0, 0));
+        this.multiplayerBtn = new Button();
+        StackPane.setAlignment(this.multiplayerBtn, Pos.CENTER);
+        StackPane.setMargin(this.multiplayerBtn, new Insets(320, 0, 0, 0));
         Image multiplayerImg = new Image("menuImages/Multiplayer.png");
-        multiplayerBtn.setGraphic(new ImageView(multiplayerImg));
-        multiplayerBtn.setStyle("-fx-background-color: transparent;");
-        multiplayerBtn.setOnAction(new EventHandler<ActionEvent>() {
+        this.multiplayerBtn.setGraphic(new ImageView(multiplayerImg));
+        this.multiplayerBtn.setStyle("-fx-background-color: transparent;");
+        this.multiplayerBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
+                moveItemsToBackTree();
+//                itemsOnScreen.add()
             }
         });
-        root.getChildren().add(multiplayerBtn);
-        multiplayerBtn.setVisible(false);
+        root.getChildren().add(this.multiplayerBtn);
+        this.multiplayerBtn.setVisible(false);
         
-        Button backBtn = new Button();
+        backBtn = new Button();
         StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);
         StackPane.setMargin(backBtn, new Insets(0, 0, 100, 0));
         Image backImg = new Image("menuImages/back.png");
@@ -81,30 +118,33 @@ public class MenuController {
         backBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if(backTree.isEmpty()){
+                if (backTree.isEmpty()) {
 //                    backBtn.setVisible(false);
-                }else{
-                    for(Node item: itemsOnScreen){
+                } else {
+                    for (Node item : itemsOnScreen) {
                         item.setVisible(false);
                     }
                     itemsOnScreen.clear();
                     ArrayList<Node> toShow = (ArrayList<Node>) backTree.pop();
-                    for(Node item:toShow){
+                    for (Node item : toShow) {
                         item.setVisible(true);
                         itemsOnScreen.add(item);
                     }
-                    if(backTree.isEmpty()){
+                    if (backTree.isEmpty()) {
+//                        itemsOnScreen.add()
                         backBtn.setVisible(false);
                     }
                     
                 }
-            
+                
             }
         });
         backBtn.setVisible(false);
         root.getChildren().add(backBtn);
 //        final Font f = Font.loadFont(new FileInputStream(new File("./src/Utils/ARCADEPI.TTF")), 12);
-        Button playBtn = new Button();
+        
+        
+        playBtn = new Button();
         StackPane.setAlignment(playBtn, Pos.CENTER);
         StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
         Image playImg = new Image("menuImages/play.png");
@@ -116,19 +156,20 @@ public class MenuController {
                 
                 backBtn.setVisible(true);
                 playBtn.setVisible(false);
-                ArrayList<Control> components = new ArrayList<>();
+                ArrayList<Node> components = new ArrayList<>();
                 components.add(playBtn);
                 backTree.push(components);
-                singleplayerBtn.setVisible(true);
+                singlePlayerBtn.setVisible(true);
                 multiplayerBtn.setVisible(true);
-                itemsOnScreen.add(singleplayerBtn);
+                itemsOnScreen.clear();
+                itemsOnScreen.add(singlePlayerBtn);
                 itemsOnScreen.add(multiplayerBtn);
             }
         });
         root.getChildren().add(playBtn);
         
         
-        Button musicBtn = new Button();
+        musicBtn = new Button();
         StackPane.setAlignment(musicBtn, Pos.CENTER_LEFT);
         StackPane.setMargin(musicBtn, new Insets(0, 0, 25, 0));
         musicBtn.setStyle("-fx-background-color: transparent;");
@@ -151,7 +192,7 @@ public class MenuController {
             }
         });
         
-        Button soundFxBtn = new Button();
+        soundFxBtn = new Button();
         StackPane.setAlignment(soundFxBtn, Pos.CENTER_LEFT);
         StackPane.setMargin(soundFxBtn, new Insets(150, 0, 0, 0));
         soundFxBtn.setStyle("-fx-background-color: transparent;");
@@ -179,7 +220,7 @@ public class MenuController {
         });
         
         
-        Button creditsBtn = new Button();
+        creditsBtn = new Button();
         StackPane.setAlignment(creditsBtn, Pos.BOTTOM_CENTER);
         StackPane.setMargin(creditsBtn, new Insets(0, 0, 50, 0));
         creditsBtn.setStyle("-fx-background-color: transparent;");
@@ -191,7 +232,7 @@ public class MenuController {
         GaussianBlur gaussianBlur = new GaussianBlur();
         gaussianBlur.setRadius(11);
         
-        Button settingsBtn = new Button();
+        settingsBtn = new Button();
         settingsBtn.setStyle("-fx-background-color: transparent;");
         StackPane.setAlignment(settingsBtn, Pos.TOP_LEFT);
         StackPane.setMargin(settingsBtn, new Insets(50, 0, 0, 50));
@@ -219,9 +260,10 @@ public class MenuController {
                 }
             }
         });
+        
         root.getChildren().add(settingsBtn);
         
-        Button quitBtn = new Button();
+        quitBtn = new Button();
         StackPane.setAlignment(quitBtn, Pos.TOP_RIGHT);
         StackPane.setMargin(quitBtn, new Insets(50, 50, 0, 0));
         quitBtn.setStyle("-fx-background-color: transparent;");
