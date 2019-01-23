@@ -7,6 +7,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Control;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -78,13 +79,30 @@ public class MenuController {
         backBtn.setGraphic(new ImageView(backImg));
         backBtn.setStyle("-fx-background-color: transparent;");
         backBtn.setOnAction(new EventHandler<ActionEvent>() {
-            //TODO Take all hide items in currently viewable array list and clear then show items in previously shown and cle
             @Override
             public void handle(ActionEvent event) {
-            
+                if(backTree.isEmpty()){
+//                    backBtn.setVisible(false);
+                }else{
+                    for(Node item: itemsOnScreen){
+                        item.setVisible(false);
+                    }
+                    itemsOnScreen.clear();
+                    ArrayList<Node> toShow = (ArrayList<Node>) backTree.pop();
+                    for(Node item:toShow){
+                        item.setVisible(true);
+                        itemsOnScreen.add(item);
+                    }
+                    if(backTree.isEmpty()){
+                        backBtn.setVisible(false);
+                    }
+                    
+                }
             
             }
         });
+        backBtn.setVisible(false);
+        root.getChildren().add(backBtn);
 //        final Font f = Font.loadFont(new FileInputStream(new File("./src/Utils/ARCADEPI.TTF")), 12);
         Button playBtn = new Button();
         StackPane.setAlignment(playBtn, Pos.CENTER);
@@ -95,9 +113,16 @@ public class MenuController {
         playBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
+                
+                backBtn.setVisible(true);
                 playBtn.setVisible(false);
+                ArrayList<Control> components = new ArrayList<>();
+                components.add(playBtn);
+                backTree.push(components);
                 singleplayerBtn.setVisible(true);
                 multiplayerBtn.setVisible(true);
+                itemsOnScreen.add(singleplayerBtn);
+                itemsOnScreen.add(multiplayerBtn);
             }
         });
         root.getChildren().add(playBtn);
@@ -203,6 +228,9 @@ public class MenuController {
         root.getChildren().add(quitBtn);
         Image quitImg = new Image("menuImages/quit.png");
         quitBtn.setGraphic(new ImageView(quitImg));
+        
+        backTree.empty();
+        itemsOnScreen.add(playBtn);
         
         return root;
     }
