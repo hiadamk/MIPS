@@ -1,6 +1,7 @@
 package ui;
 
 import audio.AudioController;
+import audio.Sounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;

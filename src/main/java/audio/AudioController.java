@@ -2,6 +2,7 @@ package audio;
 
 import javax.sound.sampled.*;
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -58,9 +59,10 @@ public class AudioController {
 	 */
 	public void playSound(Sounds sound) {
 		if (mute) return; // IF the client has muted its audio nothing will be played
+		InputStream audio = AudioController.class.getResourceAsStream(sound.getPath());
 		File audioFile=new File(sound.getPath());
 		try {
-			AudioInputStream stream=AudioSystem.getAudioInputStream(audioFile);
+			AudioInputStream stream=AudioSystem.getAudioInputStream(audio);
 			DataLine.Info info=new DataLine.Info(Clip.class, stream.getFormat());
 			Clip clip=(Clip) AudioSystem.getLine(info);
 			clip.open(stream);
@@ -94,9 +96,10 @@ public class AudioController {
 	 * @param sound file for the music
 	 */
 	public void playMusic(Sounds sound) {
-		File audioFile=new File(sound.getPath());
+		InputStream audio = AudioController.class.getResourceAsStream(sound.getPath());
+//		File audioFile=new File(sound.getPath());
 		try {
-			AudioInputStream stream=AudioSystem.getAudioInputStream(audioFile);
+			AudioInputStream stream=AudioSystem.getAudioInputStream(audio);
 			DataLine.Info info=new DataLine.Info(Clip.class, stream.getFormat());
 			Clip clip=(Clip) AudioSystem.getLine(info);
 			clip.open(stream);

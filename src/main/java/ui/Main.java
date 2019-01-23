@@ -1,6 +1,8 @@
 package ui;
 import audio.AudioController;
+import audio.Sounds;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 
 import javafx.scene.control.Label;
@@ -16,9 +18,11 @@ public class Main extends Application {
     
     @Override
     public void start(Stage primaryStage) throws Exception{
-        
-        AudioController audioController = new AudioController();
     
+    
+        AudioController audioController = new AudioController();
+        audioController.playMusic(Sounds.intro);
+        
         Label dummyLabel = new Label("GAME SCENE");
         Scene dummyScene = new Scene(dummyLabel, 1920, 1080);
         
