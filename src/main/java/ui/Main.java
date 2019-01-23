@@ -1,9 +1,9 @@
+package ui;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.effect.GaussianBlur;
@@ -31,7 +31,7 @@ public class Main extends Application {
         root.setPrefSize(1920,1080);
         
         
-        ImageView bg = new ImageView("images/EditedBackground.png");
+        ImageView bg = new ImageView("menuImages/EditedBackground.png");
         bg.fitWidthProperty().bind(primaryStage.widthProperty());
         root.getChildren().add(bg);
         StackPane.setAlignment(bg, Pos.CENTER);
@@ -39,7 +39,7 @@ public class Main extends Application {
         Button singleplayerBtn =  new Button();
         StackPane.setAlignment(singleplayerBtn, Pos.CENTER);
         StackPane.setMargin(singleplayerBtn, new Insets(160, 0,0,0));
-        Image singleplayerImg = new Image("images/Single-Player.png");
+        Image singleplayerImg = new Image("menuImages/Single-Player.png");
         singleplayerBtn.setGraphic(new ImageView(singleplayerImg));
         singleplayerBtn.setStyle("-fx-background-color: transparent;");
         singleplayerBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -53,7 +53,7 @@ public class Main extends Application {
         Button multiplayerBtn = new Button();
         StackPane.setAlignment(multiplayerBtn, Pos.CENTER);
         StackPane.setMargin(multiplayerBtn, new Insets(320, 0,0,0));
-        Image multiplayerImg = new Image("images/Multiplayer.png");
+        Image multiplayerImg = new Image("menuImages/Multiplayer.png");
         multiplayerBtn.setGraphic(new ImageView(multiplayerImg));
         multiplayerBtn.setStyle("-fx-background-color: transparent;");
         multiplayerBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -66,7 +66,7 @@ public class Main extends Application {
         Button backBtn = new Button();
         StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);
         StackPane.setMargin(backBtn, new Insets(0,0,100,0));
-        Image backImg = new Image("images/back.png");
+        Image backImg = new Image("menuImages/back.png");
         backBtn.setGraphic(new ImageView(backImg));
         backBtn.setStyle("-fx-background-color: transparent;");
         backBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -83,7 +83,7 @@ public class Main extends Application {
         StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
 //        playBtn.setFont(f);
 //        playBtn.setText("Play");
-        Image playImg = new Image("images/play.png");
+        Image playImg = new Image("menuImages/play.png");
         playBtn.setGraphic(new ImageView(playImg));
         playBtn.setStyle("-fx-background-color: transparent;");
         playBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -101,8 +101,8 @@ public class Main extends Application {
         StackPane.setMargin(musicBtn, new Insets(0,0, 25, 0));
         musicBtn.setStyle("-fx-background-color: transparent;");
         root.getChildren().add(musicBtn);
-        Image musicOn = new Image("images/Music-On.png");
-        Image musicOff = new Image("images/Music-Off.png");
+        Image musicOn = new Image("menuImages/Music-On.png");
+        Image musicOff = new Image("menuImages/Music-Off.png");
         musicBtn.setGraphic(new ImageView(musicOn));
         musicBtn.setVisible(false);
         musicBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -124,8 +124,8 @@ public class Main extends Application {
         StackPane.setMargin(soundFxBtn, new Insets(150,0, 0, 0));
         soundFxBtn.setStyle("-fx-background-color: transparent;");
         root.getChildren().add(soundFxBtn);
-        Image soundFXOn = new Image("images/SoundFX-On.png");
-        Image soundFXOff = new Image("images/SoundFX-Off.png");
+        Image soundFXOn = new Image("menuImages/SoundFX-On.png");
+        Image soundFXOff = new Image("menuImages/SoundFX-Off.png");
         soundFxBtn.setGraphic(new ImageView(soundFXOn));
         soundFxBtn.setVisible(false);
         soundFxBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -148,7 +148,7 @@ public class Main extends Application {
         StackPane.setMargin(creditsBtn, new Insets(0,0,50, 0));
         creditsBtn.setStyle("-fx-background-color: transparent;");
         root.getChildren().add(creditsBtn);
-        Image creditsImg = new Image("images/Credits.png");
+        Image creditsImg = new Image("menuImages/Credits.png");
         creditsBtn.setGraphic(new ImageView(creditsImg));
         creditsBtn.setVisible(false);
         
@@ -159,7 +159,7 @@ public class Main extends Application {
         settingsBtn.setStyle("-fx-background-color: transparent;");
         StackPane.setAlignment(settingsBtn, Pos.TOP_LEFT);
         StackPane.setMargin(settingsBtn, new Insets(50,0,0,50));
-        Image settingsImg = new Image("images/settings.png");
+        Image settingsImg = new Image("menuImages/settings.png");
         ImageView settingsView = new ImageView(settingsImg);
         settingsView.setFitHeight(50);
         settingsView.setFitWidth(50);
@@ -190,7 +190,7 @@ public class Main extends Application {
         StackPane.setMargin(quitBtn, new Insets(50, 50, 0, 0));
         quitBtn.setStyle("-fx-background-color: transparent;");
         root.getChildren().add(quitBtn);
-        Image quitImg = new Image("images/quit.png");
+        Image quitImg = new Image("menuImages/quit.png");
         quitBtn.setGraphic(new ImageView(quitImg));
         
         primaryStage.setTitle("M.I.P.S");
