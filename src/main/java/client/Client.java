@@ -25,10 +25,13 @@ public class Client extends Application{
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		scene.setOnKeyPressed(keyController);
+		//Main menu code will be here
+		//AnimationTimer started once game has started
 		new AnimationTimer() {
 			@Override
 			public void handle(long now) {
 				processInput();
+				render();
 			}
 		}.start();
 	}
@@ -48,4 +51,7 @@ public class Client extends Application{
 		
 	}
 	
+	public void render() {
+		//TODO put render code here pass in either scene or graphics content
+	}
 }
