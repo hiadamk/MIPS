@@ -5,12 +5,15 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import server.Server;
+import utils.Input;
+import utils.enums.Direction;
 
 public class Client extends Application {
 
   private int id;
   private KeyController keyController;
-
+  private Server server;
   public int getId() {
     return id;
   }
@@ -25,6 +28,11 @@ public class Client extends Application {
     primaryStage.show();
     scene.setOnKeyPressed(keyController);
     // Main menu code will be here
+
+    // If hosting if not server will be set by connection method along with new client id
+    server = new Server();
+
+
     // AnimationTimer started once game has started
     new AnimationTimer() {
       @Override
@@ -36,12 +44,14 @@ public class Client extends Application {
   }
 
   public void processInput() {
-    if (keyController.getActiveKey() == null) {
+    Direction input = keyController.getActiveKey();
+    Direction current = server.getEntity(id).getDirection();
+    if (input == null | input == current) {
       return;
     }
-    switch (keyController.getActiveKey()) {
+    switch (input) {
       case UP: // Add code here
-        System.out.println("Direction up");
+        // Validate the input
         break;
       case DOWN: // Add code here
         System.out.println("Direction down");
@@ -55,6 +65,13 @@ public class Client extends Application {
     }
   }
 
+  private void informServer(Input input) {
+    if(id == 0){
+      server.addInput(input);
+    } else {
+      //TODO integrate with netwroking to send to server
+    }
+  }
   public void render() {
     // TODO put render code here pass in either scene or graphics content
   }
