@@ -1,6 +1,7 @@
 package objects;
 
 import java.awt.geom.Point2D;
+import javafx.scene.canvas.GraphicsContext;
 import server.Server;
 import utils.enums.Direction;
 import utils.enums.EntityType;
@@ -12,15 +13,25 @@ public class Entity {
   private Direction direction;
   private int score;
   private int clientId;
-  private Server server;
   private EntityType type;
 
-  public Entity(EntityType type, int clientId, Server server) {
+  public Entity(EntityType type, int clientId) {
     this.type = type;
     this.clientId = clientId;
-    this.server = server;
     this.score = 0;
     this.velocity = 0;
+  }
+
+  public void render(GraphicsContext gc) {
+    if (type == EntityType.PACMAN) {
+      // TODO implement
+    } else if (type == EntityType.GHOST1) {
+      // TODO implement
+    } else if (type == EntityType.GHOST2) {
+      // TODO implement
+    } else if (type == EntityType.GHOST3) {
+      // TODO implement
+    }
   }
 
   public Point2D.Double getLocation() {
