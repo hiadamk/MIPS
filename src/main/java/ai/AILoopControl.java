@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.util.HashSet;
 
 import objects.Entity;
-import utils.enums.EntityType;
 
 public class AILoopControl extends Thread {
 
@@ -58,27 +57,6 @@ public class AILoopControl extends Thread {
 	private final Entity[] gameAgents;
 	private final Entity[] controlAgents;
 	private final int[][] map;
-
-	/**
-	 * Verifies that a given {@link Entity Entity[]} array contains the correct
-	 * number of {@link Entity Entity} and that every enumeration of
-	 * {@link EntityType EntityType} occurs exactly once.
-	 * 
-	 * @return True if above conditions are met.
-	 */
-	public static boolean validGameAgentArray(Entity[] gameAgents) {
-		if (gameAgents.length != EntityType.values().length) {
-			return false;
-		}
-		HashSet<EntityType> s = new HashSet<EntityType>();
-		for (Entity g : gameAgents) {
-			if (s.contains(g.getType())) {
-				return false;
-			}
-			s.add(g.getType());
-		}
-		return true;
-	}
 
 	/**
 	 * Initialises the control for the AI Control Loop.

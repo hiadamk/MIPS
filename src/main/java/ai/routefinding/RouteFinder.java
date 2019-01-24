@@ -2,7 +2,6 @@ package ai.routefinding;
 
 import objects.Entity;
 import utils.enums.Direction;
-import utils.enums.EntityType;
 
 public interface RouteFinder {
 
@@ -13,5 +12,5 @@ public interface RouteFinder {
 	/**Set all agents in the game for reference and set which of those agents the current route is being generated for.
 	 * @param gameAgents The array containing all agents within the game exactly once only.
 	 * @param myAgent The enum referring to the current agent for which this routefinder is being assigned.*/
-	public void setAgents(Entity[] gameAgents, EntityType myAgent);
+	public void setAgents(Entity[] gameAgents, int myAgent);
 }

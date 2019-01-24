@@ -1,19 +1,16 @@
 package ai;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
-
 import objects.Entity;
-import utils.enums.EntityType;
 
 class AILoopControlTests {
 	private static final Entity[] ALL_AGENTS= {
-			new Entity(EntityType.PACMAN),
-			new Entity(EntityType.GHOST1),
-			new Entity(EntityType.GHOST2),
-			new Entity(EntityType.GHOST3),
-			new Entity(EntityType.GHOST4)};
+			new Entity(true, 0),
+			new Entity(false, 1),
+			new Entity(false, 2),
+			new Entity(false, 3),
+			new Entity(false, 4)};
 
 	@Test
 	void testRun() {

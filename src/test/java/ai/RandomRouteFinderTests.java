@@ -6,7 +6,6 @@ import org.junit.jupiter.api.function.Executable;
 
 import ai.routefinding.RandomRouteFinder;
 import objects.Entity;
-import utils.enums.EntityType;
 
 class RandomRouteFinderTests {
 
@@ -22,54 +21,30 @@ class RandomRouteFinderTests {
 		RandomRouteFinder rrf = new RandomRouteFinder();
 		@SuppressWarnings("unused")
 		Entity[] gas = {
-				new Entity(EntityType.PACMAN),
-				new Entity(EntityType.GHOST1),
-				new Entity(EntityType.GHOST2),
-				new Entity(EntityType.GHOST3),
-				new Entity(EntityType.GHOST4)};
+				new Entity(true, 0),
+				new Entity(false, 1),
+				new Entity(false, 2),
+				new Entity(false, 3),
+				new Entity(false, 4)};
 	}
 	
 	@Test
 	void setGameAgentsNullPointer() {
 		RandomRouteFinder rrf = new RandomRouteFinder();
-		Executable e = () -> rrf.setAgents(null, EntityType.PACMAN);
+		Executable e = () -> rrf.setAgents(null, 0);
 		assertThrows(NullPointerException.class, e);
-	}
-	
-	@Test
-	void setGameAgentsIllegalArgumentLengthShort() {
-		RandomRouteFinder rrf = new RandomRouteFinder();
-		Entity[] gas = {
-				new Entity(EntityType.PACMAN),
-				new Entity(EntityType.GHOST1)};
-		Executable e = () -> rrf.setAgents(gas, EntityType.PACMAN);
-		assertThrows(IllegalArgumentException.class, e);
-	}
-	
-	@Test
-	void setGameAgentsIllegalArgumentLengthLong() {
-		RandomRouteFinder rrf = new RandomRouteFinder();
-		Entity[] gas = {
-				new Entity(EntityType.PACMAN),
-				new Entity(EntityType.GHOST1),
-				new Entity(EntityType.GHOST2),
-				new Entity(EntityType.GHOST3),
-				new Entity(EntityType.GHOST4),
-				new Entity(EntityType.PACMAN)};
-		Executable e = () -> rrf.setAgents(gas, EntityType.PACMAN);
-		assertThrows(IllegalArgumentException.class, e);
 	}
 	
 	@Test
 	void setGameAgentsIllegalArgumentDuplicates() {
 		RandomRouteFinder rrf = new RandomRouteFinder();
 		Entity[] gas = {
-				new Entity(EntityType.PACMAN),
-				new Entity(EntityType.GHOST1),
-				new Entity(EntityType.GHOST2),
-				new Entity(EntityType.GHOST3),
-				new Entity(EntityType.PACMAN)};
-		Executable e = () -> rrf.setAgents(gas, EntityType.PACMAN);
+				new Entity(true, 0),
+				new Entity(false, 1),
+				new Entity(false, 2),
+				new Entity(false, 3),
+				new Entity(false, 0)};
+		Executable e = () -> rrf.setAgents(gas, 0);
 		assertThrows(IllegalArgumentException.class, e);
 	}
 	
@@ -77,13 +52,13 @@ class RandomRouteFinderTests {
 	void setGameAgentsIllegalState() {
 		RandomRouteFinder rrf = new RandomRouteFinder();
 		Entity[] gas = {
-				new Entity(EntityType.PACMAN),
-				new Entity(EntityType.GHOST1),
-				new Entity(EntityType.GHOST2),
-				new Entity(EntityType.GHOST3),
-				new Entity(EntityType.GHOST4)};
-		rrf.setAgents(gas, EntityType.PACMAN);
-		Executable e = () -> rrf.setAgents(gas, EntityType.PACMAN);
+				new Entity(true, 0),
+				new Entity(false, 1),
+				new Entity(false, 2),
+				new Entity(false, 3),
+				new Entity(false, 4)};
+		rrf.setAgents(gas, 0);
+		Executable e = () -> rrf.setAgents(gas, 0);
 		assertThrows(IllegalStateException.class, e);
 	}
 
@@ -91,12 +66,12 @@ class RandomRouteFinderTests {
 	void getRouteValid() {
 		RandomRouteFinder rrf = new RandomRouteFinder();
 		Entity[] gas = {
-				new Entity(EntityType.PACMAN),
-				new Entity(EntityType.GHOST1),
-				new Entity(EntityType.GHOST2),
-				new Entity(EntityType.GHOST3),
-				new Entity(EntityType.GHOST4)};
-		rrf.setAgents(gas, EntityType.PACMAN);
+				new Entity(true, 0),
+				new Entity(false, 1),
+				new Entity(false, 2),
+				new Entity(false, 3),
+				new Entity(false, 4)};
+		rrf.setAgents(gas, 0);
 		rrf.getRoute();
 	}
 	
