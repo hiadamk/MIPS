@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import utils.enums.Direction;
+import utils.Renderable;
 
-public class Entity {
+public class Entity implements Renderable{
 
   private Point2D.Double location;
   private double velocity; // The velocity of the entity currently
