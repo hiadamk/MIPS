@@ -2,14 +2,13 @@ package objects;
 
 import java.awt.geom.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-import server.Server;
 import utils.enums.Direction;
 import utils.enums.EntityType;
 
 public class Entity {
 
   private Point2D.Double location;
-  private double velocity;
+  private double velocity; // The velocity of the entity currently
   private Direction direction;
   private int score;
   private int clientId;

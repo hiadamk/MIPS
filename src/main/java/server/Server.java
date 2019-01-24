@@ -1,16 +1,20 @@
 package server;
 
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import objects.Entity;
 import utils.Input;
+import utils.enums.Direction;
 import utils.enums.EntityType;
 
 public class Server {
 
   private BlockingQueue<Input> inputs;
   private Entity[] agents;
+  private final Point2D.Double respawnPoint = new Double(5, 5); //Need to set respawn point somehow
 
   public Server() {
     inputs = new LinkedBlockingQueue<>();
@@ -75,5 +79,19 @@ public class Server {
 
   private void updateClients() {
     // TODO implement
+  }
+
+  private void entityCollision(Entity x, Entity y) {
+    if (x.getType() == EntityType.PACMAN) {
+      x.setType(y.getType());
+      y.setType(EntityType.PACMAN);
+      x.setLocation(respawnPoint);
+      x.setDirection(Direction.UP);
+    } else if (y.getType() == EntityType.PACMAN) {
+      y.setType(x.getType());
+      x.setType(y.getType());
+      y.setLocation(respawnPoint);
+      y.setDirection(Direction.UP);
+    }
   }
 }
