@@ -2,7 +2,6 @@ package ai.routefinding;
 
 import java.awt.geom.Point2D;
 import java.util.Random;
-
 import ai.AILoopControl;
 import objects.Entity;
 import utils.enums.Direction;
@@ -14,11 +13,31 @@ public class RandomRouteFinder implements RouteFinder {
 	private Entity[] gameAgents;
 	private EntityType myAgent;
 	private boolean agentsSet;
-	
+
+	/**
+	 * Creates an instance of this routeFinder. As it is random the map is
+	 * irrelevant.
+	 */
 	public RandomRouteFinder() {
 		this.agentsSet = false;
 	}
-	
+
+	/**
+	 * Set all agents in the game for reference and set which of those agents the
+	 * current route is being generated for.
+	 * 
+	 * @param gameAgents
+	 *            The array containing all agents within the game exactly once only.
+	 * @param myAgent
+	 *            The enum referring to the current agent for which this routefinder
+	 *            is being assigned.
+	 * @throws IllegalArgumentException
+	 *             The gameAgents array does not contain all game agents exactly
+	 *             once.
+	 * @throws IllegalStateException
+	 *             The game agents cannot be re-assigned (this method can only be
+	 *             called once).
+	 */
 	public void setAgents(Entity[] gameAgents, EntityType myAgent) {
 		if (!AILoopControl.validGameAgentArray(gameAgents)) {
 			throw new IllegalArgumentException("gameAgents array must have exactly one of each GameAgentEnum.");
@@ -30,11 +49,22 @@ public class RandomRouteFinder implements RouteFinder {
 		this.myAgent = myAgent;
 		this.agentsSet = true;
 	}
-	
+
+	/**
+	 * Returns the direction to travel in until the next junction is reached.
+	 * Requires {@link #setAgents(Entity[], EntityType) setAgents()} method to have
+	 * been called before use.
+	 * 
+	 * @return The direction to travel in.
+	 * @throws IllegalStateException
+	 *             The gameAgents have not been set. Call
+	 *             {@link #setAgents(Entity[], EntityType) setAgents()} before
+	 *             calling this method.
+	 */
 	@Override
 	public Direction getRoute() {
 		if (!agentsSet) {
-			throw new IllegalStateException("Agents have not been set.");
+			throw new IllegalStateException("gameAgents have not been set.");
 		}
 		Direction dir;
 		int dirValue = R.nextInt(6);
@@ -58,10 +88,9 @@ public class RandomRouteFinder implements RouteFinder {
 		case 4: {
 			Point2D.Double mmanPos = gameAgents[EntityType.PACMAN.getId()].getLocation();
 			Point2D.Double myPos = gameAgents[myAgent.getId()].getLocation();
-			if (myPos.getY()>mmanPos.getY()) {
+			if (myPos.getY() > mmanPos.getY()) {
 				dir = Direction.UP;
-			}
-			else {
+			} else {
 				dir = Direction.DOWN;
 			}
 			break;
@@ -69,10 +98,9 @@ public class RandomRouteFinder implements RouteFinder {
 		case 5: {
 			Point2D.Double mmanPos = gameAgents[EntityType.PACMAN.getId()].getLocation();
 			Point2D.Double myPos = gameAgents[myAgent.getId()].getLocation();
-			if (myPos.getX()>mmanPos.getX()) {
+			if (myPos.getX() > mmanPos.getX()) {
 				dir = Direction.LEFT;
-			}
-			else {
+			} else {
 				dir = Direction.RIGHT;
 			}
 			break;
