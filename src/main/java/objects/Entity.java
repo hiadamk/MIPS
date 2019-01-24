@@ -3,8 +3,8 @@ package objects;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import javafx.scene.image.Image;
-import utils.enums.Direction;
 import utils.Renderable;
+import utils.enums.Direction;
 
 public class Entity implements Renderable{
 
@@ -26,6 +26,14 @@ public class Entity implements Renderable{
 
   public Point2D.Double getLocation() {
     return location;
+  }
+
+  @Override
+  public ArrayList<Image> getImage() {
+    if (direction == null) {
+      return images[0];
+    }
+    return images[direction.toInt()];
   }
 
   public void setLocation(Point2D.Double location) {
@@ -69,11 +77,5 @@ public class Entity implements Renderable{
     //images = resourceLoader.getImages(pacMan, clientId)
   }
 
-  public ArrayList<Image> getImage() { //Change that to a queue
-    if (direction == null) {
-      return images[0];
-    }
-    return images[direction.toInt()];
-  }
 
 }
