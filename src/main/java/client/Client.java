@@ -78,10 +78,6 @@ public class Client extends Application {
     }
   }
 
-  private void moveEntities() {
-
-  }
-
   private void render() {
     // TODO put render code here pass in either scene or graphics content
   }

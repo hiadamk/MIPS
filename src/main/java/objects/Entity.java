@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import utils.enums.Direction;
-import utils.enums.EntityType;
 
 public class Entity {
 
@@ -14,18 +13,15 @@ public class Entity {
   private Direction direction;
   private int score;
   private int clientId;
-  private EntityType type;
-  private ArrayList<Image> imagesUp;
-  private ArrayList<Image> imagesDown;
-  private ArrayList<Image> imagesLeft;
-  private ArrayList<Image> imagesRight;
+  private Boolean pacMan;
+  private ArrayList<Image>[] images;
 
-  public Entity(EntityType type, int clientId) {
-    this.type = type;
+  public Entity(Boolean pacMan, int clientId) {
+    this.pacMan = pacMan;
     this.clientId = clientId;
     this.score = 0;
     this.velocity = 0;
-    // images = resourceLoader.getImages(type)
+    // images = resourceLoader.getImages(pacMan, clientId)
   }
 
   public void render(GraphicsContext gc) {
@@ -68,22 +64,20 @@ public class Entity {
     return clientId;
   }
 
-  public EntityType getType() {
-    return type;
+  public Boolean isPacman() {
+    return pacMan;
   }
 
-  public void setType(EntityType type) {
-    this.type = type;
+  public void setPacMan(Boolean pac) {
+    this.pacMan = pac;
+    //images = resourceLoader.getImages(pacMan, clientId)
   }
 
-  public ArrayList<Image> getImage() {
-      switch (direction) {
-        case UP: return imagesUp;
-        case LEFT: return imagesLeft;
-        case DOWN: return imagesDown;
-        case RIGHT: return imagesRight;
-        default: return imagesUp;
-      }
+  public ArrayList<Image> getImage() { //Change that to a queue
+    if (direction == null) {
+      return images[0];
+    }
+    return images[direction.toInt()];
   }
 
 }
