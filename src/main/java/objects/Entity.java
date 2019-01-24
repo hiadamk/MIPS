@@ -2,7 +2,6 @@ package objects;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import utils.enums.Direction;
 
@@ -22,10 +21,6 @@ public class Entity {
     this.score = 0;
     this.velocity = 0;
     // images = resourceLoader.getImages(pacMan, clientId)
-  }
-
-  public void render(GraphicsContext gc) {
-
   }
 
   public Point2D.Double getLocation() {
