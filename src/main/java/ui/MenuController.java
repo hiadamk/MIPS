@@ -17,6 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+
+/**
+ * @author Adam Kona
+ * Class which handles the creation and functionality of components in the main menu.
+ */
 public class MenuController {
     
     private AudioController audioController;
@@ -42,6 +47,13 @@ public class MenuController {
     private Button joinGameBtn;
     private Button createLobbyBtn;
     
+    /**
+     * Constructor takes in the audio controller stage and game scene
+     *
+     * @param audio     Global audio controller which is passed around the system
+     * @param stage     The game window
+     * @param gameScene The scene where the game is
+     */
     public MenuController(AudioController audio, Stage stage, Scene gameScene) {
         this.audioController = audio;
         this.primaryStage = stage;
@@ -49,12 +61,18 @@ public class MenuController {
         
     }
     
+    /**
+     * Hides the components on the screen
+     */
     private void hideItemsOnScreen() {
         for (Node item : itemsOnScreen) {
             item.setVisible(false);
         }
     }
     
+    /**
+     * Hides the items currently on the screen and moves them onto the stack which will store which components were previously showing
+     */
     private void moveItemsToBackTree() {
         hideItemsOnScreen();
         List<Node> components = new ArrayList<>(itemsOnScreen);
@@ -62,18 +80,26 @@ public class MenuController {
         itemsOnScreen.clear();
     }
     
+    /**
+     * Shows items on the screen which have been previously set to hidden.
+     */
     private void showItemsOnScreen() {
         for (Node item : itemsOnScreen) {
             item.setVisible(true);
         }
     }
     
+    
+    /**
+     * Creates all the menu items and defines their functionality.
+     * @return The node containing the menu which will be returned to the game main window.
+     */
     public Node createMainMenu() {
         StackPane root = new StackPane();
         root.setPrefSize(1920, 1080);
         
         
-        ImageView bg = new ImageView("menuImages/EditedBackground.png");
+        ImageView bg = new ImageView("ui/EditedBackground.png");
         bg.fitWidthProperty().bind(this.primaryStage.widthProperty());
         root.getChildren().add(bg);
         StackPane.setAlignment(bg, Pos.CENTER);
@@ -82,7 +108,7 @@ public class MenuController {
         startGameBtn = new Button();
         StackPane.setAlignment(startGameBtn, Pos.CENTER);
         StackPane.setMargin(startGameBtn, new Insets(160, 0, 0, 0));
-        Image startImg = new Image("menuImages/start.png");
+        Image startImg = new Image("ui/start.png");
         startGameBtn.setGraphic(new ImageView(startImg));
         startGameBtn.setStyle("-fx-background-color: transparent;");
         root.getChildren().add(startGameBtn);
@@ -95,7 +121,7 @@ public class MenuController {
         this.singlePlayerBtn = new Button();
         StackPane.setAlignment(this.singlePlayerBtn, Pos.CENTER);
         StackPane.setMargin(this.singlePlayerBtn, new Insets(160, 0, 0, 0));
-        Image singleplayerImg = new Image("menuImages/Single-Player.png");
+        Image singleplayerImg = new Image("ui/Single-Player.png");
         this.singlePlayerBtn.setGraphic(new ImageView(singleplayerImg));
         this.singlePlayerBtn.setStyle("-fx-background-color: transparent;");
         this.singlePlayerBtn.setOnAction(e -> {
@@ -111,7 +137,7 @@ public class MenuController {
         this.multiplayerBtn = new Button();
         StackPane.setAlignment(this.multiplayerBtn, Pos.CENTER);
         StackPane.setMargin(this.multiplayerBtn, new Insets(320, 0, 0, 0));
-        Image multiplayerImg = new Image("menuImages/Multiplayer.png");
+        Image multiplayerImg = new Image("ui/Multiplayer.png");
         this.multiplayerBtn.setGraphic(new ImageView(multiplayerImg));
         this.multiplayerBtn.setStyle("-fx-background-color: transparent;");
         this.multiplayerBtn.setOnAction(e -> {
@@ -128,7 +154,7 @@ public class MenuController {
         backBtn = new Button();
         StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);
         StackPane.setMargin(backBtn, new Insets(0, 0, 100, 0));
-        Image backImg = new Image("menuImages/back.png");
+        Image backImg = new Image("ui/back.png");
         backBtn.setGraphic(new ImageView(backImg));
         backBtn.setStyle("-fx-background-color: transparent;");
         backBtn.setOnAction(event -> {
@@ -158,7 +184,7 @@ public class MenuController {
         playBtn = new Button();
         StackPane.setAlignment(playBtn, Pos.CENTER);
         StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
-        Image playImg = new Image("menuImages/play.png");
+        Image playImg = new Image("ui/play.png");
         playBtn.setGraphic(new ImageView(playImg));
         playBtn.setStyle("-fx-background-color: transparent;");
         playBtn.setOnAction(e -> {
@@ -177,8 +203,8 @@ public class MenuController {
         StackPane.setMargin(musicBtn, new Insets(0, 0, 25, 0));
         musicBtn.setStyle("-fx-background-color: transparent;");
         root.getChildren().add(musicBtn);
-        Image musicOn = new Image("menuImages/Music-On.png");
-        Image musicOff = new Image("menuImages/Music-Off.png");
+        Image musicOn = new Image("ui/Music-On.png");
+        Image musicOff = new Image("ui/Music-Off.png");
         musicBtn.setGraphic(new ImageView(musicOn));
         musicBtn.setVisible(false);
         musicBtn.setOnAction(event -> {
@@ -200,8 +226,8 @@ public class MenuController {
         StackPane.setMargin(soundFxBtn, new Insets(150, 0, 0, 0));
         soundFxBtn.setStyle("-fx-background-color: transparent;");
         root.getChildren().add(soundFxBtn);
-        Image soundFXOn = new Image("menuImages/SoundFX-On.png");
-        Image soundFXOff = new Image("menuImages/SoundFX-Off.png");
+        Image soundFXOn = new Image("ui/SoundFX-On.png");
+        Image soundFXOff = new Image("ui/SoundFX-Off.png");
         ImageView fxView = new ImageView(soundFXOn);
         fxView.setFitWidth(500);
         fxView.setPreserveRatio(true);
@@ -225,7 +251,7 @@ public class MenuController {
         StackPane.setMargin(creditsBtn, new Insets(0, 0, 50, 0));
         creditsBtn.setStyle("-fx-background-color: transparent;");
         root.getChildren().add(creditsBtn);
-        Image creditsImg = new Image("menuImages/Credits.png");
+        Image creditsImg = new Image("ui/Credits.png");
         creditsBtn.setGraphic(new ImageView(creditsImg));
         creditsBtn.setVisible(false);
         
@@ -236,7 +262,7 @@ public class MenuController {
         settingsBtn.setStyle("-fx-background-color: transparent;");
         StackPane.setAlignment(settingsBtn, Pos.TOP_LEFT);
         StackPane.setMargin(settingsBtn, new Insets(50, 0, 0, 50));
-        Image settingsImg = new Image("menuImages/settings.png");
+        Image settingsImg = new Image("ui/settings.png");
         ImageView settingsView = new ImageView(settingsImg);
         settingsView.setFitHeight(50);
         settingsView.setFitWidth(50);
@@ -271,13 +297,13 @@ public class MenuController {
         StackPane.setMargin(quitBtn, new Insets(50, 50, 0, 0));
         quitBtn.setStyle("-fx-background-color: transparent;");
         root.getChildren().add(quitBtn);
-        Image quitImg = new Image("menuImages/quit.png");
+        Image quitImg = new Image("ui/quit.png");
         quitBtn.setGraphic(new ImageView(quitImg));
         
         createGameBtn = new Button();
         StackPane.setAlignment(createGameBtn, Pos.CENTER);
         StackPane.setMargin(createGameBtn, new Insets(50, 0, 0, 0));
-        Image createGameImg = new Image("menuImages/create-game.png");
+        Image createGameImg = new Image("ui/create-game.png");
         createGameBtn.setStyle("-fx-background-color: transparent;");
         ImageView createGameView = new ImageView(createGameImg);
         createGameBtn.setGraphic(createGameView);
@@ -289,7 +315,7 @@ public class MenuController {
         StackPane.setMargin(joinGameBtn, new Insets(100, 0, 0, 0));
         joinGameBtn.setStyle("-fx-background-color: transparent;");
         root.getChildren().add(joinGameBtn);
-        Image joinGameImg = new Image("menuImages/join-game.png");
+        Image joinGameImg = new Image("ui/join-game.png");
         ImageView joinGameView = new ImageView(joinGameImg);
         joinGameBtn.setGraphic(joinGameView);
         joinGameBtn.setVisible(false);
@@ -298,7 +324,7 @@ public class MenuController {
         StackPane.setAlignment(createGameBtn, Pos.BOTTOM_CENTER);
         StackPane.setMargin(createGameBtn, new Insets(0, 0, 300, 0));
         createLobbyBtn.setStyle("-fx-background-color: transparent;");
-        Image createLobbyImg = new Image("menuImages/Create-Lobby.png");
+        Image createLobbyImg = new Image("ui/Create-Lobby.png");
         ImageView createLobbyView = new ImageView(createLobbyImg);
         createLobbyBtn.setGraphic(createLobbyView);
         createLobbyBtn.setVisible(false);

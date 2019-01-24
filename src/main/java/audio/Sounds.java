@@ -2,10 +2,10 @@ package audio;
 
 public enum Sounds {
 	// The filepaths of the sounds
-	intro("/audioFiles/pacman_beginning.wav"),
-	chomp("/audioFiles/pacman_chomp.wav"),
-	death("/audioFiles/pacman_death.wav"),
-	click("/audioFiles/click.wav");
+    intro("/audio/pacman_beginning.wav"),
+    chomp("/audio/pacman_chomp.wav"),
+    death("/audio/pacman_death.wav"),
+    click("/audio/click.wav");
 	private final String path;
 	Sounds(String path) {
 		this.path=path;
