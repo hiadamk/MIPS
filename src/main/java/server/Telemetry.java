@@ -22,6 +22,7 @@ public class Telemetry {
       // Generate the AI to control each entity needed
     }
     agents = new Entity[5];
+
     agents[0] = new Entity(true, 0);
     agents[1] = new Entity(false, 1);
     agents[2] = new Entity(false, 2);
