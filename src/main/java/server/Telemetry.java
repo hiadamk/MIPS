@@ -11,15 +11,15 @@ import utils.enums.Direction;
 
 public class Telemetry {
 
+  private final Point2D.Double respawnPoint = new Double(5, 5); // Need to set respawn point somehow
   private BlockingQueue<Input> inputs;
   private Entity[] agents;
-  private final Point2D.Double respawnPoint = new Double(5, 5); //Need to set respawn point somehow
 
   public Telemetry() {
     inputs = new LinkedBlockingQueue<>();
     int aiCount = 5 - makeConnections();
     if (aiCount > 0) {
-      //Generate the AI to control each entity needed
+      // Generate the AI to control each entity needed
     }
     agents = new Entity[5];
     agents[0] = new Entity(true, 0);
@@ -32,17 +32,19 @@ public class Telemetry {
 
   /**
    * Makes the connections to the other clients
+   *
    * @return the number of human players in the game
    */
   private int makeConnections() {
     int count = 1;
     // TODO implement
-    return  count;
+    return count;
   }
 
   public Entity getEntity(int id) {
     return agents[id];
   }
+
   public void addInput(Input in) {
     inputs.add(in);
   }
@@ -63,7 +65,7 @@ public class Telemetry {
   private void processInputs() {
     while (!inputs.isEmpty()) {
       Input input = inputs.poll();
-      //Validate the input
+      // Validate the input
       agents[input.getClientID()].setDirection(input.getMove());
     }
   }
