@@ -23,11 +23,11 @@ public class Server {
       //Generate the AI to control each entity needed
     }
     agents = new Entity[5];
-    agents[0] = new Entity(EntityType.PACMAN,0);
-    agents[1] = new Entity(EntityType.GHOST1,1);
-    agents[2] = new Entity(EntityType.GHOST2,2);
-    agents[3] = new Entity(EntityType.GHOST3,3);
-    agents[4] = new Entity(EntityType.GHOST4,4);
+    agents[0] = new Entity(EntityType.PACMAN);
+    agents[1] = new Entity(EntityType.GHOST1);
+    agents[2] = new Entity(EntityType.GHOST2);
+    agents[3] = new Entity(EntityType.GHOST3);
+    agents[4] = new Entity(EntityType.GHOST4);
     startGame();
   }
 

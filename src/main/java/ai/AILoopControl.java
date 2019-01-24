@@ -2,24 +2,24 @@ package ai;
 
 import java.util.HashSet;
 
-import shared.GameAgent;
-import shared.enums.GameAgentEnum;
+import objects.Entity;
+import utils.enums.EntityType;
 
 public class AILoopControl extends Thread {
 
 	public AILoopControl() {
 	}
 	
-	public static boolean validGameAgentArray(GameAgent[] gameAgents) {
+	public static boolean validGameAgentArray(Entity[] gameAgents) {
 		if (gameAgents.length != 5) {
 			throw new IllegalArgumentException("gameAgents must have a length of exactly 5.");
 		}
-		HashSet<GameAgentEnum> s = new HashSet<GameAgentEnum>();
-		for (GameAgent g : gameAgents) {
-			if (s.contains(g.getMyId())) {
+		HashSet<EntityType> s = new HashSet<EntityType>();
+		for (Entity g : gameAgents) {
+			if (s.contains(g.getType())) {
 				return false;
 			}
-			s.add(g.getMyId());
+			s.add(g.getType());
 		}
 		return true;
 	}

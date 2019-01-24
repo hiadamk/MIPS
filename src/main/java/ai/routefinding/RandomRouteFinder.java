@@ -1,25 +1,25 @@
 package ai.routefinding;
 
-import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.Random;
 
 import ai.AILoopControl;
-import shared.GameAgent;
-import shared.enums.Directions;
-import shared.enums.GameAgentEnum;
+import objects.Entity;
+import utils.enums.Direction;
+import utils.enums.EntityType;
 
 public class RandomRouteFinder implements RouteFinder {
 	private static final Random R = new Random();
-	private static final Directions DEFAULT = Directions.UP;
-	private GameAgent[] gameAgents;
-	private GameAgentEnum myAgent;
+	private static final Direction DEFAULT = Direction.UP;
+	private Entity[] gameAgents;
+	private EntityType myAgent;
 	private boolean agentsSet;
 	
 	public RandomRouteFinder() {
 		this.agentsSet = false;
 	}
 	
-	public void setAgents(GameAgent[] gameAgents, GameAgentEnum myAgent) {
+	public void setAgents(Entity[] gameAgents, EntityType myAgent) {
 		if (!AILoopControl.validGameAgentArray(gameAgents)) {
 			throw new IllegalArgumentException("gameAgents array must have exactly one of each GameAgentEnum.");
 		}
@@ -32,48 +32,48 @@ public class RandomRouteFinder implements RouteFinder {
 	}
 	
 	@Override
-	public Directions getRoute() {
+	public Direction getRoute() {
 		if (!agentsSet) {
 			throw new IllegalStateException("Agents have not been set.");
 		}
-		Directions dir;
+		Direction dir;
 		int dirValue = R.nextInt(6);
 		switch (dirValue) {
 		case 0: {
-			dir = Directions.UP;
+			dir = Direction.UP;
 			break;
 		}
 		case 1: {
-			dir = Directions.DOWN;
+			dir = Direction.DOWN;
 			break;
 		}
 		case 2: {
-			dir = Directions.LEFT;
+			dir = Direction.LEFT;
 			break;
 		}
 		case 3: {
-			dir = Directions.RIGHT;
+			dir = Direction.RIGHT;
 			break;
 		}
 		case 4: {
-			Point mmanPos = gameAgents[GameAgentEnum.MIPSMAN.getNumVal()].getCurrentPosition();
-			Point myPos = gameAgents[myAgent.getNumVal()].getCurrentPosition();
+			Point2D.Double mmanPos = gameAgents[EntityType.PACMAN.getId()].getLocation();
+			Point2D.Double myPos = gameAgents[myAgent.getId()].getLocation();
 			if (myPos.getY()>mmanPos.getY()) {
-				dir = Directions.UP;
+				dir = Direction.UP;
 			}
 			else {
-				dir = Directions.DOWN;
+				dir = Direction.DOWN;
 			}
 			break;
 		}
 		case 5: {
-			Point mmanPos = gameAgents[GameAgentEnum.MIPSMAN.getNumVal()].getCurrentPosition();
-			Point myPos = gameAgents[myAgent.getNumVal()].getCurrentPosition();
+			Point2D.Double mmanPos = gameAgents[EntityType.PACMAN.getId()].getLocation();
+			Point2D.Double myPos = gameAgents[myAgent.getId()].getLocation();
 			if (myPos.getX()>mmanPos.getX()) {
-				dir = Directions.LEFT;
+				dir = Direction.LEFT;
 			}
 			else {
-				dir = Directions.RIGHT;
+				dir = Direction.RIGHT;
 			}
 			break;
 		}

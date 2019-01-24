@@ -14,9 +14,9 @@ public class Entity {
   private int clientId;
   private EntityType type;
 
-  public Entity(EntityType type, int clientId) {
+  public Entity(EntityType type) {
     this.type = type;
-    this.clientId = clientId;
+    this.clientId = type.getId();
     this.score = 0;
     this.velocity = 0;
   }
