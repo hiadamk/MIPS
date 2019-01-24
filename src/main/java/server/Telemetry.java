@@ -10,13 +10,13 @@ import utils.Input;
 import utils.enums.Direction;
 import utils.enums.EntityType;
 
-public class Server {
+public class Telemetry {
 
   private BlockingQueue<Input> inputs;
   private Entity[] agents;
   private final Point2D.Double respawnPoint = new Double(5, 5); //Need to set respawn point somehow
 
-  public Server() {
+  public Telemetry() {
     inputs = new LinkedBlockingQueue<>();
     int aiCount = 5 - makeConnections();
     if (aiCount > 0) {

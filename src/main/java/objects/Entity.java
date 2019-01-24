@@ -1,7 +1,9 @@
 package objects;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import utils.enums.Direction;
 import utils.enums.EntityType;
 
@@ -13,24 +15,21 @@ public class Entity {
   private int score;
   private int clientId;
   private EntityType type;
+  private ArrayList<Image> imagesUp;
+  private ArrayList<Image> imagesDown;
+  private ArrayList<Image> imagesLeft;
+  private ArrayList<Image> imagesRight;
 
   public Entity(EntityType type, int clientId) {
     this.type = type;
     this.clientId = clientId;
     this.score = 0;
     this.velocity = 0;
+    // images = resourceLoader.getImages(type)
   }
 
   public void render(GraphicsContext gc) {
-    if (type == EntityType.PACMAN) {
-      // TODO implement
-    } else if (type == EntityType.GHOST1) {
-      // TODO implement
-    } else if (type == EntityType.GHOST2) {
-      // TODO implement
-    } else if (type == EntityType.GHOST3) {
-      // TODO implement
-    }
+
   }
 
   public Point2D.Double getLocation() {
@@ -76,4 +75,15 @@ public class Entity {
   public void setType(EntityType type) {
     this.type = type;
   }
+
+  public ArrayList<Image> getImage() {
+      switch (direction) {
+        case UP: return imagesUp;
+        case LEFT: return imagesLeft;
+        case DOWN: return imagesDown;
+        case RIGHT: return imagesRight;
+        default: return imagesUp;
+      }
+  }
+
 }
