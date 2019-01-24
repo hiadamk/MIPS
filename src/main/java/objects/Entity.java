@@ -1,9 +1,10 @@
 package objects;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import utils.enums.Direction;
-import utils.enums.EntityType;
 
 public class Entity {
 
@@ -12,25 +13,19 @@ public class Entity {
   private Direction direction;
   private int score;
   private int clientId;
-  private EntityType type;
+  private Boolean pacMan;
+  private ArrayList<Image>[] images;
 
-  public Entity(EntityType type) {
-    this.type = type;
-    this.clientId = type.getId();
+  public Entity(Boolean pacMan, int clientId) {
+    this.pacMan = pacMan;
+    this.clientId = clientId;
     this.score = 0;
     this.velocity = 0;
+    // images = resourceLoader.getImages(pacMan, clientId)
   }
 
   public void render(GraphicsContext gc) {
-    if (type == EntityType.PACMAN) {
-      // TODO implement
-    } else if (type == EntityType.GHOST1) {
-      // TODO implement
-    } else if (type == EntityType.GHOST2) {
-      // TODO implement
-    } else if (type == EntityType.GHOST3) {
-      // TODO implement
-    }
+
   }
 
   public Point2D.Double getLocation() {
@@ -69,11 +64,20 @@ public class Entity {
     return clientId;
   }
 
-  public EntityType getType() {
-    return type;
+  public Boolean isPacman() {
+    return pacMan;
   }
 
-  public void setType(EntityType type) {
-    this.type = type;
+  public void setPacMan(Boolean pac) {
+    this.pacMan = pac;
+    //images = resourceLoader.getImages(pacMan, clientId)
   }
+
+  public ArrayList<Image> getImage() { //Change that to a queue
+    if (direction == null) {
+      return images[0];
+    }
+    return images[direction.toInt()];
+  }
+
 }

@@ -5,7 +5,7 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import server.Server;
+import server.Telemetry;
 import utils.Input;
 import utils.enums.Direction;
 
@@ -13,14 +13,14 @@ public class Client extends Application {
 
   private int id;
   private KeyController keyController;
-  private Server server;
+  private Telemetry telemetry;
   public int getId() {
     return id;
   }
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-    int id = 0; // This will be changed if client joins a lobby, server will give it new id
+    int id = 0; // This will be changed if client joins a lobby, telemetry will give it new id
     keyController = new KeyController();
     Group root = new Group();
     Scene scene = new Scene(root, 500, 500);
@@ -29,8 +29,8 @@ public class Client extends Application {
     scene.setOnKeyPressed(keyController);
     // Main menu code will be here
 
-    // If hosting if not server will be set by connection method along with new client id
-    server = new Server();
+    // If hosting if not telemetry will be set by connection method along with new client id
+    telemetry = new Telemetry();
 
 
     // AnimationTimer started once game has started
@@ -45,7 +45,7 @@ public class Client extends Application {
 
   private void processInput() {
     Direction input = keyController.getActiveKey();
-    Direction current = server.getEntity(id).getDirection();
+    Direction current = telemetry.getEntity(id).getDirection();
     if (input == null | input == current) {
       return;
     }
@@ -72,14 +72,10 @@ public class Client extends Application {
 
   private void informServer(Input input) {
     if(id == 0){
-      server.addInput(input);
+      telemetry.addInput(input);
     } else {
-      //TODO integrate with netwroking to send to server
+      //TODO integrate with netwroking to send to telemetry
     }
-  }
-
-  private void moveEntities() {
-
   }
 
   private void render() {
