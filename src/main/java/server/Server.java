@@ -58,7 +58,11 @@ public class Server {
   }
 
   private void processInputs() {
-    // TODO implement
+    while (!inputs.isEmpty()) {
+      Input input = inputs.poll();
+      //Validate the input
+      agents[input.getClientID()].setDirection(input.getMove());
+    }
   }
 
   private void informClients() {

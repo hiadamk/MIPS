@@ -5,6 +5,7 @@ import javafx.scene.input.KeyEvent;
 import utils.Settings;
 import utils.enums.Direction;
 
+
 public class KeyController implements EventHandler<KeyEvent> {
 
   private Direction mapping;

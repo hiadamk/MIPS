@@ -43,7 +43,7 @@ public class Client extends Application {
     }.start();
   }
 
-  public void processInput() {
+  private void processInput() {
     Direction input = keyController.getActiveKey();
     Direction current = server.getEntity(id).getDirection();
     if (input == null | input == current) {
@@ -52,15 +52,20 @@ public class Client extends Application {
     switch (input) {
       case UP: // Add code here
         // Validate the input
+        System.out.println("Direction up");
+        informServer(new Input(0, Direction.UP));
         break;
       case DOWN: // Add code here
         System.out.println("Direction down");
+        informServer(new Input(0, Direction.DOWN));
         break;
       case LEFT: // Add code here
         System.out.println("Direction left");
+        informServer(new Input(0, Direction.LEFT));
         break;
       case RIGHT: // Add code here
         System.out.println("Direction right");
+        informServer(new Input(0, Direction.RIGHT));
         break;
     }
   }
@@ -72,7 +77,12 @@ public class Client extends Application {
       //TODO integrate with netwroking to send to server
     }
   }
-  public void render() {
+
+  private void moveEntities() {
+
+  }
+
+  private void render() {
     // TODO put render code here pass in either scene or graphics content
   }
 }
