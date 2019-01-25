@@ -2,6 +2,8 @@ package objects;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+
+import ai.routefinding.RouteFinder;
 import javafx.scene.image.Image;
 import utils.Renderable;
 import utils.enums.Direction;
@@ -15,6 +17,7 @@ public class Entity implements Renderable{
   private int clientId;
   private Boolean pacMan;
   private ArrayList<Image>[] images;
+  private RouteFinder routeFinder;
 
   public Entity(Boolean pacMan, int clientId) {
     this.pacMan = pacMan;
@@ -22,6 +25,14 @@ public class Entity implements Renderable{
     this.score = 0;
     this.velocity = 0;
     // images = resourceLoader.getImages(pacMan, clientId)
+  }
+  
+  public void setRouteFinder(RouteFinder routeFinder) {
+	  this.routeFinder = routeFinder;
+  }
+  
+  public RouteFinder getRouteFinder() {
+	  return routeFinder;
   }
 
   public Point2D.Double getLocation() {

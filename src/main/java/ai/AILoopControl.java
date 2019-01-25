@@ -1,14 +1,19 @@
 package ai;
 
 import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.util.HashMap;
 import java.util.HashSet;
 
+import ai.mapping.Mapping;
+import ai.routefinding.RandomRouteFinder;
+import ai.routefinding.RouteFinder;
 import objects.Entity;
+import utils.enums.Direction;
 
 public class AILoopControl extends Thread {
+	private static final int SLEEP_TIME = 1;
 
-	private static final int PATH = 0;
-	private static final int WALL = 1;
 	public static final int[][] map1 = {
 			{ 1, 0, 1, 1, 1, 1, 1, 0, 1 },
 			{ 1, 0, 1, 0, 0, 0, 0, 0, 1 },
@@ -54,85 +59,136 @@ public class AILoopControl extends Thread {
 	};
 
 	private boolean runAILoop;
-	private final Entity[] gameAgents;
 	private final Entity[] controlAgents;
-	private final int[][] map;
+	private int pacmanId;
+	private final HashSet<Point> junctions;
+	private final HashMap<Point, HashSet<Point>> edges;
 
 	/**
 	 * Initialises the control for the AI Control Loop.
 	 * 
 	 * @param gameAgents
 	 *            All agents within the game.
-	 * @param controlAgents
-	 *            The agents which will be AI controlled.
+	 * @param controlIds
+	 *            The client ID of agents which will be AI controlled.
 	 * @param map
 	 *            The map on which route finding will occur.
+	 * @throws IllegalArgumentException
+	 *             Map must be at least 1x1.
+	 * @throws IllegalArgumentException
+	 *             gameAgent array contains duplicate client IDs.
+	 * @throws IllegalStateException
+	 *             Control ID does not match a gameAgent client ID.
 	 */
-	public AILoopControl(Entity[] gameAgents, Entity[] controlAgents, int[][] map) {
-		this.runAILoop = true;
-		this.gameAgents = gameAgents;
-		this.controlAgents = controlAgents;
-		this.map = map;
-	}
-
-	/**Calculates the location of all junctions within the map. A value of 0 is classified as "Path".
-	 * @param map The map having junctions identified on.
-	 * @return A {@link HashSet}<{@link Point Point}> containing all points of junctions.
-	 * @throws IllegalArgumentException Map must be at least 1x1.*/
-	public static HashSet<Point> getJunctions(int[][] map) {
-		if (map.length<1) {
+	public AILoopControl(Entity[] gameAgents, int[] controlIds, int[][] map) {
+		if (map.length < 1 || map[0].length < 1) {
 			throw new IllegalArgumentException("Map must be at least 1x1.");
 		}
-		if (map[0].length<1) {
-			throw new IllegalArgumentException("Map must be at least 1x1.");			
+		HashSet<Integer> ids = new HashSet<Integer>();
+		for (Entity e : gameAgents) {
+			if (!ids.add(e.getClientId())) {
+				throw new IllegalArgumentException("gameAgent array contains duplicate client IDs.");
+			}
 		}
-		HashSet<Point> junctions = new HashSet<Point>();
-		for (int x = 0; x < map.length; x++) {
-			int[] currentRow = map[x];
-			for (int y = 0; y < currentRow.length; y++) {
-				boolean[] isPath = { false, false, false, false };
-				if (map[x][y] == PATH) {
-					if (x > 0) { // left
-						int[] previousRow = map[x - 1];
-						if (previousRow[y] == PATH) {
-							isPath[0] = true;
+		this.runAILoop = true;
+		this.controlAgents = new Entity[controlIds.length];
+		for (int i = 0; i < controlIds.length; i++) {
+			RouteFinder r;
+			switch (i) {
+			case 0: {
+				// TODO
+				r = new RandomRouteFinder();
+				r.setAgents(gameAgents, controlIds[i]);
+				break;
+			}
+			case 1: {
+				// TODO
+				r = new RandomRouteFinder();
+				r.setAgents(gameAgents, controlIds[i]);
+				break;
+			}
+			case 2: {
+				// TODO
+				r = new RandomRouteFinder();
+				r.setAgents(gameAgents, controlIds[i]);
+				break;
+			}
+			case 3: {
+				// TODO
+				r = new RandomRouteFinder();
+				r.setAgents(gameAgents, controlIds[i]);
+				break;
+			}
+			case 4: {
+				r = new RandomRouteFinder();
+				r.setAgents(gameAgents, controlIds[i]);
+				break;
+			}
+			default: {
+				// TODO
+				r = new RandomRouteFinder();
+				r.setAgents(gameAgents, controlIds[i]);
+				break;
+			}
+			}
+			boolean agentFound = false;
+			for (Entity ent : gameAgents) {
+				if (ent.getClientId() == controlIds[i]) {
+					controlAgents[i] = ent;
+					ent.setRouteFinder(r);
+					agentFound = true;
+					break;
+				}
+			}
+			if (!agentFound) {
+				throw new IllegalStateException("A control ID does not match an agent client ID.");
+			}
+		}
+		this.junctions = Mapping.getJunctions(map);
+		this.edges = Mapping.getEdges(map, junctions);
+	}
+
+	/** Runs the AI path-finding loop */
+	public void run() {
+		while (runAILoop && (controlAgents.length > 0)) {
+			// every AI entity
+			for (Entity ent : controlAgents) {
+				Point2D absPos = ent.getLocation();
+				// positions must be set
+				if (absPos != null) {
+					Point gridPos = new Point((int) Math.round(absPos.getX()), (int) Math.round(absPos.getY()));
+					// only route find on junctions
+					if (junctions.contains(gridPos)) {
+						RouteFinder r = ent.getRouteFinder();
+						Direction direction = r.getRoute(pacmanId);
+						// re-process if an invalid move is detected
+						while (!Mapping.validMove(gridPos, edges, direction)) {
+							direction = r.getRoute(pacmanId);
 						}
-					}
-					if (x < (map.length - 1)) { // right
-						int[] nextRow = map[x + 1];
-						if (nextRow[y] == PATH) {
-							isPath[1] = true;
-						}
-					}
-					if (y > 0) { // down
-						if (currentRow[y - 1] == PATH) {
-							isPath[2] = true;
-						}
-					}
-					if (y < (currentRow.length - 1)) { // up
-						if (currentRow[y + 1] == PATH) {
-							isPath[3] = true;
-						}
-					}
-					if ((isPath[0] || isPath[1]) && (isPath[2] || isPath[3])) {
-						junctions.add(new Point(x, y));
+						ent.setDirection(direction);
 					}
 				}
 			}
-		}
-		return junctions;
-	}
 
-	
-	public void run() {
-		while (runAILoop) {
-
+			try {
+				Thread.sleep(SLEEP_TIME);
+			} catch (InterruptedException e) {
+				runAILoop = false;
+			}
 		}
 
 	}
 
-	/**Terminates the AI route finding loop upon completion of the current iteration.*/
-	public void killAI() {
+	/**
+	 * Terminates the AI route finding loop upon completion of the current
+	 * iteration.
+	 * @return True if the current thread is alive and so the AI can be terminated.
+	 */
+	public boolean killAI() {
 		runAILoop = false;
+		if (isAlive()) {
+			return true;
+		}
+		return false;
 	}
 }

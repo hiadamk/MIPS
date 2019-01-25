@@ -8,7 +8,7 @@ public class Test {
 	
 	public static void main(String[] args) {
 		AudioController audioController= new AudioController();
-		test3(audioController);
+		test2(audioController);
 		sleep(10);
 	}
 	

@@ -28,20 +28,23 @@ public class RandomRouteFinder implements RouteFinder {
 	 * @param gameAgents
 	 *            The array containing all agents within the game exactly once only.
 	 * @param myId
-	 *            The enum referring to the current agent for which this routefinder
+	 *            The Enum referring to the current agent for which this routefinder
 	 *            is being assigned.
-	 * @throws IllegalArgumentException gameAgent cannot contain duplicate IDs.
+	 * @throws IllegalArgumentException
+	 *             gameAgent cannot contain duplicate IDs.
 	 * @throws IllegalStateException
 	 *             The game agents cannot be re-assigned (this method can only be
 	 *             called once).
 	 */
 	public void setAgents(Entity[] gameAgents, int myId) {
 		HashSet<Integer> ids = new HashSet<Integer>();
+		// basic validation
 		for (Entity e : gameAgents) {
 			if (!ids.add(e.getClientId())) {
 				throw new IllegalArgumentException("gameAgent array contains duplicate IDs.");
 			}
 		}
+		// does not allow agents to be changed once started
 		if (this.agentsSet) {
 			throw new IllegalStateException("gameAgents already assigned.");
 		}
@@ -55,16 +58,23 @@ public class RandomRouteFinder implements RouteFinder {
 	 * Requires {@link #setAgents(Entity[], EntityType) setAgents()} method to have
 	 * been called before use.
 	 * 
+	 * @param pacmanID
+	 *            The client ID of the entity that is currently pacman.
 	 * @return The direction to travel in.
 	 * @throws IllegalStateException
 	 *             The gameAgents have not been set. Call
 	 *             {@link #setAgents(Entity[], EntityType) setAgents()} before
 	 *             calling this method.
+	 * @throws IllegalArgumentException
+	 *             PacmanID must be within the range of gameAgents Array.
 	 */
 	@Override
-	public Direction getRoute() {
+	public Direction getRoute(int pacmanID) {
 		if (!agentsSet) {
 			throw new IllegalStateException("gameAgents have not been set.");
+		}
+		if (pacmanID < 0 || pacmanID >= gameAgents.length) {
+			throw new IllegalArgumentException("Pacman ID must be within range of array.");
 		}
 		Direction dir;
 		int dirValue = R.nextInt(6);
@@ -86,26 +96,37 @@ public class RandomRouteFinder implements RouteFinder {
 			break;
 		}
 		case 4: {
-			Point2D.Double mmanPos = gameAgents[0].getLocation();
-			Point2D.Double myPos = gameAgents[myId].getLocation();
-			if (myPos.getY() > mmanPos.getY()) {
-				dir = Direction.UP;
+			// makes ghost twice as likely to move towards pacman as away from them
+			if (gameAgents[pacmanID].getLocation() != null) {
+				Point2D.Double mmanPos = gameAgents[pacmanID].getLocation();
+				Point2D.Double myPos = gameAgents[myId].getLocation();
+				if (myPos.getY() > mmanPos.getY()) {
+					dir = Direction.UP;
+				} else {
+					dir = Direction.DOWN;
+				}
 			} else {
-				dir = Direction.DOWN;
+				dir = DEFAULT;
 			}
 			break;
 		}
 		case 5: {
-			Point2D.Double mmanPos = gameAgents[0].getLocation();
-			Point2D.Double myPos = gameAgents[myId].getLocation();
-			if (myPos.getX() > mmanPos.getX()) {
-				dir = Direction.LEFT;
+			// makes ghost twice as likely to move towards pacman as away from them
+			if (gameAgents[pacmanID].getLocation() != null) {
+				Point2D.Double mmanPos = gameAgents[pacmanID].getLocation();
+				Point2D.Double myPos = gameAgents[myId].getLocation();
+				if (myPos.getX() > mmanPos.getX()) {
+					dir = Direction.LEFT;
+				} else {
+					dir = Direction.RIGHT;
+				}
 			} else {
-				dir = Direction.RIGHT;
+				dir = DEFAULT;
 			}
 			break;
 		}
 		default: {
+			// state should not be reachable
 			System.err.println("Value out of range. Default value given: " + DEFAULT);
 			dir = DEFAULT;
 		}
