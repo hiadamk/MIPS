@@ -18,11 +18,8 @@ public class Settings {
         return down;
       case LEFT:
         return left;
-      case RIGHT:
-        return right;
       default:
-        System.err.println("None bound key requested");
-        return null;
+        return right;
     }
   }
 
