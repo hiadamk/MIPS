@@ -2,11 +2,13 @@ package objects;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import javafx.scene.canvas.GraphicsContext;
+
+import ai.routefinding.RouteFinder;
 import javafx.scene.image.Image;
+import utils.Renderable;
 import utils.enums.Direction;
 
-public class Entity {
+public class Entity implements Renderable{
 
   private Point2D.Double location;
   private double velocity; // The velocity of the entity currently
@@ -15,6 +17,7 @@ public class Entity {
   private int clientId;
   private Boolean pacMan;
   private ArrayList<Image>[] images;
+  private RouteFinder routeFinder;
 
   public Entity(Boolean pacMan, int clientId) {
     this.pacMan = pacMan;
@@ -23,13 +26,25 @@ public class Entity {
     this.velocity = 0;
     // images = resourceLoader.getImages(pacMan, clientId)
   }
-
-  public void render(GraphicsContext gc) {
-
+  
+  public void setRouteFinder(RouteFinder routeFinder) {
+	  this.routeFinder = routeFinder;
+  }
+  
+  public RouteFinder getRouteFinder() {
+	  return routeFinder;
   }
 
   public Point2D.Double getLocation() {
     return location;
+  }
+
+  @Override
+  public ArrayList<Image> getImage() {
+    if (direction == null) {
+      return images[0];
+    }
+    return images[direction.toInt()];
   }
 
   public void setLocation(Point2D.Double location) {
@@ -73,11 +88,5 @@ public class Entity {
     //images = resourceLoader.getImages(pacMan, clientId)
   }
 
-  public ArrayList<Image> getImage() { //Change that to a queue
-    if (direction == null) {
-      return images[0];
-    }
-    return images[direction.toInt()];
-  }
 
 }
