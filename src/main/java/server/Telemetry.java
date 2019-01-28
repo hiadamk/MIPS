@@ -8,8 +8,8 @@ import javafx.animation.AnimationTimer;
 import objects.Entity;
 import utils.Input;
 import utils.ResourceLoader;
-import utils.enums.Direction;
 import utils.Map;
+import utils.enums.Direction;
 
 public class Telemetry {
 
