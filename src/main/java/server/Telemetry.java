@@ -7,6 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import objects.Entity;
 import utils.Input;
+import utils.Map;
 import utils.enums.Direction;
 
 public class Telemetry {
@@ -14,14 +15,15 @@ public class Telemetry {
   private final Point2D.Double respawnPoint = new Double(5, 5); // Need to set respawn point somehow
   private BlockingQueue<Input> inputs;
   private Entity[] agents;
+  private static final int AGENT_COUNT = 5;
 
   public Telemetry() {
     inputs = new LinkedBlockingQueue<>();
-    int aiCount = 5 - makeConnections();
+    int aiCount = AGENT_COUNT - makeConnections();
     if (aiCount > 0) {
       // Generate the AI to control each entity needed
     }
-    agents = new Entity[5];
+    agents = new Entity[AGENT_COUNT];
 
     agents[0] = new Entity(true, 0);
     agents[1] = new Entity(false, 1);
@@ -57,7 +59,7 @@ public class Telemetry {
       public void handle(long now) {
         processInputs();
         informClients();
-        processPhysics();
+        agents = processPhysics(agents);
         updateClients();
       }
     }.start();
@@ -75,8 +77,40 @@ public class Telemetry {
     // TODO implement
   }
 
-  private void processPhysics() {
-    // TODO implement
+  /**
+   * Static Method for updating game state
+   *
+   * @param agents array of entities in current state
+   * @return array of entities in new state
+   * @author Alex Banks
+   */
+  private static Entity[] processPhysics(Entity[] agents) {
+    Map m = new Map();
+
+    for (int i = 0; i < AGENT_COUNT; i++) {
+      Point2D.Double tempLocation = agents[i].getLocation();
+      double offset = agents[i].getVelocity();
+
+      switch (agents[i].getDirection()) {
+        case UP:
+          tempLocation.setLocation(tempLocation.getX() + offset, tempLocation.getY());
+          break;
+        case DOWN:
+          tempLocation.setLocation(tempLocation.getX() - offset, tempLocation.getY());
+          break;
+        case RIGHT:
+          tempLocation.setLocation(tempLocation.getX(), tempLocation.getY() + offset);
+          break;
+        case LEFT:
+          tempLocation.setLocation(tempLocation.getX(), tempLocation.getY() - offset);
+          break;
+      }
+
+      //TODO check out of bounds
+
+    }
+
+    return agents;
   }
 
   private void updateClients() {
