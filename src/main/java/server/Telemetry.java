@@ -7,8 +7,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import objects.Entity;
 import utils.Input;
-import utils.Map;
+import utils.ResourceLoader;
 import utils.enums.Direction;
+import utils.Map;
 
 public class Telemetry {
 
@@ -83,9 +84,11 @@ public class Telemetry {
    * @param agents array of entities in current state
    * @return array of entities in new state
    * @author Alex Banks
+   * @
    */
   private static Entity[] processPhysics(Entity[] agents) {
-    Map m = new Map();
+    Map m = (new ResourceLoader(System.getProperty("user.dir"))).getMap();
+
 
     for (int i = 0; i < AGENT_COUNT; i++) {
       Point2D.Double tempLocation = agents[i].getLocation();

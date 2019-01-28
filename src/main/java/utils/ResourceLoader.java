@@ -6,30 +6,28 @@ import java.util.Arrays;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 
-
 public class ResourceLoader {
 
   private final String BASE_DIR;
-  private int[][] map;
+  private Map map;
 
   public ResourceLoader(String baseDir) {
     BASE_DIR = baseDir;
-    loadMap("default");
-    map = this.getMap();
+    map = this.loadMap("default");
   }
 
   public static void main(String[] args) {
     ResourceLoader rl = new ResourceLoader("src/main/resources/");
     rl.loadMap("default");
     System.out.println(
-        Arrays.deepToString(rl.getMap()).replace("], ", "]\n").replace("[[", "[")
+        Arrays.deepToString(rl.getMap().raw()).replace("], ", "]\n").replace("[[", "[")
             .replace("]]", "]"));
   }
 
   /**
    * @param name name of map: if file is default.png the name is default
    */
-  public void loadMap(String name) {
+  private Map loadMap(String name) {
     String path = BASE_DIR + "maps/" + name + ".png";
     File mapFile = new File(path);
     BufferedImage mapImage = null;
@@ -51,10 +49,10 @@ public class ResourceLoader {
       }
     }
 
-    map = map_;
+    return new Map(map_);
   }
 
-  public int[][] getMap() {
+  public Map getMap() {
     return map;
   }
 }
