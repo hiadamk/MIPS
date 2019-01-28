@@ -2,6 +2,9 @@ package utils;
 
 public class Map {
 
+  private final int MAX_X;
+  private final int MAX_Y;
+
   private final int[][] MAP = {
       {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
       {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
@@ -36,4 +39,13 @@ public class Map {
       {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
 
   };
+
+  public Map() {
+    MAX_X = MAP.length;
+    MAX_Y = MAP[0].length;
+  }
+
+  public boolean isWall(int x, int y) {
+    return MAP[x % MAX_X][y % MAX_Y] == 1;
+  }
 }
