@@ -35,6 +35,7 @@ eclipse
 .settings/
 
 .gradle
+.gradle/
 /build/
 
 # Ignore Gradle GUI config
