@@ -38,7 +38,7 @@ public class ServerSender extends Thread {
         byte[] buf = new byte[256];
         
         buf = message.getBytes();
-        DatagramPacket sending = new DatagramPacket(buf, 0, buf.length, group, 4445);
+        DatagramPacket sending = new DatagramPacket(buf, 0, buf.length, group, Utility.CLIENT_PORT);
         
         
         Enumeration<NetworkInterface> faces = NetworkInterface.getNetworkInterfaces();

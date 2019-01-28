@@ -23,7 +23,7 @@ public class ClientReceiver extends Thread {
      */
     public ClientReceiver(InetAddress group) throws IOException {
         this.group = group;
-        this.socket = new MulticastSocket(4445);
+        this.socket = new MulticastSocket(Utility.CLIENT_PORT);
         
         Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
         while (interfaces.hasMoreElements()) {

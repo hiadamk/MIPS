@@ -26,7 +26,7 @@ public class ServerReceiver extends Thread {
      */
     public ServerReceiver(InetAddress group, ServerSender sender) throws IOException {
         this.group = group;
-        this.socket = new MulticastSocket(4446);
+        this.socket = new MulticastSocket(Utility.SERVER_PORT);
         this.sender = sender;
         Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
         while (interfaces.hasMoreElements()) {
