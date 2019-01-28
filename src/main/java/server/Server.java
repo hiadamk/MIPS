@@ -3,6 +3,9 @@ package server;
 import java.io.IOException;
 import java.net.InetAddress;
 
+/**
+ * Main server class which starts the sender and receiver classes
+ */
 public class Server {
     
     public static void main(String[] args) throws IOException {

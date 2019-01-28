@@ -7,11 +7,20 @@ import java.net.MulticastSocket;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
 
+/**
+ * Class whose purpose is to receive packets sent from the server and communicate them to the client.
+ */
 public class ClientReceiver extends Thread {
     
     private InetAddress group;
     private MulticastSocket socket;
     
+    /**
+     * Constructor only needs the multicasting group to communicate
+     *
+     * @param group The multi-casting group that we will connect to
+     * @throws IOException caused by the use of sockets
+     */
     public ClientReceiver(InetAddress group) throws IOException {
         this.group = group;
         this.socket = new MulticastSocket(4445);
@@ -32,6 +41,9 @@ public class ClientReceiver extends Thread {
         
     }
     
+    /**
+     * Continuously listens to the port in the group which the server is sending messages to
+     */
     @Override
     public void run() {
         super.run();

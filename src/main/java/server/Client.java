@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
+
+/**
+ * Client class which creates the appropriate senders and starts them.
+ */
 public class Client {
     
     

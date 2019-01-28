@@ -7,12 +7,21 @@ import java.net.MulticastSocket;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
 
+/**
+ * Class whose purpose is to send messages from server to all clients.
+ */
 public class ServerSender extends Thread {
     
     private InetAddress group;
     private MulticastSocket socket;
     private String networkInterface;
     
+    /**
+     * Constructor builds the object with the multi-casting group
+     *
+     * @param group the multi-casting group which will be used
+     * @throws IOException caused by the sockets.
+     */
     public ServerSender(InetAddress group) throws IOException {
         this.group = group;
         this.socket = new MulticastSocket();
@@ -20,6 +29,11 @@ public class ServerSender extends Thread {
         
     }
     
+    /**
+     * Sends packets from the server to the clients.
+     * @param message The message we want to send to the clients.
+     * @throws IOException caused by the packets.
+     */
     public void send(String message) throws IOException {
         byte[] buf = new byte[256];
         
@@ -46,6 +60,9 @@ public class ServerSender extends Thread {
         }
     }
     
+    /**
+     * Empty run method for now due to the fact that threading functionality is not currently needed.
+     */
     @Override
     public void run() {
         super.run();

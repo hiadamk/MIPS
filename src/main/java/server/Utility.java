@@ -5,8 +5,15 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
 
+/**
+ * Class which will holds shared utility data for classes.
+ */
 public class Utility {
     
+    /**
+     * @return
+     * @throws IOException
+     */
     public static String getInterface() throws IOException {
         
         Enumeration<NetworkInterface> faces = NetworkInterface.getNetworkInterfaces();

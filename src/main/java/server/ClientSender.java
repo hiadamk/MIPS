@@ -7,12 +7,20 @@ import java.net.MulticastSocket;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
 
+
+/**
+ * Class whose sole purpose is to send packets from the client to the server
+ */
 public class ClientSender extends Thread {
     
     private InetAddress group;
     private MulticastSocket socket;
     private String networkInterface;
     
+    /**
+     * @param group
+     * @throws IOException
+     */
     public ClientSender(InetAddress group) throws IOException {
         this.group = group;
         this.socket = new MulticastSocket();
@@ -20,6 +28,11 @@ public class ClientSender extends Thread {
         System.out.println(this.networkInterface);
     }
     
+    /**
+     * Sends packets to the server
+     * @param message the message which we want to send to the server
+     * @throws IOException caused by the packets and and interfaces.
+     */
     public void send(String message) throws IOException {
         byte[] buf = new byte[256];
         
@@ -47,16 +60,11 @@ public class ClientSender extends Thread {
         
     }
     
+    /**
+     * Default run method, currently empty as threading functionality may not be needed in the class.
+     */
     @Override
     public void run() {
         super.run();
-//        while(true){
-//            try{
-//                this.send("1");
-//            }catch (IOException e){
-//                e.printStackTrace();
-//            }
-//
-//        }
     }
 }
