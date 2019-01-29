@@ -6,39 +6,31 @@ import java.util.Arrays;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 
-
 public class ResourceLoader {
 
   private final String BASE_DIR;
-  private int[][] map;
+  private Map map;
 
   public ResourceLoader(String baseDir) {
     BASE_DIR = baseDir;
-    loadMap("default");
-    map = this.getMap();
+    this.loadMap("default");
   }
 
   public static void main(String[] args) {
     ResourceLoader rl = new ResourceLoader("src/main/resources/");
     rl.loadMap("default");
     System.out.println(
-        Arrays.deepToString(rl.getMap()).replace("], ", "]\n").replace("[[", "[")
+        Arrays.deepToString(rl.getMap().raw()).replace("], ", "]\n").replace("[[", "[")
             .replace("]]", "]"));
   }
 
   /**
    * @param name name of map: if file is default.png the name is default
+   * reads a png map image, converts rbg color pixels into map tile numbers
    */
   public void loadMap(String name) {
-    String path = BASE_DIR + "maps/" + name + ".png";
-    File mapFile = new File(path);
-    BufferedImage mapImage = null;
 
-    try {
-      mapImage = ImageIO.read(mapFile);
-    } catch (IOException e) {
-      System.out.println(e.getMessage());
-    }
+    BufferedImage mapImage = loadImageFile("maps/", name);
 
     int width = mapImage.getWidth();
     int height = mapImage.getHeight();
@@ -50,11 +42,41 @@ public class ResourceLoader {
         map_[x][y] = MapColour.toTile(mapImage.getRGB(x, y)); //change rgb int into a map int
       }
     }
-
-    map = map_;
+    this.map = new Map(map_);
   }
 
-  public int[][] getMap() {
+  public Map getMap() {
     return map;
   }
+
+  public void loadPlayableMip(){
+
+  }
+
+  public void getPlayableMip(){
+
+  }
+
+  public void loadPlayableGhoul(){
+
+  }
+
+  public void getPlayableGhoul(){
+
+  }
+
+  private BufferedImage loadImageFile(String folderPath, String name){
+    String path = BASE_DIR + folderPath + name + ".png";
+    File mapFile = new File(path);
+    BufferedImage image = null;
+
+    try {
+      image = ImageIO.read(mapFile);
+    } catch (IOException e) {
+      System.out.println(e.getMessage());
+    }
+
+    return image;
+  }
+
 }
