@@ -26,17 +26,11 @@ public class ResourceLoader {
 
   /**
    * @param name name of map: if file is default.png the name is default
+   * reads a png map image, converts rbg color pixels into map tile numbers
    */
   public void loadMap(String name) {
-    String path = BASE_DIR + "maps/" + name + ".png";
-    File mapFile = new File(path);
-    BufferedImage mapImage = null;
 
-    try {
-      mapImage = ImageIO.read(mapFile);
-    } catch (IOException e) {
-      System.out.println(e.getMessage());
-    }
+    BufferedImage mapImage = loadImageFile("maps/", name);
 
     int width = mapImage.getWidth();
     int height = mapImage.getHeight();
@@ -54,4 +48,35 @@ public class ResourceLoader {
   public Map getMap() {
     return map;
   }
+
+  public void loadPlayableMip(){
+
+  }
+
+  public void getPlayableMip(){
+
+  }
+
+  public void loadPlayableGhoul(){
+
+  }
+
+  public void getPlayableGhoul(){
+
+  }
+
+  private BufferedImage loadImageFile(String folderPath, String name){
+    String path = BASE_DIR + folderPath + name + ".png";
+    File mapFile = new File(path);
+    BufferedImage image = null;
+
+    try {
+      image = ImageIO.read(mapFile);
+    } catch (IOException e) {
+      System.out.println(e.getMessage());
+    }
+
+    return image;
+  }
+
 }
