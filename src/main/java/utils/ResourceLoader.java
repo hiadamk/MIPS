@@ -13,7 +13,7 @@ public class ResourceLoader {
 
   public ResourceLoader(String baseDir) {
     BASE_DIR = baseDir;
-    map = this.loadMap("default");
+    this.loadMap("default");
   }
 
   public static void main(String[] args) {
@@ -27,7 +27,7 @@ public class ResourceLoader {
   /**
    * @param name name of map: if file is default.png the name is default
    */
-  private Map loadMap(String name) {
+  public void loadMap(String name) {
     String path = BASE_DIR + "maps/" + name + ".png";
     File mapFile = new File(path);
     BufferedImage mapImage = null;
@@ -48,8 +48,7 @@ public class ResourceLoader {
         map_[x][y] = MapColour.toTile(mapImage.getRGB(x, y)); //change rgb int into a map int
       }
     }
-
-    return new Map(map_);
+    this.map = new Map(map_);
   }
 
   public Map getMap() {

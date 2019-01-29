@@ -14,7 +14,8 @@ public class ResourceLoaderTests {
     ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
     resourceLoader.loadMap("1x1");
     int[][] map = {{1}};
-    assert (Arrays.deepEquals(resourceLoader.getMap(), map));
+    System.out.println(Arrays.deepToString(resourceLoader.getMap().raw()));
+    assert (Arrays.deepEquals(resourceLoader.getMap().raw(), map));
   }
 
   @Test
@@ -32,7 +33,7 @@ public class ResourceLoaderTests {
         {1, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 1, 1, 1, 1, 1, 1, 1, 1}
     };
-    assert (Arrays.deepEquals(resourceLoader.getMap(), map));
+    assert (Arrays.deepEquals(resourceLoader.getMap().raw(), map));
   }
 
   /**
@@ -53,7 +54,7 @@ public class ResourceLoaderTests {
         {1, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 1, 1, 1, 1, 1, 1, 1, 1}
     };
-    int[][] gameMap = resourceLoader.getMap();
+    int[][] gameMap = resourceLoader.getMap().raw();
 
     assert (Arrays.deepEquals(gameMap, map));
     assert (map[7][6] == gameMap[7][6]);
