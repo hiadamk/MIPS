@@ -1,8 +1,6 @@
 package networking;
-import networking.NetworkingData;
+
 import java.net.DatagramSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -28,10 +26,8 @@ public class ServerGameplayStarter {
 
 		Queue<String> outgoingQueue = new ConcurrentLinkedQueue<String>(); 
 		Queue<String> incomingQueue = new ConcurrentLinkedQueue<String>();
-		UDPListenerThread r1 = new UDPListenerThread(socket, incomingQueue);
-		UDPSenderThread r2 = new UDPSenderThread(socket, outgoingQueue);
-		Thread serverListener = new Thread(r1); 
-    	Thread serverSender = new Thread(r2);
+		UDPListenerThread serverListener = new UDPListenerThread(socket, incomingQueue);
+		UDPSenderThread serverSender = new UDPSenderThread(socket, outgoingQueue);
 		
 		//puts inputs from queues into the outgoing queue - not sure this one closes
 		Thread incomingPackager = new Thread() {

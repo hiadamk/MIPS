@@ -1,13 +1,6 @@
 package networking;
-import networking.NetworkingData;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+
 import java.net.DatagramSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -23,10 +16,8 @@ public class ClientGameplayStarter {
 
 		Queue<String> outgoingQueue = new ConcurrentLinkedQueue<String>(); 
 		Queue<String> incomingQueue = new ConcurrentLinkedQueue<String>();
-		UDPListenerThread r1 = new UDPListenerThread(socket, incomingQueue);
-		UDPSenderThread r2 = new UDPSenderThread(socket, outgoingQueue);
-		clientListener = new Thread(r1); // clientListener
-		clientSender = new Thread(r2);//clientSender
+		UDPListenerThread clientListener = new UDPListenerThread(socket, incomingQueue);
+		UDPSenderThread clientSender = new UDPSenderThread(socket, outgoingQueue);
 		
 		//puts inputs from queues into the outgoing queue - not sure this one closes
 		Thread outgoingPackager = new Thread() {
@@ -61,8 +52,8 @@ public class ClientGameplayStarter {
 							collisionQueue.add(data.substring(collisionCode.length()));
 						}else if (data.startsWith(stopCode)) {
 							running = false;
-							r1.stop();
-							r2.stop();
+							clientListener.shutdown();
+							clientSender.shutdown();
 							socket.close();
 							System.out.println("Recieved Stop Instruction");
 						}
