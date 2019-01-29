@@ -2,9 +2,14 @@ package utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import javax.imageio.ImageIO;
 import org.junit.jupiter.api.Test;
 
 public class ResourceLoaderTests {
@@ -79,4 +84,47 @@ public class ResourceLoaderTests {
     assertEquals(4,ghoulSprites.size());
     assertEquals(1,ghoulSprites.get(0).size());
   }
+
+  @Test
+  void recolouredMipPink(){
+    ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
+    ArrayList<ArrayList<Image>> mipSprites = resourceLoader.getPlayableMip(1);
+    BufferedImage firstSprite = SwingFXUtils.fromFXImage(mipSprites.get(0).get(0),null);
+
+
+
+    assertEquals(testPaletteLoader("mip_palette").getRGB(0,1),firstSprite.getRGB(11,9));
+  }
+
+  @Test
+  void recolouredMipGreen(){
+    ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
+    ArrayList<ArrayList<Image>> mipSprites = resourceLoader.getPlayableMip(2);
+    BufferedImage firstSprite = SwingFXUtils.fromFXImage(mipSprites.get(0).get(0),null);
+    assertEquals(testPaletteLoader("mip_palette").getRGB(0,2),firstSprite.getRGB(11,9));
+  }
+
+  /**
+   * tests end of sheet edge case
+   */
+  @Test
+  void recolouredMipRed(){
+    ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
+    ArrayList<ArrayList<Image>> mipSprites = resourceLoader.getPlayableMip(4);
+    BufferedImage firstSprite = SwingFXUtils.fromFXImage(mipSprites.get(0).get(0),null);
+    assertEquals(testPaletteLoader("mip_palette").getRGB(0,4),firstSprite.getRGB(11,9));
+  }
+
+  BufferedImage testPaletteLoader(String paletteName){
+    File file = new File("src/test/resources/sprites/default/playable/" + paletteName + ".png");
+    BufferedImage palette = null;
+    try {
+      palette = ImageIO.read(file);
+    } catch (IOException e) {
+      System.out.println(e.getMessage());
+    }
+
+    return palette;
+  }
 }
+
