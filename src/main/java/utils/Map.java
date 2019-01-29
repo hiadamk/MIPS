@@ -1,11 +1,14 @@
 package utils;
 
+import java.awt.geom.Point2D.Double;
+
 public class Map {
 
   private final int MAX_X;
   private final int MAX_Y;
 
   private final int[][] MAP;
+  private final Double SPAWN_POINT;
 
 //  private final int[][] MAP = {
 //      {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -46,13 +49,29 @@ public class Map {
     MAP = map_;
     MAX_X = MAP.length;
     MAX_Y = MAP[0].length;
+    SPAWN_POINT = loadSpawnPoint();
   }
 
-  public boolean isWall(int x, int y) {
-    return MAP[x % MAX_X][y % MAX_Y] == 1;
+  private Double loadSpawnPoint() {
+    for (int i = 0; i < MAX_X; i++) {
+      for (int j = 0; j < MAX_Y; j++) {
+        if (MAP[i][j] == 2) {
+          return new Double(i, j); //TODO get colour from MapColour
+        }
+      }
+    }
+    return null;
+  }
+
+  public boolean isWall(Double point) {
+    return MAP[(int) (point.getX() % MAX_X)][(int) (point.getY() % MAX_Y)] == 1;
   }
 
   int[][] raw() {
     return MAP;
+  }
+
+  public Double getSpawnPoint() {
+    return SPAWN_POINT;
   }
 }
