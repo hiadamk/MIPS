@@ -25,7 +25,6 @@ public class ClientSender extends Thread {
         this.group = group;
         this.socket = new MulticastSocket();
         this.networkInterface = Utility.getInterface();
-        System.out.println(this.networkInterface);
     }
     
     /**
