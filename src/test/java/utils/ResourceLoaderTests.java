@@ -2,7 +2,9 @@ package utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import javafx.scene.image.Image;
 import org.junit.jupiter.api.Test;
 
 public class ResourceLoaderTests {
@@ -59,5 +61,22 @@ public class ResourceLoaderTests {
     assert (Arrays.deepEquals(gameMap, map));
     assert (map[7][6] == gameMap[7][6]);
     assert (map[7][7] == gameMap[7][7]);
+  }
+
+  @Test
+  void correctMipNumLoaded(){
+    ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
+    ArrayList<ArrayList<Image>> mipSprites = resourceLoader.getPlayableMip(0);
+    assertEquals(4,mipSprites.size());
+    assertEquals(2,mipSprites.get(0).size());
+    assertEquals(2,mipSprites.get(1).size());
+  }
+
+  @Test
+  void correctGhoulNumLoaded(){
+    ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
+    ArrayList<ArrayList<Image>> ghoulSprites = resourceLoader.getPlayableGhoul(0);
+    assertEquals(4,ghoulSprites.size());
+    assertEquals(1,ghoulSprites.get(0).size());
   }
 }
