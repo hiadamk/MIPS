@@ -123,6 +123,22 @@ public class ResourceLoaderTests {
     assertArrayEquals(expected, resourceLoader.getThemes());
   }
 
+  @Test
+  void floorLoaded() {
+    ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
+    BufferedImage floor = SwingFXUtils.fromFXImage(resourceLoader.getFloorTile(), null);
+    assertEquals(19, floor.getHeight());
+    assertEquals(39, floor.getWidth());
+  }
+
+  @Test
+  void wallLoaded() {
+    ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
+    BufferedImage wall = SwingFXUtils.fromFXImage(resourceLoader.getWallTile(), null);
+    assertEquals(29, wall.getHeight());
+    assertEquals(39, wall.getWidth());
+  }
+
   BufferedImage testPaletteLoader(String paletteName){
     File file = new File("src/test/resources/sprites/default/playable/" + paletteName + ".png");
     BufferedImage palette = null;

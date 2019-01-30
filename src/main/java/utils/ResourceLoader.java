@@ -25,6 +25,9 @@ public class ResourceLoader {
   private BufferedImage ghoulPalette;
   private int ghoulColourID;
 
+  private BufferedImage wallTile;
+  private BufferedImage floorTile;
+
   /**
    * @param baseDir path to the resources folder
    */
@@ -34,6 +37,7 @@ public class ResourceLoader {
     this.loadMap("default");
     this.loadPlayableMip("default");
     this.loadPlayableGhoul("default");
+    this.loadMapTiles("default");
     this.loadThemes();
   }
 
@@ -151,6 +155,22 @@ public class ResourceLoader {
     }
     this.ghoulColourID = _colourID;
     return bufferedToJavaFxImage(this.ghoulSprites);
+  }
+
+  /**
+   * @param theme name of folder which contains the assets for that theme
+   */
+  public void loadMapTiles(String theme) {
+    this.floorTile = loadImageFile("sprites/" + theme + "/tiles/", "floor");
+    this.wallTile = loadImageFile("sprites/" + theme + "/tiles/", "wall");
+  }
+
+  public Image getFloorTile() {
+    return SwingFXUtils.toFXImage(this.floorTile, null);
+  }
+
+  public Image getWallTile() {
+    return SwingFXUtils.toFXImage(this.wallTile, null);
   }
 
   /**
