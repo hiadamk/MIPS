@@ -14,8 +14,14 @@ public class ResourceLoader {
   private final String BASE_DIR;
 
   private Map map;
+
   private ArrayList<ArrayList<BufferedImage>> mipSprites;
+  private BufferedImage mipPalette;
+  private int mipColourID;
+
   private ArrayList<ArrayList<BufferedImage>> ghoulSprites;
+  private BufferedImage ghoulPalette;
+  private int ghoulColourID;
 
   public ResourceLoader(String baseDir) {
     BASE_DIR = baseDir;
@@ -34,7 +40,7 @@ public class ResourceLoader {
 
   /**
    * @param name name of map: if file is default.png the name is default reads a png map image,
-   * converts rbg color pixels into map tile numbers
+   * converts rbg colour pixels into map tile numbers
    */
   public void loadMap(String name) {
 
@@ -64,19 +70,30 @@ public class ResourceLoader {
     final int spriteWidth = 39;
     final int spriteHeight = 36;
     BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "mip");
-
     this.mipSprites = splitSpriteSheet(spriteWidth, spriteHeight,
         spriteSheet);
+
+    this.mipPalette = loadImageFile("sprites/" + theme + "/playable/", "mip_palette");
+    this.mipColourID = 0;
   }
 
   /**
-   * creates coloured sprites of mip according to the color id selected
+   * creates coloured sprites of mip according to the colour id selected
    *
-   * @param colourID row of palette sheet to apply to sprite
+   * @param _colourID row of palette sheet to apply to sprite
    * @return 2d ArrayList of images - first dimension is the direction, second is each animation
    * frame
    */
-  public ArrayList<ArrayList<Image>> getPlayableMip(int colourID) {
+  public ArrayList<ArrayList<Image>> getPlayableMip(int _colourID) {
+
+    for (int i = 0; i < this.mipSprites.size(); i++){
+      ArrayList<BufferedImage> tmp = new ArrayList<>();
+      for(int j = 0; j < this.mipSprites.get(i).size();j++){
+        tmp.add(recolourSprite(this.mipSprites.get(i).get(j),this.mipPalette,this.mipColourID,_colourID));
+      }
+      this.mipSprites.set(i,tmp);
+    }
+    this.mipColourID = _colourID;
     return bufferedToJavaFxImage(this.mipSprites);
   }
 
@@ -90,16 +107,25 @@ public class ResourceLoader {
 
     this.ghoulSprites = splitSpriteSheet(spriteWidth, spriteHeight,
         spriteSheet);
+
+    this.ghoulPalette = loadImageFile("sprites/" + theme + "/playable/", "ghoul_palette");
+    this.ghoulColourID = 0;
   }
 
   /**
-   * creates coloured sprites of ghoul according to the color id selected
+   * creates coloured sprites of ghoul according to the colour id selected
    *
-   * @param colourID row of palette sheet to apply to sprite
+   * @param _colourID row of palette sheet to apply to sprite
    * @return 2d ArrayList of images - first dimension is the direction, second is each animation
    * frame
    */
-  public ArrayList<ArrayList<Image>> getPlayableGhoul(int colourID) {
+  public ArrayList<ArrayList<Image>> getPlayableGhoul(int _colourID) {
+    for (ArrayList<BufferedImage> imgs: this.ghoulSprites){
+      for(BufferedImage sprite: imgs){
+        recolourSprite(sprite,this.ghoulPalette,this.ghoulColourID,_colourID);
+      }
+    }
+    this.ghoulColourID = _colourID;
     return bufferedToJavaFxImage(this.ghoulSprites);
   }
 
@@ -118,7 +144,14 @@ public class ResourceLoader {
       System.out.println(e.getMessage());
     }
 
-    return image;
+    /*code from: https://www.codeproject.com/Questions/542826/getRBGplusdoesn-tplusreturnplusvalueplussetplusb
+    creates a new buffered image so that rbg colours can be edited.
+     */
+    BufferedImage imgUnindexedColourModel = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+    imgUnindexedColourModel.getGraphics().drawImage(image, 0, 0, null);
+    //end code. Accessed on 29/01/2019
+
+    return imgUnindexedColourModel;
   }
 
   /**
@@ -143,7 +176,6 @@ public class ResourceLoader {
   }
 
   /**
-   *
    * @param sprites BufferedImages to convert to JavaFX images
    * @return converted images in same arraylist structure
    */
@@ -159,5 +191,34 @@ public class ResourceLoader {
       convertedSprites.add(tmp);
     }
     return convertedSprites;
+  }
+
+  /**
+   *
+   * @param sprite image to recolour
+   * @param palette colours to choose from
+   * @param oldPaletteRow currently used palette row
+   * @param newPaletteRow palette row to replace with
+   * @return recoloured image
+   */
+  private BufferedImage recolourSprite(
+      BufferedImage sprite, BufferedImage palette, int oldPaletteRow, int newPaletteRow) {
+    if (newPaletteRow == oldPaletteRow) {
+      return sprite;
+    }
+
+    //loop through colours on palette
+    for(int i = 0; i < palette.getWidth(); i++){
+      //iterate through every pixel of sprite
+      for(int x = 0; x < sprite.getWidth(); x++){
+        for (int y = 0; y < sprite.getHeight(); y++){
+          if (sprite.getRGB(x,y) == palette.getRGB(i,oldPaletteRow)){
+            sprite.setRGB(x,y,palette.getRGB(i,newPaletteRow));
+          }
+        }
+      }
+    }
+
+    return sprite;
   }
 }
