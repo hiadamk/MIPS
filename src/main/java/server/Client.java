@@ -35,7 +35,7 @@ public class Client {
         initialisePacketManagers();
         
         this.clientSender = new PacketSender(NetworkUtility.GROUP, NetworkUtility.SERVER_PORT, this.outgoingQueue);
-        this.clientReceiver = new PacketReceiver(NetworkUtility.GROUP, NetworkUtility.CLIENT_PORT, clientSender, this.incomingQueue);
+        this.clientReceiver = new PacketReceiver(NetworkUtility.GROUP, NetworkUtility.CLIENT_PORT, this.incomingQueue);
         this.incomingPacketManager.start();
         this.outgoingPacketManager.start();
         this.clientReceiver.start();

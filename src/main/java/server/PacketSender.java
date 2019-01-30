@@ -18,8 +18,11 @@ public class PacketSender extends Thread {
 //    private byte[] buf;
     
     /**
-     * @param group
-     * @throws IOException
+     * Constructs a Packet Sender object
+     * @param group The group we want to bind to
+     * @param port The port we want to listen to
+     * @param  feedQueue The queue we want to send items from.
+     * @throws IOException Thrown by the multicast socket
      */
     public PacketSender(InetAddress group, int port, Queue<String> feedQueue) throws IOException {
         this.group = group;

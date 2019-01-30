@@ -33,7 +33,7 @@ public class Server {
         initialisePacketManagers();
         
         this.sender = new PacketSender(NetworkUtility.GROUP, NetworkUtility.CLIENT_PORT, this.outgoingQueue);
-        this.receiver = new PacketReceiver(NetworkUtility.GROUP, NetworkUtility.SERVER_PORT, sender, this.incomingQueue);
+        this.receiver = new PacketReceiver(NetworkUtility.GROUP, NetworkUtility.SERVER_PORT, this.incomingQueue);
         
         this.incomingPacketManager.start();
         this.outgoingPacketManager.start();

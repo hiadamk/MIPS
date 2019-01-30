@@ -12,20 +12,19 @@ public class PacketReceiver extends Thread {
     
     private InetAddress group;
     private MulticastSocket socket;
-    private PacketSender sender;
     private boolean running = false;
     private Queue<String> feedQueue;
     
     /**
      * Constructor only needs the multicasting group to communicate
-     *
+     * @param port The port we want to bind to
+     * @param feedQueue The queue we want to send packets from
      * @param group The multi-casting group that we will connect to
      * @throws IOException caused by the use of sockets
      */
-    public PacketReceiver(InetAddress group, int port, PacketSender sender, Queue<String> feedQueue) throws IOException {
+    public PacketReceiver(InetAddress group, int port, Queue<String> feedQueue) throws IOException {
         this.group = group;
         this.socket = new MulticastSocket(port);
-        this.sender = sender;
         setUpNetworkInterfaces();
         this.feedQueue = feedQueue;
         
@@ -64,8 +63,6 @@ public class PacketReceiver extends Thread {
                 if (received.startsWith(NetworkUtility.PREFIX) && received.endsWith(NetworkUtility.SUFFIX)) {
                     received = received.substring(NetworkUtility.PREFIX.length(), received.length() - NetworkUtility.SUFFIX.length()); //rids PREFIX and SUFFIX
                     feedQueue.add(received.trim());
-                } else {
-                    continue;
                 }
                 
             } catch (IOException e) {

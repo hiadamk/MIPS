@@ -37,7 +37,7 @@ public class NetworkUtility {
     /**
      * Gets the correct network interface to send/receive messages on
      * @return the string of the network interface which will be used for multicasting
-     * @throws IOException
+     * @throws IOException Thrown by Network Interface
      */
     public static String getInterface() throws IOException {
         

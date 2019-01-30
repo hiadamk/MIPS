@@ -7,7 +7,7 @@ public interface RouteFinder {
 
 	/**
 	 * Returns the direction to travel in until the next junction is reached.
-	 * 
+	 * @param pacmanID The ID for the current pacman.
 	 * @return The direction to travel in.
 	 */
 	public Direction getRoute(int pacmanID);

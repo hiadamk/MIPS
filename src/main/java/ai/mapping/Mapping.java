@@ -1,9 +1,10 @@
 package ai.mapping;
 
-import java.awt.Point;
+import utils.enums.Direction;
+
+import java.awt.*;
 import java.util.HashMap;
 import java.util.HashSet;
-import utils.enums.Direction;
 
 public abstract class Mapping {
 
@@ -15,7 +16,7 @@ public abstract class Mapping {
 	 * 
 	 * @param map
 	 *            The map having junctions identified on.
-	 * @return A {@link HashSet}<{@link Point Point}> containing all points of
+     * @return A {@link HashSet}&lt;{@link Point Point}&gt; containing all points of
 	 *         junctions.
 	 * @throws IllegalArgumentException
 	 *             Map must be at least 1x1.
@@ -90,7 +91,7 @@ public abstract class Mapping {
 	 *            The map to produce the junction pairs from.
 	 * @param junctions
 	 *            All the junctions within the map. These can be generated using the
-	 *            {@link #getJunctions()} method.
+     *            {@link #getJunctions(int[][]) getJunctions} method.
 	 * @return A mapping of every junction to all connected junctions.
 	 * @throws IllegalArgumentException
 	 *             The map must be at least 1x1.
@@ -220,7 +221,7 @@ public abstract class Mapping {
 	 * 
 	 * @param position
 	 *            The current position.
-	 * @param edges
+     * @param map The game map
 	 *            The mapping of all valid junctions.
 	 * @param direction
 	 *            The proposed direction of travel.
