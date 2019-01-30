@@ -13,7 +13,6 @@ import utils.enums.Direction;
 
 public class Telemetry {
 
-  private final Point2D.Double respawnPoint = new Double(5, 5); // Need to set respawn point somehow
   private BlockingQueue<Input> inputs;
   private Entity[] agents;
   private static final int AGENT_COUNT = 5;
@@ -79,16 +78,17 @@ public class Telemetry {
   }
 
   /**
-   * Static Method for updating game state
+   * Static method for updating game state increments positions if valid, increments points, and
+   * detects and treats entity collisions
+   * TODO: 30/1/19 increment points functionality
    *
    * @param agents array of entities in current state
    * @return array of entities in new state
    * @author Alex Banks
-   * @
+   * @see this#entityCollision(Entity, Entity, Double)
    */
   private static Entity[] processPhysics(Entity[] agents) {
     Map m = (new ResourceLoader(System.getProperty("user.dir"))).getMap();
-
 
     for (int i = 0; i < AGENT_COUNT; i++) {
       Point2D.Double tempLocation = agents[i].getLocation();
@@ -109,8 +109,23 @@ public class Telemetry {
           break;
       }
 
-      //TODO check out of bounds
+      if (m.isWall(tempLocation)) {
+        agents[i].setVelocity(0);
+      } else {
+        agents[i].setLocation(tempLocation);
+      }
 
+      //TODO add points for pellet collision
+    }
+
+    //separate loop for checking collision after iteration
+    for (int i = 0; i < AGENT_COUNT; i++) {
+      for (int j = i + 1; j < AGENT_COUNT; j++) {
+        if ((int) agents[i].getLocation().getX() == (int) agents[j].getLocation().getX() &&
+            (int) agents[i].getLocation().getY() == (int) agents[j].getLocation().getY()) {
+          entityCollision(agents[i], agents[j], m.getSpawnPoint());
+        }
+      }
     }
 
     return agents;
@@ -120,7 +135,15 @@ public class Telemetry {
     // TODO implement
   }
 
-  private void entityCollision(Entity x, Entity y) {
+  /**
+   * Static method for 'swapping' entities if they occupy the same square. Does nothing if both
+   * entities are ghouls
+   *
+   * @param x Entity one
+   * @param y Entity two
+   * @param respawnPoint Point to relocate new ghoul too
+   */
+  private static void entityCollision(Entity x, Entity y, Double respawnPoint) {
     if (x.isPacman()) {
       x.setPacMan(false);
       y.setPacMan(true);

@@ -4,15 +4,26 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 
 /**
  * Class which will holds shared utility data for classes.
  */
-public class Utility {
+public class NetworkUtility {
     
-    public static int SERVER_PORT = 4446;
-    public static int CLIENT_PORT = 4445;
+    public static final int SERVER_PORT = 4446;
+    public static final int CLIENT_PORT = 4445;
+    
+    public static final String PREFIX = "SMSG";
+    public static final String SUFFIX = "EMSG";
+    public static final String POSITION_CODE = "POS";
+    public static final String COLLISIONS_CODE = "COS";
+    public static final String STOP_CODE = "EXIT";
+    public static final int STRING_LIMIT = 24;
+    public static final Charset CHARSET = StandardCharsets.US_ASCII;
+    
     public static InetAddress GROUP;
     
     static {
@@ -24,7 +35,8 @@ public class Utility {
     }
     
     /**
-     * @return
+     * Gets the correct network interface to send/receive messages on
+     * @return the string of the network interface which will be used for multicasting
      * @throws IOException
      */
     public static String getInterface() throws IOException {
