@@ -1,5 +1,6 @@
 package utils;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.image.BufferedImage;
@@ -115,6 +116,13 @@ public class ResourceLoaderTests {
     assertEquals(testPaletteLoader("mip_palette").getRGB(0,4),firstSprite.getRGB(11,9));
   }
 
+  @Test
+  void correctThemesLoaded() {
+    ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
+    String[] expected = new String[]{"default"};
+    assertArrayEquals(expected, resourceLoader.getThemes());
+  }
+
   BufferedImage testPaletteLoader(String paletteName){
     File file = new File("src/test/resources/sprites/default/playable/" + paletteName + ".png");
     BufferedImage palette = null;
@@ -126,5 +134,7 @@ public class ResourceLoaderTests {
 
     return palette;
   }
+
+
 }
 
