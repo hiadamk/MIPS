@@ -60,7 +60,7 @@ public class RandomRouteFinder implements RouteFinder {
 	 * been called before use.
 	 * 
 	 * @param pacmanID
-	 *            The client ID of the entity that is currently pacman.
+     *            The main ID of the entity that is currently pacman.
 	 * @return The direction to travel in.
 	 * @throws IllegalStateException
 	 *             The gameAgents have not been set. Call

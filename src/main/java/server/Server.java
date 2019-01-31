@@ -53,8 +53,9 @@ public class Server {
                     if (incomingQueue.isEmpty()) {
                         continue;
                     }
-                    key = Integer.valueOf(incomingQueue.poll());
-                    keypressQueue.add(key);
+                    System.out.println(incomingQueue.poll());
+//                    key = Integer.valueOf(incomingQueue.poll());
+//                    keypressQueue.add(key);
                 }
             }
         };

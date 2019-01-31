@@ -33,7 +33,8 @@ public class Client {
         positionQueue = new LinkedBlockingDeque<>();
         collisionQueue = new LinkedBlockingDeque<>();
         initialisePacketManagers();
-        
+    
+        outgoingQueue.add("POS");
         this.clientSender = new PacketSender(NetworkUtility.GROUP, NetworkUtility.SERVER_PORT, this.outgoingQueue);
         this.clientReceiver = new PacketReceiver(NetworkUtility.GROUP, NetworkUtility.CLIENT_PORT, this.incomingQueue);
         this.incomingPacketManager.start();

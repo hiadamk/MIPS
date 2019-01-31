@@ -24,6 +24,7 @@ public class PacketSender extends Thread {
      * @param  feedQueue The queue we want to send items from.
      * @throws IOException Thrown by the multicast socket
      */
+
     public PacketSender(InetAddress group, int port, Queue<String> feedQueue) throws IOException {
         this.group = group;
         this.socket = new MulticastSocket();

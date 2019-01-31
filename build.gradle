@@ -20,7 +20,7 @@ dependencies {
 }
 
 task(runMain, dependsOn: 'classes', type: JavaExec) {
-    main = 'ui.Main'
+    main = 'ui.main'
     classpath = sourceSets.main.runtimeClasspath
     applicationDefaultJvmArgs=["-Djava.net.preferIPv4Stack=true"]
 }

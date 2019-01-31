@@ -1,4 +1,4 @@
-package client;
+package main;
 
 import audio.AudioController;
 import javafx.animation.AnimationTimer;
@@ -25,7 +25,7 @@ public class Client extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-    int id = 0; // This will be changed if client joins a lobby, telemetry will give it new id
+    int id = 0; // This will be changed if main joins a lobby, telemetry will give it new id
     audioController = new AudioController();
     keyController = new KeyController();
     Scene dummyScene = new Scene(new Label("place holder"), 1920, 1080);
@@ -35,10 +35,10 @@ public class Client extends Application {
     scene.setOnKeyPressed(keyController);
     primaryStage.setScene(scene);
     primaryStage.show();
-
-    // Main menu code will be here
-
-    // If hosting if not telemetry will be set by connection method along with new client id
+  
+    // main menu code will be here
+  
+    // If hosting if not telemetry will be set by connection method along with new main id
     telemetry = new Telemetry();
 
 
@@ -83,7 +83,7 @@ public class Client extends Application {
     if(id == 0){
       telemetry.addInput(input);
     } else {
-      //TODO integrate with netwroking to send to telemetry
+      //TODO integrate with networking to send to telemetry
     }
   }
 
