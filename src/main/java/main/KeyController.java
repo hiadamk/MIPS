@@ -1,4 +1,4 @@
-package client;
+package main;
 
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;

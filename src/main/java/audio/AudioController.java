@@ -9,7 +9,7 @@ import java.util.Collection;
 /**
  * <p>A simple system for playing sounds in the clients currently just for events
  * easy to expand to handle the background music too.
- * Each client will create an instance of this class to control audio</p>
+ * Each main will create an instance of this class to control audio</p>
  */
 public class AudioController {
     
@@ -59,7 +59,7 @@ public class AudioController {
      * @param sound the sound to play
      */
     public void playSound(Sounds sound) {
-        if (mute) return; // IF the client has muted its audio nothing will be played
+        if (mute) return; // IF the main has muted its audio nothing will be played
         InputStream audio = AudioController.class.getResourceAsStream(sound.getPath());
         File audioFile = new File(sound.getPath());
         try {

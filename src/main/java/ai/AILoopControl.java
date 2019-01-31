@@ -1,16 +1,16 @@
 package ai;
 
-import java.awt.Point;
-import java.awt.geom.Point2D;
-import java.util.HashMap;
-import java.util.HashSet;
-
 import ai.mapping.Mapping;
 import ai.routefinding.RandomRouteFinder;
 import ai.routefinding.RouteFinder;
 import objects.Entity;
 import utils.Map;
 import utils.enums.Direction;
+
+import java.awt.*;
+import java.awt.geom.Point2D;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class AILoopControl extends Thread {
 	private static final int SLEEP_TIME = 1;
@@ -27,19 +27,19 @@ public class AILoopControl extends Thread {
 	 * @param gameAgents
 	 *            All agents within the game.
 	 * @param controlIds
-	 *            The client ID of agents which will be AI controlled.
+     *            The main ID of agents which will be AI controlled.
 	 * @param map
 	 *            The map on which route finding will occur.
 	 * @throws IllegalArgumentException
 	 *             gameAgent array contains duplicate client IDs.
 	 * @throws IllegalStateException
-	 *             Control ID does not match a gameAgent client ID.
+     *             Control ID does not match a gameAgent main ID.
 	 */
 	public AILoopControl(Entity[] gameAgents, int[] controlIds, Map map) {
 		HashSet<Integer> ids = new HashSet<Integer>();
 		for (Entity e : gameAgents) {
 			if (!ids.add(e.getClientId())) {
-				throw new IllegalArgumentException("gameAgent array contains duplicate client IDs.");
+                throw new IllegalArgumentException("gameAgent array contains duplicate main IDs.");
 			}
 		}
 		this.runAILoop = true;
@@ -93,7 +93,7 @@ public class AILoopControl extends Thread {
 				}
 			}
 			if (!agentFound) {
-				throw new IllegalStateException("A control ID does not match an agent client ID.");
+                throw new IllegalStateException("A control ID does not match an agent main ID.");
 			}
 		}
 		this.junctions = Mapping.getJunctions(map);

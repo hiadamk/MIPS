@@ -1,10 +1,11 @@
 package ai.routefinding;
 
+import objects.Entity;
+import utils.enums.Direction;
+
 import java.awt.geom.Point2D;
 import java.util.HashSet;
 import java.util.Random;
-import objects.Entity;
-import utils.enums.Direction;
 
 public class RandomRouteFinder implements RouteFinder {
 	private static final Random R = new Random();
@@ -55,15 +56,15 @@ public class RandomRouteFinder implements RouteFinder {
 
 	/**
 	 * Returns the direction to travel in until the next junction is reached.
-	 * Requires {@link #setAgents(Entity[], EntityType) setAgents()} method to have
+	 * Requires {@link #setAgents(Entity[], int) setAgents()} method to have
 	 * been called before use.
 	 * 
 	 * @param pacmanID
-	 *            The client ID of the entity that is currently pacman.
+     *            The main ID of the entity that is currently pacman.
 	 * @return The direction to travel in.
 	 * @throws IllegalStateException
 	 *             The gameAgents have not been set. Call
-	 *             {@link #setAgents(Entity[], EntityType) setAgents()} before
+	 *             {@link #setAgents(Entity[], int) setAgents()} before
 	 *             calling this method.
 	 * @throws IllegalArgumentException
 	 *             PacmanID must be within the range of gameAgents Array.

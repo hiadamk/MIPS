@@ -1,9 +1,10 @@
 package ai.mapping;
 
-import java.awt.Point;
+import utils.enums.Direction;
+
+import java.awt.*;
 import java.util.HashMap;
 import java.util.HashSet;
-
 import utils.Map;
 import utils.enums.Direction;
 
@@ -15,7 +16,7 @@ public abstract class Mapping {
 	 * 
 	 * @param map
 	 *            The map having junctions identified on.
-	 * @return A {@link HashSet}<{@link Point Point}> containing all points of
+     * @return A {@link HashSet}&lt;{@link Point Point}&gt; containing all points of
 	 *         junctions.
 	 */
 	public static HashSet<Point> getJunctions(Map map) {
@@ -25,24 +26,24 @@ public abstract class Mapping {
 			for (int y = 0; y < map.getMaxY(); y++) {
 				// left right down up
 				boolean[] isPath = { false, false, false, false };
-				if (!map.isWall(x, y)) {
+				if (!map.isWall(new Point.Double(x, y))) {
 					if (x > 0) { // left
-						if (!map.isWall(x-1, y)) {
+						if (!map.isWall(new Point.Double(x-1, y))) {
 							isPath[0] = true;
 						}
 					}
 					if (x < (map.getMaxX() - 1)) { // right
-						if (!map.isWall(x+1, y)) {
+						if (!map.isWall(new Point.Double(x+1, y))) {
 							isPath[1] = true;
 						}
 					}
 					if (y > 0) { // down
-						if (!map.isWall(x, y-1)) {
+						if (!map.isWall(new Point.Double(x, y-1))) {
 							isPath[2] = true;
 						}
 					}
 					if (y < (map.getMaxY()-1)) { // up
-						if (!map.isWall(x, y+1)) {
+						if (!map.isWall(new Point.Double(x, y+1))) {
 							isPath[3] = true;
 						}
 					}
@@ -83,7 +84,7 @@ public abstract class Mapping {
 	 *            The map to produce the junction pairs from.
 	 * @param junctions
 	 *            All the junctions within the map. These can be generated using the
-	 *            {@link #getJunctions()} method.
+     *            {@link #getJunctions(int[][]) getJunctions} method.
 	 * @return A mapping of every junction to all connected junctions.
 	 */
 	public static HashMap<Point, HashSet<Point>> getEdges(Map map, HashSet<Point> junctions) {
@@ -93,7 +94,7 @@ public abstract class Mapping {
 			HashSet<Point> edgeSet = new HashSet<Point>();
 			int currentX = p.x - 1;
 			// a wall or junction will terminate the search
-			while (currentX > 0 && !(map.isWall(currentX, p.y))) {
+			while (currentX > 0 && !(map.isWall(new Point.Double(currentX, p.y)))) {
 				Point testPoint = new Point(currentX, p.y);
 				if (junctions.contains(testPoint)) {
 					// if a junction is found it is added to the edge pairing
@@ -104,7 +105,7 @@ public abstract class Mapping {
 			}
 			currentX = p.x + 1;
 			// a wall or junction will terminate the search
-			while (currentX < map.getMaxX() && (!map.isWall(currentX, p.y))) {
+			while (currentX < map.getMaxX() && (!map.isWall(new Point.Double(currentX, p.y)))) {
 				Point testPoint = new Point(currentX, p.y);
 				if (junctions.contains(testPoint)) {
 					// if a junction is found it is added to the edge pairing
@@ -115,7 +116,7 @@ public abstract class Mapping {
 			}
 			int currentY = p.y - 1;
 			// a wall or junction will terminate the search
-			while (currentY > 0 && !(map.isWall(p.x, currentY))) {
+			while (currentY > 0 && !(map.isWall(new Point.Double(p.x, currentY)))) {
 				Point testPoint = new Point(p.x, currentY);
 				if (junctions.contains(testPoint)) {
 					// if a junction is found it is added to the edge pairing
@@ -126,7 +127,7 @@ public abstract class Mapping {
 			}
 			currentY = p.y + 1;
 			// a wall or junction will terminate the search
-			while (currentY < map.getMaxY() && (!map.isWall(p.x, currentY))) {
+			while (currentY < map.getMaxY() && (!map.isWall(new Point.Double(p.x, currentY)))) {
 				Point testPoint = new Point(p.x, currentY);
 				if (junctions.contains(testPoint)) {
 					// if a junction is found it is added to the edge pairing
@@ -208,7 +209,7 @@ public abstract class Mapping {
 	 * 
 	 * @param position
 	 *            The current position.
-	 * @param edges
+     * @param map The game map
 	 *            The mapping of all valid junctions.
 	 * @param direction
 	 *            The proposed direction of travel.
@@ -219,28 +220,28 @@ public abstract class Mapping {
 		switch (direction) {
 		case UP: {
 			// identifies if any of the adjacent squares in correct direction are path
-			if (position.y + 1 < map.getMaxY() && !map.isWall(position.x, position.y + 1)) {
+			if (position.y + 1 < map.getMaxY() && !map.isWall(new Point.Double(position.x, position.y + 1))) {
 				return true;
 			}
 			break;
 		}
 		case DOWN: {
 			// identifies if any of the adjacent squares in correct direction are path
-			if (position.y - 1 > 0 && !map.isWall(position.x, position.y - 1)) {
+			if (position.y - 1 > 0 && !map.isWall(new Point.Double(position.x, position.y - 1))) {
 				return true;
 			}
 			break;
 		}
 		case LEFT: {
 			// identifies if any of the adjacent squares in correct direction are path
-			if (position.x - 1 > 0 && !map.isWall(position.x - 1, position.y)) {
+			if (position.x - 1 > 0 && !map.isWall(new Point.Double(position.x - 1, position.y))) {
 				return true;
 			}
 			break;
 		}
 		case RIGHT: {
 			// identifies if any of the adjacent squares in correct direction are path
-			if (position.x + 1 < map.getMaxX() && !map.isWall(position.x + 1, position.y)) {
+			if (position.x + 1 < map.getMaxX() && !map.isWall(new Point.Double(position.x + 1, position.y))) {
 				return true;
 			}
 			break;
