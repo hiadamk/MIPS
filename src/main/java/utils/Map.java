@@ -47,6 +47,14 @@ public class Map {
     MAX_X = MAP.length;
     MAX_Y = MAP[0].length;
   }
+  
+  public int getMaxX() {
+	  return MAX_X;
+  }
+  
+  public int getMaxY() {
+	  return MAX_Y;
+  }
 
   public boolean isWall(int x, int y) {
     return MAP[x % MAX_X][y % MAX_Y] == 1;
