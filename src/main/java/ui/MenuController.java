@@ -47,6 +47,8 @@ public class MenuController {
     private Button joinGameBtn;
     private Button createLobbyBtn;
     
+    private boolean isHome = true;
+    
     /**
      * Constructor takes in the audio controller stage and game scene
      *
@@ -161,7 +163,6 @@ public class MenuController {
         backBtn.setOnAction(event -> {
             audioController.playSound(Sounds.click);
             if (backTree.isEmpty()) {
-//                    backBtn.setVisible(false);
             } else {
                 for (Node item : itemsOnScreen) {
                     item.setVisible(false);
@@ -174,6 +175,7 @@ public class MenuController {
                 }
                 if (backTree.isEmpty()) {
                     backBtn.setVisible(false);
+                    isHome = true;
                 }
                 
             }
@@ -190,7 +192,7 @@ public class MenuController {
         playBtn.setStyle("-fx-background-color: transparent;");
         playBtn.setOnAction(e -> {
             audioController.playSound(Sounds.click);
-            
+            isHome = false;
             backBtn.setVisible(true);
             moveItemsToBackTree();
             itemsOnScreen.add(singlePlayerBtn);
@@ -287,8 +289,12 @@ public class MenuController {
                 creditsBtn.setVisible(false);
                 bg.setEffect(null);
                 showItemsOnScreen();
-                backBtn.setVisible(true);
+                if (!isHome) {
+                    backBtn.setVisible(true);
+                }
+//                backBtn.setVisible(true);
             }
+    
         });
         
         root.getChildren().add(settingsBtn);
@@ -300,6 +306,11 @@ public class MenuController {
         root.getChildren().add(quitBtn);
         Image quitImg = new Image("ui/quit.png");
         quitBtn.setGraphic(new ImageView(quitImg));
+        quitBtn.setOnAction(event -> {
+            audioController.playSound(Sounds.click);
+            System.exit(0);
+        
+        });
         
         createGameBtn = new Button();
         StackPane.setAlignment(createGameBtn, Pos.CENTER);
