@@ -56,6 +56,11 @@ public class Server {
                     System.out.println(incomingQueue.poll());
 //                    key = Integer.valueOf(incomingQueue.poll());
 //                    keypressQueue.add(key);
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         };
@@ -81,6 +86,7 @@ public class Server {
                             data = NetworkUtility.POSITION_CODE + data;
                             outgoingQueue.add(data);
                         }
+                        Thread.sleep(50);
                         
                     } catch (Exception e) {
                         e.printStackTrace();

@@ -12,7 +12,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public class Client {
     
-    private Queue<String> outgoingQueue;
+    public Queue<String> outgoingQueue;
     private Queue<String> incomingQueue;
     
     private Queue<String> positionQueue;
@@ -22,8 +22,8 @@ public class Client {
     private Thread outgoingPacketManager;
     private Thread incomingPacketManager;
     
-    private PacketSender clientSender;
-    private PacketReceiver clientReceiver;
+    private PacketSender sender;
+    private PacketReceiver receiver;
     
     
     public Client() throws IOException {
@@ -35,12 +35,12 @@ public class Client {
         initialisePacketManagers();
     
         outgoingQueue.add("POS");
-        this.clientSender = new PacketSender(NetworkUtility.GROUP, NetworkUtility.SERVER_PORT, this.outgoingQueue);
-        this.clientReceiver = new PacketReceiver(NetworkUtility.GROUP, NetworkUtility.CLIENT_PORT, this.incomingQueue);
+        this.sender = new PacketSender(NetworkUtility.GROUP, NetworkUtility.SERVER_PORT, this.outgoingQueue);
+        this.receiver = new PacketReceiver(NetworkUtility.GROUP, NetworkUtility.CLIENT_PORT, this.incomingQueue);
         this.incomingPacketManager.start();
         this.outgoingPacketManager.start();
-        this.clientReceiver.start();
-        this.clientSender.start();
+        this.receiver.start();
+        this.sender.start();
         
     }
     
@@ -56,6 +56,7 @@ public class Client {
                     try {
                         key = keypressQueue.take();
                         outgoingQueue.add(key.toString());
+                        Thread.sleep(50);
                     } catch (InterruptedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -82,14 +83,15 @@ public class Client {
                             collisionQueue.add(data.substring(NetworkUtility.COLLISIONS_CODE.length()));
                             System.out.println("Got collision instruction from server");
                         } else if (data.startsWith(NetworkUtility.STOP_CODE)) {
-                            clientReceiver.shutdown();
-                            clientSender.shutdown();
+                            receiver.shutdown();
+                            sender.shutdown();
                             outgoingPacketManager.interrupt();
                             incomingPacketManager.interrupt();
                             System.out.println("Recieved Stop Instruction");
                         } else {
                             throw new Exception();
                         }
+                        Thread.sleep(50);
                     } catch (Exception e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -105,6 +107,9 @@ public class Client {
     public static void main(String[] args) throws IOException {
     
         Client c = new Client();
+        for (int i = 0; i < 100; i++) {
+            c.outgoingQueue.add("Sent: " + i);
+        }
         
     }
 }
