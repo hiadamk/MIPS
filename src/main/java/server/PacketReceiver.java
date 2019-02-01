@@ -17,9 +17,10 @@ public class PacketReceiver extends Thread {
     
     /**
      * Constructor only needs the multicasting group to communicate
-     * @param port The port we want to bind to
+     *
+     * @param port      The port we want to bind to
      * @param feedQueue The queue we want to send packets from
-     * @param group The multi-casting group that we will connect to
+     * @param group     The multi-casting group that we will connect to
      * @throws IOException caused by the use of sockets
      */
     public PacketReceiver(InetAddress group, int port, Queue<String> feedQueue) throws IOException {
@@ -27,15 +28,15 @@ public class PacketReceiver extends Thread {
         this.socket = new MulticastSocket(port);
         setUpNetworkInterfaces();
         this.feedQueue = feedQueue;
-        
     }
     
     private void setUpNetworkInterfaces() throws IOException {
         Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
         while (interfaces.hasMoreElements()) {
             NetworkInterface iface = interfaces.nextElement();
-            if (iface.isLoopback() || !iface.isUp())
+            if (iface.isLoopback() || !iface.isUp()) {
                 continue;
+            }
             
             Enumeration<InetAddress> addresses = iface.getInetAddresses();
             while (addresses.hasMoreElements()) {
@@ -60,8 +61,12 @@ public class PacketReceiver extends Thread {
                 socket.receive(packet);
                 String received = new String(packet.getData());
                 received = received.replaceAll("\u0000.*", "");
-                if (received.startsWith(NetworkUtility.PREFIX) && received.endsWith(NetworkUtility.SUFFIX)) {
-                    received = received.substring(NetworkUtility.PREFIX.length(), received.length() - NetworkUtility.SUFFIX.length()); //rids PREFIX and SUFFIX
+                if (received.startsWith(NetworkUtility.PREFIX)
+                        && received.endsWith(NetworkUtility.SUFFIX)) {
+                    received =
+                            received.substring(
+                                    NetworkUtility.PREFIX.length(),
+                                    received.length() - NetworkUtility.SUFFIX.length()); // rids PREFIX and SUFFIX
                     feedQueue.add(received.trim());
                 }
                 Thread.sleep(50);
@@ -71,8 +76,6 @@ public class PacketReceiver extends Thread {
                 e.printStackTrace();
             }
         }
-        
-        
     }
     
     public void shutdown() {

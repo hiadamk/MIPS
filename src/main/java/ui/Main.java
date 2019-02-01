@@ -8,16 +8,18 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-
 public class Main extends Application {
     
     private boolean viewSettings = false;
     private boolean soundFX = true;
     private boolean music = true;
     
+    public static void main(String[] args) {
+        launch(args);
+    }
+    
     @Override
     public void start(Stage primaryStage) throws Exception {
-        
         
         AudioController audioController = new AudioController();
         audioController.playMusic(Sounds.intro);
@@ -31,10 +33,5 @@ public class Main extends Application {
         primaryStage.setTitle("M.I.P.S");
         primaryStage.setScene(new Scene(root, 1920, 1080));
         primaryStage.show();
-    }
-    
-    
-    public static void main(String[] args) {
-        launch(args);
     }
 }

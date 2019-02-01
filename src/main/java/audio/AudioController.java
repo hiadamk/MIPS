@@ -30,19 +30,36 @@ public class AudioController {
         clipCloser.start();
     }
     
+    /**
+     * Sets the music volume
+     *
+     * @param musicVolume The volume to which we want to set it to
+     */
     public void setMusicVolume(double musicVolume) {
         this.musicVolume = musicVolume;
         refreshMusic();
     }
     
+    /**
+     * Gets the current music volume.
+     * @return the current music volume.
+     */
     public double getMusicVolume() {
         return musicVolume;
     }
     
+    /**
+     * Gets the current volume of sound effects
+     * @return The current volume which sound effects are played at
+     */
     public double getSoundVolume() {
         return soundVolume;
     }
     
+    /**
+     * Sets the sound effects volume.
+     * @param soundVolume The volume we want to set the sound effects volume to.
+     */
     public void setSoundVolume(double soundVolume) {
         this.soundVolume = soundVolume;
     }
@@ -56,6 +73,9 @@ public class AudioController {
         refreshMusic();
     }
     
+    /**
+     * Increases master game volume.
+     */
     public void increaseVolume() {
         if (getMusicVolume() < 1) {
             setMusicVolume(getMusicVolume() + 0.1);
@@ -67,6 +87,9 @@ public class AudioController {
     }
     
     
+    /**
+     * Decreases master game volume.
+     */
     public void decreaseVolume() {
         if (getMusicVolume() > 0) {
             setMusicVolume(getMusicVolume() - 0.1);

@@ -9,22 +9,23 @@ import java.util.Enumeration;
 import java.util.Queue;
 
 public class PacketSender extends Thread {
+    
     private InetAddress group;
     private MulticastSocket socket;
     private String networkInterface;
     private int port;
     private boolean running = true;
     private Queue<String> feedQueue;
-//    private byte[] buf;
+    //    private byte[] buf;
     
     /**
      * Constructs a Packet Sender object
-     * @param group The group we want to bind to
-     * @param port The port we want to listen to
-     * @param  feedQueue The queue we want to send items from.
+     *
+     * @param group     The group we want to bind to
+     * @param port      The port we want to listen to
+     * @param feedQueue The queue we want to send items from.
      * @throws IOException Thrown by the multicast socket
      */
-
     public PacketSender(InetAddress group, int port, Queue<String> feedQueue) throws IOException {
         this.group = group;
         this.socket = new MulticastSocket();
@@ -32,7 +33,6 @@ public class PacketSender extends Thread {
         this.port = port;
         this.feedQueue = feedQueue;
     }
-    
     
     /**
      * Looks at the queue of messages and sends them to the needed recipient.
@@ -51,7 +51,7 @@ public class PacketSender extends Thread {
                 send(s);
                 Thread.sleep(50);
             }
-    
+            
         } catch (IOException e) {
             running = false;
             System.out.println("Server closed");
@@ -59,14 +59,11 @@ public class PacketSender extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    
     }
     
     /**
-     * Takes a String and copies it into the outgoing packet byte buffer,
-     * as well as adding PREFIX and SUFFIX strings to the buffer edges.
-     *
-     * @param s
+     * Takes a String and copies it into the outgoing packet byte buffer, as well as adding PREFIX and
+     * SUFFIX strings to the buffer edges.
      */
     private byte[] prepareBuf(String s) { // will truncate
         
@@ -76,7 +73,6 @@ public class PacketSender extends Thread {
         
         return buf;
     }
-    
     
     /**
      * Sends packets to designated port in the group
@@ -88,12 +84,12 @@ public class PacketSender extends Thread {
         byte[] buf = prepareBuf(message);
         DatagramPacket sending = new DatagramPacket(buf, 0, buf.length, group, this.port);
         
-        
         Enumeration<NetworkInterface> faces = NetworkInterface.getNetworkInterfaces();
         while (faces.hasMoreElements()) {
             NetworkInterface iface = faces.nextElement();
-            if (iface.isLoopback() || !iface.isUp())
+            if (iface.isLoopback() || !iface.isUp()) {
                 continue;
+            }
             
             Enumeration<InetAddress> addresses = iface.getInetAddresses();
             while (addresses.hasMoreElements()) {
@@ -104,17 +100,13 @@ public class PacketSender extends Thread {
                     System.out.println("Packet sent");
                     return;
                 }
-                
             }
         }
-        
     }
-    
     
     /**
      * Stops thread execution.
      */
-    
     public void shutdown() {
         this.running = false;
         socket.close();

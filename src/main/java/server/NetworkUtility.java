@@ -36,6 +36,7 @@ public class NetworkUtility {
     
     /**
      * Gets the correct network interface to send/receive messages on
+     *
      * @return the string of the network interface which will be used for multicasting
      * @throws IOException Thrown by Network Interface
      */
@@ -44,8 +45,9 @@ public class NetworkUtility {
         Enumeration<NetworkInterface> faces = NetworkInterface.getNetworkInterfaces();
         while (faces.hasMoreElements()) {
             NetworkInterface iface = faces.nextElement();
-            if (iface.isLoopback() || !iface.isUp())
+            if (iface.isLoopback() || !iface.isUp()) {
                 continue;
+            }
             
             Enumeration<InetAddress> addresses = iface.getInetAddresses();
             while (addresses.hasMoreElements()) {
