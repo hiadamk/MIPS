@@ -26,6 +26,7 @@ public enum Direction {
     }
   };
   private int id;
+
   Direction(int id) {
     this.id = id;
   }

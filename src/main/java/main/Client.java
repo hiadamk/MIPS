@@ -35,12 +35,11 @@ public class Client extends Application {
     scene.setOnKeyPressed(keyController);
     primaryStage.setScene(scene);
     primaryStage.show();
-  
+
     // main menu code will be here
-  
+
     // If hosting if not telemetry will be set by connection method along with new main id
     telemetry = new Telemetry();
-
 
     // AnimationTimer started once game has started
     new AnimationTimer() {
@@ -80,10 +79,10 @@ public class Client extends Application {
   }
 
   private void informServer(Input input) {
-    if(id == 0){
+    if (id == 0) {
       telemetry.addInput(input);
     } else {
-      //TODO integrate with networking to send to telemetry
+      // TODO integrate with networking to send to telemetry
     }
   }
 

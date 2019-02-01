@@ -45,13 +45,14 @@ public class ResourceLoader {
     ResourceLoader rl = new ResourceLoader("src/main/resources/");
     rl.loadMap("default");
     System.out.println(
-        Arrays.deepToString(rl.getMap().raw()).replace("], ", "]\n").replace("[[", "[")
+        Arrays.deepToString(rl.getMap().raw())
+            .replace("], ", "]\n")
+            .replace("[[", "[")
             .replace("]]", "]"));
   }
 
   private void loadThemes() {
-    File[] themeFolders = new File(BASE_DIR + "sprites/")
-        .listFiles(File::isDirectory);
+    File[] themeFolders = new File(BASE_DIR + "sprites/").listFiles(File::isDirectory);
     String[] _themes = new String[themeFolders.length];
 
     for (int i = 0; i < themeFolders.length; i++) {
@@ -67,7 +68,7 @@ public class ResourceLoader {
 
   /**
    * @param name name of map: if file is default.png the name is default reads a png map image,
-   * converts rbg colour pixels into map tile numbers
+   *     converts rbg colour pixels into map tile numbers
    */
   public void loadMap(String name) {
 
@@ -77,10 +78,10 @@ public class ResourceLoader {
     int height = mapImage.getHeight();
     int[][] map_ = new int[width][height];
 
-    //convert image into game map
+    // convert image into game map
     for (int x = 0; x < width; x++) {
       for (int y = 0; y < height; y++) {
-        map_[x][y] = MapColour.toTile(mapImage.getRGB(x, y)); //change rgb int into a map int
+        map_[x][y] = MapColour.toTile(mapImage.getRGB(x, y)); // change rgb int into a map int
       }
     }
     this.map = new Map(map_);
@@ -97,8 +98,7 @@ public class ResourceLoader {
     final int spriteWidth = 39;
     final int spriteHeight = 36;
     BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "mip");
-    this.mipSprites = splitSpriteSheet(spriteWidth, spriteHeight,
-        spriteSheet);
+    this.mipSprites = splitSpriteSheet(spriteWidth, spriteHeight, spriteSheet);
 
     this.mipPalette = loadImageFile("sprites/" + theme + "/playable/", "mip_palette");
     this.mipColourID = 0;
@@ -109,15 +109,16 @@ public class ResourceLoader {
    *
    * @param _colourID row of palette sheet to apply to sprite
    * @return 2d ArrayList of images - first dimension is the direction, second is each animation
-   * frame
+   *     frame
    */
   public ArrayList<ArrayList<Image>> getPlayableMip(int _colourID) {
 
     for (int i = 0; i < this.mipSprites.size(); i++) {
       ArrayList<BufferedImage> tmp = new ArrayList<>();
       for (int j = 0; j < this.mipSprites.get(i).size(); j++) {
-        tmp.add(recolourSprite(this.mipSprites.get(i).get(j), this.mipPalette, this.mipColourID,
-            _colourID));
+        tmp.add(
+            recolourSprite(
+                this.mipSprites.get(i).get(j), this.mipPalette, this.mipColourID, _colourID));
       }
       this.mipSprites.set(i, tmp);
     }
@@ -125,16 +126,13 @@ public class ResourceLoader {
     return bufferedToJavaFxImage(this.mipSprites);
   }
 
-  /**
-   * @param theme name of folder which contains the assets for that theme
-   */
+  /** @param theme name of folder which contains the assets for that theme */
   public void loadPlayableGhoul(String theme) {
     final int spriteWidth = 39;
     final int spriteHeight = 36;
     BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "ghoul");
 
-    this.ghoulSprites = splitSpriteSheet(spriteWidth, spriteHeight,
-        spriteSheet);
+    this.ghoulSprites = splitSpriteSheet(spriteWidth, spriteHeight, spriteSheet);
 
     this.ghoulPalette = loadImageFile("sprites/" + theme + "/playable/", "ghoul_palette");
     this.ghoulColourID = 0;
@@ -145,7 +143,7 @@ public class ResourceLoader {
    *
    * @param _colourID row of palette sheet to apply to sprite
    * @return 2d ArrayList of images - first dimension is the direction, second is each animation
-   * frame
+   *     frame
    */
   public ArrayList<ArrayList<Image>> getPlayableGhoul(int _colourID) {
     for (ArrayList<BufferedImage> imgs : this.ghoulSprites) {
@@ -157,9 +155,7 @@ public class ResourceLoader {
     return bufferedToJavaFxImage(this.ghoulSprites);
   }
 
-  /**
-   * @param theme name of folder which contains the assets for that theme
-   */
+  /** @param theme name of folder which contains the assets for that theme */
   public void loadMapTiles(String theme) {
     this.floorTile = loadImageFile("sprites/" + theme + "/tiles/", "floor");
     this.wallTile = loadImageFile("sprites/" + theme + "/tiles/", "wall");
@@ -191,10 +187,10 @@ public class ResourceLoader {
     /*code from: https://www.codeproject.com/Questions/542826/getRBGplusdoesn-tplusreturnplusvalueplussetplusb
     creates a new buffered image so that rbg colours can be edited.
      */
-    BufferedImage imgUnindexedColourModel = new BufferedImage(image.getWidth(), image.getHeight(),
-        BufferedImage.TYPE_4BYTE_ABGR);
+    BufferedImage imgUnindexedColourModel =
+        new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
     imgUnindexedColourModel.getGraphics().drawImage(image, 0, 0, null);
-    //end code. Accessed on 29/01/2019
+    // end code. Accessed on 29/01/2019
 
     return imgUnindexedColourModel;
   }
@@ -203,19 +199,17 @@ public class ResourceLoader {
    * @param spriteWidth x dimension of an individual sprite
    * @param spriteHeight y dimension of an individual sprite
    * @param spriteSheet loaded image containing sprites in a grid - each row contains a direction
-   * and each column contains an animation frame of that direction
+   *     and each column contains an animation frame of that direction
    */
-  private ArrayList<ArrayList<BufferedImage>> splitSpriteSheet(int spriteWidth,
-      int spriteHeight,
-      BufferedImage spriteSheet) {
+  private ArrayList<ArrayList<BufferedImage>> splitSpriteSheet(
+      int spriteWidth, int spriteHeight, BufferedImage spriteSheet) {
     ArrayList<ArrayList<BufferedImage>> _mipSprites = new ArrayList<>();
 
     for (int i = 0; i < spriteSheet.getWidth() / spriteWidth; i++) {
       ArrayList<BufferedImage> directionAnimation = new ArrayList<>();
       for (int j = 0; j < spriteSheet.getHeight() / spriteHeight; j++) {
         directionAnimation.add(
-            spriteSheet
-                .getSubimage(i * spriteWidth, j * spriteHeight, spriteWidth, spriteHeight));
+            spriteSheet.getSubimage(i * spriteWidth, j * spriteHeight, spriteWidth, spriteHeight));
       }
       _mipSprites.add(directionAnimation);
     }
@@ -253,9 +247,9 @@ public class ResourceLoader {
       return sprite;
     }
 
-    //loop through colours on palette
+    // loop through colours on palette
     for (int i = 0; i < palette.getWidth(); i++) {
-      //iterate through every pixel of sprite
+      // iterate through every pixel of sprite
       for (int x = 0; x < sprite.getWidth(); x++) {
         for (int y = 0; y < sprite.getHeight(); y++) {
           if (sprite.getRGB(x, y) == palette.getRGB(i, oldPaletteRow)) {
