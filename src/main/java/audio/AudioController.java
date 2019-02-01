@@ -35,6 +35,14 @@ public class AudioController {
         refreshMusic();
     }
     
+    public double getMusicVolume() {
+        return musicVolume;
+    }
+    
+    public double getSoundVolume() {
+        return soundVolume;
+    }
+    
     public void setSoundVolume(double soundVolume) {
         this.soundVolume = soundVolume;
     }
@@ -46,6 +54,27 @@ public class AudioController {
     public void toggleMute() {
         mute = !mute;
         refreshMusic();
+    }
+    
+    public void increaseVolume() {
+        if (getMusicVolume() < 1) {
+            setMusicVolume(getMusicVolume() + 0.1);
+        }
+        
+        if (getSoundVolume() < 1) {
+            setSoundVolume(getSoundVolume() + 0.1);
+        }
+    }
+    
+    
+    public void decreaseVolume() {
+        if (getMusicVolume() > 0) {
+            setMusicVolume(getMusicVolume() - 0.1);
+        }
+        
+        if (getSoundVolume() > 0) {
+            setSoundVolume(getSoundVolume() - 0.1);
+        }
     }
     
     private void refreshMusic() {

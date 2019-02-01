@@ -46,7 +46,9 @@ public class MenuController {
     private Button createGameBtn;
     private Button joinGameBtn;
     private Button createLobbyBtn;
-    
+    private ImageView volumeImg;
+    private Button incrVolumeBtn;
+    private Button decrVolumeBtn;
     private boolean isHome = true;
     
     /**
@@ -248,6 +250,47 @@ public class MenuController {
                 audioController.setSoundVolume(0.5);
             }
         });
+    
+        volumeImg = new ImageView(new Image("ui/Volume.png"));
+        StackPane.setAlignment(volumeImg, Pos.CENTER_LEFT);
+        StackPane.setMargin(volumeImg, new Insets(400, 0, 0, 100));
+        volumeImg.setVisible(false);
+        volumeImg.setPreserveRatio(true);
+        root.getChildren().add(volumeImg);
+        volumeImg.setFitWidth(250);
+    
+    
+        incrVolumeBtn = new Button();
+        StackPane.setAlignment(incrVolumeBtn, Pos.CENTER_LEFT);
+        StackPane.setMargin(incrVolumeBtn, new Insets(530, 0, 0, 250));
+        incrVolumeBtn.setStyle("-fx-background-color: transparent;");
+        root.getChildren().add(incrVolumeBtn);
+        ImageView incrView = new ImageView(new Image("ui/increaseVolume.png"));
+        incrView.setPreserveRatio(true);
+        incrView.setFitWidth(50);
+        incrVolumeBtn.setGraphic(incrView);
+        incrVolumeBtn.setVisible(false);
+        incrVolumeBtn.setOnAction(event -> {
+        
+            audioController.playSound(Sounds.click);
+            audioController.increaseVolume();
+        });
+    
+        decrVolumeBtn = new Button();
+        StackPane.setAlignment(decrVolumeBtn, Pos.CENTER_LEFT);
+        StackPane.setMargin(decrVolumeBtn, new Insets(530, 0, 0, 150));
+        decrVolumeBtn.setStyle("-fx-background-color: transparent;");
+        root.getChildren().add(decrVolumeBtn);
+        ImageView decrView = new ImageView(new Image("ui/decreaseVolume.png"));
+        decrView.setPreserveRatio(true);
+        decrView.setFitWidth(50);
+        decrVolumeBtn.setGraphic(decrView);
+        decrVolumeBtn.setVisible(false);
+        decrVolumeBtn.setOnAction(event -> {
+            audioController.playSound(Sounds.click);
+            audioController.decreaseVolume();
+        });
+        
         
         creditsBtn = new Button();
         StackPane.setAlignment(creditsBtn, Pos.BOTTOM_CENTER);
@@ -277,7 +320,10 @@ public class MenuController {
                 musicBtn.setVisible(true);
                 soundFxBtn.setVisible(true);
                 creditsBtn.setVisible(true);
+                volumeImg.setVisible(true);
                 viewSettings = true;
+                incrVolumeBtn.setVisible(true);
+                decrVolumeBtn.setVisible(true);
                 bg.setEffect(gaussianBlur);
                 hideItemsOnScreen();
                 backBtn.setVisible(false);
@@ -287,16 +333,19 @@ public class MenuController {
                 soundFxBtn.setVisible(false);
                 viewSettings = false;
                 creditsBtn.setVisible(false);
+                volumeImg.setVisible(false);
+                incrVolumeBtn.setVisible(false);
+                decrVolumeBtn.setVisible(false);
                 bg.setEffect(null);
                 showItemsOnScreen();
                 if (!isHome) {
                     backBtn.setVisible(true);
                 }
-//                backBtn.setVisible(true);
             }
     
         });
-        
+    
+    
         root.getChildren().add(settingsBtn);
         
         quitBtn = new Button();
