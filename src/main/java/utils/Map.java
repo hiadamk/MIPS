@@ -52,7 +52,7 @@ public class Map {
    * @see this#getSpawnPoint()
    * @see ResourceLoader#loadMap(String)
    */
-  Map(int[][] map_) {
+  public Map(int[][] map_) {
     MAP = map_;
     MAX_X = MAP.length;
     MAX_Y = MAP[0].length;
@@ -75,6 +75,14 @@ public class Map {
       }
     }
     return null;
+  }
+  
+  public int getMaxX() {
+	  return MAX_X;
+  }
+  
+  public int getMaxY() {
+	  return MAX_Y;
   }
 
   /**
