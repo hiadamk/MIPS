@@ -7,15 +7,12 @@ import java.net.InetAddress;
 import java.nio.charset.Charset;
 import java.util.Queue;
 
-/**
- * Currently there is no way to safely close the thread, I removed the stopmethod as you can't override the super one
- */
 class UDPSenderThread extends Thread {
     private final int STRING_LIMIT = NetworkingData.STRING_LIMIT;
-    private final String prefix = NetworkingData.prefix;
-    private final String suffix = NetworkingData.suffix;
-    private final Charset charset = NetworkingData.charset;
-    private boolean running = false;
+    private final String prefix = NetworkingData.PREFIX;
+    private final String suffix = NetworkingData.SUFFIX;
+    private final Charset charset = NetworkingData.CHARSET;
+    private volatile boolean running = false;
     private Queue<String> feedQueue;
     private byte[] buf;
     private DatagramSocket socket;
@@ -23,15 +20,15 @@ class UDPSenderThread extends Thread {
     private int port;
     
     /**
-     * @param socket
-     * @param feedQueue
+     * @param socket the sender is using
+     * @param feedQueue the queue of messages to send
      */
     public UDPSenderThread(DatagramSocket socket, Queue<String> feedQueue) {
         this.feedQueue = feedQueue;
         this.socket = socket;
         this.ipaddr = socket.getInetAddress();
         this.port = socket.getPort();
-        if (ipaddr == null || port == -1) {
+        if (ipaddr == null) {
             throw new IllegalArgumentException("Null ip, socket is not connected to anything!");
         }
         buf = String.format("%" + STRING_LIMIT + "s", "").getBytes(charset); //creates bye array of whitespace

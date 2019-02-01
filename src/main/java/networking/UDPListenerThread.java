@@ -9,10 +9,10 @@ import java.util.Queue;
 
 class UDPListenerThread extends Thread {
     private final int STRING_LIMIT = NetworkingData.STRING_LIMIT;
-    private final String prefix = NetworkingData.prefix;
-    private final String suffix = NetworkingData.suffix;
-    private final Charset charset = NetworkingData.charset;
-    private boolean running = false;
+    private final String prefix = NetworkingData.PREFIX;
+    private final String suffix = NetworkingData.SUFFIX;
+    private final Charset charset = NetworkingData.CHARSET;
+    private volatile boolean running = false;
     private Queue<String> feedQueue;
     private byte[] buf;
     private DatagramSocket socket;
