@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import main.Client;
 
 public class Main extends Application {
     
@@ -26,8 +27,8 @@ public class Main extends Application {
         
         Label dummyLabel = new Label("GAME SCENE");
         Scene dummyScene = new Scene(dummyLabel, 1920, 1080);
-        
-        MenuController menuController = new MenuController(audioController, primaryStage, dummyScene);
+    
+        MenuController menuController = new MenuController(audioController, primaryStage, new Client());
         StackPane root = (StackPane) menuController.createMainMenu();
         
         primaryStage.setTitle("M.I.P.S");

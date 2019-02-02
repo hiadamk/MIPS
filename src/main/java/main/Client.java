@@ -18,6 +18,8 @@ public class Client extends Application {
   private KeyController keyController;
   private Telemetry telemetry;
   private AudioController audioController;
+  private Scene gameScene;
+  private Stage primaryStage;
 
   public int getId() {
     return id;
@@ -28,8 +30,9 @@ public class Client extends Application {
     int id = 0; // This will be changed if main joins a lobby, telemetry will give it new id
     audioController = new AudioController();
     keyController = new KeyController();
-    Scene dummyScene = new Scene(new Label("place holder"), 1920, 1080);
-    MenuController menuController = new MenuController(audioController, primaryStage, dummyScene);
+    this.primaryStage = primaryStage;
+    this.gameScene = new Scene(new Label("place holder"), 1920, 1080);
+    MenuController menuController = new MenuController(audioController, primaryStage, this);
     StackPane root = (StackPane) menuController.createMainMenu();
     Scene scene = new Scene(root, 1920, 1080);
     scene.setOnKeyPressed(keyController);
@@ -37,20 +40,33 @@ public class Client extends Application {
     primaryStage.show();
 
     // main menu code will be here
-
-    // If hosting if not telemetry will be set by connection method along with new main id
-    telemetry = new Telemetry();
-
+  
+  
     // AnimationTimer started once game has started
     new AnimationTimer() {
       @Override
       public void handle(long now) {
-        processInput();
+        //Adam: This line is commented because it tries to process things that don't exist yet so breaks the menu.
+//        processInput();
         render();
       }
     }.start();
   }
-
+  
+  
+  public void startSinglePlayerGame() {
+    //TODO Implement fully
+    System.out.println("Starting single player game...");
+    // If hosting if not telemetry will be set by connection method along with new main id
+    this.telemetry = new Telemetry();
+    this.primaryStage.setScene(gameScene);
+  }
+  
+  public void startMultiplayerGame() {
+    //TODO Implement
+  }
+  
+  
   private void processInput() {
     Direction input = keyController.getActiveKey();
     Direction current = telemetry.getEntity(id).getDirection();

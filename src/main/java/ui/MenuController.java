@@ -5,13 +5,13 @@ import audio.Sounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import main.Client;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,8 @@ import java.util.Stack;
 public class MenuController {
     
     private AudioController audioController;
-    private Scene gameScene;
+    private Client client;
+    
     private boolean viewSettings = false;
     private boolean soundFX = true;
     private boolean music = true;
@@ -56,12 +57,11 @@ public class MenuController {
      *
      * @param audio     Global audio controller which is passed around the system
      * @param stage     The game window
-     * @param gameScene The scene where the game is
      */
-    public MenuController(AudioController audio, Stage stage, Scene gameScene) {
+    public MenuController(AudioController audio, Stage stage, Client client) {
         this.audioController = audio;
         this.primaryStage = stage;
-        this.gameScene = gameScene;
+        this.client = client;
         
     }
     
@@ -120,7 +120,8 @@ public class MenuController {
         startGameBtn.setVisible(false);
         startGameBtn.setOnAction(e -> {
             audioController.playSound(Sounds.click);
-            primaryStage.setScene(gameScene);
+//            primaryStage.setScene(gameScene);
+            client.startSinglePlayerGame();
         });
         
         this.singlePlayerBtn = new Button();
