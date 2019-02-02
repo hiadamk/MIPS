@@ -26,8 +26,7 @@ public class ResourceLoader {
   private BufferedImage ghoulPalette;
   private int ghoulColourID;
 
-  private BufferedImage wallTile;
-  private BufferedImage floorTile;
+  private ArrayList<BufferedImage> mapTiles;
 
   /**
    * @param baseDir path to the resources folder
@@ -125,7 +124,7 @@ public class ResourceLoader {
       this.mipSprites.set(i, tmp);
     }
     this.mipColourID = _colourID;
-    return bufferedToJavaFxImage(this.mipSprites);
+    return bufferedToJavaFxImage2D(this.mipSprites);
   }
 
   /**
@@ -156,23 +155,22 @@ public class ResourceLoader {
       }
     }
     this.ghoulColourID = _colourID;
-    return bufferedToJavaFxImage(this.ghoulSprites);
+    return bufferedToJavaFxImage2D(this.ghoulSprites);
   }
 
   /**
    * @param theme name of folder which contains the assets for that theme
    */
   public void loadMapTiles(String theme) {
-    this.floorTile = loadImageFile("sprites/" + theme + "/tiles/", "floor");
-    this.wallTile = loadImageFile("sprites/" + theme + "/tiles/", "wall");
+    ArrayList<BufferedImage> _mapTiles = new ArrayList<>();
+    for (MapElement m : MapElement.values()) {
+      _mapTiles.add(loadImageFile("sprites/" + theme + "/tiles/", m.toString()));
+    }
+    this.mapTiles = _mapTiles;
   }
 
-  public Image getFloorTile() {
-    return SwingFXUtils.toFXImage(this.floorTile, null);
-  }
-
-  public Image getWallTile() {
-    return SwingFXUtils.toFXImage(this.wallTile, null);
+  public ArrayList<Image> getMapTiles() {
+    return bufferedToJavaFxImage(this.mapTiles);
   }
 
   /**
@@ -226,16 +224,21 @@ public class ResourceLoader {
    * @param sprites BufferedImages to convert to JavaFX images
    * @return converted images in same arraylist structure
    */
-  private ArrayList<ArrayList<Image>> bufferedToJavaFxImage(
+  private ArrayList<Image> bufferedToJavaFxImage(
+      ArrayList<BufferedImage> sprites) {
+    ArrayList<Image> convertedSprites = new ArrayList<>();
+
+    for (BufferedImage img : sprites) {
+      convertedSprites.add(SwingFXUtils.toFXImage(img, null));
+    }
+    return convertedSprites;
+  }
+
+  private ArrayList<ArrayList<Image>> bufferedToJavaFxImage2D(
       ArrayList<ArrayList<BufferedImage>> sprites) {
     ArrayList<ArrayList<Image>> convertedSprites = new ArrayList<>();
-
     for (ArrayList<BufferedImage> imgs : sprites) {
-      ArrayList<Image> tmp = new ArrayList<>();
-      for (BufferedImage img : imgs) {
-        tmp.add(SwingFXUtils.toFXImage(img, null));
-      }
-      convertedSprites.add(tmp);
+      convertedSprites.add(bufferedToJavaFxImage(imgs));
     }
     return convertedSprites;
   }

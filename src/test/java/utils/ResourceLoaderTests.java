@@ -12,6 +12,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
 import org.junit.jupiter.api.Test;
+import utils.enums.MapElement;
 
 public class ResourceLoaderTests {
 
@@ -126,7 +127,8 @@ public class ResourceLoaderTests {
   @Test
   void floorLoaded() {
     ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
-    BufferedImage floor = SwingFXUtils.fromFXImage(resourceLoader.getFloorTile(), null);
+    BufferedImage floor = SwingFXUtils
+        .fromFXImage(resourceLoader.getMapTiles().get(MapElement.FLOOR.toInt()), null);
     assertEquals(19, floor.getHeight());
     assertEquals(39, floor.getWidth());
   }
@@ -134,7 +136,8 @@ public class ResourceLoaderTests {
   @Test
   void wallLoaded() {
     ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
-    BufferedImage wall = SwingFXUtils.fromFXImage(resourceLoader.getWallTile(), null);
+    BufferedImage wall = SwingFXUtils
+        .fromFXImage(resourceLoader.getMapTiles().get(MapElement.WALL.toInt()), null);
     assertEquals(29, wall.getHeight());
     assertEquals(39, wall.getWidth());
   }
