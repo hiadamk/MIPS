@@ -34,12 +34,13 @@ public class ResourceLoader {
    */
   public ResourceLoader(String baseDir) {
     BASE_DIR = baseDir;
-
+    /*
     this.loadMap("default");
     this.loadPlayableMip("default");
     this.loadPlayableGhoul("default");
     this.loadMapTiles("default");
     this.loadThemes();
+    */
   }
 
   public static void main(String[] args) {
