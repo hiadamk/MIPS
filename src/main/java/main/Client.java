@@ -35,31 +35,30 @@ public class Client extends Application {
     MenuController menuController = new MenuController(audioController, primaryStage, this);
     StackPane root = (StackPane) menuController.createMainMenu();
     Scene scene = new Scene(root, 1920, 1080);
-    scene.setOnKeyPressed(keyController);
+  
     primaryStage.setScene(scene);
     primaryStage.show();
 
-    // main menu code will be here
-  
-  
-    // AnimationTimer started once game has started
-    new AnimationTimer() {
-      @Override
-      public void handle(long now) {
-        //Adam: This line is commented because it tries to process things that don't exist yet so breaks the menu.
-//        processInput();
-        render();
-      }
-    }.start();
   }
   
   
   public void startSinglePlayerGame() {
     //TODO Implement fully
+  
     System.out.println("Starting single player game...");
     // If hosting if not telemetry will be set by connection method along with new main id
     this.telemetry = new Telemetry();
     this.primaryStage.setScene(gameScene);
+    gameScene.setOnKeyPressed(keyController);
+  
+    // AnimationTimer started once game has started
+    new AnimationTimer() {
+      @Override
+      public void handle(long now) {
+        processInput();
+        render();
+      }
+    }.start();
   }
   
   public void startMultiplayerGame() {
