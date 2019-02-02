@@ -3,6 +3,7 @@ package objects;
 import ai.routefinding.RouteFinder;
 import javafx.scene.image.Image;
 import utils.Renderable;
+import utils.ResourceLoader;
 import utils.enums.Direction;
 
 import java.awt.geom.Point2D;
@@ -16,15 +17,16 @@ public class Entity implements Renderable {
   private int score;
   private int clientId;
   private Boolean pacMan;
-  private ArrayList<Image>[] images;
+  private ArrayList<ArrayList<Image>> images;
   private RouteFinder routeFinder;
-
-  public Entity(Boolean pacMan, int clientId) {
+  private ResourceLoader resourceLoader;
+  public Entity(Boolean pacMan, int clientId, ResourceLoader resourceLoader) {
     this.pacMan = pacMan;
     this.clientId = clientId;
     this.score = 0;
     this.velocity = 0;
-    // images = resourceLoader.getImages(pacMan, clientId)
+    this.resourceLoader = resourceLoader;
+    //updateImages();
   }
 
   public RouteFinder getRouteFinder() {
@@ -46,9 +48,9 @@ public class Entity implements Renderable {
   @Override
   public ArrayList<Image> getImage() {
     if (direction == null) {
-      return images[0];
+      return images.get(0);
     }
-    return images[direction.toInt()];
+    return images.get(direction.toInt());
   }
 
   public double getVelocity() {
@@ -64,7 +66,9 @@ public class Entity implements Renderable {
   }
 
   public void setDirection(Direction direction) {
-    this.direction = direction;
+    if(this.direction!=direction){
+      this.direction = direction;
+    }
   }
 
   public int getScore() {
@@ -85,6 +89,10 @@ public class Entity implements Renderable {
 
   public void setPacMan(Boolean pac) {
     this.pacMan = pac;
-      // images = resourceLoader.getImages(pacMan, clientId)
+    updateImages();
+  }
+
+  private void updateImages(){
+    images = pacMan ? resourceLoader.getPlayableMip(clientId) : resourceLoader.getPlayableGhoul(clientId);
   }
 }

@@ -17,8 +17,10 @@ public class Telemetry {
     private static final int AGENT_COUNT = 5;
   private BlockingQueue<Input> inputs;
   private Entity[] agents;
+  private ResourceLoader resourceLoader;
 
   public Telemetry() {
+    resourceLoader = new ResourceLoader("src/main/resources");
     inputs = new LinkedBlockingQueue<>();
     int aiCount = AGENT_COUNT - makeConnections();
     if (aiCount > 0) {
@@ -26,12 +28,12 @@ public class Telemetry {
     }
     agents = new Entity[AGENT_COUNT];
 
-    agents[0] = new Entity(true, 0);
-    agents[1] = new Entity(false, 1);
-    agents[2] = new Entity(false, 2);
-    agents[3] = new Entity(false, 3);
-    agents[4] = new Entity(false, 4);
-    startGame();
+    agents[0] = new Entity(true, 0, resourceLoader);
+    agents[1] = new Entity(false, 1, resourceLoader);
+    agents[2] = new Entity(false, 2, resourceLoader);
+    agents[3] = new Entity(false, 3, resourceLoader);
+    agents[4] = new Entity(false, 4, resourceLoader);
+    //startGame();
   }
 
   /**
