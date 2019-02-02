@@ -1,13 +1,12 @@
 package objects;
 
 import ai.routefinding.RouteFinder;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import javafx.scene.image.Image;
 import utils.Renderable;
 import utils.ResourceLoader;
 import utils.enums.Direction;
-
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
 
 public class Entity implements Renderable {
 
@@ -20,6 +19,7 @@ public class Entity implements Renderable {
   private ArrayList<ArrayList<Image>> images;
   private RouteFinder routeFinder;
   private ResourceLoader resourceLoader;
+
   public Entity(Boolean pacMan, int clientId, ResourceLoader resourceLoader) {
     this.pacMan = pacMan;
     this.clientId = clientId;

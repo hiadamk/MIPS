@@ -2,12 +2,10 @@ package renderer;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.PriorityQueue;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import objects.Entity;
 import utils.Map;
-import utils.Renderable;
 
 public class Renderer {
 
@@ -33,12 +31,29 @@ public class Renderer {
   }
 
   public void render(Map map, ArrayList<Entity> entities) {
-    PriorityQueue<Renderable> gameObjects = new PriorityQueue<>(entities);
+
+    //sort entities to get rendering order
+    entities.sort((o1, o2) -> {
+      if (o1.getLocation().getX() == o2.getLocation().getX()) {
+        if (o1.getLocation().getY() == o2.getLocation().getY()) {
+          return 0;
+        } else if (o1.getLocation().getY() > o2.getLocation().getY()) {
+          return 1;
+        } else {
+          return -1;
+        }
+      } else if (o1.getLocation().getX() > o2.getLocation().getX()) {
+        return 1;
+      } else {
+        return -1;
+      }
+
+    });
 
     int[][] rawMap = map.raw();
 
-    for (int x = 0; x < rawMap.length; x++) {
-      for (int y = 0; y < rawMap[x].length; y++) {
+    for (int y = 0; y < rawMap.length; y++) {
+      for (int x = 0; x < rawMap[y].length; x++) {
         Point2D.Double tileCoord = getIsoCoord(x, y, 4);
       }
     }
