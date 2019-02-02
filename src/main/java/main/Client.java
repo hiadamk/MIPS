@@ -18,6 +18,8 @@ public class Client extends Application {
   private KeyController keyController;
   private Telemetry telemetry;
   private AudioController audioController;
+  private Scene gameScene;
+  private Stage primaryStage;
 
   public int getId() {
     return id;
@@ -28,19 +30,27 @@ public class Client extends Application {
     int id = 0; // This will be changed if main joins a lobby, telemetry will give it new id
     audioController = new AudioController();
     keyController = new KeyController();
-    Scene dummyScene = new Scene(new Label("place holder"), 1920, 1080);
-    MenuController menuController = new MenuController(audioController, primaryStage, dummyScene);
+    this.primaryStage = primaryStage;
+    this.gameScene = new Scene(new Label("place holder"), 1920, 1080);
+    MenuController menuController = new MenuController(audioController, primaryStage, this);
     StackPane root = (StackPane) menuController.createMainMenu();
     Scene scene = new Scene(root, 1920, 1080);
-    scene.setOnKeyPressed(keyController);
+  
     primaryStage.setScene(scene);
     primaryStage.show();
 
-    // main menu code will be here
-
+  }
+  
+  
+  public void startSinglePlayerGame() {
+    //TODO Implement fully
+  
+    System.out.println("Starting single player game...");
     // If hosting if not telemetry will be set by connection method along with new main id
-    telemetry = new Telemetry();
-
+    this.telemetry = new Telemetry();
+    this.primaryStage.setScene(gameScene);
+    gameScene.setOnKeyPressed(keyController);
+  
     // AnimationTimer started once game has started
     new AnimationTimer() {
       @Override
@@ -50,7 +60,12 @@ public class Client extends Application {
       }
     }.start();
   }
-
+  
+  public void startMultiplayerGame() {
+    //TODO Implement
+  }
+  
+  
   private void processInput() {
     Direction input = keyController.getActiveKey();
     Direction current = telemetry.getEntity(id).getDirection();
