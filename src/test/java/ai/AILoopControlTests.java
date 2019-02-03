@@ -46,11 +46,11 @@ class AILoopControlTests {
   	private static final Map MAP = new Map(MAP_RAW);
 	
 	private static final Entity[] ALL_AGENTS= {
-			new Entity(true, 0),
-			new Entity(false, 1),
-			new Entity(false, 2),
-			new Entity(false, 3),
-			new Entity(false, 4)};
+			new Entity(true, 0, null),
+			new Entity(false, 1, null),
+			new Entity(false, 2, null),
+			new Entity(false, 3, null),
+			new Entity(false, 4, null)};
 
 	@Test
 	void testRunValid() {
@@ -88,11 +88,11 @@ class AILoopControlTests {
 	@Test
 	void testAILoopControlDuplicateID() {
 		Entity[] entities= {
-				new Entity(true, 0),
-				new Entity(false, 1),
-				new Entity(false, 2),
-				new Entity(false, 3),
-				new Entity(false, 2)};
+				new Entity(true, 0, null),
+				new Entity(false, 1, null),
+				new Entity(false, 2, null),
+				new Entity(false, 3, null),
+				new Entity(false, 2, null)};
 		Executable e = () -> new AILoopControl(entities, new int[0], MAP);
 		assertThrows(IllegalArgumentException.class, e);
 	}
