@@ -1,16 +1,15 @@
 package server;
 
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import objects.Entity;
 import utils.Input;
 import utils.Map;
 import utils.ResourceLoader;
 import utils.enums.Direction;
-
-import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class Telemetry {
     
@@ -20,7 +19,7 @@ public class Telemetry {
   private ResourceLoader resourceLoader;
 
   public Telemetry() {
-    resourceLoader = new ResourceLoader("src/main/resources");
+    resourceLoader = new ResourceLoader("src/main/resources/");
     inputs = new LinkedBlockingQueue<>();
     int aiCount = AGENT_COUNT - makeConnections();
     if (aiCount > 0) {

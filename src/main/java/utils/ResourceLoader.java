@@ -33,6 +33,7 @@ public class ResourceLoader {
    */
   public ResourceLoader(String baseDir) {
     BASE_DIR = baseDir;
+    //BASE_DIR = "";
 
     this.loadMap("default");
     this.loadPlayableMip("default");
@@ -178,7 +179,9 @@ public class ResourceLoader {
    * @param name name of image to load (no file ending)
    */
   private BufferedImage loadImageFile(String folderPath, String name) {
+
     String path = BASE_DIR + folderPath + name + ".png";
+
     File mapFile = new File(path);
     BufferedImage image = null;
 
