@@ -2,53 +2,21 @@ package ai.routefinding;
 
 import objects.Entity;
 import utils.enums.Direction;
-
 import java.awt.geom.Point2D;
-import java.util.HashSet;
 import java.util.Random;
 
-public class RandomRouteFinder implements RouteFinder {
+public class RandomRouteFinder extends AbstractRouteFinder {
     
     private static final Random R = new Random();
     private static final Direction DEFAULT = Direction.UP;
-    private Entity[] gameAgents;
-    private int myId;
-    private boolean agentsSet;
     
     /**
      * Creates an instance of this routeFinder. As it is random the map is irrelevant.
      */
     public RandomRouteFinder() {
-        this.agentsSet = false;
+        super();
     }
     
-    /**
-     * Set all agents in the game for reference and set which of those agents the current route is
-     * being generated for.
-     *
-     * @param gameAgents The array containing all agents within the game exactly once only.
-     * @param myId       The Enum referring to the current agent for which this routefinder is being
-     *                   assigned.
-     * @throws IllegalArgumentException gameAgent cannot contain duplicate IDs.
-     * @throws IllegalStateException    The game agents cannot be re-assigned (this method can only be
-     *                                  called once).
-     */
-    public void setAgents(Entity[] gameAgents, int myId) {
-        HashSet<Integer> ids = new HashSet<Integer>();
-        // basic validation
-        for (Entity e : gameAgents) {
-            if (!ids.add(e.getClientId())) {
-                throw new IllegalArgumentException("gameAgent array contains duplicate IDs.");
-            }
-        }
-        // does not allow agents to be changed once started
-        if (this.agentsSet) {
-            throw new IllegalStateException("gameAgents already assigned.");
-        }
-        this.gameAgents = gameAgents;
-        this.myId = myId;
-        this.agentsSet = true;
-    }
     
     /**
      * Returns the direction to travel in until the next junction is reached. Requires {@link
