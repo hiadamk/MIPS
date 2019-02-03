@@ -6,6 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import objects.Entity;
 import utils.Map;
+import utils.Renderable;
 
 public class Renderer {
 
@@ -78,7 +79,7 @@ public class Renderer {
     }
 
     //render elements off the map
-    for (Entity e : entities.subList(entityCounter, entities.size())) {
+    for (Renderable e : entities.subList(entityCounter, entities.size())) {
       renderEntity(e);
     }
 
@@ -103,7 +104,7 @@ public class Renderer {
    *
    * @param e entity to render
    */
-  private void renderEntity(Entity e) {
+  private void renderEntity(Renderable e) {
     Image currentSprite = e.getImage().get(0);
     Point2D.Double rendCoord = getIsoCoord(e.getLocation().getX(), e.getLocation().getY(),
         currentSprite.getHeight());
