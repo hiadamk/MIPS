@@ -76,8 +76,8 @@ public class Renderer {
 
         //check if entity should be on top of this tile
         while (entityCounter < entities
-            .size() && (y - 1 <= spriteCoord.getY() && spriteCoord.getY() <= y
-            || x - 1 <= spriteCoord.getX() && spriteCoord.getX() <= x)) {
+            .size() && (isBetween(y - 1, y, spriteCoord.getY()) && isBetween(x - 1, x,
+            spriteCoord.getX()))) {
 
           renderEntity(entities.get(entityCounter));
           entityCounter++;
@@ -114,7 +114,6 @@ public class Renderer {
    * @param e entity to render
    */
   private void renderEntity(Renderable e) {
-    System.out.println("wow");
     Image currentSprite = e.getImage().get(0);
     Point2D.Double rendCoord = getIsoCoord(e.getLocation().getX(), e.getLocation().getY(),
         currentSprite.getHeight());
@@ -130,5 +129,9 @@ public class Renderer {
 
   private void renderHUD() {
 
+  }
+
+  private boolean isBetween(double lowerBound, double upperBound, double num) {
+    return num <= upperBound && num >= lowerBound;
   }
 }

@@ -10,6 +10,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
 import objects.Entity;
 import renderer.Renderer;
+import utils.enums.Direction;
 
 public class ImageTester extends Application {
 
@@ -28,14 +29,23 @@ public class ImageTester extends Application {
     Renderer r = new Renderer(gc, 1920, 1080, resourceLoader.getMapTiles());
 
     ArrayList<Entity> entities = new ArrayList<>();
-    Entity mip = new Entity(true, 0, resourceLoader);
-    mip.setLocation(new Double(1, 1));
+
+    Entity mip = new Entity(true, 1, resourceLoader);
     mip.setPacMan(true);
+    mip.setLocation(new Double(1, 2));
+
+    Entity ghoul = new Entity(false, 4, resourceLoader);
+    ghoul.setLocation(new Double(6.5, 3));
+    ghoul.setPacMan(false);
+    ghoul.setDirection(Direction.RIGHT);
+
     entities.add(mip);
+    entities.add(ghoul);
 
     r.render(map, entities);
 
     stage.setScene(new Scene(new Group(canvas)));
     stage.show();
+
   }
 }
