@@ -1,18 +1,22 @@
 package main;
 
 import audio.AudioController;
+import java.util.ArrayList;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import objects.Entity;
 import renderer.Renderer;
 import server.Telemetry;
 import ui.MenuController;
 import utils.Input;
+import utils.Map;
 import utils.ResourceLoader;
 import utils.enums.Direction;
 
@@ -28,6 +32,9 @@ public class Client extends Application {
   private final int xRes = 1920;
   private final int yRes = 1080;
   private ResourceLoader resourceLoader;
+  private Entity[] agents;
+  Map map;
+
 
   public int getId() {
     return id;
@@ -40,11 +47,14 @@ public class Client extends Application {
     keyController = new KeyController();
     resourceLoader = new ResourceLoader("src/test/resources/");
     this.primaryStage = primaryStage;
-    this.gameScene = new Scene(new Label("place holder"), xRes, yRes);
+    //this.gameScene = new Scene(new Label("place holder"), xRes, yRes);
     MenuController menuController = new MenuController(audioController, primaryStage, this);
     StackPane root = (StackPane) menuController.createMainMenu();
     Scene scene = new Scene(root, xRes, yRes);
     final Canvas canvas = new Canvas(xRes, yRes);
+    Group gameRoot = new Group();
+    root.getChildren().add(canvas);
+    this.gameScene = new Scene(gameRoot);
     GraphicsContext gc = canvas.getGraphicsContext2D();
     renderer = new Renderer(gc, xRes, yRes, resourceLoader.getMapTiles() );
     primaryStage.setScene(scene);
@@ -60,16 +70,10 @@ public class Client extends Application {
     // If hosting if not telemetry will be set by connection method along with new main id
     this.telemetry = new Telemetry();
     this.primaryStage.setScene(gameScene);
+
     gameScene.setOnKeyPressed(keyController);
-  
-    // AnimationTimer started once game has started
-    new AnimationTimer() {
-      @Override
-      public void handle(long now) {
-        processInput();
-        render();
-      }
-    }.start();
+
+    startGame();
   }
   
   public void startMultiplayerGame() {
@@ -77,11 +81,14 @@ public class Client extends Application {
   }
   
   private void startGame() {
+    map = resourceLoader.getMap();
+    this.primaryStage.setScene(gameScene);
     // AnimationTimer started once game has started
     new AnimationTimer() {
       @Override
       public void handle(long now) {
         processInput();
+        Telemetry.processPhysics(agents);
         render();
       }
     }.start();
@@ -123,6 +130,10 @@ public class Client extends Application {
   }
 
   private void render() {
-    // TODO put render code here pass in either scene or graphics content
+    ArrayList<Entity> x = new ArrayList<>();
+    for(Entity e : agents){
+      x.add(e);
+    }
+    renderer.render(map, x);
   }
 }
