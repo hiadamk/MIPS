@@ -13,7 +13,7 @@ import utils.enums.Direction;
 
 public class Telemetry {
     
-    private static final int AGENT_COUNT = 5;
+  private static final int AGENT_COUNT = 5;
   private BlockingQueue<Input> inputs;
   private Entity[] agents;
   private ResourceLoader resourceLoader;
@@ -44,7 +44,7 @@ public class Telemetry {
    * @author Alex Banks
    * @see this#entityCollision(Entity, Entity, Double)
    */
-  private static Entity[] processPhysics(Entity[] agents) {
+  public static Entity[] processPhysics(Entity[] agents) {
     Map m = (new ResourceLoader(System.getProperty("user.dir"))).getMap();
 
     for (int i = 0; i < AGENT_COUNT; i++) {
