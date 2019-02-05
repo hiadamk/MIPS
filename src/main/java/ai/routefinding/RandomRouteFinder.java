@@ -2,6 +2,8 @@ package ai.routefinding;
 
 import objects.Entity;
 import utils.enums.Direction;
+
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.Random;
 
@@ -29,7 +31,7 @@ public class RandomRouteFinder extends AbstractRouteFinder {
      * @throws IllegalArgumentException PacmanID must be within the range of gameAgents Array.
      */
     @Override
-    public Direction getRoute(int pacmanID) {
+    public Direction getRoute(int pacmanID, Point myLocation) {
         if (!agentsSet) {
             throw new IllegalStateException("gameAgents have not been set.");
         }

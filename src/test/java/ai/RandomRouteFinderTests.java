@@ -75,12 +75,12 @@ class RandomRouteFinderTests {
 			gas[i].setLocation(new Point2D.Double(0, i));
 		}
 		rrf.setAgents(gas, 1);
-		rrf.getRoute(0);
+		rrf.getRoute(0, null);
 	}
 	@Test
 	void getRouteNoAgentsSet() {
 		RandomRouteFinder rrf = new RandomRouteFinder();
-		Executable e = () -> rrf.getRoute(0);
+		Executable e = () -> rrf.getRoute(0, null);
 		assertThrows(IllegalStateException.class, e);
 	}
 	@Test
@@ -93,9 +93,9 @@ class RandomRouteFinderTests {
 				new Entity(false, 3, null),
 				new Entity(false, 4, null)};
 		rrf.setAgents(gas, 1);
-		Executable e = () -> rrf.getRoute(-1);
+		Executable e = () -> rrf.getRoute(-1, null);
 		assertThrows(IllegalArgumentException.class, e);
-		e = () -> rrf.getRoute(7);
+		e = () -> rrf.getRoute(7, null);
 		assertThrows(IllegalArgumentException.class, e);
 	}
 }
