@@ -1,12 +1,12 @@
 package utils;
 
 import java.awt.geom.Point2D.Double;
-import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import objects.Entity;
 import renderer.Renderer;
@@ -28,7 +28,7 @@ public class ImageTester extends Application {
     Map map = resourceLoader.getMap();
     Renderer r = new Renderer(gc, 1920, 1080, resourceLoader.getMapTiles());
 
-    ArrayList<Entity> entities = new ArrayList<>();
+
 
     Entity mip = new Entity(true, 1, new Double(1, 2));
     mip.setPacMan(true);
@@ -37,11 +37,12 @@ public class ImageTester extends Application {
     ghoul.setPacMan(false);
     ghoul.setDirection(Direction.RIGHT);
 
-    entities.add(mip);
-    entities.add(ghoul);
+    Entity[] entities = new Entity[]{mip, ghoul};
+
+    Image background = resourceLoader.getBackground();
+    gc.drawImage(background, 0, 0, 1920, 1080);
 
     r.render(map, entities);
-
     stage.setScene(new Scene(new Group(canvas)));
     stage.show();
 
