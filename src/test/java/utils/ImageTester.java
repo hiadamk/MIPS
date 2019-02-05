@@ -30,11 +30,11 @@ public class ImageTester extends Application {
 
     ArrayList<Entity> entities = new ArrayList<>();
 
-    Entity mip = new Entity(true, 1, resourceLoader);
+    Entity mip = new Entity(true, 1);
     mip.setPacMan(true);
     mip.setLocation(new Double(1, 2));
 
-    Entity ghoul = new Entity(false, 4, resourceLoader);
+    Entity ghoul = new Entity(false, 4);
     ghoul.setLocation(new Double(6.5, 3));
     ghoul.setPacMan(false);
     ghoul.setDirection(Direction.RIGHT);
