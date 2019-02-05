@@ -1,7 +1,8 @@
-package ai.routefinding;
+package ai.routefinding.routefinders;
 
 import java.awt.Point;
 
+import ai.routefinding.RouteFinder;
 import utils.enums.Direction;
 
 public class MipsManRouteFinder implements RouteFinder {

@@ -1,10 +1,10 @@
 package ai;
 
 import ai.mapping.Mapping;
-import ai.routefinding.MipsManRouteFinder;
 import ai.routefinding.NoRouteFinderException;
-import ai.routefinding.RandomRouteFinder;
 import ai.routefinding.RouteFinder;
+import ai.routefinding.routefinders.MipsManRouteFinder;
+import ai.routefinding.routefinders.RandomRouteFinder;
 import objects.Entity;
 import utils.Map;
 import utils.enums.Direction;

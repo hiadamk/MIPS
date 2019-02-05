@@ -1,8 +1,10 @@
-package ai.routefinding;
+package ai.routefinding.routefinders;
 
 import java.awt.Point;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import ai.routefinding.RouteFinder;
 import objects.Entity;
 import utils.enums.Direction;
 

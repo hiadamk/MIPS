@@ -1,9 +1,11 @@
-package ai.routefinding;
+package ai.routefinding.routefinders;
 
 import objects.Entity;
 import utils.enums.Direction;
 import java.awt.Point;
 import java.util.Random;
+
+import ai.routefinding.RouteFinder;
 
 public class RandomRouteFinder implements RouteFinder {
     
@@ -17,19 +19,17 @@ public class RandomRouteFinder implements RouteFinder {
     
     
     /**
-     * Returns the direction to travel in until the next junction is reached. Requires {@link
-     * #setAgents(Entity[], int) setAgents()} method to have been called before use.
+     * Returns the direction to travel in until the next junction is reached.
      *
-     * @param pacmanID The main ID of the entity that is currently pacman.
+     * @param myLocation The start of location for route finding.
+     * @param targetLocation The target location for route finding.
      * @return The direction to travel in.
-     * @throws IllegalStateException    The gameAgents have not been set. Call {@link
-     *                                  #setAgents(Entity[], int) setAgents()} before calling this method.
-     * @throws IllegalArgumentException PacmanID must be within the range of gameAgents Array.
+     * @throws NullPointerException One or both of positions are null.
      */
     @Override
     public Direction getRoute(Point myLocation, Point targetLocation) {
     	if (myLocation == null || targetLocation == null) {
-    		throw new NullPointerException("One or both positions are not set.");
+    		throw new NullPointerException("One or both positions are null.");
     	}
         Direction dir;
         int dirValue = R.nextInt(6);
