@@ -1,15 +1,17 @@
 package server;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 /**
- * Client class which creates the appropriate senders and starts them.
+ * ClientGameplayHandler class which creates the appropriate senders and starts them.
  */
-public class Client {
+public class ClientGameplayHandler {
 
     public Queue<String> outgoingQueue;
     private Queue<String> incomingQueue;
@@ -24,7 +26,7 @@ public class Client {
     private PacketSender sender;
     private PacketReceiver receiver;
     
-    public Client() throws IOException {
+    public ClientGameplayHandler() throws IOException {
         outgoingQueue = new ConcurrentLinkedQueue<>();
         incomingQueue = new ConcurrentLinkedQueue<>();
         keypressQueue = new LinkedBlockingDeque<>();
@@ -33,11 +35,16 @@ public class Client {
         initialisePacketManagers();
         
         outgoingQueue.add("POS");
-        this.sender =
-                new PacketSender(NetworkUtility.GROUP, NetworkUtility.SERVER_PORT, this.outgoingQueue);
-        this.receiver =
-                new PacketReceiver(NetworkUtility.GROUP, NetworkUtility.CLIENT_PORT,
-                        this.incomingQueue);
+//        this.sender =
+//                new PacketSender(NetworkUtility.GROUP, NetworkUtility.SERVER_PORT, this.outgoingQueue);
+//        this.receiver =
+//                new PacketReceiver(NetworkUtility.GROUP, NetworkUtility.CLIENT_PORT,
+//                        this.incomingQueue);
+        ArrayList<InetAddress> ips = new ArrayList<>();
+        ips.add(InetAddress.getByName("localhost"));
+        
+        this.sender = new PacketSender(3000, this.outgoingQueue, ips);
+        this.receiver = new PacketReceiver(3001, incomingQueue);
         this.incomingPacketManager.start();
         this.outgoingPacketManager.start();
         this.receiver.start();
@@ -45,11 +52,8 @@ public class Client {
     }
     
     public static void main(String[] args) throws IOException {
-        
-        Client c = new Client();
-        for (int i = 0; i < 100; i++) {
-            c.outgoingQueue.add("Sent: " + i);
-        }
+    
+        ClientGameplayHandler c = new ClientGameplayHandler();
     }
     
     /**
