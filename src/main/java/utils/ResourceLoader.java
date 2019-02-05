@@ -28,6 +28,8 @@ public class ResourceLoader {
 
   private ArrayList<BufferedImage> mapTiles;
 
+  private BufferedImage background;
+
   /**
    * @param baseDir path to the resources folder
    */
@@ -39,6 +41,7 @@ public class ResourceLoader {
     this.loadPlayableMip("default");
     this.loadPlayableGhoul("default");
     this.loadMapTiles("default");
+    this.loadBackground("default");
     this.loadThemes();
 
   }
@@ -172,6 +175,14 @@ public class ResourceLoader {
 
   public ArrayList<Image> getMapTiles() {
     return bufferedToJavaFxImage(this.mapTiles);
+  }
+
+  public void loadBackground(String theme) {
+    this.background = loadImageFile("sprites/" + theme + "/backgrounds/", theme);
+  }
+
+  public Image getBackground() {
+    return SwingFXUtils.toFXImage(this.background, null);
   }
 
   /**
