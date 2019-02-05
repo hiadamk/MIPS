@@ -8,7 +8,6 @@ import javafx.animation.AnimationTimer;
 import objects.Entity;
 import utils.Input;
 import utils.Map;
-import utils.ResourceLoader;
 import utils.enums.Direction;
 
 public class Telemetry {
@@ -16,9 +15,10 @@ public class Telemetry {
   private static final int AGENT_COUNT = 5;
   private BlockingQueue<Input> inputs;
   private Entity[] agents;
+  Map map;
 
-
-  public Telemetry() {
+  public Telemetry(Map map) {
+    this.map = map;
     inputs = new LinkedBlockingQueue<>();
     int aiCount = AGENT_COUNT - makeConnections();
     if (aiCount > 0) {
@@ -26,11 +26,12 @@ public class Telemetry {
     }
     agents = new Entity[AGENT_COUNT];
 
-    agents[0] = new Entity(true, 0);
-    agents[1] = new Entity(false, 1);
-    agents[2] = new Entity(false, 2);
-    agents[3] = new Entity(false, 3);
-    agents[4] = new Entity(false, 4);
+    agents[0] = new Entity(true, 0, new Double(1, 3));
+    agents[1] = new Entity(false, 1, new Double(1, 2));
+    agents[2] = new Entity(false, 2, new Double(1, 2));
+    agents[3] = new Entity(false, 3, new Double(1, 2));
+    agents[4] = new Entity(false, 4, new Double(1, 2));
+
     //startGame();
   }
 
@@ -43,13 +44,14 @@ public class Telemetry {
    * @author Alex Banks
    * @see this#entityCollision(Entity, Entity, Double)
    */
-  public static Entity[] processPhysics(Entity[] agents) {
-    Map m = (new ResourceLoader(System.getProperty("user.dir"))).getMap();
+  public static Entity[] processPhysics(Entity[] agents, Map m) {
 
     for (int i = 0; i < AGENT_COUNT; i++) {
       Point2D.Double tempLocation = agents[i].getLocation();
       double offset = agents[i].getVelocity();
-
+      if (agents[i].getDirection() == null) {
+        continue;
+      }
       switch (agents[i].getDirection()) {
         case UP:
           tempLocation.setLocation(tempLocation.getX() + offset, tempLocation.getY());
@@ -135,7 +137,7 @@ public class Telemetry {
             public void handle(long now) {
                 processInputs();
                 informClients();
-                agents = processPhysics(agents);
+              agents = processPhysics(agents, map);
                 updateClients();
             }
         }.start();

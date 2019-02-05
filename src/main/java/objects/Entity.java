@@ -19,11 +19,12 @@ public class Entity implements Renderable {
   private ArrayList<ArrayList<Image>> images;
   private RouteFinder routeFinder;
 
-  public Entity(Boolean pacMan, int clientId) {
+  public Entity(Boolean pacMan, int clientId, Point2D.Double location) {
     this.pacMan = pacMan;
     this.clientId = clientId;
+    this.location = location;
     this.score = 0;
-    this.velocity = 0;
+    this.velocity = pacMan ? 2 : 1;
     //updateImages();
   }
 
@@ -89,7 +90,7 @@ public class Entity implements Renderable {
     this.pacMan = pac;
   }
 
-  private void updateImages(ResourceLoader resourceLoader){
+  public void updateImages(ResourceLoader resourceLoader) {
     images = pacMan ? resourceLoader.getPlayableMip(clientId) : resourceLoader.getPlayableGhoul(clientId);
   }
 }
