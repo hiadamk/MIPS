@@ -47,7 +47,8 @@ public class Telemetry {
   public static Entity[] processPhysics(Entity[] agents, Map m) {
 
     for (int i = 0; i < AGENT_COUNT; i++) {
-      Point2D.Double tempLocation = agents[i].getLocation();
+      Point2D.Double tempLocation = new Point2D.Double(agents[i].getLocation().getX(),
+          agents[i].getLocation().getY());
       double offset = agents[i].getVelocity();
       if (agents[i].getDirection() == null) {
         continue;
@@ -69,11 +70,15 @@ public class Telemetry {
 
       if (m.isWall(tempLocation)) {
         agents[i].setDirection(null);
-        agents[i].setVelocity(0);
+        //agents[i].setVelocity(0);
         System.out.println("in wall");
+        System.out.println(tempLocation);
+        System.out.println(agents[i].getLocation());
+        System.out.println(offset);
       } else {
         agents[i].setLocation(tempLocation);
         System.out.println("moved");
+        System.out.println(offset);
       }
     
         // TODO add points for pellet collision
