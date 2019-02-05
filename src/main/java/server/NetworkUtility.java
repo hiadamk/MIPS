@@ -1,9 +1,7 @@
 package server;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
@@ -57,5 +55,30 @@ public class NetworkUtility {
             }
         }
         return "";
+    }
+    
+    public static InetAddress getServerIP() throws IOException {
+        MulticastSocket socket = new MulticastSocket(CLIENT_PORT);
+        InetAddress group = InetAddress.getByName("239.255.255.255");
+        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+        while (interfaces.hasMoreElements()) {
+            NetworkInterface iface = interfaces.nextElement();
+            if (iface.isLoopback() || !iface.isUp())
+                continue;
+            
+            Enumeration<InetAddress> addresses = iface.getInetAddresses();
+            while (addresses.hasMoreElements()) {
+                InetAddress addr = addresses.nextElement();
+                socket.setInterface(addr);
+                socket.joinGroup(group);
+            }
+        }
+        
+        byte[] buf = new byte[256];
+        DatagramPacket packet = new DatagramPacket(buf, buf.length);
+        socket.receive(packet);
+        System.out.printf("Server Address: " + packet.getAddress());
+        return packet.getAddress();
+        
     }
 }

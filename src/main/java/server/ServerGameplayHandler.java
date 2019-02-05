@@ -1,12 +1,14 @@
 package server;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public class Server {
+public class ServerGameplayHandler {
     
     private Queue<String> outgoingQueue;
     private Queue<String> incomingQueue;
@@ -21,7 +23,7 @@ public class Server {
     private PacketSender sender;
     private PacketReceiver receiver;
     
-    public Server() throws IOException {
+    public ServerGameplayHandler() throws IOException {
         
         outgoingQueue = new ConcurrentLinkedQueue<String>();
         incomingQueue = new ConcurrentLinkedQueue<String>();
@@ -30,12 +32,17 @@ public class Server {
         this.collisionQueue = new LinkedBlockingDeque<>();
         
         initialisePacketManagers();
+
+//        this.sender =
+//                new PacketSender(NetworkUtility.GROUP, NetworkUtility.CLIENT_PORT, this.outgoingQueue);
+//        this.receiver =
+//                new PacketReceiver(NetworkUtility.GROUP, NetworkUtility.SERVER_PORT, this.incomingQueue);
         
-        this.sender =
-                new PacketSender(NetworkUtility.GROUP, NetworkUtility.CLIENT_PORT, this.outgoingQueue);
-        this.receiver =
-                new PacketReceiver(NetworkUtility.GROUP, NetworkUtility.SERVER_PORT, this.incomingQueue);
         
+        ArrayList<InetAddress> ips = new ArrayList<>();
+        ips.add(InetAddress.getByName("localhost"));
+        this.sender = new PacketSender(3001, this.outgoingQueue, ips);
+        this.receiver = new PacketReceiver(3000, this.incomingQueue);
         this.incomingPacketManager.start();
         this.outgoingPacketManager.start();
         this.sender.start();
@@ -43,9 +50,9 @@ public class Server {
     }
     
     public static void main(String[] args) throws IOException {
-        
-        Server s = new Server();
-        System.out.println("Server Running");
+    
+        ServerGameplayHandler s = new ServerGameplayHandler();
+        System.out.println("ServerGameplayHandler Running");
     }
     
     /**
@@ -61,7 +68,8 @@ public class Server {
                             if (incomingQueue.isEmpty()) {
                                 continue;
                             }
-                            System.out.println(incomingQueue.poll());
+                            System.out.println(incomingQueue.peek());
+                            outgoingQueue.add(incomingQueue.poll());
                             //                    key = Integer.valueOf(incomingQueue.poll());
                             //                    keypressQueue.add(key);
                             try {
