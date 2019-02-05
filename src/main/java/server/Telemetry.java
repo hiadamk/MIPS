@@ -53,16 +53,16 @@ public class Telemetry {
         continue;
       }
       switch (agents[i].getDirection()) {
-        case UP:
+        case RIGHT:
           tempLocation.setLocation(tempLocation.getX() + offset, tempLocation.getY());
           break;
-        case DOWN:
+        case LEFT:
           tempLocation.setLocation(tempLocation.getX() - offset, tempLocation.getY());
           break;
-        case RIGHT:
+        case DOWN:
           tempLocation.setLocation(tempLocation.getX(), tempLocation.getY() + offset);
           break;
-        case LEFT:
+        case UP:
           tempLocation.setLocation(tempLocation.getX(), tempLocation.getY() - offset);
           break;
       }
