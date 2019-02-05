@@ -1,5 +1,7 @@
 package ai.routefinding;
 
+import java.awt.Point;
+
 import objects.Entity;
 import utils.enums.Direction;
 
@@ -11,7 +13,7 @@ public interface RouteFinder {
      * @param pacmanID The ID for the current pacman.
      * @return The direction to travel in.
      */
-    public Direction getRoute(int pacmanID);
+    public Direction getRoute(int pacmanID, Point myLocation);
     
     /**
      * Set all agents in the game for reference and set which of those agents the current route is

@@ -2,8 +2,7 @@ package ai.mapping;
 
 import utils.Map;
 import utils.enums.Direction;
-
-import java.awt.*;
+import java.awt.Point;
 import java.util.HashMap;
 import java.util.HashSet;
 

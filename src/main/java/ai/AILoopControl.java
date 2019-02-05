@@ -110,10 +110,11 @@ public class AILoopControl extends Thread {
                     // only route find on junctions
                     if (junctions.contains(gridPos)) {
                         RouteFinder r = ent.getRouteFinder();
-                        Direction direction = r.getRoute(pacmanId);
+                        Point myLoc = new Point((int) ent.getLocation().getX(), (int) ent.getLocation().getY());
+                        Direction direction = r.getRoute(pacmanId, myLoc);
                         // re-process if an invalid move is detected
                         while (!Mapping.validMove(gridPos, edges, direction)) {
-                            direction = r.getRoute(pacmanId);
+                            direction = r.getRoute(pacmanId, myLoc);
                         }
                         ent.setDirection(direction);
                     }

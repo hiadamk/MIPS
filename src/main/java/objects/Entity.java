@@ -18,14 +18,12 @@ public class Entity implements Renderable {
   private Boolean pacMan;
   private ArrayList<ArrayList<Image>> images;
   private RouteFinder routeFinder;
-  private ResourceLoader resourceLoader;
 
-  public Entity(Boolean pacMan, int clientId, ResourceLoader resourceLoader) {
+  public Entity(Boolean pacMan, int clientId) {
     this.pacMan = pacMan;
     this.clientId = clientId;
     this.score = 0;
     this.velocity = 0;
-    this.resourceLoader = resourceLoader;
     //updateImages();
   }
 
@@ -89,10 +87,9 @@ public class Entity implements Renderable {
 
   public void setPacMan(Boolean pac) {
     this.pacMan = pac;
-    updateImages();
   }
 
-  private void updateImages(){
+  private void updateImages(ResourceLoader resourceLoader){
     images = pacMan ? resourceLoader.getPlayableMip(clientId) : resourceLoader.getPlayableGhoul(clientId);
   }
 }
