@@ -2,7 +2,6 @@ package main;
 
 import audio.AudioController;
 import java.awt.geom.Point2D.Double;
-import java.util.ArrayList;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -84,12 +83,12 @@ public class Client extends Application {
   
   private void startGame() {
 
-    agents = new Entity[5];
+    agents = new Entity[1];
     agents[0] = new Entity(true, 0, new Double(1, 3));
-    agents[1] = new Entity(false, 1, new Double(1, 2));
-    agents[2] = new Entity(false, 2, new Double(1, 2));
-    agents[3] = new Entity(false, 3, new Double(1, 2));
-    agents[4] = new Entity(false, 4, new Double(1, 2));
+    //agents[1] = new Entity(false, 1, new Double(1, 2));
+    //agents[2] = new Entity(false, 2, new Double(1, 2));
+    //agents[3] = new Entity(false, 3, new Double(1, 2));
+    //agents[4] = new Entity(false, 4, new Double(1, 2));
     Methods.updateImages(agents, resourceLoader);
     this.primaryStage.setScene(gameScene);
     // AnimationTimer started once game has started
@@ -145,10 +144,6 @@ public class Client extends Application {
   }
 
   private void render() {
-    ArrayList<Entity> x = new ArrayList<>();
-    for(Entity e : agents){
-      x.add(e);
-    }
-    renderer.render(map, x);
+    renderer.render(map, agents);
   }
 }

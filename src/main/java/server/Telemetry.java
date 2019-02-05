@@ -11,8 +11,8 @@ import utils.Map;
 import utils.enums.Direction;
 
 public class Telemetry {
-    
-  private static final int AGENT_COUNT = 5;
+
+  private static final int AGENT_COUNT = 1;
   private BlockingQueue<Input> inputs;
   private Entity[] agents;
   Map map;
@@ -27,10 +27,10 @@ public class Telemetry {
     agents = new Entity[AGENT_COUNT];
 
     agents[0] = new Entity(true, 0, new Double(1, 3));
-    agents[1] = new Entity(false, 1, new Double(1, 2));
-    agents[2] = new Entity(false, 2, new Double(1, 2));
-    agents[3] = new Entity(false, 3, new Double(1, 2));
-    agents[4] = new Entity(false, 4, new Double(1, 2));
+    // agents[1] = new Entity(false, 1, new Double(1, 2));
+    //agents[2] = new Entity(false, 2, new Double(1, 2));
+    //agents[3] = new Entity(false, 3, new Double(1, 2));
+    //agents[4] = new Entity(false, 4, new Double(1, 2));
 
     //startGame();
   }
@@ -69,23 +69,27 @@ public class Telemetry {
 
       if (m.isWall(tempLocation)) {
         agents[i].setVelocity(0);
+        System.out.println("in wall");
       } else {
         agents[i].setLocation(tempLocation);
+        System.out.println("moved");
       }
     
         // TODO add points for pellet collision
     }
     
       // separate loop for checking collision after iteration
+    /*
     for (int i = 0; i < AGENT_COUNT; i++) {
       for (int j = i + 1; j < AGENT_COUNT; j++) {
           if ((int) agents[i].getLocation().getX() == (int) agents[j].getLocation().getX()
                   && (int) agents[i].getLocation().getY() == (int) agents[j].getLocation().getY()) {
           entityCollision(agents[i], agents[j], m.getSpawnPoint());
+          System.out.println("collison");
         }
       }
     }
-
+    */
     return agents;
   }
 
