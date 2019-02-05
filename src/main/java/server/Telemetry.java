@@ -68,6 +68,7 @@ public class Telemetry {
       }
 
       if (m.isWall(tempLocation)) {
+        agents[i].setDirection(null);
         agents[i].setVelocity(0);
         System.out.println("in wall");
       } else {
