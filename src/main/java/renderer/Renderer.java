@@ -2,6 +2,7 @@ package renderer;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import objects.Entity;
@@ -38,10 +39,11 @@ public class Renderer {
 
   /**
    * @param map Game map
-   * @param entities Playable entities
+   * @param entityArr Playable entities
    */
-  public void render(Map map, ArrayList<Entity> entities) {
+  public void render(Map map, Entity[] entityArr) {
 
+    ArrayList<Entity> entities = new ArrayList<>(Arrays.asList(entityArr));
     //sort entities to get rendering order
     entities.sort((o1, o2) -> {
       if (o1.getLocation().getY() == o2.getLocation().getY()) {
@@ -124,7 +126,8 @@ public class Renderer {
    * @return The top right corner coordinate to start rendering game map from
    */
   private Point2D.Double getMapRenderingCorner() {
-    return new Point2D.Double(this.xResolution / (double) 2, this.yResolution / (double) 5);
+    return new Point2D.Double(this.xResolution / (double) 2, this.yResolution / (double) 2);
+    //return new Point2D.Double(getIsoCoord(0,map),getIsoCoord(0,0,tileSizeY).getY())
   }
 
   private void renderHUD() {
