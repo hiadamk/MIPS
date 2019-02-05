@@ -8,7 +8,6 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import objects.Entity;
@@ -53,7 +52,7 @@ public class Client extends Application {
     Scene scene = new Scene(root, xRes, yRes);
     final Canvas canvas = new Canvas(xRes, yRes);
     Group gameRoot = new Group();
-    root.getChildren().add(canvas);
+    gameRoot.getChildren().add(canvas);
     this.gameScene = new Scene(gameRoot);
     GraphicsContext gc = canvas.getGraphicsContext2D();
     renderer = new Renderer(gc, xRes, yRes, resourceLoader.getMapTiles() );
