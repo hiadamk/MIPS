@@ -2,10 +2,10 @@ package server;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.net.NetworkInterface;
-import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.Queue;
 
 public class PacketSender extends Thread {
@@ -16,7 +16,7 @@ public class PacketSender extends Thread {
     private int port;
     private boolean running = true;
     private Queue<String> feedQueue;
-    //    private byte[] buf;
+    private ArrayList<InetAddress> ipStore = new ArrayList<>();
     
     /**
      * Constructs a Packet Sender object
@@ -32,6 +32,12 @@ public class PacketSender extends Thread {
         this.networkInterface = NetworkUtility.getInterface();
         this.port = port;
         this.feedQueue = feedQueue;
+    }
+    
+    public PacketSender(int port, Queue<String> feedQueue, ArrayList<InetAddress> ips) throws IOException {
+        this.port = port;
+        this.feedQueue = feedQueue;
+        this.ipStore = ips;
     }
     
     /**
@@ -54,7 +60,7 @@ public class PacketSender extends Thread {
             
         } catch (IOException e) {
             running = false;
-            System.out.println("Server closed");
+            System.out.println("ServerGameplayHandler closed");
             socket.close();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -82,26 +88,33 @@ public class PacketSender extends Thread {
      */
     public void send(String message) throws IOException {
         byte[] buf = prepareBuf(message);
-        DatagramPacket sending = new DatagramPacket(buf, 0, buf.length, group, this.port);
-        
-        Enumeration<NetworkInterface> faces = NetworkInterface.getNetworkInterfaces();
-        while (faces.hasMoreElements()) {
-            NetworkInterface iface = faces.nextElement();
-            if (iface.isLoopback() || !iface.isUp()) {
-                continue;
-            }
-            
-            Enumeration<InetAddress> addresses = iface.getInetAddresses();
-            while (addresses.hasMoreElements()) {
-                InetAddress addr = addresses.nextElement();
-                if (addr.toString().equals(networkInterface)) {
-                    socket.setInterface(addr);
-                    socket.send(sending);
-                    System.out.println("Packet sent");
-                    return;
-                }
-            }
+    
+        DatagramSocket ds = new DatagramSocket();
+    
+        for (InetAddress ip : ipStore) {
+            DatagramPacket packet = new DatagramPacket(buf, 0, buf.length, ip, this.port);
+            ds.send(packet);
         }
+
+
+//        Enumeration<NetworkInterface> faces = NetworkInterface.getNetworkInterfaces();
+//        while (faces.hasMoreElements()) {
+//            NetworkInterface iface = faces.nextElement();
+//            if (iface.isLoopback() || !iface.isUp()) {
+//                continue;
+//            }
+//
+//            Enumeration<InetAddress> addresses = iface.getInetAddresses();
+//            while (addresses.hasMoreElements()) {
+//                InetAddress addr = addresses.nextElement();
+//                if (addr.toString().equals(networkInterface)) {
+//                    socket.setInterface(addr);
+//                    socket.send(sending);
+//                    System.out.println("Packet sent");
+//                    return;
+//                }
+//            }
+//        }
     }
     
     /**

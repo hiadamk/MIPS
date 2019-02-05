@@ -1,10 +1,7 @@
 package server;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-import java.net.NetworkInterface;
+import java.net.*;
 import java.util.Enumeration;
 import java.util.Queue;
 
@@ -14,6 +11,8 @@ public class PacketReceiver extends Thread {
     private MulticastSocket socket;
     private boolean running = false;
     private Queue<String> feedQueue;
+    private int port;
+    private DatagramSocket ds;
     
     /**
      * Constructor only needs the multicasting group to communicate
@@ -27,6 +26,12 @@ public class PacketReceiver extends Thread {
         this.group = group;
         this.socket = new MulticastSocket(port);
         setUpNetworkInterfaces();
+        this.feedQueue = feedQueue;
+    }
+    
+    public PacketReceiver(int port, Queue<String> feedQueue) throws IOException {
+        this.port = port;
+        this.ds = new DatagramSocket(port);
         this.feedQueue = feedQueue;
     }
     
@@ -58,8 +63,12 @@ public class PacketReceiver extends Thread {
             try {
                 byte[] buf = new byte[NetworkUtility.STRING_LIMIT];
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
-                socket.receive(packet);
-                String received = new String(packet.getData());
+                ds.receive(packet);
+
+
+//                socket.receive(packet);
+                String received = new String(packet.getData(), 0, packet.getLength());
+                System.out.println(received);
                 received = received.replaceAll("\u0000.*", "");
                 if (received.startsWith(NetworkUtility.PREFIX)
                         && received.endsWith(NetworkUtility.SUFFIX)) {
