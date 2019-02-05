@@ -8,18 +8,21 @@ import javafx.animation.AnimationTimer;
 import objects.Entity;
 import utils.Input;
 import utils.Map;
+import utils.Methods;
 import utils.enums.Direction;
 
 public class Telemetry {
 
   private static final int AGENT_COUNT = 1;
   private BlockingQueue<Input> inputs;
+  private BlockingQueue<Input> outputs;
   private Entity[] agents;
   Map map;
 
   public Telemetry(Map map) {
     this.map = map;
     inputs = new LinkedBlockingQueue<>();
+    outputs = new LinkedBlockingQueue<>();
     int aiCount = AGENT_COUNT - makeConnections();
     if (aiCount > 0) {
       // Generate the AI to control each entity needed
@@ -41,7 +44,7 @@ public class Telemetry {
    *
    * @param agents array of entities in current state
    * @return array of entities in new state
-   * @author Alex Banks
+   * @author Alex Banks, Matthew Jones
    * @see this#entityCollision(Entity, Entity, Double)
    */
   public static Entity[] processPhysics(Entity[] agents, Map m) {
@@ -156,13 +159,20 @@ public class Telemetry {
     private void processInputs() {
         while (!inputs.isEmpty()) {
             Input input = inputs.poll();
-            // Validate the input
-            agents[input.getClientID()].setDirection(input.getMove());
+          int id = input.getClientID();
+          Direction d = input.getMove();
+          if (Methods.validiateDirection(d, agents[id], map)) {
+            agents[id].setDirection(d);
+            outputs.add(input); //To send to the other clients
+          }
         }
     }
     
     private void informClients() {
-        // TODO implement
+      while (!outputs.isEmpty()) {
+        Input input = outputs.poll();
+        //Send this to each client
+      }
     }
     
     private void updateClients() {

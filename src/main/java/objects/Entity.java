@@ -24,7 +24,7 @@ public class Entity implements Renderable {
     this.clientId = clientId;
     this.location = location;
     this.score = 0;
-    this.velocity = pacMan ? 0.05 : 0.02;
+    this.velocity = pacMan ? 0.2 : 0.1;
     //updateImages();
   }
 
