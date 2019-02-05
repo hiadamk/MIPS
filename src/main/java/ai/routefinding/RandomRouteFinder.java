@@ -2,22 +2,18 @@ package ai.routefinding;
 
 import objects.Entity;
 import utils.enums.Direction;
-
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.util.Random;
 
-public class RandomRouteFinder extends AbstractRouteFinder {
+public class RandomRouteFinder implements RouteFinder {
     
     private static final Random R = new Random();
     private static final Direction DEFAULT = Direction.UP;
     
     /**
-     * Creates an instance of this routeFinder. As it is random the map is irrelevant.
+     * Creates an instance of this routeFinder.
      */
-    public RandomRouteFinder() {
-        super();
-    }
+    public RandomRouteFinder() {}
     
     
     /**
@@ -31,13 +27,10 @@ public class RandomRouteFinder extends AbstractRouteFinder {
      * @throws IllegalArgumentException PacmanID must be within the range of gameAgents Array.
      */
     @Override
-    public Direction getRoute(int pacmanID, Point myLocation) {
-        if (!agentsSet) {
-            throw new IllegalStateException("gameAgents have not been set.");
-        }
-        if (pacmanID < 0 || pacmanID >= gameAgents.length) {
-            throw new IllegalArgumentException("Pacman ID must be within range of array.");
-        }
+    public Direction getRoute(Point myLocation, Point targetLocation) {
+    	if (myLocation == null || targetLocation == null) {
+    		throw new NullPointerException("One or both positions are not set.");
+    	}
         Direction dir;
         int dirValue = R.nextInt(6);
         switch (dirValue) {
@@ -59,31 +52,18 @@ public class RandomRouteFinder extends AbstractRouteFinder {
             }
             case 4: {
                 // makes ghost twice as likely to move towards pacman as away from them
-                if (gameAgents[pacmanID].getLocation() != null) {
-                    Point2D.Double mmanPos = gameAgents[pacmanID].getLocation();
-                    Point2D.Double myPos = gameAgents[myId].getLocation();
-                    if (myPos.getY() > mmanPos.getY()) {
-                        dir = Direction.UP;
-                    } else {
-                        dir = Direction.DOWN;
-                    }
+                if (myLocation.getY() > targetLocation.getY()) {
+                    dir = Direction.UP;
                 } else {
-                    dir = DEFAULT;
+                    dir = Direction.DOWN;
                 }
                 break;
             }
             case 5: {
-                // makes ghost twice as likely to move towards pacman as away from them
-                if (gameAgents[pacmanID].getLocation() != null) {
-                    Point2D.Double mmanPos = gameAgents[pacmanID].getLocation();
-                    Point2D.Double myPos = gameAgents[myId].getLocation();
-                    if (myPos.getX() > mmanPos.getX()) {
-                        dir = Direction.LEFT;
-                    } else {
-                        dir = Direction.RIGHT;
-                    }
+                if (myLocation.getX() > targetLocation.getX()) {
+                    dir = Direction.LEFT;
                 } else {
-                    dir = DEFAULT;
+                    dir = Direction.RIGHT;
                 }
                 break;
             }

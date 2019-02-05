@@ -3,6 +3,7 @@ package ai.mapping;
 import utils.Map;
 import utils.enums.Direction;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -233,5 +234,29 @@ public abstract class Mapping {
             }
         }
         return false;
+    }
+
+    /**Converts a {@link Point2D.Double} to {@link Point}. This will round using the default double to int cast rounding.
+     * @param point2d The point to be converted.
+     * @return The same point as an int. If the point is null then null will be returned.*/
+    public static Point point2DtoPoint(Point2D.Double point2d) {
+    	if (point2d==null) {
+    		return null;
+    	}
+    	int x = (int) point2d.getX();
+    	int y = (int) point2d.getY();
+    	return new Point(x,y);
+    }
+    
+    /**Converts a {@link Point} to {@link Point2D.Double}.
+     * @param point The point to be converted.
+     * @return The same point as a double. If the point is null then null will be returned.*/
+    public static Point2D.Double pointToPoint2D(Point point) {
+    	if (point==null) {
+    		return null;
+    	}
+    	double x = point.getX();
+    	double y = point.getY();
+    	return new Point2D.Double(x,y);
     }
 }
