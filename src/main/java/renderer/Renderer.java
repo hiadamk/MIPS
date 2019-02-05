@@ -8,6 +8,7 @@ import javafx.scene.image.Image;
 import objects.Entity;
 import utils.Map;
 import utils.Renderable;
+import utils.enums.MapElement;
 
 public class Renderer {
 
@@ -74,6 +75,10 @@ public class Renderer {
         //check if entity should be on top of this tile
         if (entityCounter < entities.size()) {
           spriteCoord = entities.get(entityCounter).getLocation();
+        }
+
+        if (rawMap[x][y] == MapElement.WALL.toInt()) {
+          continue;
         }
 
         //check if entity should be on top of this tile

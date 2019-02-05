@@ -33,11 +33,13 @@ public class ImageTester extends Application {
     Entity mip = new Entity(true, 1, new Double(1, 2));
     mip.setPacMan(true);
 
-    Entity ghoul = new Entity(false, 4, new Double(6.5, 3));
+    Entity ghoul = new Entity(false, 4, new Double(1, 5));
+    System.out.println(ghoul.getLocation().toString());
     ghoul.setPacMan(false);
     ghoul.setDirection(Direction.RIGHT);
 
-    Entity[] entities = new Entity[]{mip, ghoul};
+    Entity[] entities = new Entity[]{ghoul};
+    Methods.updateImages(entities, resourceLoader);
 
     Image background = resourceLoader.getBackground();
     gc.drawImage(background, 0, 0, 1920, 1080);
