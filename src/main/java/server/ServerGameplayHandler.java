@@ -41,8 +41,8 @@ public class ServerGameplayHandler {
         
         ArrayList<InetAddress> ips = new ArrayList<>();
         ips.add(InetAddress.getByName("localhost"));
-        this.sender = new PacketSender(3001, this.outgoingQueue, ips);
-        this.receiver = new PacketReceiver(3000, this.incomingQueue);
+        this.sender = new PacketSender(NetworkUtility.CLIENT_DGRAM_PORT, this.outgoingQueue, ips);
+        this.receiver = new PacketReceiver(NetworkUtility.SERVER_DGRAM_PORT, this.incomingQueue);
         this.incomingPacketManager.start();
         this.outgoingPacketManager.start();
         this.sender.start();

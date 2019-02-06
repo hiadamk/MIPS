@@ -62,7 +62,7 @@ public class NetworkUtility {
     public static InetAddress getServerIP() throws IOException {
         System.out.println("Getting the server address");
         MulticastSocket socket = new MulticastSocket(CLIENT_M_PORT);
-        InetAddress group = InetAddress.getByName("239.255.255.255");
+        InetAddress group = NetworkUtility.GROUP;
         Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
         while (interfaces.hasMoreElements()) {
             NetworkInterface iface = interfaces.nextElement();

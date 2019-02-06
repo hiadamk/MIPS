@@ -35,16 +35,11 @@ public class ClientGameplayHandler {
         initialisePacketManagers();
         
         outgoingQueue.add("POS");
-//        this.sender =
-//                new PacketSender(NetworkUtility.GROUP, NetworkUtility.SERVER_M_PORT, this.outgoingQueue);
-//        this.receiver =
-//                new PacketReceiver(NetworkUtility.GROUP, NetworkUtility.CLIENT_M_PORT,
-//                        this.incomingQueue);
         ArrayList<InetAddress> ips = new ArrayList<>();
         ips.add(InetAddress.getByName("localhost"));
-        
-        this.sender = new PacketSender(3000, this.outgoingQueue, ips);
-        this.receiver = new PacketReceiver(3001, incomingQueue);
+    
+        this.sender = new PacketSender(NetworkUtility.SERVER_DGRAM_PORT, this.outgoingQueue, ips);
+        this.receiver = new PacketReceiver(NetworkUtility.CLIENT_DGRAM_PORT, incomingQueue);
         this.incomingPacketManager.start();
         this.outgoingPacketManager.start();
         this.receiver.start();

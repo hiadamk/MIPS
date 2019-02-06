@@ -24,7 +24,7 @@ public class ServerLobby {
             super.run();
             try {
                 MulticastSocket socket = new MulticastSocket();
-                InetAddress group = InetAddress.getByName("239.255.255.255");
+                InetAddress group = NetworkUtility.GROUP;
                 
                 
                 byte[] buf;
