@@ -10,8 +10,12 @@ import utils.enums.Direction;
 import java.awt.Point;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.concurrent.ArrayBlockingQueue;
 
+/**
+ * Control class for all AI.
+ * 
+ * @author Lewis Ackroyd
+ */
 public class AILoopControl extends Thread {
 
 	private static final long SLEEP_TIME = 10;
@@ -34,112 +38,178 @@ public class AILoopControl extends Thread {
 	 *             gameAgent array contains duplicate client IDs.
 	 * @throws IllegalStateException
 	 *             Control ID does not match a gameAgent main ID.
+	 * @throws IllegalStateException
+	 *             Cannot have more than one Mipsman.
 	 */
 	public AILoopControl(Entity[] gameAgents, int[] controlIds, Map map) {
+		validateInputs(gameAgents);
+
 		this.setDaemon(true);
+		this.runAILoop = true;
+		this.controlAgents = new Entity[controlIds.length];
+		this.junctions = Mapping.getJunctions(map);
+		this.edges = Mapping.getEdges(map, junctions);
+
+		generateRouteFinders(gameAgents, controlIds);
+		correctMipsmanRouteFinder();
+	}
+
+	/*
+	 * Generates a {@link RouteFinder} for all entities that are controlled by the
+	 * AI.
+	 * 
+	 * @param gameAgents The array of all agents within the game.
+	 * 
+	 * @param controlIds The array of all main IDs that the AI will control.
+	 * 
+	 * @throws IllegalStateException A main ID in controlIds does not exist for an
+	 * {@link Entity} in gameAgents.
+	 */
+	private void generateRouteFinders(Entity[] gameAgents, int[] controlIds) throws IllegalStateException {
+		for (int i = 0; i < controlIds.length; i++) {
+			RouteFinder routeFinder;
+			switch (i) {
+			case 0: {
+				// TODO
+				routeFinder = new RandomRouteFinder();
+				break;
+			}
+			case 1: {
+				// TODO
+				routeFinder = new RandomRouteFinder();
+				break;
+			}
+			case 2: {
+				// TODO
+				routeFinder = new RandomRouteFinder();
+				break;
+			}
+			case 3: {
+				// TODO
+				routeFinder = new RandomRouteFinder();
+				break;
+			}
+			case 4: { // Mipsman - no players
+				routeFinder = new MipsManRouteFinder();
+				break;
+			}
+			default: {
+				routeFinder = new RandomRouteFinder();
+				break;
+			}
+			}
+			validateId(gameAgents, controlIds, i, routeFinder);
+		}
+	}
+
+	/*
+	 * Checks that the given ID exists as the main ID of an {@link Entity} in
+	 * gameAgents.
+	 * 
+	 * @param gameAgents The array of all agents within the game.
+	 * 
+	 * @param controlIds The array of all main IDs that the AI will control.
+	 * 
+	 * @param i The current index within the controlAgents array.
+	 * 
+	 * @param routeFinder The {@link RouteFinder} that is being assigned to the
+	 * {@link Entity} with the corresponding main ID.
+	 * 
+	 * @throws IllegalStateException The control ID does not match an agent main ID.
+	 */
+	private void validateId(Entity[] gameAgents, int[] controlIds, int i, RouteFinder routeFinder)
+			throws IllegalStateException {
+		boolean agentNotFound = true;
+		for (Entity ent : gameAgents) {
+			if (ent.getClientId() == controlIds[i]) {
+				controlAgents[i] = ent;
+				ent.setRouteFinder(routeFinder);
+				agentNotFound = false;
+				break;
+			}
+		}
+		if (agentNotFound) {
+			throw new IllegalStateException("The control ID does not match an agent main ID.");
+		}
+	}
+
+	/*
+	 * Checks that the given array does not contain any duplicate IDs and that
+	 * Mipsman is only declared once.
+	 * 
+	 * @param gameAgents The array of all agents within the game.
+	 * 
+	 * @throws IllegalArgumentException gameAgent array contains duplicate main IDs.
+	 * 
+	 * @throws IllegalStateException Cannot have more than one Mipsman.
+	 */
+	private void validateInputs(Entity[] gameAgents) throws IllegalArgumentException, IllegalStateException {
 		HashSet<Integer> ids = new HashSet<Integer>();
 		for (Entity e : gameAgents) {
 			if (!ids.add(e.getClientId())) {
 				throw new IllegalArgumentException("gameAgent array contains duplicate main IDs.");
 			}
 		}
+
 		boolean mipsmanFound = false;
 		for (Entity ent : gameAgents) {
 			if (ent.isPacman() && mipsmanFound) {
-				throw new IllegalThreadStateException("Cannot have more than one mipsman");
-			}
-			else if (ent.isPacman()) {
+				throw new IllegalStateException("Cannot have more than one mipsman.");
+			} else if (ent.isPacman()) {
 				mipsmanFound = true;
 			}
 		}
-		this.runAILoop = true;
-		this.controlAgents = new Entity[controlIds.length];
-		for (int i = 0; i < controlIds.length; i++) {
-			RouteFinder r;
-			switch (i) {
-			case 0: {
-				// TODO
-				r = new RandomRouteFinder();
-				break;
-			}
-			case 1: {
-				// TODO
-				r = new RandomRouteFinder();
-				break;
-			}
-			case 2: {
-				// TODO
-				r = new RandomRouteFinder();
-				break;
-			}
-			case 3: {
-				// TODO
-				r = new RandomRouteFinder();
-				break;
-			}
-			case 4: {
-				r = new MipsManRouteFinder();
-				break;
-			}
-			default: {
-				r = new RandomRouteFinder();
-				break;
-			}
-			}
-			boolean agentFound = false;
-			for (Entity ent : gameAgents) {
-				if (ent.getClientId() == controlIds[i]) {
-					controlAgents[i] = ent;
-					ent.setRouteFinder(r);
-					agentFound = true;
-					break;
-				}
-			}
-			if (!agentFound) {
-				throw new IllegalStateException("A control ID does not match an agent main ID.");
-			}
-		}
+	}
+
+	/*
+	 * If Mipsman is one of the control agents, ensures that agent has the {@link
+	 * MipsManRouteFinder}.
+	 */
+	private void correctMipsmanRouteFinder() {
 		Entity mipsman = null;
 		Entity mipsRoute = null;
 		for (Entity ent : controlAgents) {
 			if (ent.isPacman()) {
 				mipsman = ent;
 			}
-			else if (ent.getRouteFinder().getClass()==MipsManRouteFinder.class) {
+			// an entity has the Mipsman RouteFinder but is not Mipsman
+			else if (ent.getRouteFinder().getClass() == MipsManRouteFinder.class) {
 				mipsRoute = ent;
 			}
 		}
-		if (mipsman!=null) {
-			if (mipsman.getRouteFinder().getClass()!=MipsManRouteFinder.class) {
-				if (mipsRoute!=null) {
+		if (mipsman != null) {
+			if (mipsman.getRouteFinder().getClass() != MipsManRouteFinder.class) {
+				// only one MipsManRouteFinder will be created so if it exists then it can be
+				// swapped
+				if (mipsRoute != null) {
 					RouteFinder r = mipsman.getRouteFinder();
 					mipsman.setRouteFinder(mipsRoute.getRouteFinder());
 					mipsRoute.setRouteFinder(r);
-				}
-				else {
+				} else {
 					mipsman.setRouteFinder(new MipsManRouteFinder());
 				}
 			}
 		}
-		this.junctions = Mapping.getJunctions(map);
-		this.edges = Mapping.getEdges(map, junctions);
 	}
 
 	/**
-	 * Runs the AI path-finding loop
+	 * Runs the AI path-finding loop.
+	 * 
+	 * @throws IllegalStateException
+	 *             Mipsman routefinder incorrectly given to ghost.
 	 */
+	@Override
 	public void run() {
 		RouteFinder lastGhostRouteFinder = null;
 		while (runAILoop && (controlAgents.length > 0)) {
-			ArrayBlockingQueue<Entity> fixRouteFinder = new ArrayBlockingQueue<Entity>(1);
+			Entity fixRouteFinder = null;
 			// every AI entity
 			for (Entity ent : controlAgents) {
 				// positions must be set
 				try {
 					lastGhostRouteFinder = updateRouteFinder(ent, lastGhostRouteFinder);
-				
-				}catch (NoRouteFinderException e) {
-					fixRouteFinder.add(ent);
+				} catch (NoRouteFinderException e) {
+					fixRouteFinder = ent;
 				}
 				if (ent.getLocation() != null) {
 					// only route find on junctions
@@ -149,10 +219,9 @@ public class AILoopControl extends Thread {
 				}
 			}
 
-			while (!fixRouteFinder.isEmpty()) {
-				Entity ent = fixRouteFinder.remove();
+			if (fixRouteFinder != null) {
 				if (lastGhostRouteFinder != null) {
-					ent.setRouteFinder(lastGhostRouteFinder);
+					fixRouteFinder.setRouteFinder(lastGhostRouteFinder);
 				} else {
 					throw new IllegalStateException("Mipsman routefinder incorrectly given to ghost.");
 				}
@@ -167,18 +236,27 @@ public class AILoopControl extends Thread {
 	}
 
 	/*
-	 * Updates the routefinder in the event that Mipsman is caught. The new Mipsman
-	 * needs to have the Mipsman routefinder and the old Mipsman needs to have the
-	 * new Mipsman's old routefinder.
+	 * Updates the {@link RouteFinder} in the event that Mipsman is caught. The new
+	 * Mipsman needs to have the Mipsman {@link RouteFinder} and the old Mipsman
+	 * needs to have the new Mipsman's old {@link RouteFinder}.
+	 * 
+	 * @param ent The entity having it's {@link RouteFinder} updated.
+	 * 
+	 * @param lastGhostRouteFinder The {@link RouteFinder} that will replace this
+	 * {@link Entity}'s {@link RouteFinder} if this {@link Entity} is Mipsman.
+	 * 
+	 * @throws NoRouteFinderException The value of lastGhostRouteFinder is null and
+	 * so the {@link Entity} that caught Mipsman has not yet been identified.
 	 */
 	private RouteFinder updateRouteFinder(Entity ent, RouteFinder lastGhostRouteFinder) throws NoRouteFinderException {
 		RouteFinder r = ent.getRouteFinder();
-		//correct new Mipsman
+		// correct new Mipsman
 		if (ent.isPacman() && !r.getClass().equals(MipsManRouteFinder.class)) {
 			lastGhostRouteFinder = r;
 			ent.setRouteFinder(new MipsManRouteFinder());
 		}
-		//correct old Mipsman if possible, if not fase is returned because this is the first capture.
+		// correct old Mipsman if possible, if not false is returned because this is the
+		// first capture.
 		if (!ent.isPacman() && r.getClass().equals(MipsManRouteFinder.class)) {
 			if (lastGhostRouteFinder != null) {
 				ent.setRouteFinder(lastGhostRouteFinder);
@@ -189,7 +267,10 @@ public class AILoopControl extends Thread {
 		return lastGhostRouteFinder;
 	}
 
-	/*Executes the current routefinder and sets the next direction instruction for the agent.*/
+	/*
+	 * Executes the current {@link RouteFinder} and sets the next direction
+	 * instruction for the agent.
+	 */
 	private void executeRoute(Entity ent) {
 		RouteFinder r = ent.getRouteFinder();
 		Point myLoc = Mapping.point2DtoPoint(ent.getLocation());

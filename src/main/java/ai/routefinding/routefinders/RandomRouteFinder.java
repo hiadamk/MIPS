@@ -5,6 +5,8 @@ import java.awt.Point;
 import java.util.Random;
 import ai.routefinding.RouteFinder;
 
+/**Random direction generator. Twice as likely to produce a route towards the target as one away from it.
+ * @author Lewis Ackroyd*/
 public class RandomRouteFinder implements RouteFinder {
     
     private static final Random R = new Random();

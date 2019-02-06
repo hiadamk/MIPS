@@ -8,6 +8,8 @@ import ai.routefinding.RouteFinder;
 import objects.Entity;
 import utils.enums.Direction;
 
+/**A* route finding algorithm implementation.
+ * @author Lewis Ackroyd*/
 public class AStarRouteFinder implements RouteFinder {
     
 	private final HashSet<Point> junctions;

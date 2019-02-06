@@ -9,6 +9,8 @@ import ai.routefinding.routefinders.MipsManRouteFinder;
 import objects.Entity;
 import utils.Map;
 
+/**Unit tests for the {@link AILoopControl} class.
+ * @author Lewis Ackroyd*/
 class AILoopControlTests {
 	public static final int[][] MAP_RAW = {
   {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -100,9 +102,6 @@ class AILoopControlTests {
 	@Test
 	void testAILoopControlAgentRoleSwap() {
 		int[] controlIDs = {0, 1, 2, 3, 4};
-		for (int i = 0; i<ALL_AGENTS.length; i++) {
-			ALL_AGENTS[i].setLocation(new Point2D.Double(1, i+1));
-		}
 		AILoopControl ailc = new AILoopControl(ALL_AGENTS, controlIDs, MAP);
 		ailc.start();
 		try {
@@ -113,9 +112,6 @@ class AILoopControlTests {
 		}
 		RouteFinder firstAgent = ALL_AGENTS[0].getRouteFinder();
 		RouteFinder secondAgent = ALL_AGENTS[1].getRouteFinder();
-		for (Entity e : ALL_AGENTS) {
-			System.out.println(e.getRouteFinder().getClass());
-		}
 		assertTrue(firstAgent.getClass()==MipsManRouteFinder.class);
 		assertTrue(secondAgent.getClass()!=MipsManRouteFinder.class);
 		

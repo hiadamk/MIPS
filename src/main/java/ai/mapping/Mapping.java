@@ -7,6 +7,8 @@ import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.HashSet;
 
+/**Methods to facilitate the abstraction of the game {@link Map}, allowing it to be represented as a graph and also to perform conversions between {@link Point}/{@link Point2D.Double} types and move validation.
+ * @author Lewis Ackroyd */
 public abstract class Mapping {
     
     /**
