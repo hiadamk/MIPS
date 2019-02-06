@@ -1,6 +1,7 @@
 package server;
 
 import main.Client;
+import utils.Input;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -12,18 +13,17 @@ import java.util.concurrent.BlockingQueue;
 
 public class ClientLobbySession {
     
-    private Queue<String> positionQueue;
-    private Queue<String> collisionQueue;
-    private BlockingQueue<Integer> keypressQueue;
+    private Queue<String> clientIn;
+    private BlockingQueue<Input> keypressQueue;
     private InetAddress serverIP;
     private ClientGameplayHandler handler;
     private Client client;
     
     
-    public ClientLobbySession(Queue<String> positionQueue, Queue<String> collisionQueue,
-                              BlockingQueue<Integer> keypressQueue, Client client) throws IOException {
-        this.positionQueue = positionQueue;
-        this.collisionQueue = collisionQueue;
+    public ClientLobbySession(Queue<String> clientIn,
+                              BlockingQueue<Input> keypressQueue, Client client) throws IOException {
+        
+        this.clientIn = clientIn;
         this.keypressQueue = keypressQueue;
         this.serverIP = NetworkUtility.getServerIP();
         this.client = client;
@@ -33,7 +33,7 @@ public class ClientLobbySession {
     public void join() {
         
         try {
-            DatagramSocket ds = new DatagramSocket(3001);
+            DatagramSocket ds = new DatagramSocket(NetworkUtility.CLIENT_DGRAM_PORT);
             
             String str = NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX;
             DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), this.serverIP, NetworkUtility.SERVER_DGRAM_PORT);
@@ -64,7 +64,7 @@ public class ClientLobbySession {
             r = new String(dp.getData(), 0, dp.getLength());
             
             if (r.equals("STARTGAME")) {
-                handler = new ClientGameplayHandler();
+                handler = new ClientGameplayHandler(this.serverIP, keypressQueue, clientIn);
             }
             
             System.out.println(r);

@@ -1,22 +1,26 @@
 package server;
 
+import utils.Input;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * ClientGameplayHandler class which creates the appropriate senders and starts them.
  */
+
+
 public class ClientGameplayHandler {
 
     public Queue<String> outgoingQueue;
     private Queue<String> incomingQueue;
     
-    private BlockingQueue<Integer> keypressQueue;
+    private BlockingQueue<Input> keypressQueue;
+    private Queue<String> clientIn;
 
     private Thread outgoingPacketManager;
     private Thread incomingPacketManager;
@@ -24,17 +28,21 @@ public class ClientGameplayHandler {
     private PacketSender sender;
     private PacketReceiver receiver;
     
-    public ClientGameplayHandler() throws IOException {
+    private ArrayList<InetAddress> serverIP;
+    
+    public ClientGameplayHandler(InetAddress serverIP, Queue<Input> keypressQueue, Queue<String> clientIn) throws IOException {
         outgoingQueue = new ConcurrentLinkedQueue<>();
         incomingQueue = new ConcurrentLinkedQueue<>();
-        keypressQueue = new LinkedBlockingDeque<>();
+        this.keypressQueue = (BlockingQueue<Input>) keypressQueue;
+        this.clientIn = clientIn;
+        this.serverIP = new ArrayList<>();
+        this.serverIP.add(serverIP);
+        
         initialisePacketManagers();
         
         outgoingQueue.add("POS");
-        ArrayList<InetAddress> ips = new ArrayList<>();
-        ips.add(InetAddress.getByName("localhost"));
-    
-        this.sender = new PacketSender(NetworkUtility.SERVER_DGRAM_PORT, this.outgoingQueue, ips);
+        
+        this.sender = new PacketSender(NetworkUtility.SERVER_DGRAM_PORT, this.outgoingQueue, this.serverIP);
         this.receiver = new PacketReceiver(NetworkUtility.CLIENT_DGRAM_PORT, incomingQueue);
         this.incomingPacketManager.start();
         this.outgoingPacketManager.start();
@@ -43,8 +51,8 @@ public class ClientGameplayHandler {
     }
     
     public static void main(String[] args) throws IOException {
-    
-        ClientGameplayHandler c = new ClientGameplayHandler();
+
+//        ClientGameplayHandler c = new ClientGameplayHandler();
     }
     
     /**
@@ -55,10 +63,11 @@ public class ClientGameplayHandler {
         this.outgoingPacketManager =
                 new Thread() {
                     public void run() {
-                        Integer key;
+                        Input key;
                         while (!isInterrupted()) {
                             try {
                                 key = keypressQueue.take();
+                                //TODO Agree on the type of input sent back to the server.
                                 outgoingQueue.add(key.toString());
                                 Thread.sleep(50);
                             } catch (InterruptedException e) {
@@ -83,8 +92,7 @@ public class ClientGameplayHandler {
                                 String data = incomingQueue.poll();
     
                                 if (data.startsWith(NetworkUtility.POSITION_CODE) || data.startsWith(NetworkUtility.COLLISIONS_CODE)) {
-                                    //TODO Pass to client to render event?
-        
+                                    clientIn.add(data);
                                     System.out.println("Got instruction from server");
                                 } else if (data.startsWith(NetworkUtility.STOP_CODE)) {
                                     receiver.shutdown();

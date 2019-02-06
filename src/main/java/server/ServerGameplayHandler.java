@@ -6,20 +6,17 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.LinkedBlockingDeque;
+
 
 public class ServerGameplayHandler {
     
     private Queue<String> outgoingQueue;
     private Queue<String> incomingQueue;
+
+//    private BlockingQueue<Integer> keypressQueue;
     
-    private Queue<String> positionQueue;
-    private Queue<String> collisionQueue;
-    private BlockingQueue<Integer> keypressQueue;
-    
-    private Thread outgoingPacketManager;
+    //    private Thread outgoingPacketManager;
     private Thread incomingPacketManager;
     
     private PacketSender sender;
@@ -27,15 +24,14 @@ public class ServerGameplayHandler {
     
     private ArrayList<InetAddress> ipStore;
     
+    private Telemetry telemetry;
+    
     private int playerCount;
     
     public ServerGameplayHandler(ArrayList<InetAddress> ips, int numPlayers) throws IOException {
         
         outgoingQueue = new ConcurrentLinkedQueue<String>();
         incomingQueue = new ConcurrentLinkedQueue<String>();
-        keypressQueue = new LinkedBlockingDeque<>();
-        this.positionQueue = new LinkedBlockingDeque<>();
-        this.collisionQueue = new LinkedBlockingDeque<>();
         this.playerCount = numPlayers;
         initialisePacketManagers();
         
@@ -44,7 +40,7 @@ public class ServerGameplayHandler {
         this.sender = new PacketSender(NetworkUtility.CLIENT_DGRAM_PORT, this.outgoingQueue, ipStore);
         this.receiver = new PacketReceiver(NetworkUtility.SERVER_DGRAM_PORT, this.incomingQueue);
         this.incomingPacketManager.start();
-        this.outgoingPacketManager.start();
+//        this.outgoingPacketManager.start();
         this.sender.start();
         this.receiver.start();
     }
@@ -63,6 +59,11 @@ public class ServerGameplayHandler {
         System.out.println("ServerGameplayHandler Running");
     }
     
+    
+    public void setTelemetry(Telemetry t) {
+        this.telemetry = t;
+    }
+    
     /**
      * Initialises the packet managers
      */
@@ -77,9 +78,8 @@ public class ServerGameplayHandler {
                                 continue;
                             }
                             System.out.println(incomingQueue.peek());
-                            outgoingQueue.add(incomingQueue.poll());
-                            //                    key = Integer.valueOf(incomingQueue.poll());
-                            //                    keypressQueue.add(key);
+//                            telemetry.addInput(incomingQueue.poll());
+//                            outgoingQueue.add(incomingQueue.poll());
                             try {
                                 Thread.sleep(50);
                             } catch (InterruptedException e) {
@@ -94,32 +94,35 @@ public class ServerGameplayHandler {
         // could be parallelised in adding positions and collisions to the queue - hogging was unlikely
         // as collisions
         // occur a lot less than position updates
-        this.outgoingPacketManager =
-                new Thread() {
-                    public void run() {
-                        while (!isInterrupted()) {
-                            try {
-                                if (positionQueue.isEmpty()) {
-                                    continue;
-                                } else {
-                                    String data = collisionQueue.poll();
-                                    data = NetworkUtility.COLLISIONS_CODE + data;
-                                    outgoingQueue.add(data);
-                                }
-                                if (positionQueue.isEmpty()) {
-                                    continue;
-                                } else {
-                                    String data = positionQueue.poll();
-                                    data = NetworkUtility.POSITION_CODE + data;
-                                    outgoingQueue.add(data);
-                                }
-                                Thread.sleep(50);
-                                
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                };
+    
+        //Don't think this is needed anymore as the packet sender is directly watching the outgoing queue which the telemetry adds to.
+
+//        this.outgoingPacketManager =
+//                new Thread() {
+//                    public void run() {
+//                        while (!isInterrupted()) {
+//                            try {
+//                                if (po.isEmpty()) {
+//                                    continue;
+//                                } else {
+//                                    String data = collisionQueue.poll();
+//                                    data = NetworkUtility.COLLISIONS_CODE + data;
+//                                    outgoingQueue.add(data);
+//                                }
+//                                if (positionQueue.isEmpty()) {
+//                                    continue;
+//                                } else {
+//                                    String data = positionQueue.poll();
+//                                    data = NetworkUtility.POSITION_CODE + data;
+//                                    outgoingQueue.add(data);
+//                                }
+//                                Thread.sleep(50);
+//
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    }
+//                };
   }
 }
