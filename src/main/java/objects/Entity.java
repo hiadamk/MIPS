@@ -17,6 +17,7 @@ public class Entity implements Renderable {
   private int clientId;
   private Boolean pacMan;
   private ArrayList<ArrayList<Image>> images;
+  private ArrayList<Image> currentImage;
   private RouteFinder routeFinder;
 
   public Entity(Boolean pacMan, int clientId, Point2D.Double location) {
@@ -24,7 +25,7 @@ public class Entity implements Renderable {
     this.clientId = clientId;
     this.location = location;
     this.score = 0;
-    this.velocity = pacMan ? 0.2 : 0.1;
+    this.velocity = pacMan ? 0.1 : 0.08;
     //updateImages();
   }
 
@@ -46,10 +47,10 @@ public class Entity implements Renderable {
 
   @Override
   public ArrayList<Image> getImage() {
-    if (direction == null) {
-      return images.get(0);
+    if (direction != null) {
+      return images.get(direction.toInt());
     }
-    return images.get(direction.toInt());
+    return currentImage == null ? images.get(0) : currentImage;
   }
 
   public double getVelocity() {
@@ -67,6 +68,9 @@ public class Entity implements Renderable {
   public void setDirection(Direction direction) {
     if(this.direction!=direction){
       this.direction = direction;
+      if (direction != null) {
+        currentImage = images.get(direction.toInt());
+      }
     }
   }
 
@@ -88,6 +92,7 @@ public class Entity implements Renderable {
 
   public void setPacMan(Boolean pac) {
     this.pacMan = pac;
+    this.velocity = pacMan ? 0.2 : 0.1;
   }
 
   public void updateImages(ResourceLoader resourceLoader) {

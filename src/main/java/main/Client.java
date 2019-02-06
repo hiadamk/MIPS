@@ -2,6 +2,8 @@ package main;
 
 import audio.AudioController;
 import audio.Sounds;
+import java.awt.geom.Point2D.Double;
+import java.util.Queue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -19,9 +21,6 @@ import utils.Map;
 import utils.Methods;
 import utils.ResourceLoader;
 import utils.enums.Direction;
-
-import java.awt.geom.Point2D.Double;
-import java.util.Queue;
 
 public class Client extends Application {
 
@@ -115,9 +114,11 @@ public class Client extends Application {
       return;
     }
     System.out.println(input.toString() + "     " + current);
+    if (!Methods.validiateDirection(input, agents[0], map)) {
+      return;
+    }
     switch (input) {
       case UP: // Add code here
-        // Validate the input
         System.out.println("Direction up");
         informServer(new Input(0, Direction.UP));
         agents[id].setDirection(input);

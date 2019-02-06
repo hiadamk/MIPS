@@ -15,20 +15,21 @@ public class Methods {
   public static boolean validiateDirection(Direction d, Entity e, Map m) {
     Point2D.Double newLoc = new Point2D.Double(e.getLocation().getX(),
         e.getLocation().getY());
-    switch (e.getDirection()) {
+    double offset = 0.5 + e.getVelocity();
+    switch (d) {
       case RIGHT:
-        newLoc.setLocation(newLoc.getX() + e.getVelocity(), newLoc.getY());
+        newLoc.setLocation(newLoc.getX() + offset, newLoc.getY());
         break;
       case LEFT:
-        newLoc.setLocation(newLoc.getX() - e.getVelocity(), newLoc.getY());
+        newLoc.setLocation(newLoc.getX() - offset, newLoc.getY());
         break;
       case DOWN:
-        newLoc.setLocation(newLoc.getX(), newLoc.getY() + e.getVelocity());
+        newLoc.setLocation(newLoc.getX(), newLoc.getY() + offset);
         break;
       case UP:
-        newLoc.setLocation(newLoc.getX(), newLoc.getY() - e.getVelocity());
+        newLoc.setLocation(newLoc.getX(), newLoc.getY() - offset);
         break;
     }
-    return m.isWall(newLoc);
+    return !m.isWall(newLoc);
   }
 }
