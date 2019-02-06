@@ -15,13 +15,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 public class ClientGameplayHandler {
-
+    
     public Queue<String> outgoingQueue;
     private Queue<String> incomingQueue;
     
     private BlockingQueue<Input> keypressQueue;
     private Queue<String> clientIn;
-
+    
     private Thread outgoingPacketManager;
     private Thread incomingPacketManager;
     

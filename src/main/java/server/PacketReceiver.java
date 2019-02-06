@@ -64,7 +64,7 @@ public class PacketReceiver extends Thread {
                 byte[] buf = new byte[NetworkUtility.STRING_LIMIT];
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 ds.receive(packet);
-
+    
                 String received = new String(packet.getData(), 0, packet.getLength());
                 System.out.println(received);
                 received = received.replaceAll("\u0000.*", "");
