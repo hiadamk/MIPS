@@ -34,9 +34,9 @@ public class ServerGameplayHandler {
         initialisePacketManagers();
 
 //        this.sender =
-//                new PacketSender(NetworkUtility.GROUP, NetworkUtility.CLIENT_PORT, this.outgoingQueue);
+//                new PacketSender(NetworkUtility.GROUP, NetworkUtility.CLIENT_M_PORT, this.outgoingQueue);
 //        this.receiver =
-//                new PacketReceiver(NetworkUtility.GROUP, NetworkUtility.SERVER_PORT, this.incomingQueue);
+//                new PacketReceiver(NetworkUtility.GROUP, NetworkUtility.SERVER_M_PORT, this.incomingQueue);
         
         
         ArrayList<InetAddress> ips = new ArrayList<>();

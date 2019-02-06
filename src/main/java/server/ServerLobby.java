@@ -10,7 +10,7 @@ public class ServerLobby {
     private int playerCount;
     private ArrayList<InetAddress> playerIPs;
     private boolean gameStarted;
-    private Telemetry telemetry;
+//    private Telemetry telemetry;
     
     public ServerLobby() {
         pinger.start();
@@ -30,7 +30,7 @@ public class ServerLobby {
                 byte[] buf;
                 String message = "PING";
                 buf = message.getBytes();
-                DatagramPacket sending = new DatagramPacket(buf, 0, buf.length, group, NetworkUtility.CLIENT_PORT);
+                DatagramPacket sending = new DatagramPacket(buf, 0, buf.length, group, NetworkUtility.CLIENT_M_PORT);
                 
                 while (!isInterrupted()) {
                     Enumeration<NetworkInterface> faces = NetworkInterface.getNetworkInterfaces();
@@ -59,7 +59,7 @@ public class ServerLobby {
     };
     
     public void acceptConnections() throws IOException {
-        DatagramSocket ds = new DatagramSocket(3000);
+        DatagramSocket ds = new DatagramSocket(NetworkUtility.SERVER_DGRAM_PORT);
         
         while (!gameStarted) {
             if (playerCount <= 5) {
@@ -72,7 +72,7 @@ public class ServerLobby {
                     InetAddress ip = dp.getAddress();
                     System.out.println("Connecting to: " + ip);
                     playerIPs.add(ip);
-                    dp = new DatagramPacket("SUCCESS".getBytes(), "SUCCESS".length(), ip, 3001);
+                    dp = new DatagramPacket("SUCCESS".getBytes(), "SUCCESS".length(), ip, NetworkUtility.CLIENT_DGRAM_PORT);
                     ds.send(dp);
                     playerCount++;
                 }
@@ -89,9 +89,9 @@ public class ServerLobby {
         System.out.printf("Server starting game...");
         for (InetAddress ip : playerIPs) {
             try {
-                DatagramSocket ds = new DatagramSocket(3000);
+                DatagramSocket ds = new DatagramSocket();
                 String str = "START GAME";
-                DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), ip, 3001);
+                DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), ip, NetworkUtility.CLIENT_DGRAM_PORT);
                 ds.send(dp);
                 ds.close();
             } catch (IOException e) {

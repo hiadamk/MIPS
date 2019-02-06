@@ -11,8 +11,10 @@ import java.util.Enumeration;
  */
 public class NetworkUtility {
     
-    public static final int SERVER_PORT = 4446;
-    public static final int CLIENT_PORT = 4445;
+    public static final int SERVER_M_PORT = 4446;
+    public static final int CLIENT_M_PORT = 4445;
+    public static final int SERVER_DGRAM_PORT = 3000;
+    public static final int CLIENT_DGRAM_PORT = 3001;
     
     public static final String PREFIX = "SMSG";
     public static final String SUFFIX = "EMSG";
@@ -59,7 +61,7 @@ public class NetworkUtility {
     
     public static InetAddress getServerIP() throws IOException {
         System.out.println("Getting the server address");
-        MulticastSocket socket = new MulticastSocket(CLIENT_PORT);
+        MulticastSocket socket = new MulticastSocket(CLIENT_M_PORT);
         InetAddress group = InetAddress.getByName("239.255.255.255");
         Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
         while (interfaces.hasMoreElements()) {
