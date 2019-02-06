@@ -2,13 +2,16 @@ package ai;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.util.HashMap;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-
-import ai.routefinding.RandomRouteFinder;
+import ai.mapping.Mapping;
+import ai.routefinding.routefinders.RandomRouteFinder;
 import objects.Entity;
+import utils.enums.Direction;
 
 class RandomRouteFinderTests {
 
@@ -18,50 +21,6 @@ class RandomRouteFinderTests {
 		RandomRouteFinder rrf = new RandomRouteFinder();
 	}
 
-	@Test
-	void setGameAgentsValid() {
-		@SuppressWarnings("unused")
-		RandomRouteFinder rrf = new RandomRouteFinder();
-		@SuppressWarnings("unused")
-		Entity[] gas = {
-				new Entity(true, 0, null),
-				new Entity(false, 1, null),
-				new Entity(false, 2, null),
-				new Entity(false, 3, null),
-				new Entity(false, 4, null)};
-	}
-	@Test
-	void setGameAgentsNullPointer() {
-		RandomRouteFinder rrf = new RandomRouteFinder();
-		Executable e = () -> rrf.setAgents(null, 0);
-		assertThrows(NullPointerException.class, e);
-	}
-	@Test
-	void setGameAgentsIllegalArgumentDuplicates() {
-		RandomRouteFinder rrf = new RandomRouteFinder();
-		Entity[] gas = {
-				new Entity(true, 0, null),
-				new Entity(false, 1, null),
-				new Entity(false, 2, null),
-				new Entity(false, 3, null),
-				new Entity(false, 0, null)};
-		Executable e = () -> rrf.setAgents(gas, 0);
-		assertThrows(IllegalArgumentException.class, e);
-	}
-	@Test
-	void setGameAgentsIllegalState() {
-		RandomRouteFinder rrf = new RandomRouteFinder();
-		Entity[] gas = {
-				new Entity(true, 0, null),
-				new Entity(false, 1, null),
-				new Entity(false, 2, null),
-				new Entity(false, 3, null),
-				new Entity(false, 4, null)};
-		rrf.setAgents(gas, 0);
-		Executable e = () -> rrf.setAgents(gas, 0);
-		assertThrows(IllegalStateException.class, e);
-	}
-	
 	@Test
 	void getRouteValid() {
 		RandomRouteFinder rrf = new RandomRouteFinder();
@@ -74,17 +33,11 @@ class RandomRouteFinderTests {
 		for (int i = 0; i < gas.length; i++) {
 			gas[i].setLocation(new Point2D.Double(0, i));
 		}
-		rrf.setAgents(gas, 1);
-		rrf.getRoute(0, null);
+		rrf.getRoute(Mapping.point2DtoPoint(gas[1].getLocation()), Mapping.point2DtoPoint(gas[0].getLocation()));
 	}
+	
 	@Test
-	void getRouteNoAgentsSet() {
-		RandomRouteFinder rrf = new RandomRouteFinder();
-		Executable e = () -> rrf.getRoute(0, null);
-		assertThrows(IllegalStateException.class, e);
-	}
-	@Test
-	void getRouteInvalidPacmanID() {
+	void getRouteNullPointer() {
 		RandomRouteFinder rrf = new RandomRouteFinder();
 		Entity[] gas = {
 				new Entity(true, 0, null),
@@ -92,10 +45,48 @@ class RandomRouteFinderTests {
 				new Entity(false, 2, null),
 				new Entity(false, 3, null),
 				new Entity(false, 4, null)};
-		rrf.setAgents(gas, 1);
-		Executable e = () -> rrf.getRoute(-1, null);
-		assertThrows(IllegalArgumentException.class, e);
-		e = () -> rrf.getRoute(7, null);
-		assertThrows(IllegalArgumentException.class, e);
+		Executable e = () -> rrf.getRoute(Mapping.point2DtoPoint(gas[1].getLocation()), Mapping.point2DtoPoint(gas[0].getLocation()));
+		assertThrows(NullPointerException.class, e);
+		
+		gas[0].setLocation(new Point2D.Double(1,1));
+		
+		e = () -> rrf.getRoute(Mapping.point2DtoPoint(gas[1].getLocation()), Mapping.point2DtoPoint(gas[0].getLocation()));
+		assertThrows(NullPointerException.class, e);
+		
+		e = () -> rrf.getRoute(Mapping.point2DtoPoint(gas[0].getLocation()), Mapping.point2DtoPoint(gas[1].getLocation()));
+		assertThrows(NullPointerException.class, e);
+	}
+	
+	@Test
+	void directionProbabilities() {
+		RandomRouteFinder rrf = new RandomRouteFinder();
+		Entity[] gas = {
+				new Entity(true, 0, null),
+				new Entity(false, 1, null),
+				new Entity(false, 2, null),
+				new Entity(false, 3, null),
+				new Entity(false, 4, null)};
+
+		for (int i = 0; i < gas.length; i++) {
+			gas[i].setLocation(new Point2D.Double(i, i));
+		}
+		
+		HashMap<Direction, Integer> counters = new HashMap<Direction, Integer>();
+		counters.put(Direction.DOWN, 0);
+		counters.put(Direction.UP, 0);
+		counters.put(Direction.LEFT, 0);
+		counters.put(Direction.RIGHT, 0);
+		for (int count = 0; count<100000; count++) {
+			Direction dir = rrf.getRoute(Mapping.point2DtoPoint(gas[1].getLocation()), Mapping.point2DtoPoint(gas[0].getLocation()));
+			counters.put(dir, counters.get(dir)+1);
+		}
+		for (Direction d : counters.keySet()) {
+			System.out.println(d + " " + counters.get(d));
+		}
+		
+		boolean vertical = (counters.get(Direction.UP)>((counters.get(Direction.DOWN)-1000)*2));
+		boolean horizontal = counters.get(Direction.LEFT)>((counters.get(Direction.RIGHT)-1000)*2);
+		assertTrue(vertical);
+		assertTrue(horizontal);
 	}
 }

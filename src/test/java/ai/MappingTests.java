@@ -3,6 +3,7 @@ package ai;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -169,4 +170,14 @@ class MappingTests {
 		assertFalse(Mapping.validMove(testPoint, testMap2, Direction.DOWN));
 	}
 
+	@Test
+	void testPointConversion() {
+		Point testPoint = new Point(1, 1);
+		Point2D.Double testPoint2D = new Point2D.Double(1, 1);
+		assertTrue(Mapping.point2DtoPoint(Mapping.pointToPoint2D(testPoint)).equals(testPoint));
+		assertTrue(Mapping.pointToPoint2D(Mapping.point2DtoPoint(testPoint2D)).equals(testPoint2D));
+
+		assertTrue(Mapping.point2DtoPoint(Mapping.pointToPoint2D(null))==null);
+		assertTrue(Mapping.pointToPoint2D(Mapping.point2DtoPoint(null))==null);
+	}
 }

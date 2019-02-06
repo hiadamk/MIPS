@@ -1,12 +1,14 @@
-package ai.routefinding;
+package ai.routefinding.routefinders;
 
 import java.awt.Point;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import ai.routefinding.RouteFinder;
 import objects.Entity;
 import utils.enums.Direction;
 
-public class AStarRouteFinder extends AbstractRouteFinder {
+public class AStarRouteFinder implements RouteFinder {
     
 	private final HashSet<Point> junctions;
 	private final HashMap<Point, HashSet<Point>> edges;
@@ -31,9 +33,8 @@ public class AStarRouteFinder extends AbstractRouteFinder {
      * @throws IllegalArgumentException PacmanID must be within the range of gameAgents Array.
      */
 	@Override
-	public Direction getRoute(int pacmanID, Point myLocation) {
+	public Direction getRoute(Point myLocation, Point targetLocation) {
 		// TODO Auto-generated method stub
-		return null;
+		return Direction.UP;
 	}
-
 }
