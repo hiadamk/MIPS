@@ -4,11 +4,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.awt.geom.Point2D;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import ai.routefinding.RouteFinder;
+import ai.routefinding.routefinders.MipsManRouteFinder;
 import objects.Entity;
 import utils.Map;
 
 class AILoopControlTests {
-	private static final int[][] MAP_RAW = {
+	public static final int[][] MAP_RAW = {
   {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
   {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
   {1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1},
@@ -83,7 +85,6 @@ class AILoopControlTests {
 		int[] controlIDs = {0, 1, 2, 3, 5};
 		Executable e = () -> new AILoopControl(ALL_AGENTS, controlIDs, MAP);
 		assertThrows(IllegalStateException.class, e);
-		
 	}
 	@Test
 	void testAILoopControlDuplicateID() {
@@ -96,11 +97,73 @@ class AILoopControlTests {
 		Executable e = () -> new AILoopControl(entities, new int[0], MAP);
 		assertThrows(IllegalArgumentException.class, e);
 	}
-
+	@Test
+	void testAILoopControlAgentRoleSwap() {
+		int[] controlIDs = {0, 1, 2, 3, 4};
+		for (int i = 0; i<ALL_AGENTS.length; i++) {
+			ALL_AGENTS[i].setLocation(new Point2D.Double(1, i+1));
+		}
+		AILoopControl ailc = new AILoopControl(ALL_AGENTS, controlIDs, MAP);
+		ailc.start();
+		try {
+			Thread.sleep(500);
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		RouteFinder firstAgent = ALL_AGENTS[0].getRouteFinder();
+		RouteFinder secondAgent = ALL_AGENTS[1].getRouteFinder();
+		for (Entity e : ALL_AGENTS) {
+			System.out.println(e.getRouteFinder().getClass());
+		}
+		assertTrue(firstAgent.getClass()==MipsManRouteFinder.class);
+		assertTrue(secondAgent.getClass()!=MipsManRouteFinder.class);
+		
+		ALL_AGENTS[0].setPacMan(false);
+		ALL_AGENTS[1].setPacMan(true);
+		
+		try {
+			Thread.sleep(500);
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		assertTrue(firstAgent.getClass()==MipsManRouteFinder.class);
+		assertTrue(secondAgent.getClass()!=MipsManRouteFinder.class);
+		
+		ALL_AGENTS[1].setPacMan(false);
+		ALL_AGENTS[0].setPacMan(true);
+		try {
+			Thread.sleep(500);
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		assertTrue(firstAgent.getClass()==MipsManRouteFinder.class);
+		assertTrue(secondAgent.getClass()!=MipsManRouteFinder.class);
+	}
+	
+	
 	@Test
 	void testKillAI() {
 		int[] i = {0};
 		AILoopControl ailc = new AILoopControl(ALL_AGENTS,  i, MAP);
+		ailc.start();
+		assertTrue(ailc.killAI());
+		
+		ailc = new AILoopControl(ALL_AGENTS,  i, MAP);
+		assertFalse(ailc.killAI());
+		ailc.start();
+		assertTrue(ailc.killAI());
+		
+		i = new int[0];
+		ailc = new AILoopControl(ALL_AGENTS,  i, MAP);
+		ailc.start();
+		assertTrue(ailc.killAI());
+		
+		ailc = new AILoopControl(ALL_AGENTS,  i, MAP);
 		assertFalse(ailc.killAI());
 		ailc.start();
 		assertTrue(ailc.killAI());

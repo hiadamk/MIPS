@@ -35,6 +35,6 @@ public class AStarRouteFinder implements RouteFinder {
 	@Override
 	public Direction getRoute(Point myLocation, Point targetLocation) {
 		// TODO Auto-generated method stub
-		return null;
+		return Direction.UP;
 	}
 }

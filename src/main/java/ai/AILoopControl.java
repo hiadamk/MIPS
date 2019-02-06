@@ -3,8 +3,7 @@ package ai;
 import ai.mapping.Mapping;
 import ai.routefinding.NoRouteFinderException;
 import ai.routefinding.RouteFinder;
-import ai.routefinding.routefinders.MipsManRouteFinder;
-import ai.routefinding.routefinders.RandomRouteFinder;
+import ai.routefinding.routefinders.*;
 import objects.Entity;
 import utils.Map;
 import utils.enums.Direction;
@@ -37,10 +36,20 @@ public class AILoopControl extends Thread {
 	 *             Control ID does not match a gameAgent main ID.
 	 */
 	public AILoopControl(Entity[] gameAgents, int[] controlIds, Map map) {
+		this.setDaemon(true);
 		HashSet<Integer> ids = new HashSet<Integer>();
 		for (Entity e : gameAgents) {
 			if (!ids.add(e.getClientId())) {
 				throw new IllegalArgumentException("gameAgent array contains duplicate main IDs.");
+			}
+		}
+		boolean mipsmanFound = false;
+		for (Entity ent : gameAgents) {
+			if (ent.isPacman() && mipsmanFound) {
+				throw new IllegalThreadStateException("Cannot have more than one mipsman");
+			}
+			else if (ent.isPacman()) {
+				mipsmanFound = true;
 			}
 		}
 		this.runAILoop = true;
@@ -69,7 +78,7 @@ public class AILoopControl extends Thread {
 				break;
 			}
 			case 4: {
-				r = new RandomRouteFinder();
+				r = new MipsManRouteFinder();
 				break;
 			}
 			default: {
@@ -90,6 +99,28 @@ public class AILoopControl extends Thread {
 				throw new IllegalStateException("A control ID does not match an agent main ID.");
 			}
 		}
+		Entity mipsman = null;
+		Entity mipsRoute = null;
+		for (Entity ent : controlAgents) {
+			if (ent.isPacman()) {
+				mipsman = ent;
+			}
+			else if (ent.getRouteFinder().getClass()==MipsManRouteFinder.class) {
+				mipsRoute = ent;
+			}
+		}
+		if (mipsman!=null) {
+			if (mipsman.getRouteFinder().getClass()!=MipsManRouteFinder.class) {
+				if (mipsRoute!=null) {
+					RouteFinder r = mipsman.getRouteFinder();
+					mipsman.setRouteFinder(mipsRoute.getRouteFinder());
+					mipsRoute.setRouteFinder(r);
+				}
+				else {
+					mipsman.setRouteFinder(new MipsManRouteFinder());
+				}
+			}
+		}
 		this.junctions = Mapping.getJunctions(map);
 		this.edges = Mapping.getEdges(map, junctions);
 	}
@@ -104,16 +135,16 @@ public class AILoopControl extends Thread {
 			// every AI entity
 			for (Entity ent : controlAgents) {
 				// positions must be set
+				try {
+					lastGhostRouteFinder = updateRouteFinder(ent, lastGhostRouteFinder);
+				
+				}catch (NoRouteFinderException e) {
+					fixRouteFinder.add(ent);
+				}
 				if (ent.getLocation() != null) {
 					// only route find on junctions
 					if (junctions.contains(Mapping.point2DtoPoint(ent.getLocation()))) {
-						try {
-							updateRouteFinder(ent, lastGhostRouteFinder);
-							executeRoute(ent);
-						}
-						catch (NoRouteFinderException e) {
-							fixRouteFinder.add(ent);
-						}
+						executeRoute(ent);
 					}
 				}
 			}

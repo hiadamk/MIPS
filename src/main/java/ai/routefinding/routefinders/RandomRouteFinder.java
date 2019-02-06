@@ -1,10 +1,8 @@
 package ai.routefinding.routefinders;
 
-import objects.Entity;
 import utils.enums.Direction;
 import java.awt.Point;
 import java.util.Random;
-
 import ai.routefinding.RouteFinder;
 
 public class RandomRouteFinder implements RouteFinder {
@@ -31,7 +29,7 @@ public class RandomRouteFinder implements RouteFinder {
     	if (myLocation == null || targetLocation == null) {
     		throw new NullPointerException("One or both positions are null.");
     	}
-        Direction dir;
+        Direction dir = DEFAULT;
         int dirValue = R.nextInt(6);
         switch (dirValue) {
             case 0: {
@@ -66,11 +64,6 @@ public class RandomRouteFinder implements RouteFinder {
                     dir = Direction.RIGHT;
                 }
                 break;
-            }
-            default: {
-                // state should not be reachable
-                System.err.println("Value out of range. Default value given: " + DEFAULT);
-                dir = DEFAULT;
             }
         }
         return dir;

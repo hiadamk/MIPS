@@ -1,6 +1,8 @@
 package ai;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 
@@ -45,6 +47,14 @@ class RandomRouteFinderTests {
 				new Entity(false, 4, null)};
 		Executable e = () -> rrf.getRoute(Mapping.point2DtoPoint(gas[1].getLocation()), Mapping.point2DtoPoint(gas[0].getLocation()));
 		assertThrows(NullPointerException.class, e);
+		
+		gas[0].setLocation(new Point2D.Double(1,1));
+		
+		e = () -> rrf.getRoute(Mapping.point2DtoPoint(gas[1].getLocation()), Mapping.point2DtoPoint(gas[0].getLocation()));
+		assertThrows(NullPointerException.class, e);
+		
+		e = () -> rrf.getRoute(Mapping.point2DtoPoint(gas[0].getLocation()), Mapping.point2DtoPoint(gas[1].getLocation()));
+		assertThrows(NullPointerException.class, e);
 	}
 	
 	@Test
@@ -73,7 +83,10 @@ class RandomRouteFinderTests {
 		for (Direction d : counters.keySet()) {
 			System.out.println(d + " " + counters.get(d));
 		}
-		assertTrue(counters.get(Direction.UP)>((counters.get(Direction.DOWN)-1000)*2));
-		assertTrue(counters.get(Direction.LEFT)>((counters.get(Direction.RIGHT)-1000)*2));
+		
+		boolean vertical = (counters.get(Direction.UP)>((counters.get(Direction.DOWN)-1000)*2));
+		boolean horizontal = counters.get(Direction.LEFT)>((counters.get(Direction.RIGHT)-1000)*2);
+		assertTrue(vertical);
+		assertTrue(horizontal);
 	}
 }
