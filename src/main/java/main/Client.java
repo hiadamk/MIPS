@@ -1,8 +1,7 @@
 package main;
 
 import audio.AudioController;
-import java.awt.geom.Point2D.Double;
-import java.util.Queue;
+import audio.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -20,6 +19,9 @@ import utils.Map;
 import utils.Methods;
 import utils.ResourceLoader;
 import utils.enums.Direction;
+
+import java.awt.geom.Point2D.Double;
+import java.util.Queue;
 
 public class Client extends Application {
 
@@ -50,6 +52,7 @@ public class Client extends Application {
     resourceLoader = new ResourceLoader("src/test/resources/");
     this.primaryStage = primaryStage;
     //this.gameScene = new Scene(new Label("place holder"), xRes, yRes);
+      audioController.playMusic(Sounds.intro);
     MenuController menuController = new MenuController(audioController, primaryStage, this);
     StackPane root = (StackPane) menuController.createMainMenu();
     Scene scene = new Scene(root, xRes, yRes);
