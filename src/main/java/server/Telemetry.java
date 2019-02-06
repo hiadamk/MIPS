@@ -1,9 +1,5 @@
 package server;
 
-import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import objects.Entity;
 import utils.Input;
@@ -11,12 +7,19 @@ import utils.Map;
 import utils.Methods;
 import utils.enums.Direction;
 
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 public class Telemetry {
 
   private static final int AGENT_COUNT = 1;
   private BlockingQueue<Input> inputs;
   private BlockingQueue<Input> outputs;
   private Entity[] agents;
+    private boolean singlePlayer;
   Map map;
 
   public Telemetry(Map map) {
@@ -37,6 +40,14 @@ public class Telemetry {
 
     //startGame();
   }
+    
+    public Telemetry(Map map, Queue<String> clientQueue) {
+        this.map = map;
+        inputs = new LinkedBlockingQueue<>();
+        outputs = new LinkedBlockingQueue<>();
+        singlePlayer = true;
+        
+    }
 
   /**
    * Static method for updating game state increments positions if valid, increments points, and

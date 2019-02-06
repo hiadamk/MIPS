@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ClientLobbySession {
     
@@ -60,5 +61,11 @@ public class ClientLobbySession {
             e.printStackTrace();
         }
         
+    }
+    
+    public static void main(String[] args) throws IOException {
+        ClientLobbySession c = new ClientLobbySession(new LinkedBlockingQueue<String>(),
+                new LinkedBlockingQueue<String>(), new LinkedBlockingQueue<Integer>());
+        c.join();
     }
 }

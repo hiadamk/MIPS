@@ -58,6 +58,7 @@ public class NetworkUtility {
     }
     
     public static InetAddress getServerIP() throws IOException {
+        System.out.println("Getting the server address");
         MulticastSocket socket = new MulticastSocket(CLIENT_PORT);
         InetAddress group = InetAddress.getByName("239.255.255.255");
         Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();

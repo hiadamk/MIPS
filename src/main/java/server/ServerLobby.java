@@ -1,9 +1,7 @@
 package server;
 
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-import java.net.NetworkInterface;
+import java.io.IOException;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -12,57 +10,103 @@ public class ServerLobby {
     private int playerCount;
     private ArrayList<InetAddress> playerIPs;
     private boolean gameStarted;
+    private Telemetry telemetry;
     
     public ServerLobby() {
         pinger.start();
+        this.playerCount = 0;
+        this.playerIPs = new ArrayList<>();
     }
     
-    Thread pinger = new Thread(() -> {
-        try {
-            MulticastSocket socket = new MulticastSocket(4445);
-            InetAddress group = InetAddress.getByName("239.255.255.255");
-            
-            
-            byte[] buf;
-            String message = "PING";
-            buf = message.getBytes();
-            DatagramPacket sending = new DatagramPacket(buf, 0, buf.length, group, 4446);
-            
-            while (true) {
-                Enumeration<NetworkInterface> faces = NetworkInterface.getNetworkInterfaces();
-                a:
-                while (faces.hasMoreElements()) {
-                    NetworkInterface iface = faces.nextElement();
-                    if (iface.isLoopback() || !iface.isUp())
-                        continue;
-                    
-                    Enumeration<InetAddress> addresses = iface.getInetAddresses();
-                    while (addresses.hasMoreElements()) {
-                        InetAddress addr = addresses.nextElement();
-                        socket.setInterface(addr);
-                        socket.send(sending);
+    Thread pinger = new Thread() {
+        @Override
+        public void run() {
+            super.run();
+            try {
+                MulticastSocket socket = new MulticastSocket();
+                InetAddress group = InetAddress.getByName("239.255.255.255");
+                
+                
+                byte[] buf;
+                String message = "PING";
+                buf = message.getBytes();
+                DatagramPacket sending = new DatagramPacket(buf, 0, buf.length, group, NetworkUtility.CLIENT_PORT);
+                
+                while (!isInterrupted()) {
+                    Enumeration<NetworkInterface> faces = NetworkInterface.getNetworkInterfaces();
+                    a:
+                    while (faces.hasMoreElements()) {
+                        NetworkInterface iface = faces.nextElement();
+                        if (iface.isLoopback() || !iface.isUp())
+                            continue;
                         
+                        Enumeration<InetAddress> addresses = iface.getInetAddresses();
+                        while (addresses.hasMoreElements()) {
+                            InetAddress addr = addresses.nextElement();
+                            socket.setInterface(addr);
+                            socket.send(sending);
+                            
+                        }
                     }
+                    Thread.sleep(100);
                 }
-                Thread.sleep(100);
+                
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         
-        
-    });
+    };
     
-    public void acceptConnections() {
-        //TODO Implement
+    public void acceptConnections() throws IOException {
+        DatagramSocket ds = new DatagramSocket(3000);
+        
+        while (!gameStarted) {
+            if (playerCount <= 5) {
+                byte[] buf = new byte[1024];
+                DatagramPacket dp = new DatagramPacket(buf, 1024);
+                ds.receive(dp);
+                String r = new String(dp.getData(), 0, dp.getLength());
+                if (r.equals(NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX)) {
+                    System.out.println(r);
+                    InetAddress ip = dp.getAddress();
+                    System.out.println("Connecting to: " + ip);
+                    playerIPs.add(ip);
+                    dp = new DatagramPacket("SUCCESS".getBytes(), "SUCCESS".length(), ip, 3001);
+                    ds.send(dp);
+                    playerCount++;
+                }
+                
+            }
+            
+        }
+        ds.close();
     }
     
     public void gameStart() {
-        //TODO Implement
+        pinger.interrupt();
+        gameStarted = true;
+        System.out.printf("Server starting game...");
+        for (InetAddress ip : playerIPs) {
+            try {
+                DatagramSocket ds = new DatagramSocket(3000);
+                String str = "START GAME";
+                DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), ip, 3001);
+                ds.send(dp);
+                ds.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        
+        }
     }
     
     public void gameStop() {
         //TODO Implement
+    }
+    
+    public static void main(String[] args) throws IOException {
+        ServerLobby s = new ServerLobby();
+        s.acceptConnections();
     }
 }
