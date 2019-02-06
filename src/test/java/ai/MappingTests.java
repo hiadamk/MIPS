@@ -13,6 +13,8 @@ import ai.mapping.Mapping;
 import utils.Map;
 import utils.enums.Direction;
 
+/**Unit tests for the {@link Mapping} class.
+ * @author Lewis Ackroyd*/
 class MappingTests {
 	private static final int[][] testMap1Raw = {
 			{ 1, 1, 1, 1, 1 },

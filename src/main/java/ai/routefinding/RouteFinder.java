@@ -3,6 +3,8 @@ package ai.routefinding;
 import java.awt.Point;
 import utils.enums.Direction;
 
+/**Interface used to allow a {@link Direction} to be produced based on implemented conditions.
+ * @author Lewis Ackroyd*/
 public interface RouteFinder {
     
     /**

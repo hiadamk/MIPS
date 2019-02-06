@@ -9,6 +9,8 @@ import ai.routefinding.routefinders.MipsManRouteFinder;
 import objects.Entity;
 import utils.Map;
 
+/**Unit tests for the {@link AILoopControl} class.
+ * @author Lewis Ackroyd*/
 class AILoopControlTests {
 	public static final int[][] MAP_RAW = {
   {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -61,7 +63,7 @@ class AILoopControlTests {
 			ALL_AGENTS[i].setLocation(new Point2D.Double(1 + i, 1));
 		}
 		AILoopControl ailc = new AILoopControl(ALL_AGENTS,  ids, MAP);
-		ailc.run();
+		ailc.start();
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {

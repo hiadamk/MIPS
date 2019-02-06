@@ -2,10 +2,8 @@ package ai;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.HashMap;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import ai.mapping.Mapping;
@@ -13,6 +11,8 @@ import ai.routefinding.routefinders.RandomRouteFinder;
 import objects.Entity;
 import utils.enums.Direction;
 
+/**Unit tests for the {@link RandomRouteFinder} class.
+ * @author Lewis Ackroyd*/
 class RandomRouteFinderTests {
 
 	@Test
