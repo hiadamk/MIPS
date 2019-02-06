@@ -1,5 +1,7 @@
 package server;
 
+import main.Client;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -7,7 +9,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class ClientLobbySession {
     
@@ -16,14 +17,16 @@ public class ClientLobbySession {
     private BlockingQueue<Integer> keypressQueue;
     private InetAddress serverIP;
     private ClientGameplayHandler handler;
+    private Client client;
     
     
     public ClientLobbySession(Queue<String> positionQueue, Queue<String> collisionQueue,
-                              BlockingQueue<Integer> keypressQueue) throws IOException {
+                              BlockingQueue<Integer> keypressQueue, Client client) throws IOException {
         this.positionQueue = positionQueue;
         this.collisionQueue = collisionQueue;
         this.keypressQueue = keypressQueue;
         this.serverIP = NetworkUtility.getServerIP();
+        this.client = client;
         
     }
     
@@ -40,6 +43,17 @@ public class ClientLobbySession {
             dp = new DatagramPacket(buf, 1024);
             ds.receive(dp);
             String r = new String(dp.getData(), 0, dp.getLength());
+            r = r.replaceAll("\u0000.*", "");
+            int id = Integer.parseInt(r);
+            this.client.setId(id);
+    
+    
+            buf = new byte[1024];
+            dp = new DatagramPacket(buf, 1024);
+            ds.receive(dp);
+            r = new String(dp.getData(), 0, dp.getLength());
+            r = r.replaceAll("\u0000.*", "");
+            
             if (r.equals("SUCCESS")) {
                 System.out.println("Server connection success");
             }
@@ -64,8 +78,8 @@ public class ClientLobbySession {
     }
     
     public static void main(String[] args) throws IOException {
-        ClientLobbySession c = new ClientLobbySession(new LinkedBlockingQueue<String>(),
-                new LinkedBlockingQueue<String>(), new LinkedBlockingQueue<Integer>());
-        c.join();
+//        ClientLobbySession c = new ClientLobbySession(new LinkedBlockingQueue<String>(),
+//                new LinkedBlockingQueue<String>(), new LinkedBlockingQueue<Integer>());
+//        c.join();
     }
 }

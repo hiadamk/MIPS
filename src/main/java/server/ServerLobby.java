@@ -80,8 +80,13 @@ public class ServerLobby {
                     InetAddress ip = dp.getAddress();
                     System.out.println("Connecting to: " + ip);
                     playerIPs.add(ip);
+                    int playerID = playerCount;
                     dp = new DatagramPacket("SUCCESS".getBytes(), "SUCCESS".length(), ip, NetworkUtility.CLIENT_DGRAM_PORT);
                     ds.send(dp);
+                    System.out.println("Sent client " + playerID + " their ID...");
+                    dp = new DatagramPacket("SUCCESS".getBytes(), "SUCCESS".length(), ip, NetworkUtility.CLIENT_DGRAM_PORT);
+                    ds.send(dp);
+                    System.out.println("Sent client " + playerID + " a successful connection message...");
                     playerCount++;
                 }
                 

@@ -1,7 +1,6 @@
 package main;
 
 import audio.AudioController;
-import audio.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -52,8 +51,7 @@ public class Client extends Application {
     keyController = new KeyController();
     resourceLoader = new ResourceLoader("src/test/resources/");
     this.primaryStage = primaryStage;
-    //this.gameScene = new Scene(new Label("place holder"), xRes, yRes);
-      audioController.playMusic(Sounds.intro);
+//    audioController.playMusic(Sounds.intro);
     MenuController menuController = new MenuController(audioController, primaryStage, this);
     StackPane root = (StackPane) menuController.createMainMenu();
     Scene scene = new Scene(root, xRes, yRes);
@@ -65,7 +63,6 @@ public class Client extends Application {
     renderer = new Renderer(gc, xRes, yRes, resourceLoader.getMapTiles() );
     primaryStage.setScene(scene);
     primaryStage.show();
-    //audioController.playMusic(Sounds.intro);
   }
   
   
@@ -152,6 +149,10 @@ public class Client extends Application {
           // TODO integrate with networking to send to telemetry
     }
   }
+    
+    public void setId(int id) {
+        this.id = id;
+    }
 
   private void render() {
     renderer.render(map, agents);
