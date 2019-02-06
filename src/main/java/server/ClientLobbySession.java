@@ -33,7 +33,7 @@ public class ClientLobbySession {
             DatagramSocket ds = new DatagramSocket(3001);
             
             String str = NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX;
-            DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), this.serverIP, 3000);
+            DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), this.serverIP, NetworkUtility.SERVER_DGRAM_PORT);
             ds.send(dp);
             
             byte[] buf = new byte[1024];

@@ -15,9 +15,7 @@ public class ClientGameplayHandler {
 
     public Queue<String> outgoingQueue;
     private Queue<String> incomingQueue;
-
-    private Queue<String> positionQueue;
-    private Queue<String> collisionQueue;
+    
     private BlockingQueue<Integer> keypressQueue;
 
     private Thread outgoingPacketManager;
@@ -30,8 +28,6 @@ public class ClientGameplayHandler {
         outgoingQueue = new ConcurrentLinkedQueue<>();
         incomingQueue = new ConcurrentLinkedQueue<>();
         keypressQueue = new LinkedBlockingDeque<>();
-        positionQueue = new LinkedBlockingDeque<>();
-        collisionQueue = new LinkedBlockingDeque<>();
         initialisePacketManagers();
         
         outgoingQueue.add("POS");
@@ -83,16 +79,13 @@ public class ClientGameplayHandler {
                                 if (incomingQueue.isEmpty()) {
                                     continue;
                                 }
+                                System.out.println("CLIENT RECEIVED -> " + incomingQueue.peek());
                                 String data = incomingQueue.poll();
-                            
-                                if (data.startsWith(NetworkUtility.POSITION_CODE)) {
-                                    positionQueue
-                                            .add(data.substring(NetworkUtility.POSITION_CODE.length()));
-                                    System.out.println("Got position instruction from server");
-                                } else if (data.startsWith(NetworkUtility.COLLISIONS_CODE)) {
-                                    collisionQueue
-                                            .add(data.substring(NetworkUtility.COLLISIONS_CODE.length()));
-                                    System.out.println("Got collision instruction from server");
+    
+                                if (data.startsWith(NetworkUtility.POSITION_CODE) || data.startsWith(NetworkUtility.COLLISIONS_CODE)) {
+                                    //TODO Pass to client to render event?
+        
+                                    System.out.println("Got instruction from server");
                                 } else if (data.startsWith(NetworkUtility.STOP_CODE)) {
                                     receiver.shutdown();
                                     sender.shutdown();
@@ -104,7 +97,6 @@ public class ClientGameplayHandler {
                                 }
                                 Thread.sleep(50);
                             } catch (Exception e) {
-                                // TODO Auto-generated catch block
                                 e.printStackTrace();
                                 System.out.println("Argument in incoming queue had invalid code");
                             }

@@ -1,5 +1,7 @@
 package server;
 
+import utils.Input;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -23,25 +25,23 @@ public class ServerGameplayHandler {
     private PacketSender sender;
     private PacketReceiver receiver;
     
-    public ServerGameplayHandler() throws IOException {
+    private ArrayList<InetAddress> ipStore;
+    
+    private int playerCount;
+    
+    public ServerGameplayHandler(ArrayList<InetAddress> ips, int numPlayers) throws IOException {
         
         outgoingQueue = new ConcurrentLinkedQueue<String>();
         incomingQueue = new ConcurrentLinkedQueue<String>();
         keypressQueue = new LinkedBlockingDeque<>();
         this.positionQueue = new LinkedBlockingDeque<>();
         this.collisionQueue = new LinkedBlockingDeque<>();
-        
+        this.playerCount = numPlayers;
         initialisePacketManagers();
-
-//        this.sender =
-//                new PacketSender(NetworkUtility.GROUP, NetworkUtility.CLIENT_M_PORT, this.outgoingQueue);
-//        this.receiver =
-//                new PacketReceiver(NetworkUtility.GROUP, NetworkUtility.SERVER_M_PORT, this.incomingQueue);
         
-        
-        ArrayList<InetAddress> ips = new ArrayList<>();
-        ips.add(InetAddress.getByName("localhost"));
-        this.sender = new PacketSender(NetworkUtility.CLIENT_DGRAM_PORT, this.outgoingQueue, ips);
+        outgoingQueue.add("POS");
+        this.ipStore = ips;
+        this.sender = new PacketSender(NetworkUtility.CLIENT_DGRAM_PORT, this.outgoingQueue, ipStore);
         this.receiver = new PacketReceiver(NetworkUtility.SERVER_DGRAM_PORT, this.incomingQueue);
         this.incomingPacketManager.start();
         this.outgoingPacketManager.start();
@@ -49,9 +49,17 @@ public class ServerGameplayHandler {
         this.receiver.start();
     }
     
-    public static void main(String[] args) throws IOException {
+    public int getPlayerCount() {
+        return this.playerCount;
+    }
     
-        ServerGameplayHandler s = new ServerGameplayHandler();
+    public void sendPacket(Input i) {
+        this.outgoingQueue.add(i.toString());
+    }
+    
+    public static void main(String[] args) throws IOException {
+
+//        ServerGameplayHandler s = new ServerGameplayHandler();
         System.out.println("ServerGameplayHandler Running");
     }
     

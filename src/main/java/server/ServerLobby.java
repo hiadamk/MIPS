@@ -10,7 +10,7 @@ public class ServerLobby {
     private int playerCount;
     private ArrayList<InetAddress> playerIPs;
     private boolean gameStarted;
-//    private Telemetry telemetry;
+    private ServerGameplayHandler s;
     
     public ServerLobby() {
         pinger.start();
@@ -18,6 +18,9 @@ public class ServerLobby {
         this.playerIPs = new ArrayList<>();
     }
     
+    /**
+     * Thread which sends messages to multicast group to make server IP known
+     */
     Thread pinger = new Thread() {
         @Override
         public void run() {
@@ -58,11 +61,16 @@ public class ServerLobby {
         
     };
     
+    /**
+     * Accepts connections from clients.
+     *
+     * @throws IOException
+     */
     public void acceptConnections() throws IOException {
         DatagramSocket ds = new DatagramSocket(NetworkUtility.SERVER_DGRAM_PORT);
         
         while (!gameStarted) {
-            if (playerCount <= 5) {
+            if (playerCount < 5) {
                 byte[] buf = new byte[1024];
                 DatagramPacket dp = new DatagramPacket(buf, 1024);
                 ds.receive(dp);
@@ -77,13 +85,21 @@ public class ServerLobby {
                     playerCount++;
                 }
                 
+            } else {
+                ds.close();
+                return;
             }
             
         }
         ds.close();
     }
     
-    public void gameStart() {
+    /**
+     * Starts the game for all clients
+     *
+     * @return
+     */
+    public ServerGameplayHandler gameStart() {
         pinger.interrupt();
         gameStarted = true;
         System.out.printf("Server starting game...");
@@ -97,13 +113,25 @@ public class ServerLobby {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        
+    
         }
+        try {
+            this.s = new ServerGameplayHandler(this.playerIPs, playerCount);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return s;
+        
     }
     
+    /**
+     * Stops the game for clients.
+     */
     public void gameStop() {
         //TODO Implement
     }
+    
     
     public static void main(String[] args) throws IOException {
         ServerLobby s = new ServerLobby();

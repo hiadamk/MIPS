@@ -34,6 +34,14 @@ public class PacketSender extends Thread {
         this.feedQueue = feedQueue;
     }
     
+    /**
+     * Constructs a Packet Sender object
+     *
+     * @param port      the port we want to send to
+     * @param feedQueue the queue which we are constantly reading from to send messages from.
+     * @param ips       The list of IP addresses which are listening on the port for a message.
+     * @throws IOException
+     */
     public PacketSender(int port, Queue<String> feedQueue, ArrayList<InetAddress> ips) throws IOException {
         this.port = port;
         this.feedQueue = feedQueue;
@@ -81,7 +89,7 @@ public class PacketSender extends Thread {
     }
     
     /**
-     * Sends packets to designated port in the group
+     * Sends packets to each IP in the list of IPs listening to agreed port.
      *
      * @param message the message which we want to send to the server
      * @throws IOException caused by the packets and and interfaces.

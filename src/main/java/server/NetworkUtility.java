@@ -59,6 +59,12 @@ public class NetworkUtility {
         return "";
     }
     
+    /**
+     * Checks for a message in the group and gets the IP of the server from that.
+     *
+     * @return the IP of the server
+     * @throws IOException Thrown by use of multicast sockets.
+     */
     public static InetAddress getServerIP() throws IOException {
         System.out.println("Getting the server address");
         MulticastSocket socket = new MulticastSocket(CLIENT_M_PORT);

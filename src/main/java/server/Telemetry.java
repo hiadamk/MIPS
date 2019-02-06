@@ -20,13 +20,16 @@ public class Telemetry {
   private BlockingQueue<Input> outputs;
   private Entity[] agents;
     private boolean singlePlayer;
-  Map map;
-
-  public Telemetry(Map map) {
+    private Map map;
+    private Queue<Input> clientQueue;
+    private ServerGameplayHandler server;
+    
+    public Telemetry(Map map, ServerGameplayHandler server) {
     this.map = map;
     inputs = new LinkedBlockingQueue<>();
     outputs = new LinkedBlockingQueue<>();
-    int aiCount = AGENT_COUNT - makeConnections();
+        this.server = server;
+        int aiCount = 5 - server.getPlayerCount();
     if (aiCount > 0) {
       // Generate the AI to control each entity needed
     }
@@ -41,12 +44,12 @@ public class Telemetry {
     //startGame();
   }
     
-    public Telemetry(Map map, Queue<String> clientQueue) {
+    public Telemetry(Map map, Queue<Input> clientQueue) {
         this.map = map;
         inputs = new LinkedBlockingQueue<>();
         outputs = new LinkedBlockingQueue<>();
         singlePlayer = true;
-        
+        this.clientQueue = clientQueue;
     }
 
   /**
@@ -135,17 +138,6 @@ public class Telemetry {
     }
   }
     
-    /**
-     * Makes the connections to the other clients
-     *
-     * @return the number of human players in the game
-     */
-    private int makeConnections() {
-        int count = 1;
-        // TODO implement
-        return count;
-    }
-    
     public Entity getEntity(int id) {
         return agents[id];
     }
@@ -182,7 +174,11 @@ public class Telemetry {
     private void informClients() {
       while (!outputs.isEmpty()) {
         Input input = outputs.poll();
-        //Send this to each client
+          if (singlePlayer) {
+              clientQueue.add(input);
+          } else {
+              server.sendPacket(input);
+          }
       }
     }
     

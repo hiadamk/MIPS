@@ -53,7 +53,7 @@ public class PacketReceiver extends Thread {
     }
     
     /**
-     * Continuously listens to the port in the group which the server is sending messages to
+     * Continuously listens to the port agreed and adds the messages to the relevant queue in the client/server
      */
     @Override
     public void run() {
@@ -65,8 +65,6 @@ public class PacketReceiver extends Thread {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 ds.receive(packet);
 
-
-//                socket.receive(packet);
                 String received = new String(packet.getData(), 0, packet.getLength());
                 System.out.println(received);
                 received = received.replaceAll("\u0000.*", "");
@@ -76,6 +74,7 @@ public class PacketReceiver extends Thread {
                             received.substring(
                                     NetworkUtility.PREFIX.length(),
                                     received.length() - NetworkUtility.SUFFIX.length()); // rids PREFIX and SUFFIX
+                    System.out.println(feedQueue);
                     feedQueue.add(received.trim());
                 }
                 Thread.sleep(50);

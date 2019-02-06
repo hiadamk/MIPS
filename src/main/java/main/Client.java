@@ -2,8 +2,6 @@ package main;
 
 import audio.AudioController;
 import audio.Sounds;
-import java.awt.geom.Point2D.Double;
-import java.util.Queue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -21,6 +19,10 @@ import utils.Map;
 import utils.Methods;
 import utils.ResourceLoader;
 import utils.enums.Direction;
+
+import java.awt.geom.Point2D.Double;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Client extends Application {
 
@@ -68,14 +70,16 @@ public class Client extends Application {
   
   
   public void startSinglePlayerGame() {
-    //TODO Implement fully
   
     System.out.println("Starting single player game...");
     // If hosting if not telemetry will be set by connection method along with new main id
     map = resourceLoader.getMap();
-    this.telemetry = new Telemetry(map);
+      Queue<Input> incomingQueue = new LinkedList<>();
+    
+      this.telemetry = new Telemetry(map, incomingQueue);
     this.primaryStage.setScene(gameScene);
-
+      this.id = 0;
+    
     gameScene.setOnKeyPressed(keyController);
 
     startGame();
@@ -120,22 +124,22 @@ public class Client extends Application {
     switch (input) {
       case UP: // Add code here
         System.out.println("Direction up");
-        informServer(new Input(0, Direction.UP));
+          informServer(new Input(this.id, Direction.UP));
         agents[id].setDirection(input);
         break;
       case DOWN: // Add code here
         System.out.println("Direction down");
-        informServer(new Input(0, Direction.DOWN));
+          informServer(new Input(this.id, Direction.DOWN));
         agents[id].setDirection(input);
         break;
       case LEFT: // Add code here
         System.out.println("Direction left");
-        informServer(new Input(0, Direction.LEFT));
+          informServer(new Input(this.id, Direction.LEFT));
         agents[id].setDirection(input);
         break;
       case RIGHT: // Add code here
         System.out.println("Direction right");
-        informServer(new Input(0, Direction.RIGHT));
+          informServer(new Input(this.id, Direction.RIGHT));
         agents[id].setDirection(input);
         break;
     }
