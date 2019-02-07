@@ -80,9 +80,6 @@ class RandomRouteFinderTests {
 			Direction dir = rrf.getRoute(Mapping.point2DtoPoint(gas[1].getLocation()), Mapping.point2DtoPoint(gas[0].getLocation()));
 			counters.put(dir, counters.get(dir)+1);
 		}
-		for (Direction d : counters.keySet()) {
-			System.out.println(d + " " + counters.get(d));
-		}
 		
 		boolean vertical = (counters.get(Direction.UP)>((counters.get(Direction.DOWN)-1000)*2));
 		boolean horizontal = counters.get(Direction.LEFT)>((counters.get(Direction.RIGHT)-1000)*2);
