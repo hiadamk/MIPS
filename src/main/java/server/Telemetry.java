@@ -30,7 +30,7 @@ public class Telemetry {
         outputs = new LinkedBlockingQueue<>();
         
         this.server = server;
-        int aiCount = 5 - server.getPlayerCount();
+        int aiCount = AGENT_COUNT - server.getPlayerCount();
         this.singlePlayer = false;
 
         agents = new Entity[AGENT_COUNT];
@@ -41,7 +41,7 @@ public class Telemetry {
         //agents[3] = new Entity(false, 3, new Double(1, 2));
         //agents[4] = new Entity(false, 4, new Double(1, 2));
       int[] aiControlled = new int[aiCount];
-      int highestId = 4;
+      int highestId = AGENT_COUNT-1;
       for (int i = 0; i < aiCount; i++) {
         aiControlled[i] = highestId;
         highestId--;
