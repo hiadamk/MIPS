@@ -1,5 +1,6 @@
 package utils;
 
+import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 
 public class Map {
@@ -84,6 +85,12 @@ public class Map {
       return MAX_Y;
   }
 
+  public boolean withinBounds(Point2D.Double point) {
+	  boolean x = point.getX()>=0 && point.getX()<MAX_X;
+	  boolean y = point.getY()>=0 && point.getY()<MAX_Y;
+	  return x&&y;
+  }
+  
   /**
    * calculates if point is out of bounds modular arithmetic for map looping TODO: 30/1/19 get wall
    * int from MapColour

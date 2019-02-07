@@ -5,11 +5,13 @@ import ai.routefinding.NoRouteFinderException;
 import ai.routefinding.RouteFinder;
 import ai.routefinding.routefinders.*;
 import objects.Entity;
+import utils.Input;
 import utils.Map;
 import utils.enums.Direction;
 import java.awt.Point;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Control class for all AI.
@@ -23,7 +25,8 @@ public class AILoopControl extends Thread {
 	private final HashSet<Point> junctions;
 	private final HashMap<Point, HashSet<Point>> edges;
 	private boolean runAILoop;
-	private int pacmanId;
+	private int mipsmanID;
+	private final BlockingQueue<Input> directionsOut;
 
 	/**
 	 * Initialises the control for the AI Control Loop.
@@ -41,7 +44,7 @@ public class AILoopControl extends Thread {
 	 * @throws IllegalStateException
 	 *             Cannot have more than one Mipsman.
 	 */
-	public AILoopControl(Entity[] gameAgents, int[] controlIds, Map map) {
+	public AILoopControl(Entity[] gameAgents, int[] controlIds, Map map, BlockingQueue<Input> directionsOut) {
 		validateInputs(gameAgents);
 
 		this.setDaemon(true);
@@ -49,9 +52,16 @@ public class AILoopControl extends Thread {
 		this.controlAgents = new Entity[controlIds.length];
 		this.junctions = Mapping.getJunctions(map);
 		this.edges = Mapping.getEdges(map, junctions);
+		this.directionsOut = directionsOut;
 
 		generateRouteFinders(gameAgents, controlIds);
 		correctMipsmanRouteFinder();
+		for (Entity ent : gameAgents) {
+			if (ent.isPacman()) {
+				mipsmanID = ent.getClientId();
+				break;
+			}
+		}
 	}
 
 	/*
@@ -254,6 +264,7 @@ public class AILoopControl extends Thread {
 		if (ent.isPacman() && !r.getClass().equals(MipsManRouteFinder.class)) {
 			lastGhostRouteFinder = r;
 			ent.setRouteFinder(new MipsManRouteFinder());
+			mipsmanID = ent.getClientId();
 		}
 		// correct old Mipsman if possible, if not false is returned because this is the
 		// first capture.
@@ -274,14 +285,19 @@ public class AILoopControl extends Thread {
 	private void executeRoute(Entity ent) {
 		RouteFinder r = ent.getRouteFinder();
 		Point myLoc = Mapping.point2DtoPoint(ent.getLocation());
-		Point mipsManLoc = Mapping.point2DtoPoint(controlAgents[pacmanId].getLocation());
+		Point mipsManLoc = Mapping.point2DtoPoint(controlAgents[mipsmanID].getLocation());
 		Direction direction;
 		direction = r.getRoute(myLoc, mipsManLoc);
 		// re-process a random direction if an invalid move is detected
 		while (!Mapping.validMove(myLoc, edges, direction)) {
 			direction = new RandomRouteFinder().getRoute(myLoc, mipsManLoc);
 		}
-		ent.setDirection(direction);
+		try {
+			directionsOut.put(new Input(ent.getClientId(), direction));
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
