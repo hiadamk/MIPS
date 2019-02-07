@@ -1,17 +1,17 @@
 package server;
 
+import ai.AILoopControl;
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import objects.Entity;
 import utils.Input;
 import utils.Map;
 import utils.Methods;
 import utils.enums.Direction;
-
-import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
-import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class Telemetry {
     
@@ -30,11 +30,9 @@ public class Telemetry {
         outputs = new LinkedBlockingQueue<>();
         
         this.server = server;
-        int aiCount = 5 - server.getPlayerCount();
+        int aiCount = AGENT_COUNT - server.getPlayerCount();
         this.singlePlayer = false;
-        if (aiCount > 0) {
-            // Generate the AI to control each entity needed
-        }
+
         agents = new Entity[AGENT_COUNT];
     
         agents[0] = new Entity(true, 0, new Double(1, 3));
@@ -42,7 +40,14 @@ public class Telemetry {
         //agents[2] = new Entity(false, 2, new Double(1, 2));
         //agents[3] = new Entity(false, 3, new Double(1, 2));
         //agents[4] = new Entity(false, 4, new Double(1, 2));
-    
+      int[] aiControlled = new int[aiCount];
+      int highestId = AGENT_COUNT-1;
+      for (int i = 0; i < aiCount; i++) {
+        aiControlled[i] = highestId;
+        highestId--;
+      }
+      AILoopControl ai = new AILoopControl(agents, aiControlled, map, inputs);
+      ai.start();
         //startGame();
     }
     

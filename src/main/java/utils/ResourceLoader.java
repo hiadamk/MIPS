@@ -12,6 +12,8 @@ import utils.enums.MapElement;
 
 public class ResourceLoader {
 
+  private final String fileSeparator = File.separator;
+
   private final String BASE_DIR;
 
   private String[] themes;
@@ -57,7 +59,7 @@ public class ResourceLoader {
   }
 
   private void loadThemes() {
-    File[] themeFolders = new File(BASE_DIR + "sprites/").listFiles(File::isDirectory);
+    File[] themeFolders = new File(toOSPath(BASE_DIR + "sprites/")).listFiles(File::isDirectory);
     String[] _themes = new String[themeFolders.length];
 
     for (int i = 0; i < themeFolders.length; i++) {
@@ -191,8 +193,8 @@ public class ResourceLoader {
    */
   private BufferedImage loadImageFile(String folderPath, String name) {
 
-    String path = BASE_DIR + folderPath + name + ".png";
-
+    String path = toOSPath(BASE_DIR + folderPath + name + ".png");
+    System.out.println(path);
     File mapFile = new File(path);
     BufferedImage image = null;
 
@@ -283,5 +285,9 @@ public class ResourceLoader {
     }
 
     return sprite;
+  }
+
+  private String toOSPath(String windowsPath) {
+    return windowsPath.replace("/", fileSeparator);
   }
 }
