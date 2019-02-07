@@ -72,8 +72,14 @@ public class Client extends Application {
     // If hosting if not telemetry will be set by connection method along with new main id
     map = resourceLoader.getMap();
       Queue<Input> incomingQueue = new LinkedList<>();
-    
-      this.telemetry = new Telemetry(map, incomingQueue);
+
+    agents = new Entity[5];
+    agents[0] = new Entity(true, 0, new Double(1, 2));
+    agents[1] = new Entity(false, 1, new Double(1, 1));
+    agents[2] = new Entity(false, 2, new Double(1, 1));
+    agents[3] = new Entity(false, 3, new Double(1, 1));
+    agents[4] = new Entity(false, 4, new Double(1, 1));
+      this.telemetry = new Telemetry(map, incomingQueue, agents);
     this.primaryStage.setScene(gameScene);
       this.id = 0;
     
@@ -88,12 +94,12 @@ public class Client extends Application {
   
   private void startGame() {
     //inputs = new Queue<Input>();
-    agents = new Entity[1];
-    agents[0] = new Entity(true, 0, new Double(1, 1));
-    //agents[1] = new Entity(false, 1, new Double(1, 2));
-    //agents[2] = new Entity(false, 2, new Double(1, 2));
-    //agents[3] = new Entity(false, 3, new Double(1, 2));
-    //agents[4] = new Entity(false, 4, new Double(1, 2));
+    //agents = new Entity[2];
+    //agents[0] = new Entity(true, 0, new Double(1, 2));
+    //agents[1] = new Entity(false, 1, new Double(1, 1));
+    //agents[2] = new Entity(false, 2, new Double(1, 1));
+    //agents[3] = new Entity(false, 3, new Double(1, 1));
+    //agents[4] = new Entity(false, 4, new Double(1, 1));
     Methods.updateImages(agents, resourceLoader);
     this.primaryStage.setScene(gameScene);
     // AnimationTimer started once game has started
@@ -105,16 +111,17 @@ public class Client extends Application {
         render();
       }
     }.start();
+    telemetry.startAI();
   }
 
   private void processInput() {
     Direction input = keyController.getActiveKey();
     Direction current = agents[id].getDirection();
 
-    if (input == null | input == current) {
+    if (input == null || input == current) {
       return;
     }
-    System.out.println(input.toString() + "     " + current);
+    System.out.println(input.toString() + "     " + current + " ID: " + id);
     if (!Methods.validiateDirection(input, agents[0], map)) {
       return;
     }

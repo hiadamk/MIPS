@@ -15,7 +15,7 @@ import utils.enums.Direction;
 
 public class Telemetry {
     
-    private static final int AGENT_COUNT = 1;
+    private static final int AGENT_COUNT = 5;
     private BlockingQueue<Input> inputs;
     private BlockingQueue<Input> outputs;
     private Entity[] agents;
@@ -23,6 +23,7 @@ public class Telemetry {
     private Map map;
     private Queue<Input> clientQueue;
     private ServerGameplayHandler server;
+    private boolean AIStarted = false;
     
     public Telemetry(Map map, ServerGameplayHandler server) {
         this.map = map;
@@ -35,13 +36,13 @@ public class Telemetry {
 
         agents = new Entity[AGENT_COUNT];
     
-        agents[0] = new Entity(true, 0, new Double(1, 3));
-        // agents[1] = new Entity(false, 1, new Double(1, 2));
-        //agents[2] = new Entity(false, 2, new Double(1, 2));
-        //agents[3] = new Entity(false, 3, new Double(1, 2));
-        //agents[4] = new Entity(false, 4, new Double(1, 2));
+        agents[0] = new Entity(true, 0, new Double(1, 2));
+        agents[1] = new Entity(false, 1, new Double(1, 1));
+        agents[2] = new Entity(false, 2, new Double(1, 1));
+        agents[3] = new Entity(false, 3, new Double(1, 1));
+        agents[4] = new Entity(false, 4, new Double(1, 1));
       int[] aiControlled = new int[aiCount];
-      int highestId = AGENT_COUNT-1;
+      int highestId = AGENT_COUNT;//-1;
       for (int i = 0; i < aiCount; i++) {
         aiControlled[i] = highestId;
         highestId--;
@@ -51,12 +52,35 @@ public class Telemetry {
         //startGame();
     }
     
-    public Telemetry(Map map, Queue<Input> clientQueue) {
+    public Telemetry(Map map, Queue<Input> clientQueue, Entity[] agents) {
         this.map = map;
         inputs = new LinkedBlockingQueue<>();
         outputs = new LinkedBlockingQueue<>();
         singlePlayer = true;
         this.clientQueue = clientQueue;
+        this.agents = agents;
+        /*agents = new Entity[AGENT_COUNT];
+        
+        agents[0] = new Entity(true, 0, new Double(1, 2));
+        agents[1] = new Entity(false, 1, new Double(1, 1));
+        agents[2] = new Entity(false, 2, new Double(1, 1));
+        agents[3] = new Entity(false, 3, new Double(1, 1));
+        agents[4] = new Entity(false, 4, new Double(1, 1));*/
+
+    }
+
+    public void startAI () {
+        if (!AIStarted) {
+            int[] aiControlled = new int[AGENT_COUNT-1];
+            int highestId = AGENT_COUNT-1;
+            for (int i = 0; i < AGENT_COUNT-1; i++) {
+                aiControlled[i] = highestId;
+                highestId--;
+            }
+            AILoopControl ai = new AILoopControl(agents, aiControlled, map, inputs);
+            ai.start();
+            AIStarted = true;
+        }
     }
     
     /**
@@ -101,13 +125,13 @@ public class Telemetry {
             if (m.isWall(tempLocation)) {
                 agents[i].setDirection(null);
                 //agents[i].setVelocity(0);
-                System.out.println("in wall");
+                System.out.println("in wall. ID: " + agents[i].getClientId());
                 System.out.println(tempLocation);
                 System.out.println(agents[i].getLocation());
                 System.out.println(offset);
             } else {
                 agents[i].setLocation(tempLocation);
-                System.out.println("moved");
+                System.out.println("moved. ID: " + agents[i].getClientId());
                 System.out.println(offset);
             }
             
