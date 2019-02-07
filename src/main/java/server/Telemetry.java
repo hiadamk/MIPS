@@ -41,8 +41,8 @@ public class Telemetry {
         //agents[3] = new Entity(false, 3, new Double(1, 2));
         //agents[4] = new Entity(false, 4, new Double(1, 2));
       int[] aiControlled = new int[aiCount];
-      int highestId = 5;
-      for (int i; i < aiCount; i++) {
+      int highestId = 4;
+      for (int i = 0; i < aiCount; i++) {
         aiControlled[i] = highestId;
         highestId--;
       }
