@@ -92,7 +92,8 @@ public class Map {
    * @return true if wall
    */
   public boolean isWall(Double point) {
-    return MAP[(int) (point.getX() % MAX_X + 0.5)][(int) (point.getY() % MAX_Y + 0.5)] == 1;
+    return MAP[((int) (point.getX() + 0.5 + MAX_X)) % MAX_X][((int) (point.getY() + 0.5 + MAX_Y))
+        % MAX_Y] == 1;
   }
 
   /**

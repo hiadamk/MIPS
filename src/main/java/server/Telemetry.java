@@ -74,20 +74,22 @@ public class Telemetry {
             }
             switch (agents[i].getDirection()) {
                 case RIGHT:
-                    tempLocation.setLocation((tempLocation.getX() + offset) % m.getMaxX(),
+                  tempLocation
+                      .setLocation((tempLocation.getX() + offset + m.getMaxX()) % m.getMaxX(),
                         tempLocation.getY());
                     break;
                 case LEFT:
-                    tempLocation.setLocation((tempLocation.getX() - offset) % m.getMaxX(),
+                  tempLocation
+                      .setLocation((tempLocation.getX() - offset + m.getMaxX()) % m.getMaxX(),
                         tempLocation.getY());
                     break;
                 case DOWN:
                     tempLocation.setLocation(tempLocation.getX(),
-                        (tempLocation.getY() + offset) % m.getMaxY());
+                        (tempLocation.getY() + offset + m.getMaxY()) % m.getMaxY());
                     break;
                 case UP:
                     tempLocation.setLocation(tempLocation.getX(),
-                        (tempLocation.getY() - offset) % m.getMaxY());
+                        (tempLocation.getY() - offset + m.getMaxY()) % m.getMaxY());
                     break;
             }
             
