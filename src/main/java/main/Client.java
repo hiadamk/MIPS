@@ -1,6 +1,8 @@
 package main;
 
 import audio.AudioController;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.geom.Point2D.Double;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -31,8 +33,8 @@ public class Client extends Application {
   private Scene gameScene;
   private Stage primaryStage;
   private Renderer renderer;
-  private final int xRes = 1920;
-  private final int yRes = 1080;
+  private int xRes = 1920;
+  private int yRes = 1080;
   private ResourceLoader resourceLoader;
   private Entity[] agents;
   private Queue<Input> inputs;
@@ -45,6 +47,11 @@ public class Client extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
+    Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();
+    xRes = screenRes.width;
+    yRes = screenRes.height;
+
+
     int id = 0; // This will be changed if main joins a lobby, telemetry will give it new id
     audioController = new AudioController();
     keyController = new KeyController();
