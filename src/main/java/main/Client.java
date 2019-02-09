@@ -47,7 +47,7 @@ public class Client extends Application {
     int id = 0; // This will be changed if main joins a lobby, telemetry will give it new id
     audioController = new AudioController();
     keyController = new KeyController();
-    resourceLoader = new ResourceLoader("src/test/resources/");
+    resourceLoader = new ResourceLoader("src/main/resources/");
     this.primaryStage = primaryStage;
     //this.gameScene = new Scene(new Label("place holder"), xRes, yRes);
     MenuController menuController = new MenuController(audioController, primaryStage, this);
@@ -58,7 +58,7 @@ public class Client extends Application {
     gameRoot.getChildren().add(canvas);
     this.gameScene = new Scene(gameRoot);
     GraphicsContext gc = canvas.getGraphicsContext2D();
-    renderer = new Renderer(gc, xRes, yRes, resourceLoader.getMapTiles() );
+    renderer = new Renderer(gc, xRes, yRes, resourceLoader);
     primaryStage.setScene(scene);
     primaryStage.show();
     //audioController.playMusic(Sounds.intro);

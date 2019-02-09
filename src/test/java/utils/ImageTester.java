@@ -25,8 +25,9 @@ public class ImageTester extends Application {
 
     ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
 
+    resourceLoader.loadMap("9x9");
     Map map = resourceLoader.getMap();
-    Renderer r = new Renderer(gc, 1920, 1080, resourceLoader.getMapTiles());
+    Renderer r = new Renderer(gc, 1920, 1080, resourceLoader);
 
 
 

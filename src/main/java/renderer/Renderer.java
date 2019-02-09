@@ -1,23 +1,30 @@
 package renderer;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import objects.Entity;
 import utils.Map;
 import utils.Renderable;
+import utils.ResourceLoader;
 import utils.enums.MapElement;
 
 public class Renderer {
 
+  private static final double MAP_BORDER = 10;
   private final GraphicsContext gc;
   private final int xResolution;
   private final int yResolution;
   private Point2D.Double mapRenderingCorner;
 
   private ArrayList<Image> mapTiles;
+  private Image background;
+  private BufferedImage palette;
 
   private double tileSizeX = 39;
   private double tileSizeY = 19;
@@ -25,17 +32,16 @@ public class Renderer {
   /**
    * @param _xResolution Game x resolution
    * @param _yResolution Game y resolution
-   * @param _mapTiles Map sprites (placeholder)
    */
-  public Renderer(GraphicsContext _gc, int _xResolution, int _yResolution,
-      ArrayList<Image> _mapTiles) {
+  public Renderer(GraphicsContext _gc, int _xResolution, int _yResolution, ResourceLoader r) {
     this.gc = _gc;
     this.xResolution = _xResolution;
     this.yResolution = _yResolution;
     this.mapRenderingCorner = getMapRenderingCorner();
-    this.mapTiles = _mapTiles;
+    this.mapTiles = r.getMapTiles();
+    this.background = r.getBackground();
+    this.palette = r.getBackgroundPalette();
 
-    //this.floor =
   }
 
   /**
@@ -43,6 +49,8 @@ public class Renderer {
    * @param entityArr Playable entities
    */
   public void render(Map map, Entity[] entityArr) {
+
+    renderBackground(map);
 
     ArrayList<Entity> entities = new ArrayList<>(Arrays.asList(entityArr));
     //sort entities to get rendering order
@@ -105,6 +113,69 @@ public class Renderer {
 
   }
 
+  private void renderBackground(Map map) {
+    //render backing image
+    gc.drawImage(background, 0, 0, xResolution, yResolution);
+
+    //Render map base
+    Point2D.Double tmpCoord = getIsoCoord(0, 0, tileSizeY);
+    Point2D.Double topLeft = new Double(tmpCoord.getX() + 0.5 * tileSizeX,
+        tmpCoord.getY() - 0.5 * MAP_BORDER);
+
+    tmpCoord = getIsoCoord(map.getMaxX(), 0, tileSizeY);
+    Point2D.Double topRight = new Double(tmpCoord.getX() + MAP_BORDER + tileSizeX,
+        tmpCoord.getY() + 0.5 * tileSizeY);
+
+    tmpCoord = getIsoCoord(0, map.getMaxY(), tileSizeY);
+    Point2D.Double bottomLeft = new Double(tmpCoord.getX() - 0.5 * MAP_BORDER,
+        tmpCoord.getY() + 0.5 * tileSizeY);
+
+    tmpCoord = getIsoCoord(map.getMaxX(), map.getMaxY(), tileSizeY);
+    Point2D.Double bottomRight = new Double(tmpCoord.getX() + 0.5 * tileSizeX,
+        tmpCoord.getY() + 0.5 * MAP_BORDER + tileSizeY);
+
+    setFillColour(palette.getRGB(0, 0));
+    gc.fillPolygon(
+        new double[]{topLeft.getX(), topRight.getX(), bottomRight.getX(), bottomLeft.getX()},
+        new double[]{topLeft.getY(), topRight.getY(), bottomRight.getY(), bottomLeft.getY()}, 4);
+
+    //Render Pyramid underside
+
+    double yChange = topRight.getX() - bottomRight.getX();
+    double xChange = topRight.getY() - bottomRight.getY();
+
+    double percentageXRes = 0.04;
+    double ratio = ((percentageXRes * xResolution) / yChange) * (map.getMaxY() / (double) 20);
+
+    double x = bottomRight.getX() - xChange * ratio;
+    double y = bottomRight.getY() + yChange * ratio;
+
+    Point2D.Double pyramidVertex = new Point2D.Double(x, y);
+
+    setFillColour(palette.getRGB(2, 0));
+    gc.fillPolygon(
+        new double[]{topRight.getX(), bottomRight.getX(), pyramidVertex.getX()},
+        new double[]{topRight.getY(), bottomRight.getY(), pyramidVertex.getY()}, 3);
+
+    setFillColour(palette.getRGB(1, 0));
+    gc.fillPolygon(
+        new double[]{bottomLeft.getX(), bottomRight.getX(), pyramidVertex.getX()},
+        new double[]{bottomLeft.getY(), bottomRight.getY(), pyramidVertex.getY()}, 3);
+
+    //Draw outline
+    gc.setStroke(Color.BLACK);
+    gc.strokePolygon(new double[]{bottomLeft.getX(), bottomRight.getX(), pyramidVertex.getX()},
+        new double[]{bottomLeft.getY(), bottomRight.getY(), pyramidVertex.getY()}, 3);
+
+    gc.strokePolygon(
+        new double[]{topRight.getX(), bottomRight.getX(), pyramidVertex.getX()},
+        new double[]{topRight.getY(), bottomRight.getY(), pyramidVertex.getY()}, 3);
+
+    gc.strokePolygon(
+        new double[]{topLeft.getX(), topRight.getX(), bottomRight.getX(), bottomLeft.getX()},
+        new double[]{topLeft.getY(), topRight.getY(), bottomRight.getY(), bottomLeft.getY()}, 4);
+  }
+
   /**
    * @param x cartesian x coordinate
    * @param y cartesian Y coordinate
@@ -131,7 +202,7 @@ public class Renderer {
    * @return The top right corner coordinate to start rendering game map from
    */
   private Point2D.Double getMapRenderingCorner() {
-    return new Point2D.Double(this.xResolution / (double) 2, this.yResolution / (double) 2);
+    return new Point2D.Double(this.xResolution / (double) 2, this.yResolution / (double) 3);
     //return new Point2D.Double(getIsoCoord(0,map),getIsoCoord(0,0,tileSizeY).getY())
   }
 
@@ -141,5 +212,10 @@ public class Renderer {
 
   private boolean isBetween(double lowerBound, double upperBound, double num) {
     return num <= upperBound && num >= lowerBound;
+  }
+
+  private void setFillColour(int colour) {
+    gc.setFill(new Color((colour >> 16 & 0xFF) / (double) 255, (colour >> 8 & 0xFF) / (double) 255,
+        (colour & 0xFF) / (double) 255, 1));
   }
 }

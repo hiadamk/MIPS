@@ -29,6 +29,7 @@ public class ResourceLoader {
   private ArrayList<BufferedImage> mapTiles;
 
   private BufferedImage background;
+  private BufferedImage backgroundPalette;
 
   /**
    * @param baseDir path to the resources folder
@@ -179,11 +180,18 @@ public class ResourceLoader {
 
   public void loadBackground(String theme) {
     this.background = loadImageFile("sprites/" + theme + "/backgrounds/", theme);
+    this.backgroundPalette = loadImageFile("sprites/" + theme + "/backgrounds/",
+        theme + "_palette");
   }
 
   public Image getBackground() {
     return SwingFXUtils.toFXImage(this.background, null);
   }
+
+  public BufferedImage getBackgroundPalette() {
+    return this.backgroundPalette;
+  }
+
 
   /**
    * @param folderPath folder that contains the images
@@ -284,4 +292,6 @@ public class ResourceLoader {
 
     return sprite;
   }
+
+
 }
