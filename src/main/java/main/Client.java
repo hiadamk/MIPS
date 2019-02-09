@@ -100,7 +100,6 @@ public class Client extends Application {
       @Override
       public void handle(long now) {
         processInput();
-        Telemetry.processPhysics(agents, map);
         render();
       }
     }.start();

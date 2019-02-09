@@ -171,14 +171,25 @@ public class Telemetry {
   }
 
   public void startGame() {
+    final long DELAY = 1000000;
     // TODO implement
+
     new AnimationTimer() {
+      long change;
+      long oldTime = System.nanoTime();
       @Override
       public void handle(long now) {
-        processInputs();
-        informClients();
-        agents = processPhysics(agents, map);
-        updateClients();
+        change = now - oldTime;
+        if (change >= DELAY) {
+          oldTime = now;
+          System.out.println(change);
+          processInputs();
+          informClients();
+          agents = processPhysics(agents, map);
+          updateClients();
+        } else {
+          System.out.println("skipped");
+        }
       }
     }.start();
   }
