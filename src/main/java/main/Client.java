@@ -3,7 +3,6 @@ package main;
 import audio.AudioController;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.geom.Point2D.Double;
 import java.util.LinkedList;
 import java.util.Queue;
 import javafx.animation.AnimationTimer;
@@ -70,19 +69,19 @@ public class Client extends Application {
     primaryStage.setScene(scene);
     primaryStage.show();
   }
-  
-  
-  public void startSinglePlayerGame() {
+
+
+  public void startSinglePlayerGame() { // This will work for hosting multiplayer too
   
     System.out.println("Starting single player game...");
     // If hosting if not telemetry will be set by connection method along with new main id
     map = resourceLoader.getMap();
-      Queue<Input> incomingQueue = new LinkedList<>();
-    
-      this.telemetry = new Telemetry(map, incomingQueue);
+    Queue<Input> incomingQueue = new LinkedList<>();
+    this.telemetry = new Telemetry(map, incomingQueue);
     this.primaryStage.setScene(gameScene);
-      this.id = 0;
-    
+    this.id = 0;
+    this.agents = telemetry.getAgents();
+    this.map = telemetry.getMap();
     gameScene.setOnKeyPressed(keyController);
 
     startGame();
@@ -94,12 +93,6 @@ public class Client extends Application {
   
   private void startGame() {
     //inputs = new Queue<Input>();
-    agents = new Entity[1];
-    agents[0] = new Entity(true, 0, new Double(1, 1));
-    //agents[1] = new Entity(false, 1, new Double(1, 2));
-    //agents[2] = new Entity(false, 2, new Double(1, 2));
-    //agents[3] = new Entity(false, 3, new Double(1, 2));
-    //agents[4] = new Entity(false, 4, new Double(1, 2));
     Methods.updateImages(agents, resourceLoader);
     this.primaryStage.setScene(gameScene);
     // AnimationTimer started once game has started
