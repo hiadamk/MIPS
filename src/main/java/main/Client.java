@@ -1,6 +1,9 @@
 package main;
 
 import audio.AudioController;
+import java.awt.geom.Point2D.Double;
+import java.util.LinkedList;
+import java.util.Queue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -18,10 +21,6 @@ import utils.Map;
 import utils.Methods;
 import utils.ResourceLoader;
 import utils.enums.Direction;
-
-import java.awt.geom.Point2D.Double;
-import java.util.LinkedList;
-import java.util.Queue;
 
 public class Client extends Application {
 
@@ -49,7 +48,7 @@ public class Client extends Application {
     int id = 0; // This will be changed if main joins a lobby, telemetry will give it new id
     audioController = new AudioController();
     keyController = new KeyController();
-    resourceLoader = new ResourceLoader("src/test/resources/");
+    resourceLoader = new ResourceLoader("src/main/resources/");
     this.primaryStage = primaryStage;
 //    audioController.playMusic(Sounds.intro);
     MenuController menuController = new MenuController(audioController, primaryStage, this);
@@ -60,7 +59,7 @@ public class Client extends Application {
     gameRoot.getChildren().add(canvas);
     this.gameScene = new Scene(gameRoot);
     GraphicsContext gc = canvas.getGraphicsContext2D();
-    renderer = new Renderer(gc, xRes, yRes, resourceLoader.getMapTiles() );
+    renderer = new Renderer(gc, xRes, yRes, resourceLoader);
     primaryStage.setScene(scene);
     primaryStage.show();
   }
