@@ -1,6 +1,7 @@
 package main;
 
 import audio.AudioController;
+import audio.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -11,6 +12,9 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import objects.Entity;
 import renderer.Renderer;
+import server.ClientLobbySession;
+import server.ServerGameplayHandler;
+import server.ServerLobby;
 import server.Telemetry;
 import ui.MenuController;
 import utils.Input;
@@ -20,8 +24,10 @@ import utils.ResourceLoader;
 import utils.enums.Direction;
 
 import java.awt.geom.Point2D.Double;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Client extends Application {
 
@@ -37,6 +43,8 @@ public class Client extends Application {
   private ResourceLoader resourceLoader;
   private Entity[] agents;
   private Queue<Input> inputs;
+    private ServerLobby server;
+    private ServerGameplayHandler serverGameplayHandler;
   Map map;
 
 
@@ -51,7 +59,7 @@ public class Client extends Application {
     keyController = new KeyController();
     resourceLoader = new ResourceLoader("src/test/resources/");
     this.primaryStage = primaryStage;
-//    audioController.playMusic(Sounds.intro);
+      audioController.playMusic(Sounds.intro);
     MenuController menuController = new MenuController(audioController, primaryStage, this);
     StackPane root = (StackPane) menuController.createMainMenu();
     Scene scene = new Scene(root, xRes, yRes);
@@ -83,7 +91,20 @@ public class Client extends Application {
   }
   
   public void startMultiplayerGame() {
-    //TODO Implement
+    
+      Queue<String> clientIn = new LinkedList<>();
+      Queue<Input> keypressQueue = new LinkedBlockingQueue<>();
+      try {
+          this.server = new ServerLobby();
+          server.acceptConnections();
+          ClientLobbySession lobbySession = new ClientLobbySession(clientIn, keypressQueue, this);
+        
+      } catch (IOException e) {
+          e.printStackTrace();
+      }
+    
+    
+    
   }
   
   private void startGame() {

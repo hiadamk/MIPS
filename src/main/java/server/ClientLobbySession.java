@@ -9,19 +9,18 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
 
 public class ClientLobbySession {
     
     private Queue<String> clientIn;
-    private BlockingQueue<Input> keypressQueue;
+    private Queue<Input> keypressQueue;
     private InetAddress serverIP;
     private ClientGameplayHandler handler;
     private Client client;
     
     
     public ClientLobbySession(Queue<String> clientIn,
-                              BlockingQueue<Input> keypressQueue, Client client) throws IOException {
+                              Queue<Input> keypressQueue, Client client) throws IOException {
         
         this.clientIn = clientIn;
         this.keypressQueue = keypressQueue;
