@@ -1,6 +1,5 @@
 package utils;
 
-import java.awt.geom.Point2D.Double;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -11,6 +10,8 @@ import javafx.stage.Stage;
 import objects.Entity;
 import renderer.Renderer;
 import utils.enums.Direction;
+
+import java.awt.geom.Point2D.Double;
 
 public class ImageTester extends Application {
 
@@ -24,9 +25,10 @@ public class ImageTester extends Application {
     final GraphicsContext gc = canvas.getGraphicsContext2D();
 
     ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
-
+    
+      resourceLoader.loadMap("9x9");
     Map map = resourceLoader.getMap();
-    Renderer r = new Renderer(gc, 1920, 1080, resourceLoader.getMapTiles());
+      Renderer r = new Renderer(gc, 1920, 1080, resourceLoader);
 
 
 

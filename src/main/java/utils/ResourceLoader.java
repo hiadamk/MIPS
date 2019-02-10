@@ -1,18 +1,17 @@
 package utils;
 
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
+import utils.enums.MapElement;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.Image;
-import javax.imageio.ImageIO;
-import utils.enums.MapElement;
 
 public class ResourceLoader {
-
-  private final String fileSeparator = File.separator;
 
   private final String BASE_DIR;
 
@@ -31,6 +30,7 @@ public class ResourceLoader {
   private ArrayList<BufferedImage> mapTiles;
 
   private BufferedImage background;
+    private BufferedImage backgroundPalette;
 
   /**
    * @param baseDir path to the resources folder
@@ -59,7 +59,7 @@ public class ResourceLoader {
   }
 
   private void loadThemes() {
-    File[] themeFolders = new File(toOSPath(BASE_DIR + "sprites/")).listFiles(File::isDirectory);
+      File[] themeFolders = new File(BASE_DIR + "sprites/").listFiles(File::isDirectory);
     String[] _themes = new String[themeFolders.length];
 
     for (int i = 0; i < themeFolders.length; i++) {
@@ -181,20 +181,28 @@ public class ResourceLoader {
 
   public void loadBackground(String theme) {
     this.background = loadImageFile("sprites/" + theme + "/backgrounds/", theme);
+      this.backgroundPalette = loadImageFile("sprites/" + theme + "/backgrounds/",
+              theme + "_palette");
+
   }
 
   public Image getBackground() {
     return SwingFXUtils.toFXImage(this.background, null);
   }
+    
+    public BufferedImage getBackgroundPalette() {
+        return this.backgroundPalette;
+    }
+
 
   /**
    * @param folderPath folder that contains the images
    * @param name name of image to load (no file ending)
    */
   private BufferedImage loadImageFile(String folderPath, String name) {
+    
+      String path = BASE_DIR + folderPath + name + ".png";
 
-    String path = toOSPath(BASE_DIR + folderPath + name + ".png");
-    System.out.println(path);
     File mapFile = new File(path);
     BufferedImage image = null;
 
@@ -285,9 +293,5 @@ public class ResourceLoader {
     }
 
     return sprite;
-  }
-
-  private String toOSPath(String windowsPath) {
-    return windowsPath.replace("/", fileSeparator);
   }
 }
