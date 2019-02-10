@@ -58,40 +58,49 @@ public class Telemetry {
   public static Entity[] processPhysics(Entity[] agents, Map m) {
 
     for (int i = 0; i < AGENT_COUNT; i++) {
-      Point2D.Double tempLocation =
+      Point2D.Double nextLocation =
           new Point2D.Double(agents[i].getLocation().getX(), agents[i].getLocation().getY());
       double offset = agents[i].getVelocity();
+
+      double nextX = nextLocation.getX();
+      double nextY = nextLocation.getY();
+      double wallX = nextX;
+      double wallY = nextY;
+
       if (agents[i].getDirection() == null) {
         continue;
       }
       switch (agents[i].getDirection()) {
         case RIGHT:
-          tempLocation.setLocation(
-              (tempLocation.getX() + offset + m.getMaxX()) % m.getMaxX(), tempLocation.getY());
+          nextX = (nextX + offset + m.getMaxX()) % m.getMaxX();
+          wallX = (nextX + 0.9 + m.getMaxX()) % m.getMaxX();
           break;
         case LEFT:
-          tempLocation.setLocation(
-              (tempLocation.getX() - offset + m.getMaxX()) % m.getMaxX(), tempLocation.getY());
+          nextX = (nextX - offset + m.getMaxX()) % m.getMaxX();
+          wallX = nextX;
           break;
         case DOWN:
-          tempLocation.setLocation(
-              tempLocation.getX(), (tempLocation.getY() + offset + m.getMaxY()) % m.getMaxY());
+          nextY = (nextY + offset + m.getMaxY()) % m.getMaxY();
+          wallY = (nextY + 0.9 + m.getMaxY()) % m.getMaxY();
           break;
         case UP:
-          tempLocation.setLocation(
-              tempLocation.getX(), (tempLocation.getY() - offset + m.getMaxY()) % m.getMaxY());
+          nextY = (nextY - offset + m.getMaxY()) % m.getMaxY();
+          wallY = nextY;
           break;
       }
 
-      if (m.isWall(tempLocation)) {
+      nextLocation.setLocation(nextX,nextY);
+      Point2D.Double wallLocation = new Point2D.Double(wallX, wallY);
+
+      if (m.isWall(wallLocation)) {
         agents[i].setDirection(null);
         // agents[i].setVelocity(0);
         System.out.println("in wall");
-        System.out.println(tempLocation);
+        System.out.println(nextLocation);
         System.out.println(agents[i].getLocation());
         System.out.println(offset);
       } else {
-        agents[i].setLocation(tempLocation);
+        agents[i].setLocation(nextLocation);
         System.out.println("moved");
         System.out.println(offset);
       }
