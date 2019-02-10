@@ -4,8 +4,6 @@ import audio.AudioController;
 import audio.Sounds;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -64,6 +62,7 @@ public class MenuController {
     private Label lobbyStatusLbl;
     private Label loadingDots;
     private Font font;
+    private Button startMGameBtn;
     private boolean isHome = true;
     
     /**
@@ -142,8 +141,20 @@ public class MenuController {
         startGameBtn.setVisible(false);
         startGameBtn.setOnAction(e -> {
             audioController.playSound(Sounds.click);
-//            primaryStage.setScene(gameScene);
             client.startSinglePlayerGame();
+        });
+    
+        startMGameBtn = new Button();
+        StackPane.setAlignment(startMGameBtn, Pos.BOTTOM_CENTER);
+        StackPane.setMargin(startMGameBtn, new Insets(0, 0, 200, 0));
+//        Image startMImg = new Image("ui/start.png");
+        startMGameBtn.setGraphic(new ImageView(startImg));
+        startMGameBtn.setStyle("-fx-background-color: transparent;");
+        root.getChildren().add(startMGameBtn);
+        startMGameBtn.setVisible(false);
+        startMGameBtn.setOnAction(e -> {
+            audioController.playSound(Sounds.click);
+            client.startMultiplayerGame();
         });
         
         this.singlePlayerBtn = new Button();
@@ -395,8 +406,12 @@ public class MenuController {
         root.getChildren().add(createGameBtn);
         createGameBtn.setOnAction(event -> {
             moveItemsToBackTree();
+            itemsOnScreen.add(lobbyStatusLbl);
+            itemsOnScreen.add(loadingDots);
+            itemsOnScreen.add(startMGameBtn);
             lobbyStatusLbl.setVisible(true);
             loadingDots.setVisible(true);
+            startMGameBtn.setVisible(true);
             client.createMultiplayerLobby();
         });
         
@@ -440,16 +455,14 @@ public class MenuController {
         root.getChildren().add(loadingDots);
     
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new EventHandler() {
-                    @Override
-                    public void handle(Event event) {
+                new KeyFrame(Duration.ZERO, event -> {
+                   
                         String statusText = loadingDots.getText();
                         loadingDots.setText(
                                 (" . . .".equals(statusText))
                                         ? " ."
                                         : statusText + " ."
                         );
-                    }
                 }),
                 new KeyFrame(Duration.millis(1000))
         );
