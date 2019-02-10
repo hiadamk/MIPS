@@ -115,8 +115,8 @@ public class Telemetry {
       for (int j = i + 1; j < AGENT_COUNT; j++) {
           if ((int) agents[i].getLocation().getX() == (int) agents[j].getLocation().getX()
                   && (int) agents[i].getLocation().getY() == (int) agents[j].getLocation().getY()) {
-          entityCollision(agents[i], agents[j], m.getSpawnPoint());
-          System.out.println("collison");
+          entityCollision(agents[i], agents[j], m.getRandomSpawnPoint());
+          System.out.println("collision");
         }
       }
     }
