@@ -15,7 +15,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Telemetry {
-  
+
   private static final int AGENT_COUNT = 1;
   private BlockingQueue<Input> inputs;
   private BlockingQueue<Input> outputs;
@@ -24,19 +24,19 @@ public class Telemetry {
   private Map map;
   private Queue<Input> clientQueue;
   private ServerGameplayHandler server;
-  
+
   public Telemetry(Map map, ServerGameplayHandler server) {
     this.map = map;
     inputs = new LinkedBlockingQueue<>();
     outputs = new LinkedBlockingQueue<>();
-    
+
     this.server = server;
     this.singlePlayer = false;
-    
+
     initialise();
     startGame();
   }
-  
+
   public Telemetry(Map map, Queue<Input> clientQueue) {
     this.map = map;
     inputs = new LinkedBlockingQueue<>();
@@ -46,7 +46,7 @@ public class Telemetry {
     initialise();
     startGame();
   }
-  
+
   /**
    * Static method for updating game state increments positions if valid, increments points, and
    * detects and treats entity collisions TODO: 30/1/19 increment points functionality
@@ -57,64 +57,73 @@ public class Telemetry {
    * @see this#entityCollision(Entity, Entity, Double)
    */
   public static Entity[] processPhysics(Entity[] agents, Map m) {
-    
+
     for (int i = 0; i < AGENT_COUNT; i++) {
-      Point2D.Double tempLocation =
-              new Point2D.Double(agents[i].getLocation().getX(), agents[i].getLocation().getY());
+      Point2D.Double nextLocation =
+          new Point2D.Double(agents[i].getLocation().getX(), agents[i].getLocation().getY());
       double offset = agents[i].getVelocity();
+
+      double nextX = nextLocation.getX();
+      double nextY = nextLocation.getY();
+      double wallX = nextX;
+      double wallY = nextY;
+
       if (agents[i].getDirection() == null) {
         continue;
       }
       switch (agents[i].getDirection()) {
         case RIGHT:
-          tempLocation.setLocation(
-                  (tempLocation.getX() + offset + m.getMaxX()) % m.getMaxX(), tempLocation.getY());
+          nextX = (nextX + offset + m.getMaxX()) % m.getMaxX();
+          wallX = (nextX + 0.9 + m.getMaxX()) % m.getMaxX();
           break;
         case LEFT:
-          tempLocation.setLocation(
-                  (tempLocation.getX() - offset + m.getMaxX()) % m.getMaxX(), tempLocation.getY());
+          nextX = (nextX - offset + m.getMaxX()) % m.getMaxX();
+          wallX = nextX;
           break;
         case DOWN:
-          tempLocation.setLocation(
-                  tempLocation.getX(), (tempLocation.getY() + offset + m.getMaxY()) % m.getMaxY());
+          nextY = (nextY + offset + m.getMaxY()) % m.getMaxY();
+          wallY = (nextY + 0.9 + m.getMaxY()) % m.getMaxY();
           break;
         case UP:
-          tempLocation.setLocation(
-                  tempLocation.getX(), (tempLocation.getY() - offset + m.getMaxY()) % m.getMaxY());
+          nextY = (nextY - offset + m.getMaxY()) % m.getMaxY();
+          wallY = nextY;
           break;
       }
-      
-      if (m.isWall(tempLocation)) {
+
+      nextLocation.setLocation(nextX,nextY);
+      Point2D.Double wallLocation = new Point2D.Double(wallX, wallY);
+
+      if (m.isWall(wallLocation)) {
         agents[i].setDirection(null);
         // agents[i].setVelocity(0);
         System.out.println("in wall");
-        System.out.println(tempLocation);
+        System.out.println(nextLocation);
         System.out.println(agents[i].getLocation());
         System.out.println(offset);
       } else {
-        agents[i].setLocation(tempLocation);
+        agents[i].setLocation(nextLocation);
         System.out.println("moved");
         System.out.println(offset);
       }
-      
+
       // TODO add points for pellet collision
     }
-    
+
     // separate loop for checking collision after iteration
     /*
     for (int i = 0; i < AGENT_COUNT; i++) {
       for (int j = i + 1; j < AGENT_COUNT; j++) {
           if ((int) agents[i].getLocation().getX() == (int) agents[j].getLocation().getX()
                   && (int) agents[i].getLocation().getY() == (int) agents[j].getLocation().getY()) {
-          entityCollision(agents[i], agents[j], m.getSpawnPoint());
-          System.out.println("collison");
+          entityCollision(agents[i], agents[j], m.getRandomSpawnPoint());
+          System.out.println("collision");
         }
       }
     }
     */
     return agents;
   }
-  
+
   /**
    * Static method for 'swapping' entities if they occupy the same square. Does nothing if both
    * entities are ghouls
@@ -136,7 +145,7 @@ public class Telemetry {
       y.setDirection(Direction.UP);
     }
   }
-  
+
   public void initialise() {
     agents = new Entity[AGENT_COUNT];
     agents[0] = new Entity(true, 0, new Double(1, 3));
@@ -158,27 +167,27 @@ public class Telemetry {
     AILoopControl ai = new AILoopControl(agents, aiControlled, map, inputs);
     ai.start();
   }
-  
+
   public Map getMap() {
     return map;
   }
-  
+
   public Entity getEntity(int id) {
     return agents[id];
   }
-  
+
   public void addInput(Input in) {
     inputs.add(in);
   }
-  
+
   public void startGame() {
     final long DELAY = 1000000;
     // TODO implement
-    
+
     new AnimationTimer() {
       long change;
       long oldTime = System.nanoTime();
-      
+
       @Override
       public void handle(long now) {
         change = now - oldTime;
@@ -195,7 +204,7 @@ public class Telemetry {
       }
     }.start();
   }
-  
+
   private void processInputs() {
     while (!inputs.isEmpty()) {
       Input input = inputs.poll();
@@ -207,7 +216,7 @@ public class Telemetry {
       }
     }
   }
-  
+
   private void informClients() {
     while (!outputs.isEmpty()) {
       Input input = outputs.poll();
@@ -218,11 +227,11 @@ public class Telemetry {
       }
     }
   }
-  
+
   private void updateClients() {
     // TODO implement
   }
-  
+
   public Entity[] getAgents() {
     return agents;
   }
