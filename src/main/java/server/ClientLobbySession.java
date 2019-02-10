@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Queue;
 
 public class ClientLobbySession {
@@ -26,55 +25,58 @@ public class ClientLobbySession {
         this.keypressQueue = keypressQueue;
         this.serverIP = NetworkUtility.getServerIP();
         this.client = client;
+        joiner.start();
         
     }
     
-    public void join() {
-        
-        try {
-            DatagramSocket ds = new DatagramSocket(NetworkUtility.CLIENT_DGRAM_PORT);
+    Thread joiner = new Thread() {
+        @Override
+        public void run() {
+            super.run();
+            try {
+                DatagramSocket ds = new DatagramSocket(NetworkUtility.CLIENT_DGRAM_PORT);
+                
+                String str = NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX;
+                DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), serverIP, NetworkUtility.SERVER_DGRAM_PORT);
+                ds.send(dp);
+                
+                byte[] buf = new byte[1024];
+                dp = new DatagramPacket(buf, 1024);
+                ds.receive(dp);
+                String r = new String(dp.getData(), 0, dp.getLength());
+                r = r.replaceAll("\u0000.*", "");
+                int id = Integer.parseInt(r);
+                client.setId(id);
+                
+                
+                buf = new byte[1024];
+                dp = new DatagramPacket(buf, 1024);
+                ds.receive(dp);
+                r = new String(dp.getData(), 0, dp.getLength());
+                r = r.replaceAll("\u0000.*", "");
+                
+                if (r.equals("SUCCESS")) {
+                    System.out.println("Server connection success");
+                }
+                
+                buf = new byte[1024];
+                dp = new DatagramPacket(buf, 1024);
+                ds.receive(dp);
+                r = new String(dp.getData(), 0, dp.getLength());
+                
+                if (r.equals("STARTGAME")) {
+                    handler = new ClientGameplayHandler(serverIP, keypressQueue, clientIn);
+                }
+                
+                System.out.println(r);
+                ds.close();
+            } catch (IOException e) {
             
-            String str = NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX;
-            DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), this.serverIP, NetworkUtility.SERVER_DGRAM_PORT);
-            ds.send(dp);
-            
-            byte[] buf = new byte[1024];
-            dp = new DatagramPacket(buf, 1024);
-            ds.receive(dp);
-            String r = new String(dp.getData(), 0, dp.getLength());
-            r = r.replaceAll("\u0000.*", "");
-            int id = Integer.parseInt(r);
-            this.client.setId(id);
-    
-    
-            buf = new byte[1024];
-            dp = new DatagramPacket(buf, 1024);
-            ds.receive(dp);
-            r = new String(dp.getData(), 0, dp.getLength());
-            r = r.replaceAll("\u0000.*", "");
-            
-            if (r.equals("SUCCESS")) {
-                System.out.println("Server connection success");
             }
             
-            buf = new byte[1024];
-            dp = new DatagramPacket(buf, 1024);
-            ds.receive(dp);
-            r = new String(dp.getData(), 0, dp.getLength());
-            
-            if (r.equals("STARTGAME")) {
-                handler = new ClientGameplayHandler(this.serverIP, keypressQueue, clientIn);
-            }
-            
-            System.out.println(r);
-            ds.close();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        
-    }
+    };
+    
     
     public static void main(String[] args) throws IOException {
 //        ClientLobbySession c = new ClientLobbySession(new LinkedBlockingQueue<String>(),

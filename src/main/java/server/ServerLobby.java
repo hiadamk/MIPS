@@ -5,6 +5,9 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
+
+//TODO Use multi-casting to constantly ping the number of players in the game in a thread.
+//TODO Use multi-casting to constantly ping the current players in the game in a thread
 public class ServerLobby {
     
     private int playerCount;
@@ -16,6 +19,7 @@ public class ServerLobby {
         pinger.start();
         this.playerCount = 0;
         this.playerIPs = new ArrayList<>();
+        acceptConnections.start();
     }
     
     /**
@@ -32,6 +36,7 @@ public class ServerLobby {
                 
                 byte[] buf;
                 String message = "PING";
+                
                 buf = message.getBytes();
                 DatagramPacket sending = new DatagramPacket(buf, 0, buf.length, group, NetworkUtility.CLIENT_M_PORT);
                 
@@ -51,7 +56,7 @@ public class ServerLobby {
                             
                         }
                     }
-                    Thread.sleep(100);
+                    Thread.sleep(1000);
                 }
                 
             } catch (Exception e) {
@@ -61,43 +66,52 @@ public class ServerLobby {
         
     };
     
+    
     /**
-     * Accepts connections from clients.
-     *
-     * @throws IOException
+     * Accepts connections from clients
      */
-    public void acceptConnections() throws IOException {
-        DatagramSocket ds = new DatagramSocket(NetworkUtility.SERVER_DGRAM_PORT);
-        
-        while (!gameStarted) {
-            if (playerCount < 5) {
-                byte[] buf = new byte[1024];
-                DatagramPacket dp = new DatagramPacket(buf, 1024);
-                ds.receive(dp);
-                String r = new String(dp.getData(), 0, dp.getLength());
-                if (r.equals(NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX)) {
-                    System.out.println(r);
-                    InetAddress ip = dp.getAddress();
-                    System.out.println("Connecting to: " + ip);
-                    playerIPs.add(ip);
-                    int playerID = playerCount;
-                    dp = new DatagramPacket("SUCCESS".getBytes(), "SUCCESS".length(), ip, NetworkUtility.CLIENT_DGRAM_PORT);
-                    ds.send(dp);
-                    System.out.println("Sent client " + playerID + " their ID...");
-                    dp = new DatagramPacket("SUCCESS".getBytes(), "SUCCESS".length(), ip, NetworkUtility.CLIENT_DGRAM_PORT);
-                    ds.send(dp);
-                    System.out.println("Sent client " + playerID + " a successful connection message...");
-                    playerCount++;
-                }
+    Thread acceptConnections = new Thread() {
+        @Override
+        public void run() {
+            super.run();
+            try {
+                DatagramSocket ds = new DatagramSocket(NetworkUtility.SERVER_DGRAM_PORT);
                 
-            } else {
-                ds.close();
-                return;
+                while (!isInterrupted()) {
+                    if (playerCount < 5) {
+                        System.out.println("Waiting for new connection...");
+                        byte[] buf = new byte[1024];
+                        DatagramPacket dp = new DatagramPacket(buf, 1024);
+                        ds.receive(dp);
+                        String r = new String(dp.getData(), 0, dp.getLength());
+                        if (r.equals(NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX)) {
+                            System.out.println(r);
+                            InetAddress ip = dp.getAddress();
+                            System.out.println("Connecting to: " + ip);
+                            playerIPs.add(ip);
+                            int playerID = playerCount;
+                            dp = new DatagramPacket(String.valueOf(playerID).getBytes(), 1, ip, NetworkUtility.CLIENT_DGRAM_PORT);
+                            ds.send(dp);
+                            System.out.println("Sent client " + playerID + " their ID...");
+                            dp = new DatagramPacket("SUCCESS".getBytes(), "SUCCESS".length(), ip, NetworkUtility.CLIENT_DGRAM_PORT);
+                            ds.send(dp);
+                            System.out.println("Sent client " + playerID + " a successful connection message...");
+                            playerCount++;
+                        }
+                        
+                    } else {
+                        ds.close();
+                        return;
+                    }
+                    
+                }
+            } catch (IOException e) {
+            
             }
             
         }
-        ds.close();
-    }
+    };
+    
     
     /**
      * Starts the game for all clients
@@ -106,6 +120,7 @@ public class ServerLobby {
      */
     public ServerGameplayHandler gameStart() {
         pinger.interrupt();
+        acceptConnections.interrupt();
         gameStarted = true;
         System.out.printf("Server starting game...");
         for (InetAddress ip : playerIPs) {
@@ -118,7 +133,7 @@ public class ServerLobby {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-    
+            
         }
         try {
             this.s = new ServerGameplayHandler(this.playerIPs, playerCount);
@@ -140,6 +155,6 @@ public class ServerLobby {
     
     public static void main(String[] args) throws IOException {
         ServerLobby s = new ServerLobby();
-        s.acceptConnections();
+//        s.acceptConnections();
     }
 }

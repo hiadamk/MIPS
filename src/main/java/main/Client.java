@@ -1,7 +1,6 @@
 package main;
 
 import audio.AudioController;
-import audio.Sounds;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -45,6 +44,7 @@ public class Client extends Application {
     private Queue<Input> inputs;
     private ServerLobby server;
     private ServerGameplayHandler serverGameplayHandler;
+    private ClientLobbySession clientLobbySession;
     Map map;
     private boolean isHost;
     
@@ -60,7 +60,7 @@ public class Client extends Application {
         keyController = new KeyController();
         resourceLoader = new ResourceLoader("src/test/resources/");
         this.primaryStage = primaryStage;
-        audioController.playMusic(Sounds.intro);
+//        audioController.playMusic(Sounds.intro);
         MenuController menuController = new MenuController(audioController, primaryStage, this);
         StackPane root = (StackPane) menuController.createMainMenu();
         Scene scene = new Scene(root, xRes, yRes);
@@ -98,9 +98,7 @@ public class Client extends Application {
         Queue<Input> keypressQueue = new LinkedBlockingQueue<>();
         try {
             this.server = new ServerLobby();
-            server.acceptConnections();
-            ClientLobbySession lobbySession = new ClientLobbySession(clientIn, keypressQueue, this);
-            lobbySession.join();
+            clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -111,8 +109,7 @@ public class Client extends Application {
         Queue<String> clientIn = new LinkedList<>();
         Queue<Input> keypressQueue = new LinkedBlockingQueue<>();
         try {
-            ClientLobbySession lobbySession = new ClientLobbySession(clientIn, keypressQueue, this);
-            lobbySession.join();
+            clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -135,7 +132,7 @@ public class Client extends Application {
         //inputs = new Queue<Input>();
         agents = new Entity[1];
         agents[0] = new Entity(true, 0, new Double(1, 1));
-        //agents[1] = new Entity(false, 1, new Double(1, 2));
+//        agents[1] = new Entity(false, 1, new Double(1, 2));
         //agents[2] = new Entity(false, 2, new Double(1, 2));
         //agents[3] = new Entity(false, 3, new Double(1, 2));
         //agents[4] = new Entity(false, 4, new Double(1, 2));
