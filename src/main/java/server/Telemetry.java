@@ -1,17 +1,18 @@
 package server;
 
 import ai.AILoopControl;
-import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
-import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import objects.Entity;
 import utils.Input;
 import utils.Map;
 import utils.Methods;
 import utils.enums.Direction;
+
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Telemetry {
 
@@ -127,8 +128,8 @@ public class Telemetry {
    * Static method for 'swapping' entities if they occupy the same square. Does nothing if both
    * entities are ghouls
    *
-   * @param x Entity one
-   * @param y Entity two
+   * @param x            Entity one
+   * @param y            Entity two
    * @param respawnPoint Point to relocate new ghoul too
    */
   private static void entityCollision(Entity x, Entity y, Double respawnPoint) {
@@ -186,6 +187,7 @@ public class Telemetry {
     new AnimationTimer() {
       long change;
       long oldTime = System.nanoTime();
+
       @Override
       public void handle(long now) {
         change = now - oldTime;
