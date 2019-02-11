@@ -78,7 +78,6 @@ public class Renderer {
         currentSprite = mapTiles.get(rawMap[x][y]);
         rendCoord = getIsoCoord(x, y, currentSprite.getHeight());
         gc.drawImage(currentSprite, rendCoord.x, rendCoord.y);
-        System.out.println("rendered " + x + "," + y);
 
         //check if entity should be on top of this tile
         if (entityCounter < entities.size()) {
@@ -87,7 +86,6 @@ public class Renderer {
 
         while (entityCounter < entities
             .size() && x == (int) (spriteCoord.getX() + 1) && y == (int) (spriteCoord.getY() + 1)) {
-          System.out.println(entities.get(entityCounter).toString());
           renderEntity(entities.get(entityCounter));
           entityCounter++;
 
