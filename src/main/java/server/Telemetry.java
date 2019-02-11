@@ -149,8 +149,8 @@ public class Telemetry {
     agents = new Entity[AGENT_COUNT];
     agents[0] = new Entity(true, 0, new Double(1, 3));
     System.out.println(agents);
-    agents[1] = new Entity(false, 1, new Double(1, 18));
-    agents[2] = new Entity(false, 2, new Double(1, 16));
+    agents[1] = new Entity(false, 1, new Double(1, 19));
+    agents[2] = new Entity(false, 2, new Double(1, 17));
     // agents[3] = new Entity(false, 3, new Double(1, 2));
     // agents[4] = new Entity(false, 4, new Double(1, 2));
     int aiCount = AGENT_COUNT - (server == null ? 1 : server.getPlayerCount());
@@ -208,6 +208,9 @@ public class Telemetry {
     while (!inputs.isEmpty()) {
       Input input = inputs.poll();
       int id = input.getClientID();
+      if (id != 0) {
+        System.out.println("none 0 input found");
+      }
       Direction d = input.getMove();
       if (Methods.validiateDirection(d, agents[id], map)) {
         agents[id].setDirection(d);
