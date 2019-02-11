@@ -69,44 +69,44 @@ public class Telemetry {
             double wallX = nextX;
             double wallY = nextY;
 
-            if (agents[i].getDirection() == null) {
-                continue;
-            }
-            switch (agents[i].getDirection()) {
-                case RIGHT:
-                    nextX = (nextX + offset + m.getMaxX()) % m.getMaxX();
-                    wallX = (nextX + 0.9 + m.getMaxX()) % m.getMaxX();
-                    break;
-                case LEFT:
-                    nextX = (nextX - offset + m.getMaxX()) % m.getMaxX();
-                    wallX = nextX;
-                    break;
-                case DOWN:
-                    nextY = (nextY + offset + m.getMaxY()) % m.getMaxY();
-                    wallY = (nextY + 0.9 + m.getMaxY()) % m.getMaxY();
-                    break;
-                case UP:
-                    nextY = (nextY - offset + m.getMaxY()) % m.getMaxY();
-                    wallY = nextY;
-                    break;
-            }
+            if (agents[i].getDirection() != null) {
+                switch (agents[i].getDirection()) {
+                    case RIGHT:
+                        nextX = (nextX + offset + m.getMaxX()) % m.getMaxX();
+                        wallX = (nextX + 0.5 + m.getMaxX()) % m.getMaxX();
+                        break;
+                    case LEFT:
+                        nextX = (nextX - offset + m.getMaxX()) % m.getMaxX();
+                        wallX = (nextX - 0.5 + m.getMaxX()) % m.getMaxX();
+                        break;
+                    case DOWN:
+                        nextY = (nextY + offset + m.getMaxY()) % m.getMaxY();
+                        wallY = (nextY + 0.5 + m.getMaxY()) % m.getMaxY();
+                        break;
+                    case UP:
+                        nextY = (nextY - offset + m.getMaxY()) % m.getMaxY();
+                        wallY = (nextY - 0.5 + m.getMaxY()) % m.getMaxY();
+                        break;
+                }
 
-            nextLocation.setLocation(nextX, nextY);
-            Point2D.Double wallLocation = new Point2D.Double(wallX, wallY);
+                nextLocation.setLocation(nextX, nextY);
+                Point2D.Double wallLocation = new Point2D.Double(wallX, wallY);
 
-            if (m.isWall(wallLocation)) {
-                agents[i].setDirection(null);
-                // agents[i].setVelocity(0);
-                System.out.println("in wall");
-                System.out.println(nextLocation);
-                System.out.println(agents[i].getLocation());
-                System.out.println(offset);
-            } else {
-                agents[i].setLocation(nextLocation);
-                System.out.println("moved");
-                System.out.println(offset);
+                if (m.isWall(wallLocation)) {
+                    agents[i].setDirection(null);
+                    // agents[i].setVelocity(0);
+                    System.err.println("wall");
+                    System.err.println(nextLocation);
+                    System.err.println(wallLocation);
+                    System.err.println("");
+                } else {
+                    agents[i].setLocation(nextLocation);
+                    System.out.println("moved");
+                    System.out.println(wallLocation);
+                    System.out.println(offset);
+                    System.out.println("");
+                }
             }
-
             // TODO add points for pellet collision
         }
 
