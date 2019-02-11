@@ -88,6 +88,7 @@ public class Client extends Application {
     System.out.println("Starting single player game...");
     // If hosting if not telemetry will be set by connection method along with new main id
     map = resourceLoader.getMap();
+
     Queue<Input> incomingQueue = new LinkedList<>();
 
     this.telemetry = new Telemetry(map, incomingQueue);
@@ -137,9 +138,10 @@ public class Client extends Application {
 
   private void startGame() {
     //inputs = new Queue<Input>();
+
     //agents = new Entity[1];
     //agents[0] = new Entity(true, 0, new Double(0.5, 0.5));
-//        agents[1] = new Entity(false, 1, new Double(0.5, 1.5));
+    //agents[1] = new Entity(false, 1, new Double(0.5, 1.5));
     //agents[2] = new Entity(false, 2, new Double(0.5, 1.5));
     //agents[3] = new Entity(false, 3, new Double(0.5, 1.5));
     //agents[4] = new Entity(false, 4, new Double(0.5, 1.5));
@@ -166,10 +168,10 @@ public class Client extends Application {
     Direction input = keyController.getActiveKey();
     Direction current = agents[id].getDirection();
 
-    if (input == null | input == current) {
+    if (input == null || input == current) {
       return;
     }
-    System.out.println(input.toString() + "     " + current);
+    System.out.println(input.toString() + "     " + current + " ID: " + id);
     if (!Methods.validiateDirection(input, agents[0], map)) {
       return;
     }

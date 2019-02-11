@@ -4,6 +4,7 @@ import utils.Map;
 import utils.enums.Direction;
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.sql.SQLSyntaxErrorException;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -154,7 +155,7 @@ public abstract class Mapping {
             case UP: {
                 // identifies if any of the junctions are in correct direction
                 for (Point p : junctions) {
-                    if (position.y < p.y) {
+                    if (position.y > p.y) {
                         return true;
                     }
                 }
@@ -163,7 +164,7 @@ public abstract class Mapping {
             case DOWN: {
                 // identifies if any of the junctions are in correct direction
                 for (Point p : junctions) {
-                    if (position.y > p.y) {
+                    if (position.y < p.y) {
                         return true;
                     }
                 }
@@ -203,6 +204,9 @@ public abstract class Mapping {
      * position is not a junction.
      */
     public static boolean validMove(Point position, Map map, Direction direction) {
+        if (direction==null) {
+            return false;
+        }
         switch (direction) {
             case UP: {
                 // identifies if any of the adjacent squares in correct direction are path
@@ -238,7 +242,8 @@ public abstract class Mapping {
         return false;
     }
 
-    /**Converts a {@link Point2D.Double} to {@link Point}. This will round using the default double to int cast rounding.
+
+     /**Converts a {@link Point2D.Double} to {@link Point}. This will round using the default double to int cast rounding.
      * @param point2d The point to be converted.
      * @return The same point as an int. If the point is null then null will be returned.*/
     public static Point point2DtoPoint(Point2D.Double point2d) {
@@ -260,5 +265,74 @@ public abstract class Mapping {
     	double x = point.getX();
     	double y = point.getY();
     	return new Point2D.Double(x,y);
+    }
+
+    public static Direction directionBetweenPoints(Point start, Point target) {
+        if (start.getX()==target.getX()) {
+            if (start.getY()>target.getY()) {
+                return Direction.UP;
+            }
+            else {
+                return Direction.DOWN;
+            }
+        }
+        else if (start.getX()>target.getX()) {
+            return Direction.LEFT;
+        }
+        else {
+            return Direction.RIGHT;
+        }
+    }
+
+    public static Point findNearestJunction(Point position, Map map, HashSet<Point> junctions) {
+        int vertical = costVertical(position, map, junctions);
+        int horizontal = costHorizontal(position, map, junctions);
+        if (Math.abs(vertical)<Math.abs(horizontal)) {
+            position.translate(0, vertical);
+        }
+        else {
+            position.translate(horizontal, 0);
+        }
+        return position;
+    }
+
+    private static int costVertical(Point position, Map map, HashSet<Point> junctions) {
+        Point up = position;
+        Point down = position;
+        while (!map.isWall(Mapping.pointToPoint2D(up))||!map.isWall(Mapping.pointToPoint2D(down))) {
+            if (!map.isWall(Mapping.pointToPoint2D(up))) {
+                if (junctions.contains(up)) {
+                    return up.y-position.y;
+                }
+                up.translate(0, -1);
+            }
+            if (!map.isWall(Mapping.pointToPoint2D(down))) {
+                if (junctions.contains(up)) {
+                    return down.y-position.y;
+                }
+                down.translate(0, 1);
+            }
+        }
+        return Integer.MAX_VALUE;
+    }
+
+    private static int costHorizontal(Point position, Map map, HashSet<Point> junctions) {
+        Point left = position;
+        Point right = position;
+        while (!map.isWall(Mapping.pointToPoint2D(left))||!map.isWall(Mapping.pointToPoint2D(right))) {
+            if (!map.isWall(Mapping.pointToPoint2D(left))) {
+                if (junctions.contains(left)) {
+                    return left.x-position.x;
+                }
+                left.translate(-1, 0);
+            }
+            if (!map.isWall(Mapping.pointToPoint2D(right))) {
+                if (junctions.contains(left)) {
+                    return right.x-position.x;
+                }
+                right.translate(1, 0);
+            }
+        }
+        return Integer.MAX_VALUE;
     }
 }

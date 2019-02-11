@@ -12,6 +12,7 @@ import ai.routefinding.routefinders.MipsManRouteFinder;
 import objects.Entity;
 import utils.Map;
 import utils.Input;
+import utils.ResourceLoader;
 
 /**Unit tests for the {@link AILoopControl} class.
  * @author Lewis Ackroyd*/
@@ -63,10 +64,13 @@ class AILoopControlTests {
 
 	@Test
 	void testRunValid() {
+		ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
 		int[] ids = {4};
 		for (int i = 0; i<ALL_AGENTS.length; i++) {
 			ALL_AGENTS[i].setLocation(new Point2D.Double(1 + i, 1));
+			ALL_AGENTS[i].updateImages(resourceLoader);
 		}
+
 		AILoopControl ailc = new AILoopControl(ALL_AGENTS,  ids, MAP, QUEUE);
 		ailc.start();
 		try {

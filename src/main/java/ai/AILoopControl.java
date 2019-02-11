@@ -7,6 +7,7 @@ import ai.routefinding.routefinders.*;
 import objects.Entity;
 import utils.Input;
 import utils.Map;
+import utils.Methods;
 import utils.enums.Direction;
 import java.awt.Point;
 import java.util.HashMap;
@@ -20,13 +21,14 @@ import java.util.concurrent.BlockingQueue;
  */
 public class AILoopControl extends Thread {
 
-	private static final long SLEEP_TIME = 10;
+	private static final long SLEEP_TIME = 1;
 	private final Entity[] controlAgents;
 	private final HashSet<Point> junctions;
 	private final HashMap<Point, HashSet<Point>> edges;
 	private boolean runAILoop;
 	private int mipsmanID;
 	private final BlockingQueue<Input> directionsOut;
+	private final Map map;
 
 	/**
 	 * Initialises the control for the AI Control Loop.
@@ -53,6 +55,7 @@ public class AILoopControl extends Thread {
 		this.junctions = Mapping.getJunctions(map);
 		this.edges = Mapping.getEdges(map, junctions);
 		this.directionsOut = directionsOut;
+		this.map = map;
 
 		generateRouteFinders(gameAgents, controlIds);
 		correctMipsmanRouteFinder();
@@ -86,7 +89,7 @@ public class AILoopControl extends Thread {
 			}
 			case 1: {
 				// TODO
-				routeFinder = new RandomRouteFinder();
+				routeFinder = new AStarRouteFinder(junctions,edges,map);
 				break;
 			}
 			case 2: {
@@ -100,7 +103,7 @@ public class AILoopControl extends Thread {
 				break;
 			}
 			case 4: { // Mipsman - no players
-				routeFinder = new MipsManRouteFinder();
+				routeFinder = new RandomRouteFinder();//new MipsManRouteFinder();
 				break;
 			}
 			default: {
@@ -226,6 +229,12 @@ public class AILoopControl extends Thread {
 					if (junctions.contains(Mapping.point2DtoPoint(ent.getLocation()))) {
 						executeRoute(ent);
 					}
+					else {
+						if (!Mapping.validMove(Mapping.point2DtoPoint(ent.getLocation()), map, ent.getDirection())) {
+							Point nearestJunct = Mapping.findNearestJunction(Mapping.point2DtoPoint(ent.getLocation()), map, junctions);
+							ent.setDirection(Mapping.directionBetweenPoints(Mapping.point2DtoPoint(ent.getLocation()), nearestJunct));
+						}
+					}
 				}
 			}
 
@@ -293,10 +302,11 @@ public class AILoopControl extends Thread {
 			direction = new RandomRouteFinder().getRoute(myLoc, mipsManLoc);
 		}
 		try {
-			directionsOut.put(new Input(ent.getClientId(), direction));
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ent.setDirection(direction);
+			directionsOut.add(new Input(ent.getClientId(), direction));
+		}
+		catch (NullPointerException e) {
+			System.err.println("image file null in entity" + ent.getClientId());
 		}
 	}
 

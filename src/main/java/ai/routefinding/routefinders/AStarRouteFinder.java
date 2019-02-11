@@ -41,15 +41,15 @@ public class AStarRouteFinder implements RouteFinder {
 	@Override
 	public Direction getRoute(Point myLocation, Point targetLocation) {
 		if (!junctions.contains(myLocation)) {
-			Point nearestJunct = findNearestJunction(myLocation);
-			return directionBetweenPoints(myLocation, nearestJunct);
+			Point nearestJunct = Mapping.findNearestJunction(myLocation, map, junctions);
+			return Mapping.directionBetweenPoints(myLocation, nearestJunct);
 		}
 		Point targetJunction;
 		if (junctions.contains(targetLocation)) {
 			targetJunction = targetLocation;
 		}
 		else {
-			targetJunction = findNearestJunction(targetLocation);
+			targetJunction = Mapping.findNearestJunction(targetLocation, map, junctions);
 		}
 		HashMap<Point, AStarData> visited = new HashMap<Point, AStarData>();
 		HashMap<Point, AStarData> unVisited = new HashMap<Point, AStarData>();
@@ -79,81 +79,12 @@ public class AStarRouteFinder implements RouteFinder {
 		for (Point key : visited.keySet()) {
 			AStarData data = visited.get(key);
 			if (myLocation.equals(data.getParentPosition())&&!myLocation.equals(data.getMyPosition())) {
-				outDirection = directionBetweenPoints(data.getMyPosition(), data.getParentPosition());
+				outDirection = Mapping.directionBetweenPoints(data.getMyPosition(), data.getParentPosition());
 				break;
 			}
 		}
 		
 		return outDirection;
-	}
-	
-	private Direction directionBetweenPoints(Point start, Point target) {
-		if (start.getX()==target.getX()) {
-			if (start.getY()>target.getY()) {
-				return Direction.UP;
-			}
-			else {
-				return Direction.DOWN;
-			}
-		}
-		else if (start.getX()>target.getX()) {
-			return Direction.LEFT;
-		}
-		else {
-			return Direction.RIGHT;
-		}
-	}
-	
-	private Point findNearestJunction(Point position) {
-		int vertical = costVertical(position);
-		int horizontal = costHorizontal(position);
-		if (Math.abs(vertical)<Math.abs(horizontal)) {
-			position.translate(0, vertical);
-		}
-		else {
-			position.translate(horizontal, 0);
-		}
-		return position;
-	}
-	
-	private int costVertical(Point position) {
-		Point up = position;
-		Point down = position;
-		while (!map.isWall(Mapping.pointToPoint2D(up))||!map.isWall(Mapping.pointToPoint2D(down))) {
-			if (!map.isWall(Mapping.pointToPoint2D(up))) {
-				if (junctions.contains(up)) {
-					return up.y-position.y;
-				}
-				up.translate(0, -1);
-			}
-			if (!map.isWall(Mapping.pointToPoint2D(down))) {
-				if (junctions.contains(up)) {
-					return down.y-position.y;
-				}
-				down.translate(0, 1);
-			}
-		}
-		return Integer.MAX_VALUE;
-	}
-	
-	private int costHorizontal(Point position) {
-		Point left = position;
-		Point right = position;
-		while (!map.isWall(Mapping.pointToPoint2D(left))||!map.isWall(Mapping.pointToPoint2D(right))) {
-			if (!map.isWall(Mapping.pointToPoint2D(left))) {
-				if (junctions.contains(left)) {
-					return left.x-position.x;
-				}
-				left.translate(-1, 0);
-			}
-			if (!map.isWall(Mapping.pointToPoint2D(right))) {
-				if (junctions.contains(left)) {
-					return right.x-position.x;
-				}
-				right.translate(1, 0);
-			}
-		}
-		return Integer.MAX_VALUE;
 	}
 	
 	private double movementCost(Point start, Point target) {
