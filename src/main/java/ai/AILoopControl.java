@@ -301,8 +301,13 @@ public class AILoopControl extends Thread {
 		while (!Mapping.validMove(myLoc, edges, direction)) {
 			direction = new RandomRouteFinder().getRoute(myLoc, mipsManLoc);
 		}
-		ent.setDirection(direction);
-		directionsOut.add(new Input(ent.getClientId(), direction));
+		try {
+			ent.setDirection(direction);
+			directionsOut.add(new Input(ent.getClientId(), direction));
+		}
+		catch (NullPointerException e) {
+			System.err.println("image file null in entity" + ent.getClientId());
+		}
 	}
 
 	/**

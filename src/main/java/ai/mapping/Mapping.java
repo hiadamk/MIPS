@@ -4,6 +4,7 @@ import utils.Map;
 import utils.enums.Direction;
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.sql.SQLSyntaxErrorException;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -203,6 +204,9 @@ public abstract class Mapping {
      * position is not a junction.
      */
     public static boolean validMove(Point position, Map map, Direction direction) {
+        if (direction==null) {
+            return false;
+        }
         switch (direction) {
             case UP: {
                 // identifies if any of the adjacent squares in correct direction are path
