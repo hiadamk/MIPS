@@ -1,18 +1,16 @@
 package utils;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.geom.Point2D.Double;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import objects.Entity;
 import renderer.Renderer;
-import utils.enums.Direction;
-
-import java.awt.*;
-import java.awt.geom.Point2D.Double;
 
 public class ImageTester extends Application {
 
@@ -29,17 +27,15 @@ public class ImageTester extends Application {
     final GraphicsContext gc = canvas.getGraphicsContext2D();
 
     ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
-    
-      resourceLoader.loadMap("9x9");
+
+    resourceLoader.loadMap("9x18plain");
     Map map = resourceLoader.getMap();
       Renderer r = new Renderer(gc, xRes, yRes, resourceLoader);
 
-
-
-    Entity mip = new Entity(true, 1, new Double(1, 2));
+    Entity mip = new Entity(true, 1, new Double(1, 1));
     mip.setPacMan(true);
 
-    Entity ghoul = new Entity(false, 4, new Double(3, 4));
+    Entity ghoul = new Entity(false, 4, new Double(0.5, 1));
     System.out.println(ghoul.getLocation().toString());
     ghoul.setPacMan(false);
     //ghoul.setDirection(Direction.RIGHT);

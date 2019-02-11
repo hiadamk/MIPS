@@ -12,7 +12,6 @@ import objects.Entity;
 import utils.Map;
 import utils.Renderable;
 import utils.ResourceLoader;
-import utils.enums.MapElement;
 
 public class Renderer {
 
@@ -79,21 +78,16 @@ public class Renderer {
         currentSprite = mapTiles.get(rawMap[x][y]);
         rendCoord = getIsoCoord(x, y, currentSprite.getHeight());
         gc.drawImage(currentSprite, rendCoord.x, rendCoord.y);
+        System.out.println("rendered " + x + "," + y);
 
         //check if entity should be on top of this tile
         if (entityCounter < entities.size()) {
           spriteCoord = entities.get(entityCounter).getLocation();
         }
 
-        if (rawMap[x][y] == MapElement.WALL.toInt()) {
-          continue;
-        }
-
-        //check if entity should be on top of this tile
         while (entityCounter < entities
-            .size() && (isBetween(y - 1, y, spriteCoord.getY()) && isBetween(x - 1, x,
-            spriteCoord.getX()))) {
-
+            .size() && x == (int) (spriteCoord.getX() + 1) && y == (int) (spriteCoord.getY() + 1)) {
+          System.out.println(entities.get(entityCounter).toString());
           renderEntity(entities.get(entityCounter));
           entityCounter++;
 
@@ -102,11 +96,6 @@ public class Renderer {
           }
         }
       }
-    }
-
-    //render elements off the map
-    for (Renderable e : entities.subList(entityCounter, entities.size())) {
-      renderEntity(e);
     }
 
     renderHUD();
@@ -147,7 +136,9 @@ public class Renderer {
     double percentageXRes = 0.04;
     double ratio = ((percentageXRes * xResolution) / yChange) * (map.getMaxY() / (double) 20);
 
-    double x = bottomRight.getX() - xChange * ratio;
+    //double x = bottomRight.getX() - xChange * ratio;
+    double x = getIsoCoord(map.getMaxX() / (double) 2, map.getMaxY() / (double) 2, tileSizeY)
+        .getX();
     double y = bottomRight.getY() + yChange * ratio;
 
     Point2D.Double pyramidVertex = new Point2D.Double(x, y);
@@ -182,9 +173,10 @@ public class Renderer {
    * @param spriteHeight vertical offset
    */
   private Point2D.Double getIsoCoord(double x, double y, double spriteHeight) {
-    double isoX = mapRenderingCorner.getX() - (y - x) * (this.tileSizeX / 2);
+    double isoX = mapRenderingCorner.getX() - (y - x) * (this.tileSizeX / (double) 2);
     double isoY =
-        mapRenderingCorner.getY() + (y + x) * (this.tileSizeY / 2) + (tileSizeY - spriteHeight);
+        mapRenderingCorner.getY() + (y + x) * (this.tileSizeY / (double) 2) + (tileSizeY
+            - spriteHeight);
     return new Point2D.Double(isoX, isoY);
   }
 
@@ -193,7 +185,8 @@ public class Renderer {
    */
   private void renderEntity(Renderable e) {
     Image currentSprite = e.getImage().get(0);
-    Point2D.Double rendCoord = getIsoCoord(e.getLocation().getX(), e.getLocation().getY(),
+    Point2D.Double rendCoord = getIsoCoord(e.getLocation().getX() + 0.5,
+        e.getLocation().getY() + 0.5,
         currentSprite.getHeight());
     gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
   }
@@ -218,4 +211,5 @@ public class Renderer {
     gc.setFill(new Color((colour >> 16 & 0xFF) / (double) 255, (colour >> 8 & 0xFF) / (double) 255,
         (colour & 0xFF) / (double) 255, 1));
   }
+
 }

@@ -138,7 +138,7 @@ public class Client extends Application {
   private void startGame() {
     //inputs = new Queue<Input>();
     agents = new Entity[1];
-    agents[0] = new Entity(true, 0, new Double(1, 1));
+    agents[0] = new Entity(true, 0, new Double(0.5, 0.5));
 //        agents[1] = new Entity(false, 1, new Double(1, 2));
     //agents[2] = new Entity(false, 2, new Double(1, 2));
     //agents[3] = new Entity(false, 3, new Double(1, 2));

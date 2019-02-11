@@ -1,13 +1,12 @@
 package objects;
 
 import ai.routefinding.RouteFinder;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import javafx.scene.image.Image;
 import utils.Renderable;
 import utils.ResourceLoader;
 import utils.enums.Direction;
-
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
 
 public class Entity implements Renderable {
 
@@ -98,5 +97,14 @@ public class Entity implements Renderable {
 
   public void updateImages(ResourceLoader resourceLoader) {
     images = pacMan ? resourceLoader.getPlayableMip(clientId) : resourceLoader.getPlayableGhoul(clientId);
+  }
+
+  @Override
+  public String toString() {
+    if (this.pacMan) {
+      return "mip" + clientId;
+    } else {
+      return "ghoul" + clientId;
+    }
   }
 }
