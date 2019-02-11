@@ -5,6 +5,7 @@ package ai;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import ai.routefinding.RouteFinder;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -22,7 +23,7 @@ class AStarRouteFinderTests {
 	}
 
 	/**
-	 * Test method for {@link ai.routefinding.routefinders.AStarRouteFinder#getRoute(java.awt.Point, java.awt.Point)}.
+	 * Test method for {@link RouteFinder#getRoute(java.awt.geom.Point2D.Double, java.awt.geom.Point2D.Double)}.
 	 */
 	@Test
 	void testGetRoute() {

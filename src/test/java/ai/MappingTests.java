@@ -71,7 +71,7 @@ class MappingTests {
 
 		HashMap<Point, HashSet<Point>> result = Mapping.getEdges(testMap2);
 
-		assertTrue(result.equals(testEdges));
+		assertEquals(result, testEdges);
 	}
 
 	@Test
@@ -98,88 +98,6 @@ class MappingTests {
 		testEdges.put(new Point(3, 4), nextPoint);
 		HashSet<Point> junctions = Mapping.getJunctions(testMap2);
 		HashMap<Point, HashSet<Point>> result = Mapping.getEdges(testMap2, junctions);
-		assertTrue(result.equals(testEdges));
-	}
-
-//	@Test
-//	void testValidMovePointHashMapOfPointHashSetOfPointDirection() {
-//		HashMap<Point, HashSet<Point>> edges = Mapping.getEdges(testMap2);
-//		Point testPoint = new Point(1, 1);
-//
-//		assertTrue(Mapping.validMove(testPoint, edges, Direction.UP));
-//		assertTrue(Mapping.validMove(testPoint, edges, Direction.RIGHT));
-//		assertFalse(Mapping.validMove(testPoint, edges, Direction.DOWN));
-//		assertFalse(Mapping.validMove(testPoint, edges, Direction.LEFT));
-//
-//		
-//		//will fail all because given point is not a junction
-//		assertFalse(Mapping.validMove(new Point(0, 1), edges, Direction.RIGHT));
-//
-//		testPoint = new Point(2, 1);
-//
-//		assertFalse(Mapping.validMove(testPoint, edges, Direction.LEFT));
-//		assertFalse(Mapping.validMove(testPoint, edges, Direction.RIGHT));
-//		assertFalse(Mapping.validMove(testPoint, edges, Direction.UP));
-//		assertFalse(Mapping.validMove(testPoint, edges, Direction.DOWN));
-//
-//		testPoint = new Point(0, 0);
-//
-//		assertFalse(Mapping.validMove(testPoint, edges, Direction.LEFT));
-//		assertFalse(Mapping.validMove(testPoint, edges, Direction.RIGHT));
-//		assertFalse(Mapping.validMove(testPoint, edges, Direction.UP));
-//		assertFalse(Mapping.validMove(testPoint, edges, Direction.DOWN));
-//
-//		testPoint = new Point(4, 5);
-//
-//		assertFalse(Mapping.validMove(testPoint, edges, Direction.LEFT));
-//		assertFalse(Mapping.validMove(testPoint, edges, Direction.RIGHT));
-//		assertFalse(Mapping.validMove(testPoint, edges, Direction.UP));
-//		assertFalse(Mapping.validMove(testPoint, edges, Direction.DOWN));
-//	}
-//
-//	@Test
-//	void testValidMovePointMapDirection() {
-//		Point testPoint = new Point(1, 1);
-//
-//		assertTrue(Mapping.validMove(testPoint, testMap2, Direction.UP));
-//		assertTrue(Mapping.validMove(testPoint, testMap2, Direction.RIGHT));
-//		assertFalse(Mapping.validMove(testPoint, testMap2, Direction.DOWN));
-//		assertFalse(Mapping.validMove(testPoint, testMap2, Direction.LEFT));
-//
-//		
-//		//will fail all because given point is not a junction
-//		assertTrue(Mapping.validMove(new Point(0, 1), testMap2, Direction.RIGHT));
-//
-//		testPoint = new Point(2, 1);
-//
-//		assertTrue(Mapping.validMove(testPoint, testMap2, Direction.LEFT));
-//		assertTrue(Mapping.validMove(testPoint, testMap2, Direction.RIGHT));
-//		assertFalse(Mapping.validMove(testPoint, testMap2, Direction.UP));
-//		assertFalse(Mapping.validMove(testPoint, testMap2, Direction.DOWN));
-//
-//		testPoint = new Point(0, 0);
-//
-//		assertFalse(Mapping.validMove(testPoint, testMap2, Direction.LEFT));
-//		assertFalse(Mapping.validMove(testPoint, testMap2, Direction.RIGHT));
-//		assertFalse(Mapping.validMove(testPoint, testMap2, Direction.UP));
-//		assertFalse(Mapping.validMove(testPoint, testMap2, Direction.DOWN));
-//
-//		testPoint = new Point(4, 5);
-//
-//		assertFalse(Mapping.validMove(testPoint, testMap2, Direction.LEFT));
-//		assertFalse(Mapping.validMove(testPoint, testMap2, Direction.RIGHT));
-//		assertFalse(Mapping.validMove(testPoint, testMap2, Direction.UP));
-//		assertFalse(Mapping.validMove(testPoint, testMap2, Direction.DOWN));
-//	}
-
-	@Test
-	void testPointConversion() {
-		Point testPoint = new Point(1, 1);
-		Point2D.Double testPoint2D = new Point2D.Double(1, 1);
-		assertTrue(Mapping.point2DtoPoint(Mapping.pointToPoint2D(testPoint)).equals(testPoint));
-		assertTrue(Mapping.pointToPoint2D(Mapping.point2DtoPoint(testPoint2D)).equals(testPoint2D));
-
-		assertTrue(Mapping.point2DtoPoint(Mapping.pointToPoint2D(null))==null);
-		assertTrue(Mapping.pointToPoint2D(Mapping.point2DtoPoint(null))==null);
+		assertEquals(result, testEdges);
 	}
 }

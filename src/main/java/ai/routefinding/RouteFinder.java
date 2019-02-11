@@ -1,6 +1,7 @@
 package ai.routefinding;
 
-import java.awt.Point;
+import java.awt.geom.Point2D;
+
 import utils.enums.Direction;
 
 /**Interface used to allow a {@link Direction} to be produced based on implemented conditions.
@@ -14,6 +15,6 @@ public interface RouteFinder {
      * @param targetLocation The target of the route finding.
      * @return The direction to travel in.
      */
-    public Direction getRoute(Point myLocation, Point targetLocation);
+    public Direction getRoute(Point2D.Double myLocation, Point2D.Double targetLocation);
     
 }

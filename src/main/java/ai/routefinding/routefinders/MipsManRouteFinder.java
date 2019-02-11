@@ -1,6 +1,6 @@
 package ai.routefinding.routefinders;
 
-import java.awt.Point;
+import java.awt.geom.Point2D;
 
 import ai.routefinding.RouteFinder;
 import utils.enums.Direction;
@@ -10,7 +10,7 @@ import utils.enums.Direction;
 public class MipsManRouteFinder implements RouteFinder {
 
 	@Override
-	public Direction getRoute(Point myLocation, Point targetLocation) {
+	public Direction getRoute(Point2D.Double myLocation, Point2D.Double targetLocation) {
 		// TODO Auto-generated method stub
 		return Direction.DOWN;
 	}

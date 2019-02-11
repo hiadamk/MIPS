@@ -10,6 +10,7 @@ import utils.Map;
 import utils.Methods;
 import utils.enums.Direction;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.BlockingQueue;
@@ -89,7 +90,7 @@ public class AILoopControl extends Thread {
 			}
 			case 1: {
 				// TODO
-				routeFinder = new AStarRouteFinder(junctions,edges,map);
+				routeFinder = new RandomRouteFinder();//new AStarRouteFinder(junctions,edges,map);
 				break;
 			}
 			case 2: {
@@ -214,6 +215,7 @@ public class AILoopControl extends Thread {
 	@Override
 	public void run() {
 		RouteFinder lastGhostRouteFinder = null;
+		System.out.println("Starting AI loop...");
 		while (runAILoop && (controlAgents.length > 0)) {
 			Entity fixRouteFinder = null;
 			// every AI entity
@@ -226,17 +228,26 @@ public class AILoopControl extends Thread {
 				}
 				if (ent.getLocation() != null) {
 					// only route find on junctions
-					if (junctions.contains(Mapping.point2DtoPoint(ent.getLocation()))) {
+					if (junctions.contains(Mapping.getGridCoord(ent.getLocation()))) {
 						executeRoute(ent);
 					}
 					else {
-						if (!Mapping.validMove(Mapping.point2DtoPoint(ent.getLocation()), map, ent.getDirection())) {
-							Point nearestJunct = Mapping.findNearestJunction(Mapping.point2DtoPoint(ent.getLocation()), map, junctions);
+						if (ent.getDirection()==null || !Methods.validiateDirection(ent.getDirection(), ent, map)) {
+							Point2D.Double nearestJunct = Mapping.findNearestJunction(ent.getLocation(), map, junctions);
 							try {
-								ent.setDirection(Mapping.directionBetweenPoints(Mapping.point2DtoPoint(ent.getLocation()), nearestJunct));
+								if (nearestJunct!=ent.getLocation()) {
+									ent.setDirection(Mapping.directionBetweenPoints(ent.getLocation(), nearestJunct));
+								}
+								else {
+									Direction dir = new RandomRouteFinder().getRoute(ent.getLocation(), controlAgents[mipsmanID].getLocation());
+									while (!Methods.validiateDirection(dir,ent,map)) {
+										dir = new RandomRouteFinder().getRoute(ent.getLocation(), controlAgents[mipsmanID].getLocation());
+									}
+									ent.setDirection(dir);
+								}
 							}
 							catch (NullPointerException e) {
-								System.out.println("Direction not set");
+								System.out.println("Images not set");
 							}
 						}
 					}
@@ -298,12 +309,12 @@ public class AILoopControl extends Thread {
 	 */
 	private void executeRoute(Entity ent) {
 		RouteFinder r = ent.getRouteFinder();
-		Point myLoc = Mapping.point2DtoPoint(ent.getLocation());
-		Point mipsManLoc = Mapping.point2DtoPoint(controlAgents[mipsmanID].getLocation());
+		Point2D.Double myLoc = ent.getLocation();
+		Point2D.Double mipsManLoc = controlAgents[mipsmanID].getLocation();
 		Direction direction;
 		direction = r.getRoute(myLoc, mipsManLoc);
 		// re-process a random direction if an invalid move is detected
-		while (!Mapping.validMove(myLoc, edges, direction)) {
+		while (!Methods.validiateDirection(direction, ent, map)) {
 			direction = new RandomRouteFinder().getRoute(myLoc, mipsManLoc);
 		}
 		try {

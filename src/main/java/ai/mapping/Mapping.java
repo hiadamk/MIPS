@@ -4,7 +4,6 @@ import utils.Map;
 import utils.enums.Direction;
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.sql.SQLSyntaxErrorException;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -133,141 +132,11 @@ public abstract class Mapping {
         return edgeMap;
     }
     
-    /**
-     * Checks if a direction is a valid move from the current position. If the current position is not
-     * a junction then false will be returned. Use {@link #validMove(Point, HashMap, Direction)} for
-     * this case.
-     *
-     * @param position  The current position.
-     * @param edges     The mapping of all valid junctions.
-     * @param direction The proposed direction of travel.
-     * @return True if the direction is a valid direction of travel. False otherwise or if the current
-     * position is not a junction.
-     */
-    public static boolean validMove(
-            Point position, HashMap<Point, HashSet<Point>> edges, Direction direction) {
-        // if the position is not a junction then no edges will be found.
-        if (!edges.containsKey(position)) {
-            return false;
-        }
-        HashSet<Point> junctions = edges.get(position);
-        switch (direction) {
-            case UP: {
-                // identifies if any of the junctions are in correct direction
-                for (Point p : junctions) {
-                    if (position.y > p.y) {
-                        return true;
-                    }
-                }
-                break;
-            }
-            case DOWN: {
-                // identifies if any of the junctions are in correct direction
-                for (Point p : junctions) {
-                    if (position.y < p.y) {
-                        return true;
-                    }
-                }
-                break;
-            }
-            case LEFT: {
-                // identifies if any of the junctions are in correct direction
-                for (Point p : junctions) {
-                    if (position.x > p.x) {
-                        return true;
-                    }
-                }
-                break;
-            }
-            case RIGHT: {
-                // identifies if any of the junctions are in correct direction
-                for (Point p : junctions) {
-                    if (position.x < p.x) {
-                        return true;
-                    }
-                }
-                break;
-            }
-        }
-        return false;
-    }
-    
-    /**
-     * Checks if a direction is a valid move from the current position. If the current position is not
-     * a junction then false will be returned. Use {@link #validMove(Point, HashMap, Direction)} for
-     * this case.
-     *
-     * @param position  The current position.
-     * @param map       The game map The mapping of all valid junctions.
-     * @param direction The proposed direction of travel.
-     * @return True if the direction is a valid direction of travel. False otherwise or if the current
-     * position is not a junction.
-     */
-    public static boolean validMove(Point position, Map map, Direction direction) {
-        if (direction==null) {
-            return false;
-        }
-        switch (direction) {
-            case UP: {
-                // identifies if any of the adjacent squares in correct direction are path
-                if (position.y + 1 < map.getMaxY()
-                        && !map.isWall(new Point.Double(position.x, position.y + 1))) {
-                    return true;
-                }
-                break;
-            }
-            case DOWN: {
-                // identifies if any of the adjacent squares in correct direction are path
-                if (position.y - 1 > 0 && !map.isWall(new Point.Double(position.x, position.y - 1))) {
-                    return true;
-                }
-                break;
-            }
-            case LEFT: {
-                // identifies if any of the adjacent squares in correct direction are path
-                if (position.x - 1 > 0 && !map.isWall(new Point.Double(position.x - 1, position.y))) {
-                    return true;
-                }
-                break;
-            }
-            case RIGHT: {
-                // identifies if any of the adjacent squares in correct direction are path
-                if (position.x + 1 < map.getMaxX()
-                        && !map.isWall(new Point.Double(position.x + 1, position.y))) {
-                    return true;
-                }
-                break;
-            }
-        }
-        return false;
+    public static Point getGridCoord(Point2D.Double position) {
+        return new Point((int) Math.floor(position.getX()), (int) Math.floor(position.getY()));
     }
 
-
-     /**Converts a {@link Point2D.Double} to {@link Point}. This will round using the default double to int cast rounding.
-     * @param point2d The point to be converted.
-     * @return The same point as an int. If the point is null then null will be returned.*/
-    public static Point point2DtoPoint(Point2D.Double point2d) {
-    	if (point2d==null) {
-    		return null;
-    	}
-    	int x = (int) point2d.getX();
-    	int y = (int) point2d.getY();
-    	return new Point(x,y);
-    }
-    
-    /**Converts a {@link Point} to {@link Point2D.Double}.
-     * @param point The point to be converted.
-     * @return The same point as a double. If the point is null then null will be returned.*/
-    public static Point2D.Double pointToPoint2D(Point point) {
-    	if (point==null) {
-    		return null;
-    	}
-    	double x = point.getX();
-    	double y = point.getY();
-    	return new Point2D.Double(x,y);
-    }
-
-    public static Direction directionBetweenPoints(Point start, Point target) {
+    public static Direction directionBetweenPoints(Point2D.Double start, Point2D.Double target) {
         if (start.getX()==target.getX()) {
             if (start.getY()>target.getY()) {
                 return Direction.UP;
@@ -284,55 +153,59 @@ public abstract class Mapping {
         }
     }
 
-    public static Point findNearestJunction(Point position, Map map, HashSet<Point> junctions) {
-        int vertical = costVertical(position, map, junctions);
-        int horizontal = costHorizontal(position, map, junctions);
+    public static Point2D.Double findNearestJunction(Point2D.Double position, Map map, HashSet<Point> junctions) {
+        double vertical = costVertical(position, map, junctions);
+        double horizontal = costHorizontal(position, map, junctions);
+        Point2D.Double output;
         if (Math.abs(vertical)<Math.abs(horizontal)) {
-            position.translate(0, vertical);
+            output = new Point2D.Double(position.getX(), position.getY() + vertical);
         }
         else {
-            position.translate(horizontal, 0);
+            output = new Point2D.Double(position.getX()+horizontal, position.getY());
+        }
+        if (map.withinBounds(output)) {
+            return output;
         }
         return position;
     }
 
-    private static int costVertical(Point position, Map map, HashSet<Point> junctions) {
-        Point up = position;
-        Point down = position;
-        while (!map.isWall(Mapping.pointToPoint2D(up))||!map.isWall(Mapping.pointToPoint2D(down))) {
-            if (!map.isWall(Mapping.pointToPoint2D(up))) {
-                if (junctions.contains(up)) {
-                    return up.y-position.y;
+    private static double costVertical(Point2D.Double position, Map map, HashSet<Point> junctions) {
+        Point2D.Double up = new Point2D.Double(position.getX(), position.getY());
+        Point2D.Double down = new Point2D.Double(position.getX(), position.getY());
+        while (!map.isWall(up)||!map.isWall(down)) {
+            if (!map.isWall(up)) {
+                if (junctions.contains(Mapping.getGridCoord(up))) {
+                    return up.getY()-position.getY();
                 }
-                up.translate(0, -1);
+                up.setLocation(up.getX(), up.getY()-1);
             }
-            if (!map.isWall(Mapping.pointToPoint2D(down))) {
-                if (junctions.contains(up)) {
-                    return down.y-position.y;
+            if (!map.isWall(down)) {
+                if (junctions.contains(Mapping.getGridCoord(down))) {
+                    return down.getY()-position.getY();
                 }
-                down.translate(0, 1);
+                up.setLocation(down.getX(), down.getY()+1);
             }
         }
-        return Integer.MAX_VALUE;
+        return Double.MAX_VALUE;
     }
 
-    private static int costHorizontal(Point position, Map map, HashSet<Point> junctions) {
-        Point left = position;
-        Point right = position;
-        while (!map.isWall(Mapping.pointToPoint2D(left))||!map.isWall(Mapping.pointToPoint2D(right))) {
-            if (!map.isWall(Mapping.pointToPoint2D(left))) {
-                if (junctions.contains(left)) {
-                    return left.x-position.x;
+    private static double costHorizontal(Point2D.Double position, Map map, HashSet<Point> junctions) {
+        Point2D.Double left = new Point2D.Double(position.getX(), position.getY());
+        Point2D.Double right = new Point2D.Double(position.getX(), position.getY());
+        while (!map.isWall(left)||!map.isWall(right)) {
+            if (!map.isWall(left)) {
+                if (junctions.contains(Mapping.getGridCoord(left))) {
+                    return left.getX()-position.getX();
                 }
-                left.translate(-1, 0);
+                left.setLocation(left.getX() -1, left.getY());
             }
-            if (!map.isWall(Mapping.pointToPoint2D(right))) {
-                if (junctions.contains(left)) {
-                    return right.x-position.x;
+            if (!map.isWall(right)) {
+                if (junctions.contains(Mapping.getGridCoord(right))) {
+                    return right.getX()-position.getX();
                 }
-                right.translate(1, 0);
+                right.setLocation(right.getX()+1, right.getY());
             }
         }
-        return Integer.MAX_VALUE;
+        return Double.MAX_VALUE;
     }
 }

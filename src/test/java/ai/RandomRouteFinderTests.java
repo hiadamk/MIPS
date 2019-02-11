@@ -33,7 +33,7 @@ class RandomRouteFinderTests {
 		for (int i = 0; i < gas.length; i++) {
 			gas[i].setLocation(new Point2D.Double(0, i));
 		}
-		rrf.getRoute(Mapping.point2DtoPoint(gas[1].getLocation()), Mapping.point2DtoPoint(gas[0].getLocation()));
+		rrf.getRoute(gas[1].getLocation(), gas[0].getLocation());
 	}
 	
 	@Test
@@ -45,15 +45,15 @@ class RandomRouteFinderTests {
 				new Entity(false, 2, null),
 				new Entity(false, 3, null),
 				new Entity(false, 4, null)};
-		Executable e = () -> rrf.getRoute(Mapping.point2DtoPoint(gas[1].getLocation()), Mapping.point2DtoPoint(gas[0].getLocation()));
+		Executable e = () -> rrf.getRoute(gas[1].getLocation(), gas[0].getLocation());
 		assertThrows(NullPointerException.class, e);
 		
 		gas[0].setLocation(new Point2D.Double(1,1));
 		
-		e = () -> rrf.getRoute(Mapping.point2DtoPoint(gas[1].getLocation()), Mapping.point2DtoPoint(gas[0].getLocation()));
+		e = () -> rrf.getRoute(gas[1].getLocation(), gas[0].getLocation());
 		assertThrows(NullPointerException.class, e);
 		
-		e = () -> rrf.getRoute(Mapping.point2DtoPoint(gas[0].getLocation()), Mapping.point2DtoPoint(gas[1].getLocation()));
+		e = () -> rrf.getRoute(gas[0].getLocation(), gas[1].getLocation());
 		assertThrows(NullPointerException.class, e);
 	}
 	
@@ -77,7 +77,7 @@ class RandomRouteFinderTests {
 		counters.put(Direction.LEFT, 0);
 		counters.put(Direction.RIGHT, 0);
 		for (int count = 0; count<100000; count++) {
-			Direction dir = rrf.getRoute(Mapping.point2DtoPoint(gas[1].getLocation()), Mapping.point2DtoPoint(gas[0].getLocation()));
+			Direction dir = rrf.getRoute(gas[1].getLocation(), gas[0].getLocation());
 			counters.put(dir, counters.get(dir)+1);
 		}
 		
