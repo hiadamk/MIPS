@@ -25,7 +25,7 @@ public class Entity implements Renderable {
     this.clientId = clientId;
     this.location = location;
     this.score = 0;
-    this.velocity = pacMan ? 0.1 : 0.08;
+      this.velocity = pacMan ? 0.08 : 0.06;
     //updateImages();
   }
 
@@ -97,5 +97,14 @@ public class Entity implements Renderable {
 
   public void updateImages(ResourceLoader resourceLoader) {
     images = pacMan ? resourceLoader.getPlayableMip(clientId) : resourceLoader.getPlayableGhoul(clientId);
+  }
+
+  @Override
+  public String toString() {
+    if (this.pacMan) {
+      return "mip" + clientId;
+    } else {
+      return "ghoul" + clientId;
+    }
   }
 }

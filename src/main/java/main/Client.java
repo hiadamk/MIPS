@@ -1,6 +1,13 @@
 package main;
 
 import audio.AudioController;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.geom.Point2D.Double;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -11,6 +18,9 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import objects.Entity;
 import renderer.Renderer;
+import server.ClientLobbySession;
+import server.ServerGameplayHandler;
+import server.ServerLobby;
 import server.Telemetry;
 import ui.MenuController;
 import utils.Input;
@@ -19,12 +29,9 @@ import utils.Methods;
 import utils.ResourceLoader;
 import utils.enums.Direction;
 
-import java.awt.geom.Point2D.Double;
-import java.util.LinkedList;
-import java.util.Queue;
-
 public class Client extends Application {
 
+  Map map;
   private int id;
   private KeyController keyController;
   private Telemetry telemetry;
@@ -32,26 +39,37 @@ public class Client extends Application {
   private Scene gameScene;
   private Stage primaryStage;
   private Renderer renderer;
-  private final int xRes = 1920;
-  private final int yRes = 1080;
+  private int xRes = 1920;
+  private int yRes = 1080;
   private ResourceLoader resourceLoader;
   private Entity[] agents;
   private Queue<Input> inputs;
-  Map map;
+  private ServerLobby server;
+  private ServerGameplayHandler serverGameplayHandler;
+  private ClientLobbySession clientLobbySession;
+  private boolean isHost;
 
 
   public int getId() {
     return id;
   }
 
+  public void setId(int id) {
+    this.id = id;
+  }
+
   @Override
   public void start(Stage primaryStage) throws Exception {
+    Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();
+    xRes = screenRes.width;
+    yRes = screenRes.height;
+
     int id = 0; // This will be changed if main joins a lobby, telemetry will give it new id
     audioController = new AudioController();
     keyController = new KeyController();
-    resourceLoader = new ResourceLoader("src/test/resources/");
+    resourceLoader = new ResourceLoader("src/main/resources/");
     this.primaryStage = primaryStage;
-//    audioController.playMusic(Sounds.intro);
+//        audioController.playMusic(Sounds.intro);
     MenuController menuController = new MenuController(audioController, primaryStage, this);
     StackPane root = (StackPane) menuController.createMainMenu();
     Scene scene = new Scene(root, xRes, yRes);
@@ -60,46 +78,77 @@ public class Client extends Application {
     gameRoot.getChildren().add(canvas);
     this.gameScene = new Scene(gameRoot);
     GraphicsContext gc = canvas.getGraphicsContext2D();
-    renderer = new Renderer(gc, xRes, yRes, resourceLoader.getMapTiles() );
+    renderer = new Renderer(gc, xRes, yRes, resourceLoader);
     primaryStage.setScene(scene);
     primaryStage.show();
   }
-  
-  
+
   public void startSinglePlayerGame() {
-  
+
     System.out.println("Starting single player game...");
     // If hosting if not telemetry will be set by connection method along with new main id
     map = resourceLoader.getMap();
-      Queue<Input> incomingQueue = new LinkedList<>();
 
-    agents = new Entity[5];
-    agents[0] = new Entity(true, 0, new Double(1, 2));
-    agents[1] = new Entity(false, 1, new Double(1, 1));
-    agents[2] = new Entity(false, 2, new Double(1, 1));
-    agents[3] = new Entity(false, 3, new Double(1, 1));
-    agents[4] = new Entity(false, 4, new Double(1, 1));
-      this.telemetry = new Telemetry(map, incomingQueue, agents);
+    Queue<Input> incomingQueue = new LinkedList<>();
+
+    this.telemetry = new Telemetry(map, incomingQueue);
     this.primaryStage.setScene(gameScene);
-      this.id = 0;
-    
+    this.id = 0;
+
     gameScene.setOnKeyPressed(keyController);
 
     startGame();
   }
-  
-  public void startMultiplayerGame() {
-    //TODO Implement
+
+  public void createMultiplayerLobby() {
+    isHost = true;
+    Queue<String> clientIn = new LinkedList<>();
+    Queue<Input> keypressQueue = new LinkedBlockingQueue<>();
+    try {
+      this.server = new ServerLobby();
+      clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
-  
+
+  public void joinMultiplayerLobby() {
+    isHost = false;
+    Queue<String> clientIn = new LinkedList<>();
+    Queue<Input> keypressQueue = new LinkedBlockingQueue<>();
+    try {
+      clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  public void startMultiplayerGame() {
+
+    if (isHost) {
+      ServerGameplayHandler s = server.gameStart();
+      this.telemetry = new Telemetry(this.map, s);
+    } else {
+      //TODO Implement what needs to happen when the game starts and they are not the host
+      //TODO Surely each client needs to know the start locations of each entity for rendering
+    }
+
+  }
+
   private void startGame() {
     //inputs = new Queue<Input>();
-    //agents = new Entity[2];
-    //agents[0] = new Entity(true, 0, new Double(1, 2));
-    //agents[1] = new Entity(false, 1, new Double(1, 1));
-    //agents[2] = new Entity(false, 2, new Double(1, 1));
-    //agents[3] = new Entity(false, 3, new Double(1, 1));
-    //agents[4] = new Entity(false, 4, new Double(1, 1));
+
+    //agents = new Entity[1];
+    //agents[0] = new Entity(true, 0, new Double(0.5, 0.5));
+    //agents[1] = new Entity(false, 1, new Double(0.5, 1.5));
+    //agents[2] = new Entity(false, 2, new Double(0.5, 1.5));
+    //agents[3] = new Entity(false, 3, new Double(0.5, 1.5));
+    //agents[4] = new Entity(false, 4, new Double(0.5, 1.5));
+    if (telemetry != null) {
+      agents = telemetry.getAgents();
+      map = telemetry.getMap();
+    }
     Methods.updateImages(agents, resourceLoader);
     this.primaryStage.setScene(gameScene);
     // AnimationTimer started once game has started
@@ -107,11 +156,12 @@ public class Client extends Application {
       @Override
       public void handle(long now) {
         processInput();
-        Telemetry.processPhysics(agents, map);
+        if (id > 0) {
+          Telemetry.processPhysics(agents, map);
+        }
         render();
       }
     }.start();
-    telemetry.startAI();
   }
 
   private void processInput() {
@@ -128,38 +178,34 @@ public class Client extends Application {
     switch (input) {
       case UP: // Add code here
         System.out.println("Direction up");
-          informServer(new Input(this.id, Direction.UP));
+        informServer(new Input(this.id, Direction.UP));
         agents[id].setDirection(input);
         break;
       case DOWN: // Add code here
         System.out.println("Direction down");
-          informServer(new Input(this.id, Direction.DOWN));
+        informServer(new Input(this.id, Direction.DOWN));
         agents[id].setDirection(input);
         break;
       case LEFT: // Add code here
         System.out.println("Direction left");
-          informServer(new Input(this.id, Direction.LEFT));
+        informServer(new Input(this.id, Direction.LEFT));
         agents[id].setDirection(input);
         break;
       case RIGHT: // Add code here
         System.out.println("Direction right");
-          informServer(new Input(this.id, Direction.RIGHT));
+        informServer(new Input(this.id, Direction.RIGHT));
         agents[id].setDirection(input);
         break;
     }
   }
 
   private void informServer(Input input) {
-      if (id == 0) {
+    if (id == 0) {
       telemetry.addInput(input);
     } else {
-          // TODO integrate with networking to send to telemetry
+      // TODO integrate with networking to send to telemetry
     }
   }
-    
-    public void setId(int id) {
-        this.id = id;
-    }
 
   private void render() {
     renderer.render(map, agents);

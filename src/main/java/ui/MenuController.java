@@ -2,17 +2,26 @@ package ui;
 
 import audio.AudioController;
 import audio.Sounds;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import main.Client;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -50,6 +59,10 @@ public class MenuController {
     private ImageView volumeImg;
     private Button incrVolumeBtn;
     private Button decrVolumeBtn;
+    private Label lobbyStatusLbl;
+    private Label loadingDots;
+    private Font font;
+    private Button startMGameBtn;
     private boolean isHome = true;
     
     /**
@@ -100,6 +113,14 @@ public class MenuController {
      * @return The node containing the menu which will be returned to the game main window.
      */
     public Node createMainMenu() {
+    
+        try {
+            // load a custom font from a specific location (change path!)
+            // 12 is the size to use
+            this.font = Font.loadFont(new FileInputStream(new File("src/main/resources/ui/PressStart2P.ttf")), 40);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         StackPane root = new StackPane();
         root.setPrefSize(1920, 1080);
         
@@ -120,8 +141,20 @@ public class MenuController {
         startGameBtn.setVisible(false);
         startGameBtn.setOnAction(e -> {
             audioController.playSound(Sounds.click);
-//            primaryStage.setScene(gameScene);
             client.startSinglePlayerGame();
+        });
+    
+        startMGameBtn = new Button();
+        StackPane.setAlignment(startMGameBtn, Pos.BOTTOM_CENTER);
+        StackPane.setMargin(startMGameBtn, new Insets(0, 0, 200, 0));
+//        Image startMImg = new Image("ui/start.png");
+        startMGameBtn.setGraphic(new ImageView(startImg));
+        startMGameBtn.setStyle("-fx-background-color: transparent;");
+        root.getChildren().add(startMGameBtn);
+        startMGameBtn.setVisible(false);
+        startMGameBtn.setOnAction(e -> {
+            audioController.playSound(Sounds.click);
+            client.startMultiplayerGame();
         });
         
         this.singlePlayerBtn = new Button();
@@ -371,6 +404,16 @@ public class MenuController {
         createGameBtn.setGraphic(createGameView);
         createGameBtn.setVisible(false);
         root.getChildren().add(createGameBtn);
+        createGameBtn.setOnAction(event -> {
+            moveItemsToBackTree();
+            itemsOnScreen.add(lobbyStatusLbl);
+            itemsOnScreen.add(loadingDots);
+            itemsOnScreen.add(startMGameBtn);
+            lobbyStatusLbl.setVisible(true);
+            loadingDots.setVisible(true);
+            startMGameBtn.setVisible(true);
+            client.createMultiplayerLobby();
+        });
         
         joinGameBtn = new Button();
         StackPane.setAlignment(joinGameBtn, Pos.CENTER);
@@ -381,6 +424,9 @@ public class MenuController {
         ImageView joinGameView = new ImageView(joinGameImg);
         joinGameBtn.setGraphic(joinGameView);
         joinGameBtn.setVisible(false);
+        joinGameBtn.setOnAction(event -> {
+            client.joinMultiplayerLobby();
+        });
         
         createLobbyBtn = new Button();
         StackPane.setAlignment(createGameBtn, Pos.BOTTOM_CENTER);
@@ -391,6 +437,38 @@ public class MenuController {
         createLobbyBtn.setGraphic(createLobbyView);
         createLobbyBtn.setVisible(false);
         root.getChildren().add(createLobbyBtn);
+    
+        lobbyStatusLbl = new Label("Searching for players");
+        lobbyStatusLbl.setTextFill(Color.WHITE);
+        lobbyStatusLbl.setVisible(false);
+        lobbyStatusLbl.setFont(this.font);
+        StackPane.setAlignment(lobbyStatusLbl, Pos.CENTER);
+        StackPane.setMargin(lobbyStatusLbl, new Insets(0, 0, 350, 0));
+        root.getChildren().add(lobbyStatusLbl);
+    
+        loadingDots = new Label(" .");
+        loadingDots.setTextFill(Color.WHITE);
+        loadingDots.setVisible(false);
+        loadingDots.setFont(this.font);
+        StackPane.setAlignment(loadingDots, Pos.CENTER);
+        StackPane.setMargin(loadingDots, new Insets(0, 0, 300, 0));
+        root.getChildren().add(loadingDots);
+    
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, event -> {
+                   
+                        String statusText = loadingDots.getText();
+                        loadingDots.setText(
+                                (" . . .".equals(statusText))
+                                        ? " ."
+                                        : statusText + " ."
+                        );
+                }),
+                new KeyFrame(Duration.millis(1000))
+        );
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+        
         
         backTree.empty();
         itemsOnScreen.add(playBtn);

@@ -35,6 +35,7 @@ public class ClientGameplayHandler {
         incomingQueue = new ConcurrentLinkedQueue<>();
         this.keypressQueue = (BlockingQueue<Input>) keypressQueue;
         this.clientIn = clientIn;
+    
         this.serverIP = new ArrayList<>();
         this.serverIP.add(serverIP);
         
@@ -71,7 +72,6 @@ public class ClientGameplayHandler {
                                 outgoingQueue.add(key.toString());
                                 Thread.sleep(50);
                             } catch (InterruptedException e) {
-                                // TODO Auto-generated catch block
                                 e.printStackTrace();
                             }
                         }
