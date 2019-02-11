@@ -208,6 +208,9 @@ public class Telemetry {
     while (!inputs.isEmpty()) {
       Input input = inputs.poll();
       int id = input.getClientID();
+      if (id != 0) {
+        System.out.println("none 0 input found");
+      }
       Direction d = input.getMove();
       if (Methods.validiateDirection(d, agents[id], map)) {
         agents[id].setDirection(d);
