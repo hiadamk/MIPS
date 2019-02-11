@@ -77,7 +77,9 @@ public class Renderer {
         //render current map tile
         currentSprite = mapTiles.get(rawMap[x][y]);
         rendCoord = getIsoCoord(x, y, currentSprite.getHeight());
+        //if(rawMap[x][y] == MapElement.FLOOR.toInt()){ gc.drawImage(currentSprite, rendCoord.x, rendCoord.y);}
         gc.drawImage(currentSprite, rendCoord.x, rendCoord.y);
+
         //fSystem.out.println("rendered " + x + "," + y);
 
         //check if entity should be on top of this tile
@@ -86,7 +88,7 @@ public class Renderer {
         }
 
         while (entityCounter < entities
-            .size() && x == (int) (spriteCoord.getX() + 1) && y == (int) (spriteCoord.getY() + 1)) {
+            .size() && x == (int) (spriteCoord.getX()) && y == (int) (spriteCoord.getY())) {
           //System.out.println(entities.get(entityCounter).toString());
           renderEntity(entities.get(entityCounter));
           entityCounter++;
@@ -185,8 +187,8 @@ public class Renderer {
    */
   private void renderEntity(Renderable e) {
     Image currentSprite = e.getImage().get(0);
-    Point2D.Double rendCoord = getIsoCoord(e.getLocation().getX() + 0.5,
-        e.getLocation().getY() + 0.5,
+    Point2D.Double rendCoord = getIsoCoord(e.getLocation().getX() - 0.5,
+        e.getLocation().getY() - 0.5,
         currentSprite.getHeight());
     gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
   }
