@@ -100,6 +100,11 @@ public class Renderer {
       }
     }
 
+    //TEMPORARY FIX FOR GHOUL RENDERING
+    for (Entity e : entities.subList(entityCounter, entities.size())) {
+      renderEntity(e);
+    }
+
     renderHUD();
 
   }
