@@ -147,10 +147,10 @@ public class Telemetry {
 
   public void initialise() {
     agents = new Entity[AGENT_COUNT];
-    agents[0] = new Entity(true, 0, new Double(1, 3));
+    agents[0] = new Entity(true, 0, new Double(1.5, 3.5));
     System.out.println(agents);
-    agents[1] = new Entity(false, 1, new Double(1, 19));
-    agents[2] = new Entity(false, 2, new Double(1, 17));
+    agents[1] = new Entity(false, 1, new Double(1.5, 19.5));
+    agents[2] = new Entity(false, 2, new Double(1.5, 17.5));
     // agents[3] = new Entity(false, 3, new Double(1, 2));
     // agents[4] = new Entity(false, 4, new Double(1, 2));
     int aiCount = AGENT_COUNT - (server == null ? 1 : server.getPlayerCount());
