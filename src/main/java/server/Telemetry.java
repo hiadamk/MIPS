@@ -1,6 +1,11 @@
 package server;
 
 import ai.AILoopControl;
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import objects.Entity;
 import utils.Input;
@@ -8,15 +13,9 @@ import utils.Map;
 import utils.Methods;
 import utils.enums.Direction;
 
-import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
-import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
 public class Telemetry {
 
-  private static final int AGENT_COUNT = 1;
+  private static final int AGENT_COUNT = 3;
   private BlockingQueue<Input> inputs;
   private BlockingQueue<Input> outputs;
   private Entity[] agents;
@@ -150,11 +149,11 @@ public class Telemetry {
     agents = new Entity[AGENT_COUNT];
     agents[0] = new Entity(true, 0, new Double(1, 3));
     System.out.println(agents);
-    // agents[1] = new Entity(false, 1, new Double(1, 2));
-    // agents[2] = new Entity(false, 2, new Double(1, 2));
+    agents[1] = new Entity(false, 1, new Double(1, 18));
+    agents[2] = new Entity(false, 2, new Double(1, 16));
     // agents[3] = new Entity(false, 3, new Double(1, 2));
     // agents[4] = new Entity(false, 4, new Double(1, 2));
-    int aiCount = AGENT_COUNT - (server == null ? 4 : server.getPlayerCount());
+    int aiCount = AGENT_COUNT - (server == null ? 1 : server.getPlayerCount());
     if (aiCount < 0) {
       aiCount = 0;
     }

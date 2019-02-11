@@ -3,7 +3,6 @@ package main;
 import audio.AudioController;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.geom.Point2D.Double;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -137,12 +136,16 @@ public class Client extends Application {
 
   private void startGame() {
     //inputs = new Queue<Input>();
-    agents = new Entity[1];
-    agents[0] = new Entity(true, 0, new Double(1, 1));
+    //agents = new Entity[1];
+    //agents[0] = new Entity(true, 0, new Double(1, 1));
 //        agents[1] = new Entity(false, 1, new Double(1, 2));
     //agents[2] = new Entity(false, 2, new Double(1, 2));
     //agents[3] = new Entity(false, 3, new Double(1, 2));
     //agents[4] = new Entity(false, 4, new Double(1, 2));
+    if (telemetry != null) {
+      agents = telemetry.getAgents();
+      map = telemetry.getMap();
+    }
     Methods.updateImages(agents, resourceLoader);
     this.primaryStage.setScene(gameScene);
     // AnimationTimer started once game has started
@@ -150,7 +153,9 @@ public class Client extends Application {
       @Override
       public void handle(long now) {
         processInput();
-        Telemetry.processPhysics(agents, map);
+        if (id > 0) {
+          Telemetry.processPhysics(agents, map);
+        }
         render();
       }
     }.start();
