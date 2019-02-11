@@ -162,6 +162,7 @@ public class Client extends Application {
         render();
       }
     }.start();
+    telemetry.startAI();
   }
 
   private void processInput() {

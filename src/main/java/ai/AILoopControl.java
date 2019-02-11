@@ -232,7 +232,12 @@ public class AILoopControl extends Thread {
 					else {
 						if (!Mapping.validMove(Mapping.point2DtoPoint(ent.getLocation()), map, ent.getDirection())) {
 							Point nearestJunct = Mapping.findNearestJunction(Mapping.point2DtoPoint(ent.getLocation()), map, junctions);
-							ent.setDirection(Mapping.directionBetweenPoints(Mapping.point2DtoPoint(ent.getLocation()), nearestJunct));
+							try {
+								ent.setDirection(Mapping.directionBetweenPoints(Mapping.point2DtoPoint(ent.getLocation()), nearestJunct));
+							}
+							catch (NullPointerException e) {
+								System.out.println("Direction not set");
+							}
 						}
 					}
 				}

@@ -24,6 +24,7 @@ public class Telemetry {
     private Queue<Input> clientQueue;
     private ServerGameplayHandler server;
     private AILoopControl ai;
+    private boolean aiRunning;
 
     public Telemetry(Map map, ServerGameplayHandler server) {
         this.map = map;
@@ -164,6 +165,7 @@ public class Telemetry {
             aiControlled[i] = highestId;
             highestId--;
         }
+        aiRunning = false;
         ai = new AILoopControl(agents, aiControlled, map, inputs);
     }
 
@@ -203,7 +205,13 @@ public class Telemetry {
         }
       }
     }.start();
-  }
+    }
+
+    public void startAI() {
+        if (!aiRunning && ai!=null) {
+            ai.start();
+        }
+    }
 
   private void processInputs() {
     while (!inputs.isEmpty()) {
