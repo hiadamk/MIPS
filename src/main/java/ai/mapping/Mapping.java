@@ -136,6 +136,12 @@ public abstract class Mapping {
         return new Point((int) Math.floor(position.getX()), (int) Math.floor(position.getY()));
     }
 
+    public static Direction directionBetweenPoints(Point start, Point target) {
+        Point2D.Double s = new Point2D.Double(start.getX(), start.getY());
+        Point2D.Double t = new Point2D.Double(target.getX(), target.getY());
+        return directionBetweenPoints(s,t);
+    }
+
     public static Direction directionBetweenPoints(Point2D.Double start, Point2D.Double target) {
         if (start.getX()==target.getX()) {
             if (start.getY()>target.getY()) {

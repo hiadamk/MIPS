@@ -30,6 +30,7 @@ public class AILoopControl extends Thread {
     private int mipsmanID;
     private final BlockingQueue<Input> directionsOut;
     private final Map map;
+    private final Entity[] gameAgents;
 
     /**
      * Initialises the control for the AI Control Loop.
@@ -52,6 +53,7 @@ public class AILoopControl extends Thread {
 
         this.setDaemon(true);
         this.runAILoop = true;
+        this.gameAgents = gameAgents;
         this.controlAgents = new Entity[controlIds.length];
         this.junctions = Mapping.getJunctions(map);
         this.edges = Mapping.getEdges(map, junctions);
@@ -83,12 +85,12 @@ public class AILoopControl extends Thread {
         for (int i = 0; i < controlIds.length; i++) {
             RouteFinder routeFinder;
             switch (i) {
-                case 0: {
+                case 1: {
                     // TODO
                     routeFinder = new RandomRouteFinder();
                     break;
                 }
-                case 1: {
+                case 0: {
                     // TODO
                     routeFinder = new RandomRouteFinder();//new AStarRouteFinder(junctions,edges,map);
                     break;
@@ -318,7 +320,7 @@ public class AILoopControl extends Thread {
     private void executeRoute(Entity ent) {
         RouteFinder r = ent.getRouteFinder();
         Point2D.Double myLoc = ent.getLocation();
-        Point2D.Double mipsManLoc = controlAgents[mipsmanID].getLocation();
+        Point2D.Double mipsManLoc = gameAgents[mipsmanID].getLocation();
         Direction direction;
         direction = r.getRoute(myLoc, mipsManLoc);
         // re-process a random direction if an invalid move is detected

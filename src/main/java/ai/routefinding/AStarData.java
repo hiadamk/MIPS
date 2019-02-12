@@ -1,23 +1,23 @@
 package ai.routefinding;
 
-import java.awt.geom.Point2D;
+import java.awt.Point;
 
 public class AStarData {
-	private final Point2D.Double myPosition;
-	private final Point2D.Double parent;
+	private final Point myPosition;
+	private final Point parent;
 	private final double cost;
 	
-	public AStarData(Point2D.Double myPosition, Point2D.Double parent, double cost) {
+	public AStarData(Point myPosition, Point parent, double cost) {
 		this.myPosition = myPosition;
 		this.parent = parent;
 		this.cost = cost;
 	}
 	
-	public Point2D.Double getMyPosition() {
+	public Point getMyPosition() {
 		return myPosition;
 	}
 	
-	public Point2D.Double getParentPosition() {
+	public Point getParentPosition() {
 		return parent;
 	}
 	

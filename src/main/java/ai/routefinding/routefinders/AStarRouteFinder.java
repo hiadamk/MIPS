@@ -42,42 +42,44 @@ public class AStarRouteFinder implements RouteFinder {
      * @throws IllegalArgumentException PacmanID must be within the range of gameAgents Array.
      */
 	@Override
-	public Direction getRoute(Point2D.Double myLocation, Point2D.Double targetLocation) {
+	public Direction getRoute(Point2D.Double myLocPointDouble, Point2D.Double targetLocPointDouble) {
+		Point myLocation = Mapping.getGridCoord(myLocPointDouble);
+		Point targetLocation = Mapping.getGridCoord(targetLocPointDouble);
 		if (!junctions.contains(myLocation)) {
-			Point2D.Double nearestJunct = Mapping.findNearestJunction(myLocation, map, junctions);
-			return Mapping.directionBetweenPoints(myLocation, nearestJunct);
+			Point2D.Double nearestJunct = Mapping.findNearestJunction(myLocPointDouble, map, junctions);
+			return Mapping.directionBetweenPoints(myLocPointDouble, nearestJunct);
 		}
-		Point2D.Double targetJunction;
-		if (junctions.contains(Mapping.getGridCoord(targetLocation))) {
+		Point targetJunction;
+		if (junctions.contains(targetLocation)) {
 			targetJunction = targetLocation;
 		}
 		else {
-			targetJunction = Mapping.findNearestJunction(targetLocation, map, junctions);
+			targetJunction = Mapping.getGridCoord(Mapping.findNearestJunction(targetLocPointDouble, map, junctions));
 		}
 		HashMap<Point, AStarData> visited = new HashMap<Point, AStarData>();
 		HashMap<Point, AStarData> unVisited = new HashMap<Point, AStarData>();
-		visited.put(Mapping.getGridCoord(myLocation), new AStarData(myLocation, myLocation, 0));
+		visited.put(myLocation, new AStarData(myLocation, myLocation, 0));
 		Direction outDirection = Direction.UP;	//default
-		Point2D.Double currentPoint = myLocation;
-		while (!visited.containsKey(Mapping.getGridCoord(targetJunction))&&(visited.size()<junctions.size())) {
-			HashSet<Point> connections = edges.get(Mapping.getGridCoord(currentPoint));
+		Point currentPoint = myLocation;
+		while (!visited.containsKey(targetJunction)&&(visited.size()<junctions.size())) {
+			HashSet<Point> connections = edges.get(currentPoint);
 			for (Point connection : connections) {
 				if (!visited.containsKey(connection)) {
-					double cost = visited.get(Mapping.getGridCoord(currentPoint)).getCost() + movementCost(currentPoint, new Point2D.Double(connection.getX(), connection.getY())) + heuristicCost(currentPoint, targetJunction);
-					unVisited.put(connection, new AStarData(currentPoint, new Point2D.Double(connection.getX(), connection.getY()), cost));
+					double cost = visited.get(currentPoint).getCost() + movementCost(currentPoint, connection) + heuristicCost(connection, targetJunction);
+					unVisited.put(connection, new AStarData(currentPoint, connection, cost));
 				}
 			}
 			double lowestCost = Double.MAX_VALUE;
 			for (Point key : unVisited.keySet()) {
 				AStarData data = unVisited.get(key);
 				if (data.getCost()<lowestCost) {
-					currentPoint = new Point2D.Double(key.getX(), key.getY());
+					currentPoint = key;
 					lowestCost = data.getCost();
 				}
 			}
-			AStarData data = unVisited.get(Mapping.getGridCoord(currentPoint));
-			unVisited.remove(Mapping.getGridCoord(currentPoint));
-			visited.put(Mapping.getGridCoord(currentPoint), data);
+			AStarData data = unVisited.get(currentPoint);//
+			unVisited.remove(currentPoint);
+			visited.put(currentPoint, data);
 		}
 		for (Point key : visited.keySet()) {
 			AStarData data = visited.get(key);
@@ -90,11 +92,11 @@ public class AStarRouteFinder implements RouteFinder {
 		return outDirection;
 	}
 	
-	private double movementCost(Point2D.Double start, Point2D.Double target) {
+	private double movementCost(Point start, Point target) {
 		return start.distance(target);
 	}
 	
-	private double heuristicCost(Point2D.Double start, Point2D.Double target) {
+	private double heuristicCost(Point start, Point target) {
 		return start.distance(target);
 	}
 }
