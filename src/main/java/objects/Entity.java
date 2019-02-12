@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 import utils.Renderable;
 import utils.ResourceLoader;
 import utils.enums.Direction;
+import java.awt.Point;
 
 public class Entity implements Renderable {
 
@@ -19,6 +20,7 @@ public class Entity implements Renderable {
   private ArrayList<ArrayList<Image>> images;
   private ArrayList<Image> currentImage;
   private RouteFinder routeFinder;
+  private Point lastGridCoord;
 
   public Entity(Boolean pacMan, int clientId, Point2D.Double location) {
     this.pacMan = pacMan;
@@ -39,6 +41,14 @@ public class Entity implements Renderable {
 
   public Point2D.Double getLocation() {
     return location;
+  }
+
+  public void setLastGridCoord(Point position) {
+    this.lastGridCoord = position;
+  }
+
+  public Point getLastGridCoord() {
+    return lastGridCoord;
   }
     
     public void setLocation(Point2D.Double location) {
