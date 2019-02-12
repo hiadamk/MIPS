@@ -15,7 +15,7 @@ import utils.enums.Direction;
 
 public class Telemetry {
 
-    private static final int AGENT_COUNT = 3;
+    private static final int AGENT_COUNT = 5;
     private BlockingQueue<Input> inputs;
     private BlockingQueue<Input> outputs;
     private Entity[] agents;
@@ -74,18 +74,26 @@ public class Telemetry {
                     case RIGHT:
                         nextX = (nextX + offset + m.getMaxX()) % m.getMaxX();
                         wallX = (nextX + 0.5 + m.getMaxX()) % m.getMaxX();
+                        nextY = (int) nextY + 0.5;
+                        wallY = nextY;
                         break;
                     case LEFT:
                         nextX = (nextX - offset + m.getMaxX()) % m.getMaxX();
                         wallX = (nextX - 0.5 + m.getMaxX()) % m.getMaxX();
+                        nextY = (int) nextY + 0.5;
+                        wallY = nextY;
                         break;
                     case DOWN:
                         nextY = (nextY + offset + m.getMaxY()) % m.getMaxY();
                         wallY = (nextY + 0.5 + m.getMaxY()) % m.getMaxY();
+                        nextX = (int) nextX + 0.5;
+                        wallX = nextX;
                         break;
                     case UP:
                         nextY = (nextY - offset + m.getMaxY()) % m.getMaxY();
                         wallY = (nextY - 0.5 + m.getMaxY()) % m.getMaxY();
+                        nextX = (int) nextX + 0.5;
+                        wallX = nextX;
                         break;
                 }
 
@@ -95,16 +103,11 @@ public class Telemetry {
                 if (m.isWall(wallLocation)) {
                     agents[i].setDirection(null);
                     // agents[i].setVelocity(0);
-                    System.err.println("wall");
-                    System.err.println(nextLocation);
-                    System.err.println(wallLocation);
-                    System.err.println("");
+                    System.err.println("next: " + nextLocation);
+                    System.err.println("wall: " + wallLocation);
                 } else {
                     agents[i].setLocation(nextLocation);
-                    System.out.println("moved");
-                    System.out.println(wallLocation);
-                    System.out.println(offset);
-                    System.out.println("");
+                    System.out.println("wall: " + wallLocation);
                 }
             }
             // TODO add points for pellet collision
@@ -153,8 +156,8 @@ public class Telemetry {
         System.out.println(agents);
         agents[1] = new Entity(false, 1, new Double(1.5, 18.5));
         agents[2] = new Entity(false, 2, new Double(1.5, 16.5));
-        // agents[3] = new Entity(false, 3, new Double(1, 2));
-        // agents[4] = new Entity(false, 4, new Double(1, 2));
+        agents[3] = new Entity(false, 3, new Double(1.5, 2.5));
+        agents[4] = new Entity(false, 4, new Double(1.5, 2.5));
         int aiCount = AGENT_COUNT - (server == null ? 1 : server.getPlayerCount());
         if (aiCount < 0) {
             aiCount = 0;
