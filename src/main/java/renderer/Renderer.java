@@ -5,6 +5,7 @@ import java.awt.geom.Point2D.Double;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -12,6 +13,7 @@ import objects.Entity;
 import utils.Map;
 import utils.Renderable;
 import utils.ResourceLoader;
+import utils.enums.MapElement;
 
 public class Renderer {
 
@@ -28,6 +30,8 @@ public class Renderer {
   private double tileSizeX = 39;
   private double tileSizeY = 19;
 
+  private ArrayList<Point2D.Double> traversalOrder = new ArrayList<>();
+
   /**
    * @param _xResolution Game x resolution
    * @param _yResolution Game y resolution
@@ -41,6 +45,27 @@ public class Renderer {
     this.background = r.getBackground();
     this.palette = r.getBackgroundPalette();
 
+    Map map = r.getMap();
+
+    int[][] rawMap = map.raw();
+
+    final int ROW = map.getMaxX();
+    final int COL = map.getMaxY();
+
+    for (int line = 1; line <= (ROW + COL - 1); line++) {
+      int start_col = Math.max(0, line - ROW);
+
+      int count = Math.min(line, Math.min(COL - start_col, ROW));
+
+      // Print elements of this line
+      for (int j = 0; j < count; j++) {
+        int x = Math.min(ROW, line) - j - 1;
+        int y = start_col + j;
+        this.traversalOrder.add(new Double(x, y));
+      }
+    }
+    System.out.println(traversalOrder.toString());
+
   }
 
   /**
@@ -48,66 +73,70 @@ public class Renderer {
    * @param entityArr Playable entities
    */
   public void render(Map map, Entity[] entityArr) {
-
+    gc.clearRect(0, 0, xResolution, yResolution);
     renderBackground(map);
-
+    int[][] rawMap = map.raw();
     ArrayList<Entity> entities = new ArrayList<>(Arrays.asList(entityArr));
     //sort entities to get rendering order
-    entities.sort((o1, o2) -> {
-      if (o1.getLocation().getY() == o2.getLocation().getY()) {
-        return java.lang.Double.compare(o1.getLocation().getX(), o2.getLocation().getX());
-      } else if (o1.getLocation().getY() > o2.getLocation().getY()) {
-        return 1;
-      } else {
-        return -1;
-      }
+    entities.sort(Comparator.comparingDouble(
+        o -> Math.pow(o.getLocation().getX(), 2) + Math.pow(o.getLocation().getY(), 2)));
 
-    });
-
-    int entityCounter = 0; //current position in entity list
+    int entityCounter = 0;
     Image currentSprite;
     Point2D.Double rendCoord;
     Point2D.Double spriteCoord = new Point2D.Double(java.lang.Double.MAX_VALUE,
         java.lang.Double.MAX_VALUE);
 
-    int[][] rawMap = map.raw();
+    int x;
+    int y;
 
-    for (int x = 0; x < rawMap.length; x++) {
-      for (int y = 0; y < rawMap[x].length; y++) {
-        //render current map tile
-        currentSprite = mapTiles.get(rawMap[x][y]);
-        rendCoord = getIsoCoord(x, y, currentSprite.getHeight());
-        //if(rawMap[x][y] == MapElement.FLOOR.toInt()){ gc.drawImage(currentSprite, rendCoord.x, rendCoord.y);}
-        gc.drawImage(currentSprite, rendCoord.x, rendCoord.y);
+    //Render floor first (floors will never be on a higher layer than anything apart form the background
+    for (Point2D.Double coord : traversalOrder) {
+      x = (int) coord.getX();
+      y = (int) coord.getY();
 
-        //fSystem.out.println("rendered " + x + "," + y);
-
-        //check if entity should be on top of this tile
-        if (entityCounter < entities.size()) {
-          spriteCoord = entities.get(entityCounter).getLocation();
-        }
-
-        while (entityCounter < entities
-            .size() && x == (int) (spriteCoord.getX()) && y == (int) (spriteCoord.getY())) {
-          //System.out.println(entities.get(entityCounter).toString());
-          renderEntity(entities.get(entityCounter));
-          entityCounter++;
-
-          if (entityCounter < entities.size()) {
-            spriteCoord = entities.get(entityCounter).getLocation();
-          }
-        }
+      if (MapElement.FLOOR.toInt() == rawMap[x][y]) {
+        rendCoord = getIsoCoord(x, y, mapTiles.get(MapElement.FLOOR.toInt()).getHeight());
+        gc.drawImage(mapTiles.get(MapElement.FLOOR.toInt()), rendCoord.x, rendCoord.y);
       }
     }
 
-    //TEMPORARY FIX FOR GHOUL RENDERING
-    for (Entity e : entities.subList(entityCounter, entities.size())) {
-      renderEntity(e);
+    //Loop through grid in diagonal traversal to render walls and entities by depth
+    for (Point2D.Double coord : traversalOrder) {
+      x = (int) coord.getX();
+      y = (int) coord.getY();
+
+      currentSprite = mapTiles.get(rawMap[x][y]);
+      rendCoord = getIsoCoord(x, y, currentSprite.getHeight());
+      if (MapElement.FLOOR.toInt() == rawMap[x][y]) {
+        continue;
+      }
+
+      //render wall (or any other non passable terrain)
+      gc.drawImage(currentSprite, rendCoord.x, rendCoord.y);
+
+      if (entityCounter < entities.size()) {
+        spriteCoord = entities.get(entityCounter).getLocation();
+      }
+
+      //is the current entities depth the same or deeper than the wall just rendered?
+      while (entityCounter < entities.size()
+          && ((x + y) >= ((int) spriteCoord.getX() + (int) spriteCoord.getY()))
+          && spriteCoord.getX() > x) {
+        renderEntity(entities.get(entityCounter));
+        entityCounter++;
+
+        //point to the next entity
+        if (entityCounter < entities.size()) {
+          spriteCoord = entities.get(entityCounter).getLocation();
+        }
+      }
+
     }
 
     renderHUD();
-
   }
+
 
   private void renderBackground(Map map) {
     //render backing image
