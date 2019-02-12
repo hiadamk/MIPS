@@ -35,7 +35,7 @@ public class ImageTester extends Application {
     Entity mip = new Entity(true, 1, new Double(1, 1));
     mip.setPacMan(true);
 
-    Entity ghoul = new Entity(false, 4, new Double(0.5, 1));
+    Entity ghoul = new Entity(false, 4, new Double(1.5, 5.8));
     System.out.println(ghoul.getLocation().toString());
     ghoul.setPacMan(false);
     //ghoul.setDirection(Direction.RIGHT);
