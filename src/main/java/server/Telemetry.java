@@ -74,18 +74,26 @@ public class Telemetry {
                     case RIGHT:
                         nextX = (nextX + offset + m.getMaxX()) % m.getMaxX();
                         wallX = (nextX + 0.5 + m.getMaxX()) % m.getMaxX();
+                        nextY = (int) nextY + 0.5;
+                        wallY = nextY;
                         break;
                     case LEFT:
                         nextX = (nextX - offset + m.getMaxX()) % m.getMaxX();
                         wallX = (nextX - 0.5 + m.getMaxX()) % m.getMaxX();
+                        nextY = (int) nextY + 0.5;
+                        wallY = nextY;
                         break;
                     case DOWN:
                         nextY = (nextY + offset + m.getMaxY()) % m.getMaxY();
                         wallY = (nextY + 0.5 + m.getMaxY()) % m.getMaxY();
+                        nextX = (int) nextX + 0.5;
+                        wallX = nextX;
                         break;
                     case UP:
                         nextY = (nextY - offset + m.getMaxY()) % m.getMaxY();
                         wallY = (nextY - 0.5 + m.getMaxY()) % m.getMaxY();
+                        nextX = (int) nextX + 0.5;
+                        wallX = nextX;
                         break;
                 }
 
@@ -95,16 +103,11 @@ public class Telemetry {
                 if (m.isWall(wallLocation)) {
                     agents[i].setDirection(null);
                     // agents[i].setVelocity(0);
-                    System.err.println("wall");
-                    System.err.println(nextLocation);
-                    System.err.println(wallLocation);
-                    System.err.println("");
+                    System.err.println("next: " + nextLocation);
+                    System.err.println("wall: " + wallLocation);
                 } else {
                     agents[i].setLocation(nextLocation);
-                    System.out.println("moved");
-                    System.out.println(wallLocation);
-                    System.out.println(offset);
-                    System.out.println("");
+                    System.out.println("wall: " + wallLocation);
                 }
             }
             // TODO add points for pellet collision
