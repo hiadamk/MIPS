@@ -79,7 +79,8 @@ public class Renderer {
     ArrayList<Entity> entities = new ArrayList<>(Arrays.asList(entityArr));
     //sort entities to get rendering order
     entities.sort(Comparator.comparingDouble(
-        o -> Math.pow(o.getLocation().getX(), 2) + Math.pow(o.getLocation().getY(), 2)));
+        o -> o.getLocation().getX() + o.getLocation().getY()));
+
 
     int entityCounter = 0;
     Image currentSprite;
