@@ -18,6 +18,9 @@ public class ResourceLoader {
 
   private Map map;
 
+  private final int spriteWidth = 39;
+  private final int spriteHeight = 36;
+
   private ArrayList<ArrayList<BufferedImage>> mipSprites;
   private BufferedImage mipPalette;
   private int mipColourID;
@@ -101,13 +104,29 @@ public class ResourceLoader {
    * @param theme name of folder which contains the assets for that theme
    */
   public void loadPlayableMip(String theme) {
-    final int spriteWidth = 39;
-    final int spriteHeight = 36;
     BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "mip");
     this.mipSprites = splitSpriteSheet(spriteWidth, spriteHeight, spriteSheet);
 
     this.mipPalette = loadImageFile("sprites/" + theme + "/playable/", "mip_palette");
     this.mipColourID = 0;
+  }
+
+  public void setResolution(int x, int y) {
+    double mapToScreenRatio = 0.8;
+
+    //find dimensions of rendered map we want based on mapToScreenRatio
+    int targetX = (int) (x * mapToScreenRatio);
+    int targetY = (int) (y * mapToScreenRatio);
+
+    int tileHeight = this.mapTiles.get(MapElement.FLOOR.toInt()).getHeight();
+    int tileWidth = this.mapTiles.get(MapElement.FLOOR.toInt()).getWidth();
+
+    //find the dimensions of the rendered map based on default sprite scaling
+    int currentX = tileHeight + (int) (0.5 * tileHeight * map.getMaxX());
+    int currentY = tileHeight + (int) (0.5 * tileWidth * map.getMaxY());
+
+    //choose the smallest ratio to make sure map fits on screen
+    double ratio = Math.min(targetX / currentX, targetY / currentY);
   }
 
   /**
@@ -136,8 +155,6 @@ public class ResourceLoader {
    * @param theme name of folder which contains the assets for that theme
    */
   public void loadPlayableGhoul(String theme) {
-    final int spriteWidth = 39;
-    final int spriteHeight = 36;
     BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "ghoul");
 
     this.ghoulSprites = splitSpriteSheet(spriteWidth, spriteHeight, spriteSheet);
