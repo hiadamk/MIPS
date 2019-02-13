@@ -1,5 +1,7 @@
 package utils;
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +19,9 @@ public class ResourceLoader {
   private String[] themes;
 
   private Map map;
+
+  private final int spriteWidth = 39;
+  private final int spriteHeight = 36;
 
   private ArrayList<ArrayList<BufferedImage>> mipSprites;
   private BufferedImage mipPalette;
@@ -55,6 +60,8 @@ public class ResourceLoader {
             .replace("], ", "]\n")
             .replace("[[", "[")
             .replace("]]", "]"));
+
+    rl.setResolution(3840, 2160, false);
   }
 
   private void loadThemes() {
@@ -101,13 +108,72 @@ public class ResourceLoader {
    * @param theme name of folder which contains the assets for that theme
    */
   public void loadPlayableMip(String theme) {
-    final int spriteWidth = 39;
-    final int spriteHeight = 36;
     BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "mip");
     this.mipSprites = splitSpriteSheet(spriteWidth, spriteHeight, spriteSheet);
 
     this.mipPalette = loadImageFile("sprites/" + theme + "/playable/", "mip_palette");
     this.mipColourID = 0;
+  }
+
+  /**
+   * @param x new x resolution
+   * @param y new y resolution
+   * @param pixelPerfect if true, only scales images by integer scale factor
+   */
+  public void setResolution(int x, int y, boolean pixelPerfect) {
+    double mapToScreenRatio = 0.7;
+
+    //find dimensions of rendered map we want based on mapToScreenRatio
+    int targetX = (int) (x * mapToScreenRatio);
+    int targetY = (int) (y * mapToScreenRatio);
+
+    int tileHeight = this.mapTiles.get(MapElement.FLOOR.toInt()).getHeight();
+    int tileWidth = this.mapTiles.get(MapElement.FLOOR.toInt()).getWidth();
+
+    //find the dimensions of the rendered map based on default sprite scaling
+    int currentX = tileHeight + (int) (0.5 * tileHeight * map.getMaxX());
+    int currentY = tileHeight + (int) (0.5 * tileWidth * map.getMaxY());
+
+    //choose the smallest ratio to make sure map fits on screen
+    double ratio = Math.min(targetX / (double) currentX, (double) targetY / currentY);
+    System.out.println(ratio);
+
+    ratio = (pixelPerfect) ? Math.floor(ratio) : ratio;
+
+    for (int i = 0; i < mipSprites.size(); i++) {
+      resizeSpritesSmooth(mipSprites.get(i), ratio);
+    }
+
+    for (int i = 0; i < mipSprites.size(); i++) {
+      resizeSpritesSmooth(ghoulSprites.get(i), ratio);
+    }
+
+    resizeSpritesSmooth(mapTiles, ratio);
+
+  }
+
+  private void resizeSpritesSmooth(ArrayList<BufferedImage> sprites, double ratio) {
+    BufferedImage temp;
+
+    for (int i = 0; i < sprites.size(); i++) {
+      temp = sprites.get(i);
+      int newWidth = (int) (temp.getWidth() * ratio);
+      int newHeight = (int) (temp.getHeight() * ratio);
+      BufferedImage resizedSprite = new BufferedImage(newWidth, newHeight,
+          BufferedImage.TYPE_4BYTE_ABGR);
+      Graphics2D g = resizedSprite.createGraphics();
+      g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+          RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+      g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,
+          RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+      g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
+
+      g.drawImage(temp, 0, 0, newWidth, newHeight, null);
+      g.dispose();
+
+      sprites.set(i, resizedSprite);
+    }
+
   }
 
   /**
@@ -136,8 +202,6 @@ public class ResourceLoader {
    * @param theme name of folder which contains the assets for that theme
    */
   public void loadPlayableGhoul(String theme) {
-    final int spriteWidth = 39;
-    final int spriteHeight = 36;
     BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "ghoul");
 
     this.ghoulSprites = splitSpriteSheet(spriteWidth, spriteHeight, spriteSheet);
