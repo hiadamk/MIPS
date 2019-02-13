@@ -35,4 +35,8 @@ public class Methods {
     }
     return !m.isWall(newLoc);
   }
+
+  public static double mod (double dividend, int divisor) {
+    return (dividend + divisor) % divisor;
+  }
 }

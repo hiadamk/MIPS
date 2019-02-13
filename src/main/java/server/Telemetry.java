@@ -1,5 +1,6 @@
 package server;
 
+import static utils.Methods.mod;
 import ai.AILoopControl;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
@@ -59,55 +60,47 @@ public class Telemetry {
      */
     public static Entity[] processPhysics(Entity[] agents, Map m) {
 
+        final int MAXX = m.getMaxX();
+        final int MAXY = m.getMaxY();
+
         for (int i = 0; i < AGENT_COUNT; i++) {
-            Point2D.Double nextLocation =
-                    new Point2D.Double(agents[i].getLocation().getX(), agents[i].getLocation().getY());
+            Point2D.Double prevLocation = agents[i].getLocation();
             double offset = agents[i].getVelocity();
 
-            double nextX = nextLocation.getX();
-            double nextY = nextLocation.getY();
-            double wallX = nextX;
-            double wallY = nextY;
+            double nextX = prevLocation.getX();
+            double nextY = prevLocation.getY();
 
             if (agents[i].getDirection() != null) {
                 switch (agents[i].getDirection()) {
                     case RIGHT:
-                        nextX = (nextX + offset + m.getMaxX()) % m.getMaxX();
-                        wallX = (nextX + 0.5 + m.getMaxX()) % m.getMaxX();
-                        nextY = (int) nextY + 0.5;
-                        wallY = nextY;
+                        nextX = mod(nextX + offset,MAXX);
+                        nextY = mod((int) nextY + 0.5,MAXY);
                         break;
                     case LEFT:
-                        nextX = (nextX - offset + m.getMaxX()) % m.getMaxX();
-                        wallX = (nextX - 0.5 + m.getMaxX()) % m.getMaxX();
-                        nextY = (int) nextY + 0.5;
-                        wallY = nextY;
+                        nextX = mod(nextX - offset,MAXX);
+                        nextY = mod((int) nextY + 0.5,MAXY);
                         break;
                     case DOWN:
-                        nextY = (nextY + offset + m.getMaxY()) % m.getMaxY();
-                        wallY = (nextY + 0.5 + m.getMaxY()) % m.getMaxY();
-                        nextX = (int) nextX + 0.5;
-                        wallX = nextX;
+                        nextY = mod(nextY + offset,MAXY);
+                        nextX = mod((int) nextX + 0.5,MAXX);
                         break;
                     case UP:
-                        nextY = (nextY - offset + m.getMaxY()) % m.getMaxY();
-                        wallY = (nextY - 0.5 + m.getMaxY()) % m.getMaxY();
-                        nextX = (int) nextX + 0.5;
-                        wallX = nextX;
+                        nextY = mod(nextY - offset,MAXY);
+                        nextX = mod((int) nextX + 0.5,MAXX);
                         break;
                 }
 
-                nextLocation.setLocation(nextX, nextY);
-                Point2D.Double wallLocation = new Point2D.Double(wallX, wallY);
+                agents[i].setLocation(new Double(nextX, nextY));
+                Point2D.Double faceLocation = agents[i].getFaceLocation(MAXX, MAXY);
 
-                if (m.isWall(wallLocation)) {
+                if (m.isWall(faceLocation)) {
                     agents[i].setDirection(null);
-                    // agents[i].setVelocity(0);
-                    System.err.println("next: " + nextLocation);
-                    System.err.println("wall: " + wallLocation);
+                    agents[i].setLocation(prevLocation);
+                    System.err.println(i + "prev: " + prevLocation);
+                    System.err.println(i + "face: " + faceLocation);
                 } else {
-                    agents[i].setLocation(nextLocation);
-                    System.out.println("wall: " + wallLocation);
+                    agents[i].setLocation(prevLocation);
+                    System.out.println(i + "face: " + faceLocation);
                 }
             }
             // TODO add points for pellet collision

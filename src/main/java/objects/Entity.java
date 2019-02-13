@@ -4,6 +4,7 @@ import ai.routefinding.RouteFinder;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import javafx.scene.image.Image;
+import utils.Methods;
 import utils.Renderable;
 import utils.ResourceLoader;
 import utils.enums.Direction;
@@ -41,6 +42,19 @@ public class Entity implements Renderable {
 
   public Point2D.Double getLocation() {
     return location;
+  }
+
+  public Point2D.Double getFaceLocation(int x, int y) {
+    switch(this.direction){
+      case UP:
+        return new Point2D.Double(this.location.getX(), Methods.mod(this.location.getY()-0.5,y));
+      case DOWN:
+        return new Point2D.Double(this.location.getX(), Methods.mod(this.location.getY()+0.5,y));
+      case LEFT:
+        return new Point2D.Double(Methods.mod(this.location.getX()-0.5,x), this.location.getY());
+      default:
+        return new Point2D.Double(Methods.mod(this.location.getX()-0.5,x), this.location.getY());
+    }
   }
 
   public void setLastGridCoord(Point position) {
