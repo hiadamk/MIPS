@@ -3,7 +3,6 @@ package main;
 import audio.AudioController;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.geom.Point2D.Double;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -91,7 +90,7 @@ public class Client extends Application {
 
     Queue<Input> incomingQueue = new LinkedList<>();
 
-    this.telemetry = new Telemetry(map, incomingQueue);
+    this.telemetry = new Telemetry(map, incomingQueue, resourceLoader);
     this.primaryStage.setScene(gameScene);
     this.id = 0;
 
@@ -157,7 +156,7 @@ public class Client extends Application {
       public void handle(long now) {
         processInput();
         if (id > 0) {
-          Telemetry.processPhysics(agents, map);
+          Telemetry.processPhysics(agents, map, resourceLoader);
         }
         render();
       }

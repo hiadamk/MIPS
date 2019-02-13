@@ -13,6 +13,7 @@ import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -61,6 +62,7 @@ public class MenuController {
     private Button decrVolumeBtn;
     private Label lobbyStatusLbl;
     private Label loadingDots;
+    private VBox multiplayerOptions;
     private Font font;
     private Button startMGameBtn;
     private boolean isHome = true;
@@ -123,13 +125,22 @@ public class MenuController {
         }
         StackPane root = new StackPane();
         root.setPrefSize(1920, 1080);
-        
-        
-        ImageView bg = new ImageView("ui/EditedBackground.png");
+
+
+//        ImageView bg = new ImageView("ui/EditedBackground.png");
+        ImageView bg = new ImageView("sprites/default/backgrounds/default.png");
         bg.fitWidthProperty().bind(this.primaryStage.widthProperty());
         root.getChildren().add(bg);
         StackPane.setAlignment(bg, Pos.CENTER);
-        
+    
+    
+        ImageView logo = new ImageView("ui/MIPS-B.png");
+        logo.preserveRatioProperty();
+//        logo.setFitWidth(600);
+        StackPane.setAlignment(logo, Pos.TOP_CENTER);
+        StackPane.setMargin(logo, new Insets(200, 0, 0, 0));
+        root.getChildren().add(logo);
+        logo.setVisible(true);
         
         startGameBtn = new Button();
         StackPane.setAlignment(startGameBtn, Pos.CENTER);
@@ -182,43 +193,15 @@ public class MenuController {
         this.multiplayerBtn.setOnAction(e -> {
             audioController.playSound(Sounds.click);
             moveItemsToBackTree();
-            itemsOnScreen.add(createGameBtn);
-            itemsOnScreen.add(joinGameBtn);
+//            itemsOnScreen.add(createGameBtn);
+//            itemsOnScreen.add(joinGameBtn);
+            itemsOnScreen.add(multiplayerOptions);
             showItemsOnScreen();
             
         });
         root.getChildren().add(this.multiplayerBtn);
         this.multiplayerBtn.setVisible(false);
         
-        backBtn = new Button();
-        StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);
-        StackPane.setMargin(backBtn, new Insets(0, 0, 100, 0));
-        Image backImg = new Image("ui/back.png");
-        backBtn.setGraphic(new ImageView(backImg));
-        backBtn.setStyle("-fx-background-color: transparent;");
-        backBtn.setOnAction(event -> {
-            audioController.playSound(Sounds.click);
-            if (backTree.isEmpty()) {
-            } else {
-                for (Node item : itemsOnScreen) {
-                    item.setVisible(false);
-                }
-                itemsOnScreen.clear();
-                ArrayList<Node> toShow = (ArrayList<Node>) backTree.pop();
-                for (Node item : toShow) {
-                    item.setVisible(true);
-                    itemsOnScreen.add(item);
-                }
-                if (backTree.isEmpty()) {
-                    backBtn.setVisible(false);
-                    isHome = true;
-                }
-                
-            }
-            
-        });
-        backBtn.setVisible(false);
-        root.getChildren().add(backBtn);
         
         playBtn = new Button();
         StackPane.setAlignment(playBtn, Pos.CENTER);
@@ -394,17 +377,34 @@ public class MenuController {
             System.exit(0);
         
         });
+    
+    
+        joinGameBtn = new Button();
+        joinGameBtn.setPickOnBounds(true);
+//        StackPane.setAlignment(joinGameBtn, Pos.CENTER);
+//        StackPane.setMargin(joinGameBtn, new Insets(100, 0, 0, 0));
+        joinGameBtn.setStyle("-fx-background-color: transparent;");
+        root.getChildren().add(joinGameBtn);
+        Image joinGameImg = new Image("ui/join-game.png");
+        ImageView joinGameView = new ImageView(joinGameImg);
+        joinGameBtn.setGraphic(joinGameView);
+        joinGameBtn.setVisible(true);
+        joinGameBtn.setOnAction(event -> {
+            client.joinMultiplayerLobby();
+        });
         
         createGameBtn = new Button();
-        StackPane.setAlignment(createGameBtn, Pos.CENTER);
-        StackPane.setMargin(createGameBtn, new Insets(50, 0, 0, 0));
+        createGameBtn.setPickOnBounds(true);
+//        StackPane.setAlignment(createGameBtn, Pos.CENTER);
+//        StackPane.setMargin(createGameBtn, new Insets(0, 0, 0, 0));
         Image createGameImg = new Image("ui/create-game.png");
         createGameBtn.setStyle("-fx-background-color: transparent;");
         ImageView createGameView = new ImageView(createGameImg);
         createGameBtn.setGraphic(createGameView);
-        createGameBtn.setVisible(false);
+        createGameBtn.setVisible(true);
         root.getChildren().add(createGameBtn);
         createGameBtn.setOnAction(event -> {
+            audioController.playSound(Sounds.click);
             moveItemsToBackTree();
             itemsOnScreen.add(lobbyStatusLbl);
             itemsOnScreen.add(loadingDots);
@@ -414,19 +414,16 @@ public class MenuController {
             startMGameBtn.setVisible(true);
             client.createMultiplayerLobby();
         });
+    
+        multiplayerOptions = new VBox(10, joinGameBtn, createGameBtn);
+        multiplayerOptions.setAlignment(Pos.CENTER);
+        StackPane.setAlignment(multiplayerOptions, Pos.CENTER);
+        StackPane.setMargin(multiplayerOptions, new Insets(100, 0, 0, 0));
+        root.getChildren().add(multiplayerOptions);
+    
+    
+        multiplayerOptions.setVisible(false);
         
-        joinGameBtn = new Button();
-        StackPane.setAlignment(joinGameBtn, Pos.CENTER);
-        StackPane.setMargin(joinGameBtn, new Insets(100, 0, 0, 0));
-        joinGameBtn.setStyle("-fx-background-color: transparent;");
-        root.getChildren().add(joinGameBtn);
-        Image joinGameImg = new Image("ui/join-game.png");
-        ImageView joinGameView = new ImageView(joinGameImg);
-        joinGameBtn.setGraphic(joinGameView);
-        joinGameBtn.setVisible(false);
-        joinGameBtn.setOnAction(event -> {
-            client.joinMultiplayerLobby();
-        });
         
         createLobbyBtn = new Button();
         StackPane.setAlignment(createGameBtn, Pos.BOTTOM_CENTER);
@@ -468,7 +465,38 @@ public class MenuController {
         );
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
-        
+    
+        backBtn = new Button();
+        StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);
+        StackPane.setMargin(backBtn, new Insets(0, 0, 100, 0));
+        Image backImg = new Image("ui/back.png");
+        backBtn.setGraphic(new ImageView(backImg));
+        backBtn.setStyle("-fx-background-color: transparent;");
+        backBtn.setOnAction(event -> {
+            System.out.println("BACK CLICKED");
+            System.out.println(backTree.toString());
+            audioController.playSound(Sounds.click);
+            if (backTree.isEmpty()) {
+            } else {
+                for (Node item : itemsOnScreen) {
+                    item.setVisible(false);
+                }
+                itemsOnScreen.clear();
+                ArrayList<Node> toShow = (ArrayList<Node>) backTree.pop();
+                for (Node item : toShow) {
+                    item.setVisible(true);
+                    itemsOnScreen.add(item);
+                }
+                if (backTree.isEmpty()) {
+                    backBtn.setVisible(false);
+                    isHome = true;
+                }
+            
+            }
+            System.out.println("ITEMS ON SCREEN" + this.itemsOnScreen.toString());
+        });
+        backBtn.setVisible(false);
+        root.getChildren().add(backBtn);
         
         backTree.empty();
         itemsOnScreen.add(playBtn);
