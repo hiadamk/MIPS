@@ -32,7 +32,7 @@ public class NetworkUtility {
     
     static {
         try {
-            GROUP = InetAddress.getByName("239.255.255.255");
+            GROUP = InetAddress.getByName("239.255.255.255"); //excessive?
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
