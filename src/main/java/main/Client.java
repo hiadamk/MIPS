@@ -39,8 +39,8 @@ public class Client extends Application {
   private Scene gameScene;
   private Stage primaryStage;
   private Renderer renderer;
-    private int xRes = 1366;
-    private int yRes = 768;
+    private int xRes = 1920;
+    private int yRes = 1080;
   private ResourceLoader resourceLoader;
   private Entity[] agents;
   private Queue<Input> inputs;
