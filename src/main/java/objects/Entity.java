@@ -46,16 +46,24 @@ public class Entity implements Renderable {
   }
 
   public Point2D.Double getFaceLocation(int x, int y) {
-    switch (this.direction) {
-      case UP:
-        return new Point2D.Double(this.location.getX(), Methods.mod(this.location.getY() - 0.5, y));
-      case DOWN:
-        return new Point2D.Double(this.location.getX(), Methods.mod(this.location.getY() + 0.5, y));
-      case LEFT:
-        return new Point2D.Double(Methods.mod(this.location.getX() - 0.5, x), this.location.getY());
-      default:
-        return new Point2D.Double(Methods.mod(this.location.getX() - 0.5, x), this.location.getY());
+
+    if (this.direction != null) {
+      switch (this.direction) {
+        case UP:
+          return new Point2D.Double(
+              this.location.getX(), Methods.mod(this.location.getY() - 0.5, y));
+        case DOWN:
+          return new Point2D.Double(
+              this.location.getX(), Methods.mod(this.location.getY() + 0.5, y));
+        case LEFT:
+          return new Point2D.Double(
+              Methods.mod(this.location.getX() - 0.5, x), this.location.getY());
+        case RIGHT:
+          return new Point2D.Double(
+              Methods.mod(this.location.getX() + 0.5, x), this.location.getY());
+      }
     }
+    return this.location;
   }
 
   public void setLastGridCoord(Point position) {

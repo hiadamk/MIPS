@@ -104,7 +104,6 @@ public class Telemetry {
           System.err.println(i + "prev: " + prevLocation);
           System.err.println(i + "face: " + faceLocation);
         } else {
-          agents[i].setLocation(prevLocation);
           System.out.println(i + "face: " + faceLocation);
         }
       }
@@ -112,21 +111,20 @@ public class Telemetry {
     }
 
     // separate loop for checking collision after iteration
-    /*
-        for (int i = 0; i < AGENT_COUNT; i++) {
-          for (int j = (i + 1); j < AGENT_COUNT; j++) {
 
-            if (agents[i].isPacman() && !agents[j].isPacman()) {
-              detectEntityCollision(agents[i],agents[j],resourceLoader);
-            }
+    for (int i = 0; i < AGENT_COUNT; i++) {
+      for (int j = (i + 1); j < AGENT_COUNT; j++) {
 
-            if (agents[j].isPacman() && !agents[i].isPacman()) {
-              detectEntityCollision(agents[j],agents[i],resourceLoader);
-            }
-
-          }
+        if (agents[i].isPacman() && !agents[j].isPacman()) {
+          detectEntityCollision(agents[i], agents[j], resourceLoader);
         }
-    */
+
+        if (agents[j].isPacman() && !agents[i].isPacman()) {
+          detectEntityCollision(agents[j], agents[i], resourceLoader);
+        }
+      }
+    }
+
     return agents;
   }
 
@@ -139,13 +137,13 @@ public class Telemetry {
    */
   private static void detectEntityCollision(
       Entity pacman, Entity ghoul, ResourceLoader resourceLoader) {
-    Double faceI =
-        pacman.getFaceLocation(
-            resourceLoader.getMap().getMaxX(), resourceLoader.getMap().getMaxY());
-    Double centerJ = ghoul.getLocation();
+    Double pacmanCenter = pacman.getLocation();
+    Double ghoulFace =
+        ghoul.getFaceLocation(resourceLoader.getMap().getMaxX(), resourceLoader.getMap().getMaxY());
 
-    if (mod(abs(faceI.getX() - centerJ.getX()), resourceLoader.getMap().getMaxX()) <= 0.5
-        && mod(abs(faceI.getY() - centerJ.getY()), resourceLoader.getMap().getMaxY()) <= 0.5) {
+    if (mod(abs(pacmanCenter.getX() - ghoulFace.getX()), resourceLoader.getMap().getMaxX()) <= 0.5
+        && mod(abs(pacmanCenter.getY() - ghoulFace.getY()), resourceLoader.getMap().getMaxY())
+        <= 0.5) {
 
       pacman.setPacMan(false);
       ghoul.setPacMan(true);
