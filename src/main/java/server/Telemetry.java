@@ -4,8 +4,8 @@ import static java.lang.Math.abs;
 import static utils.Methods.mod;
 
 import ai.AILoopControl;
-import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
+import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -56,20 +56,21 @@ public class Telemetry {
 
   /**
    * Static method for updating game state increments positions if valid, increments points, and
-   * detects and treats entity collisions TODO: 30/1/19 increment points functionality
+   * detects and treats entity collisions
+   *
+   * TODO: increment points functionality
    *
    * @param agents array of entities in current state
-   * @return array of entities in new state
    * @author Alex Banks, Matthew Jones
    * @see this#detectEntityCollision(Entity, Entity, ResourceLoader)
    */
-  public static Entity[] processPhysics(Entity[] agents, Map m, ResourceLoader resourceLoader) {
+  public static void processPhysics(Entity[] agents, Map m, ResourceLoader resourceLoader) {
 
     final int MAXX = m.getMaxX();
     final int MAXY = m.getMaxY();
 
     for (int i = 0; i < AGENT_COUNT; i++) {
-      Point2D.Double prevLocation = agents[i].getLocation();
+      Double prevLocation = agents[i].getLocation();
       double offset = agents[i].getVelocity();
 
       double nextX = prevLocation.getX();
@@ -96,7 +97,7 @@ public class Telemetry {
         }
 
         agents[i].setLocation(new Double(nextX, nextY));
-        Point2D.Double faceLocation = agents[i].getFaceLocation(MAXX, MAXY);
+        Double faceLocation = agents[i].getFaceLocation(MAXX, MAXY);
 
         if (m.isWall(faceLocation)) {
           agents[i].setDirection(null);
@@ -124,8 +125,6 @@ public class Telemetry {
         }
       }
     }
-
-    return agents;
   }
 
   /**
@@ -152,18 +151,19 @@ public class Telemetry {
       pacman.updateImages(resourceLoader);
       ghoul.updateImages(resourceLoader);
 
-      System.out.println("collision");
+      System.out.println(
+          "ghoul " + ghoul.getClientId() + " collided with mipsman " + pacman.getClientId());
     }
   }
 
-  public void initialise() {
+  private void initialise() {
     agents = new Entity[AGENT_COUNT];
     agents[0] = new Entity(true, 0, new Double(1.5, 2.5));
-    System.out.println(agents);
     agents[1] = new Entity(false, 1, new Double(1.5, 18.5));
     agents[2] = new Entity(false, 2, new Double(1.5, 16.5));
     agents[3] = new Entity(false, 3, new Double(1.5, 2.5));
     agents[4] = new Entity(false, 4, new Double(1.5, 2.5));
+    System.out.println(Arrays.toString(agents));
     int aiCount = AGENT_COUNT - (server == null ? 1 : server.getPlayerCount());
     if (aiCount < 0) {
       aiCount = 0;
@@ -190,7 +190,7 @@ public class Telemetry {
     inputs.add(in);
   }
 
-  public void startGame() {
+  private void startGame() {
     final long DELAY = 1000000;
     // TODO implement
 
@@ -206,10 +206,10 @@ public class Telemetry {
           // System.out.println(change);
           processInputs();
           informClients();
-          agents = processPhysics(agents, map, resourceLoader);
+          processPhysics(agents, map, resourceLoader);
           updateClients();
-        } else {
-          // System.out.println("skipped");
+          //        } else {
+          //           System.out.println("skipped");
         }
       }
     }.start();
@@ -226,7 +226,7 @@ public class Telemetry {
       Input input = inputs.poll();
       int id = input.getClientID();
       if (id != 0) {
-        System.out.println("none 0 input found");
+        System.err.println("none 0 input found");
       }
       Direction d = input.getMove();
       if (Methods.validiateDirection(d, agents[id], map)) {
