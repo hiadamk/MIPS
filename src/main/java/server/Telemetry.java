@@ -17,162 +17,161 @@ import utils.enums.Direction;
 
 public class Telemetry {
 
-    private static final int AGENT_COUNT = 5;
-    private BlockingQueue<Input> inputs;
-    private BlockingQueue<Input> outputs;
-    private Entity[] agents;
-    private boolean singlePlayer;
-    private Map map;
-    private Queue<Input> clientQueue;
-    private ServerGameplayHandler server;
-    private AILoopControl ai;
-    private boolean aiRunning;
+  private static final int AGENT_COUNT = 5;
+  private BlockingQueue<Input> inputs;
+  private BlockingQueue<Input> outputs;
+  private Entity[] agents;
+  private boolean singlePlayer;
+  private Map map;
+  private Queue<Input> clientQueue;
+  private ServerGameplayHandler server;
+  private AILoopControl ai;
+  private boolean aiRunning;
   private ResourceLoader resourceLoader;
 
-    public Telemetry(Map map, ServerGameplayHandler server) {
-        this.map = map;
-        inputs = new LinkedBlockingQueue<>();
-        outputs = new LinkedBlockingQueue<>();
+  public Telemetry(Map map, ServerGameplayHandler server) {
+    this.map = map;
+    inputs = new LinkedBlockingQueue<>();
+    outputs = new LinkedBlockingQueue<>();
 
-        this.server = server;
-        this.singlePlayer = false;
+    this.server = server;
+    this.singlePlayer = false;
 
-        initialise();
-        startGame();
-    }
+    initialise();
+    startGame();
+  }
 
   public Telemetry(Map map, Queue<Input> clientQueue, ResourceLoader resourceLoader) {
-        this.map = map;
-        inputs = new LinkedBlockingQueue<>();
-        outputs = new LinkedBlockingQueue<>();
-        singlePlayer = true;
-        this.clientQueue = clientQueue;
+    this.map = map;
+    inputs = new LinkedBlockingQueue<>();
+    outputs = new LinkedBlockingQueue<>();
+    singlePlayer = true;
+    this.clientQueue = clientQueue;
     this.resourceLoader = resourceLoader;
-        initialise();
-        startGame();
-    }
+    initialise();
+    startGame();
+  }
 
-    /**
-     * Static method for updating game state increments positions if valid, increments points, and
-     * detects and treats entity collisions TODO: 30/1/19 increment points functionality
-     *
-     * @param agents array of entities in current state
-     * @return array of entities in new state
-     * @author Alex Banks, Matthew Jones
-     * @see this#entityCollision(Entity, Entity, Double, ResourceLoader)
-     */
-    public static Entity[] processPhysics(Entity[] agents, Map m, ResourceLoader resourceLoader) {
+  /**
+   * Static method for updating game state increments positions if valid, increments points, and
+   * detects and treats entity collisions TODO: 30/1/19 increment points functionality
+   *
+   * @param agents array of entities in current state
+   * @return array of entities in new state
+   * @author Alex Banks, Matthew Jones
+   * @see this#entityCollision(Entity, Entity, Double, ResourceLoader)
+   */
+  public static Entity[] processPhysics(Entity[] agents, Map m, ResourceLoader resourceLoader) {
 
-        final int MAXX = m.getMaxX();
-        final int MAXY = m.getMaxY();
-
-        for (int i = 0; i < AGENT_COUNT; i++) {
-            Point2D.Double prevLocation = agents[i].getLocation();
-            double offset = agents[i].getVelocity();
-
-            double nextX = prevLocation.getX();
-            double nextY = prevLocation.getY();
-
-            if (agents[i].getDirection() != null) {
-                switch (agents[i].getDirection()) {
-                    case RIGHT:
-                        nextX = mod(nextX + offset,MAXX);
-                        nextY = mod((int) nextY + 0.5,MAXY);
-                        break;
-                    case LEFT:
-                        nextX = mod(nextX - offset,MAXX);
-                        nextY = mod((int) nextY + 0.5,MAXY);
-                        break;
-                    case DOWN:
-                        nextY = mod(nextY + offset,MAXY);
-                        nextX = mod((int) nextX + 0.5,MAXX);
-                        break;
-                    case UP:
-                        nextY = mod(nextY - offset,MAXY);
-                        nextX = mod((int) nextX + 0.5,MAXX);
-                        break;
-                }
-
-                agents[i].setLocation(new Double(nextX, nextY));
-                Point2D.Double faceLocation = agents[i].getFaceLocation(MAXX, MAXY);
-
-                if (m.isWall(faceLocation)) {
-                    agents[i].setDirection(null);
-                    agents[i].setLocation(prevLocation);
-                    System.err.println(i + "prev: " + prevLocation);
-                    System.err.println(i + "face: " + faceLocation);
-                } else {
-                    agents[i].setLocation(prevLocation);
-                    System.out.println(i + "face: " + faceLocation);
-                }
-            }
-            // TODO add points for pellet collision
-        }
-
-        // separate loop for checking collision after iteration
+    final int MAXX = m.getMaxX();
+    final int MAXY = m.getMaxY();
 
     for (int i = 0; i < AGENT_COUNT; i++) {
-      for (int j = i + 1; j < AGENT_COUNT; j++) {
-          if ((int) agents[i].getLocation().getX() == (int) agents[j].getLocation().getX()
-                  && (int) agents[i].getLocation().getY() == (int) agents[j].getLocation().getY()) {
-            entityCollision(agents[i], agents[j], m.getRandomSpawnPoint(), resourceLoader);
+      Point2D.Double prevLocation = agents[i].getLocation();
+      double offset = agents[i].getVelocity();
+
+      double nextX = prevLocation.getX();
+      double nextY = prevLocation.getY();
+
+      if (agents[i].getDirection() != null) {
+        switch (agents[i].getDirection()) {
+          case RIGHT:
+            nextX = mod(nextX + offset, MAXX);
+            nextY = mod((int) nextY + 0.5, MAXY);
+            break;
+          case LEFT:
+            nextX = mod(nextX - offset, MAXX);
+            nextY = mod((int) nextY + 0.5, MAXY);
+            break;
+          case DOWN:
+            nextY = mod(nextY + offset, MAXY);
+            nextX = mod((int) nextX + 0.5, MAXX);
+            break;
+          case UP:
+            nextY = mod(nextY - offset, MAXY);
+            nextX = mod((int) nextX + 0.5, MAXX);
+            break;
+        }
+
+        agents[i].setLocation(new Double(nextX, nextY));
+        Point2D.Double faceLocation = agents[i].getFaceLocation(MAXX, MAXY);
+
+        if (m.isWall(faceLocation)) {
+          agents[i].setDirection(null);
+          agents[i].setLocation(prevLocation);
+          System.err.println(i + "prev: " + prevLocation);
+          System.err.println(i + "face: " + faceLocation);
+        } else {
+          agents[i].setLocation(prevLocation);
+          System.out.println(i + "face: " + faceLocation);
+        }
+      }
+      // TODO add points for pellet collision
+    }
+
+    // separate loop for checking collision after iteration
+
+    for (int i = 0; i < AGENT_COUNT; i++) {
+      for (int j = (i + 1); j < AGENT_COUNT; j++) {
+        if ((int) agents[i].getLocation().getX() == (int) agents[j].getLocation().getX()
+            && (int) agents[i].getLocation().getY() == (int) agents[j].getLocation().getY()) {
+          entityCollision(agents[i], agents[j], m.getRandomSpawnPoint(), resourceLoader);
           System.out.println("collision");
         }
       }
     }
 
-        return agents;
-    }
+    return agents;
+  }
 
-    /**
-     * Static method for 'swapping' entities if they occupy the same square. Does nothing if both
-     * entities are ghouls
-     *
-     * @param x            Entity one
-     * @param y            Entity two
-     * @param respawnPoint Point to relocate new ghoul too
-     */
-    private static void entityCollision(Entity x, Entity y, Double respawnPoint,
-        ResourceLoader resourceLoader) {
-        if (x.isPacman() && !y.isPacman()) {
-            x.setPacMan(false);
-            y.setPacMan(true);
-            x.setLocation(respawnPoint);
-            x.setDirection(Direction.UP);
-          x.updateImages(resourceLoader);
-          y.updateImages(resourceLoader);
-        } else if (y.isPacman() && !x.isPacman()) {
-            y.setPacMan(false);
-            x.setPacMan(true);
-            y.setLocation(respawnPoint);
-            y.setDirection(Direction.UP);
-          x.updateImages(resourceLoader);
-          y.updateImages(resourceLoader);
-        }
+  /**
+   * Static method for 'swapping' entities if they occupy the same square. Does nothing if both
+   * entities are ghouls
+   *
+   * @param x Entity one
+   * @param y Entity two
+   * @param respawnPoint Point to relocate new ghoul too
+   */
+  private static void entityCollision(
+      Entity x, Entity y, Double respawnPoint, ResourceLoader resourceLoader) {
+    if (x.isPacman() && !y.isPacman()) {
+      x.setPacMan(false);
+      y.setPacMan(true);
+      x.setLocation(respawnPoint);
+      x.setDirection(Direction.UP);
+      x.updateImages(resourceLoader);
+      y.updateImages(resourceLoader);
+    } else if (y.isPacman() && !x.isPacman()) {
+      y.setPacMan(false);
+      x.setPacMan(true);
+      y.setLocation(respawnPoint);
+      y.setDirection(Direction.UP);
+      x.updateImages(resourceLoader);
+      y.updateImages(resourceLoader);
     }
+  }
 
-    public void initialise() {
-        agents = new Entity[AGENT_COUNT];
-        agents[0] = new Entity(true, 0, new Double(1.5, 2.5));
-        System.out.println(agents);
-        agents[1] = new Entity(false, 1, new Double(1.5, 18.5));
-        agents[2] = new Entity(false, 2, new Double(1.5, 16.5));
-        agents[3] = new Entity(false, 3, new Double(1.5, 2.5));
-        agents[4] = new Entity(false, 4, new Double(1.5, 2.5));
-        int aiCount = AGENT_COUNT - (server == null ? 1 : server.getPlayerCount());
-        if (aiCount < 0) {
-            aiCount = 0;
-        }
-        int[] aiControlled = new int[aiCount];
-        int highestId = AGENT_COUNT - 1;
-        for (int i = 0; i < aiCount; i++) {
-            aiControlled[i] = highestId;
-            highestId--;
-        }
-        aiRunning = false;
-        ai = new AILoopControl(agents, aiControlled, map, inputs);
+  public void initialise() {
+    agents = new Entity[AGENT_COUNT];
+    agents[0] = new Entity(true, 0, new Double(1.5, 2.5));
+    System.out.println(agents);
+    agents[1] = new Entity(false, 1, new Double(1.5, 18.5));
+    agents[2] = new Entity(false, 2, new Double(1.5, 16.5));
+    agents[3] = new Entity(false, 3, new Double(1.5, 2.5));
+    agents[4] = new Entity(false, 4, new Double(1.5, 2.5));
+    int aiCount = AGENT_COUNT - (server == null ? 1 : server.getPlayerCount());
+    if (aiCount < 0) {
+      aiCount = 0;
     }
-
+    int[] aiControlled = new int[aiCount];
+    int highestId = AGENT_COUNT - 1;
+    for (int i = 0; i < aiCount; i++) {
+      aiControlled[i] = highestId;
+      highestId--;
+    }
+    aiRunning = false;
+    ai = new AILoopControl(agents, aiControlled, map, inputs);
+  }
 
   public Map getMap() {
     return map;
@@ -199,23 +198,23 @@ public class Telemetry {
         change = now - oldTime;
         if (change >= DELAY) {
           oldTime = now;
-          //System.out.println(change);
+          // System.out.println(change);
           processInputs();
           informClients();
           agents = processPhysics(agents, map, resourceLoader);
           updateClients();
         } else {
-          //System.out.println("skipped");
+          // System.out.println("skipped");
         }
       }
     }.start();
-    }
+  }
 
-    public void startAI() {
-        if (!aiRunning && ai!=null) {
-            ai.start();
-        }
+  public void startAI() {
+    if (!aiRunning && ai != null) {
+      ai.start();
     }
+  }
 
   private void processInputs() {
     while (!inputs.isEmpty()) {
