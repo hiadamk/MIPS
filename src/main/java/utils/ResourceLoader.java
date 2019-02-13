@@ -1,5 +1,7 @@
 package utils;
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +60,8 @@ public class ResourceLoader {
             .replace("], ", "]\n")
             .replace("[[", "[")
             .replace("]]", "]"));
+
+    rl.setResolution(1920, 1080, true);
   }
 
   private void loadThemes() {
@@ -111,8 +115,13 @@ public class ResourceLoader {
     this.mipColourID = 0;
   }
 
-  public void setResolution(int x, int y) {
-    double mapToScreenRatio = 0.8;
+  /**
+   * @param x new x resolution
+   * @param y new y resolution
+   * @param pixelPerfect if true, only scales images by integer scale factor
+   */
+  public void setResolution(int x, int y, boolean pixelPerfect) {
+    double mapToScreenRatio = 0.7;
 
     //find dimensions of rendered map we want based on mapToScreenRatio
     int targetX = (int) (x * mapToScreenRatio);
@@ -126,7 +135,43 @@ public class ResourceLoader {
     int currentY = tileHeight + (int) (0.5 * tileWidth * map.getMaxY());
 
     //choose the smallest ratio to make sure map fits on screen
-    double ratio = Math.min(targetX / currentX, targetY / currentY);
+    double ratio = Math.min(targetX / (double) currentX, (double) targetY / currentY);
+    System.out.println(ratio);
+
+    if (pixelPerfect) {
+
+    } else {
+      for (int i = 0; i < mipSprites.size(); i++) {
+        resizeSpritesSmooth(mipSprites.get(i), ratio);
+      }
+
+      for (int i = 0; i < mipSprites.size(); i++) {
+        resizeSpritesSmooth(ghoulSprites.get(i), ratio);
+      }
+
+      resizeSpritesSmooth(mapTiles, ratio);
+    }
+  }
+
+  private void resizeSpritesSmooth(ArrayList<BufferedImage> sprites, double ratio) {
+    BufferedImage temp;
+
+    for (int i = 0; i < sprites.size(); i++) {
+      temp = sprites.get(i);
+      int newWidth = (int) (temp.getWidth() * ratio);
+      int newHeight = (int) (temp.getHeight() * ratio);
+      BufferedImage resizedSprite = new BufferedImage(newWidth, newHeight,
+          BufferedImage.TYPE_4BYTE_ABGR);
+      Graphics2D g = resizedSprite.createGraphics();
+      g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+          RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+      g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+      g.drawImage(temp, 0, 0, newWidth, newHeight, null);
+      g.dispose();
+
+      sprites.set(i, resizedSprite);
+    }
+
   }
 
   /**

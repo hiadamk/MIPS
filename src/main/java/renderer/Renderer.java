@@ -27,8 +27,8 @@ public class Renderer {
   private Image background;
   private BufferedImage palette;
 
-  private double tileSizeX = 39;
-  private double tileSizeY = 19;
+  private double tileSizeX;
+  private double tileSizeY;
 
   private ArrayList<Point2D.Double> traversalOrder = new ArrayList<>();
 
@@ -41,13 +41,10 @@ public class Renderer {
     this.xResolution = _xResolution;
     this.yResolution = _yResolution;
     this.mapRenderingCorner = getMapRenderingCorner();
-    this.mapTiles = r.getMapTiles();
     this.background = r.getBackground();
     this.palette = r.getBackgroundPalette();
 
     Map map = r.getMap();
-
-    int[][] rawMap = map.raw();
 
     final int ROW = map.getMaxX();
     final int COL = map.getMaxY();
@@ -64,7 +61,11 @@ public class Renderer {
         this.traversalOrder.add(new Double(x, y));
       }
     }
-    System.out.println(traversalOrder.toString());
+
+    r.setResolution(xResolution, yResolution, false);
+    this.mapTiles = r.getMapTiles();
+    tileSizeX = r.getMapTiles().get(0).getWidth();
+    tileSizeY = r.getMapTiles().get(0).getHeight();
 
   }
 
@@ -232,7 +233,7 @@ public class Renderer {
    * @return The top right corner coordinate to start rendering game map from
    */
   private Point2D.Double getMapRenderingCorner() {
-    return new Point2D.Double(this.xResolution / (double) 2, this.yResolution / (double) 3);
+    return new Point2D.Double(this.xResolution / (double) 2, this.yResolution / (double) 10);
     //return new Point2D.Double(getIsoCoord(0,map),getIsoCoord(0,0,tileSizeY).getY())
   }
 
