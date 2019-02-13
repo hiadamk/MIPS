@@ -1,6 +1,8 @@
 package server;
 
+import static java.lang.Math.abs;
 import static utils.Methods.mod;
+
 import ai.AILoopControl;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
@@ -59,7 +61,7 @@ public class Telemetry {
    * @param agents array of entities in current state
    * @return array of entities in new state
    * @author Alex Banks, Matthew Jones
-   * @see this#entityCollision(Entity, Entity, Double, ResourceLoader)
+   * @see this#detectEntityCollision(Entity, Entity, ResourceLoader)
    */
   public static Entity[] processPhysics(Entity[] agents, Map m, ResourceLoader resourceLoader) {
 
@@ -110,44 +112,49 @@ public class Telemetry {
     }
 
     // separate loop for checking collision after iteration
+    /*
+        for (int i = 0; i < AGENT_COUNT; i++) {
+          for (int j = (i + 1); j < AGENT_COUNT; j++) {
 
-    for (int i = 0; i < AGENT_COUNT; i++) {
-      for (int j = (i + 1); j < AGENT_COUNT; j++) {
-        if ((int) agents[i].getLocation().getX() == (int) agents[j].getLocation().getX()
-            && (int) agents[i].getLocation().getY() == (int) agents[j].getLocation().getY()) {
-          entityCollision(agents[i], agents[j], m.getRandomSpawnPoint(), resourceLoader);
-          System.out.println("collision");
+            if (agents[i].isPacman() && !agents[j].isPacman()) {
+              detectEntityCollision(agents[i],agents[j],resourceLoader);
+            }
+
+            if (agents[j].isPacman() && !agents[i].isPacman()) {
+              detectEntityCollision(agents[j],agents[i],resourceLoader);
+            }
+
+          }
         }
-      }
-    }
-
+    */
     return agents;
   }
 
   /**
-   * Static method for 'swapping' entities if they occupy the same square. Does nothing if both
-   * entities are ghouls
+   * Static method for 'swapping' a pacman and ghoul if they occupy the same area.
    *
-   * @param x Entity one
-   * @param y Entity two
-   * @param respawnPoint Point to relocate new ghoul too
+   * @param pacman Entity currently acting as pacman
+   * @param ghoul Entity currently running as ghoul
+   * @author Alex Banks, Matthew Jones
    */
-  private static void entityCollision(
-      Entity x, Entity y, Double respawnPoint, ResourceLoader resourceLoader) {
-    if (x.isPacman() && !y.isPacman()) {
-      x.setPacMan(false);
-      y.setPacMan(true);
-      x.setLocation(respawnPoint);
-      x.setDirection(Direction.UP);
-      x.updateImages(resourceLoader);
-      y.updateImages(resourceLoader);
-    } else if (y.isPacman() && !x.isPacman()) {
-      y.setPacMan(false);
-      x.setPacMan(true);
-      y.setLocation(respawnPoint);
-      y.setDirection(Direction.UP);
-      x.updateImages(resourceLoader);
-      y.updateImages(resourceLoader);
+  private static void detectEntityCollision(
+      Entity pacman, Entity ghoul, ResourceLoader resourceLoader) {
+    Double faceI =
+        pacman.getFaceLocation(
+            resourceLoader.getMap().getMaxX(), resourceLoader.getMap().getMaxY());
+    Double centerJ = ghoul.getLocation();
+
+    if (mod(abs(faceI.getX() - centerJ.getX()), resourceLoader.getMap().getMaxX()) <= 0.5
+        && mod(abs(faceI.getY() - centerJ.getY()), resourceLoader.getMap().getMaxY()) <= 0.5) {
+
+      pacman.setPacMan(false);
+      ghoul.setPacMan(true);
+      pacman.setLocation(resourceLoader.getMap().getRandomSpawnPoint());
+      pacman.setDirection(Direction.UP);
+      pacman.updateImages(resourceLoader);
+      ghoul.updateImages(resourceLoader);
+
+      System.out.println("collision");
     }
   }
 
