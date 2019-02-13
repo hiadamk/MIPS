@@ -34,42 +34,39 @@ public class ClientLobbySession {
         public void run() {
             super.run();
             try {
-                DatagramSocket ds = new DatagramSocket(NetworkUtility.CLIENT_DGRAM_PORT);
-                
-                String str = NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX;
-                DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), serverIP, NetworkUtility.SERVER_DGRAM_PORT);
-                ds.send(dp);
-                
-                byte[] buf = new byte[1024];
-                dp = new DatagramPacket(buf, 1024);
-                ds.receive(dp);
-                String r = new String(dp.getData(), 0, dp.getLength());
-                r = r.replaceAll("\u0000.*", "");
+                Socket soc = new Socket(ServerIP, NetworkUtility.SERVER_DGRAM_PORT);
+                PrintWriter out = new PrintWriter(soc.getOutputStream());
+                BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream());
+
+                String str = NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX);
+                out.println(str);
+                out.flush();
+
+
+                String r = in.readln();
                 int id = Integer.parseInt(r);
                 client.setId(id);
                 
-                
-                buf = new byte[1024];
-                dp = new DatagramPacket(buf, 1024);
-                ds.receive(dp);
-                r = new String(dp.getData(), 0, dp.getLength());
-                r = r.replaceAll("\u0000.*", "");
-                
+
+                r = in.readln();
                 if (r.equals("SUCCESS")) {
                     System.out.println("Server connection success");
                 }
-                
-                buf = new byte[1024];
-                dp = new DatagramPacket(buf, 1024);
-                ds.receive(dp);
-                r = new String(dp.getData(), 0, dp.getLength());
-                
-                if (r.equals("STARTGAME")) {
+                out.close();
+                in.close();
+                soc.close();
+
+
+                soc = new ServerSocket(CLIENT_DGRAM_PORT).accept();
+                BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+                r = in.readln();
+                                if (r.equals("STARTGAME")) {
                     handler = new ClientGameplayHandler(serverIP, keypressQueue, clientIn);
                 }
                 
                 System.out.println(r);
-                ds.close();
+                in.close();
+                soc.close();
             } catch (IOException e) {
             
             }
