@@ -123,13 +123,22 @@ public class MenuController {
         }
         StackPane root = new StackPane();
         root.setPrefSize(1920, 1080);
-        
-        
-        ImageView bg = new ImageView("ui/EditedBackground.png");
+
+
+//        ImageView bg = new ImageView("ui/EditedBackground.png");
+        ImageView bg = new ImageView("sprites/default/backgrounds/default.png");
         bg.fitWidthProperty().bind(this.primaryStage.widthProperty());
         root.getChildren().add(bg);
         StackPane.setAlignment(bg, Pos.CENTER);
-        
+    
+    
+        ImageView logo = new ImageView("ui/MIPS-B.png");
+        logo.preserveRatioProperty();
+//        logo.setFitWidth(600);
+        StackPane.setAlignment(logo, Pos.TOP_CENTER);
+        StackPane.setMargin(logo, new Insets(200, 0, 0, 0));
+        root.getChildren().add(logo);
+        logo.setVisible(true);
         
         startGameBtn = new Button();
         StackPane.setAlignment(startGameBtn, Pos.CENTER);
