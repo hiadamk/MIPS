@@ -1,6 +1,9 @@
 package server;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -84,7 +87,7 @@ public class ServerLobby {
                         PrintWriter out = new PrintWriter(soc.getOutputStream());
                         System.out.println("Waiting for new connection...");
 
-                        String r = in.readline();
+                        String r = in.readLine();
                         if (r.equals(NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX)) {
                             System.out.println(r);
 
@@ -107,7 +110,6 @@ public class ServerLobby {
                         }
                         
                     } else {
-                        ds.close();
                         return;
                     }
                     

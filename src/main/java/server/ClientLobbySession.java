@@ -3,10 +3,15 @@ package server;
 import main.Client;
 import utils.Input;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Queue;
 
 public class ClientLobbySession {
@@ -34,21 +39,21 @@ public class ClientLobbySession {
         public void run() {
             super.run();
             try {
-                Socket soc = new Socket(ServerIP, NetworkUtility.SERVER_DGRAM_PORT);
+                Socket soc = new Socket(serverIP, NetworkUtility.SERVER_DGRAM_PORT);
                 PrintWriter out = new PrintWriter(soc.getOutputStream());
-                BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream());
+                BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
 
-                String str = NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX);
+                String str = NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX;
                 out.println(str);
                 out.flush();
 
 
-                String r = in.readln();
+                String r = in.readLine();
                 int id = Integer.parseInt(r);
                 client.setId(id);
                 
 
-                r = in.readln();
+                r = in.readLine();
                 if (r.equals("SUCCESS")) {
                     System.out.println("Server connection success");
                 }
@@ -57,9 +62,9 @@ public class ClientLobbySession {
                 soc.close();
 
 
-                soc = new ServerSocket(CLIENT_DGRAM_PORT).accept();
-                BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
-                r = in.readln();
+                soc = new ServerSocket(NetworkUtility.CLIENT_DGRAM_PORT).accept();
+                in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+                r = in.readLine();
                                 if (r.equals("STARTGAME")) {
                     handler = new ClientGameplayHandler(serverIP, keypressQueue, clientIn);
                 }
