@@ -61,7 +61,7 @@ public class ResourceLoader {
             .replace("[[", "[")
             .replace("]]", "]"));
 
-    rl.setResolution(1920, 1080, true);
+    rl.setResolution(3840, 2160, false);
   }
 
   private void loadThemes() {
@@ -138,19 +138,18 @@ public class ResourceLoader {
     double ratio = Math.min(targetX / (double) currentX, (double) targetY / currentY);
     System.out.println(ratio);
 
-    if (pixelPerfect) {
+    ratio = (pixelPerfect) ? Math.floor(ratio) : ratio;
 
-    } else {
-      for (int i = 0; i < mipSprites.size(); i++) {
-        resizeSpritesSmooth(mipSprites.get(i), ratio);
-      }
-
-      for (int i = 0; i < mipSprites.size(); i++) {
-        resizeSpritesSmooth(ghoulSprites.get(i), ratio);
-      }
-
-      resizeSpritesSmooth(mapTiles, ratio);
+    for (int i = 0; i < mipSprites.size(); i++) {
+      resizeSpritesSmooth(mipSprites.get(i), ratio);
     }
+
+    for (int i = 0; i < mipSprites.size(); i++) {
+      resizeSpritesSmooth(ghoulSprites.get(i), ratio);
+    }
+
+    resizeSpritesSmooth(mapTiles, ratio);
+
   }
 
   private void resizeSpritesSmooth(ArrayList<BufferedImage> sprites, double ratio) {
@@ -164,8 +163,11 @@ public class ResourceLoader {
           BufferedImage.TYPE_4BYTE_ABGR);
       Graphics2D g = resizedSprite.createGraphics();
       g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-          RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-      g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+          RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+      g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,
+          RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+      g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
+
       g.drawImage(temp, 0, 0, newWidth, newHeight, null);
       g.dispose();
 

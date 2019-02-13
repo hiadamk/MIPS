@@ -40,7 +40,6 @@ public class Renderer {
     this.gc = _gc;
     this.xResolution = _xResolution;
     this.yResolution = _yResolution;
-    this.mapRenderingCorner = getMapRenderingCorner();
     this.background = r.getBackground();
     this.palette = r.getBackgroundPalette();
 
@@ -62,8 +61,8 @@ public class Renderer {
       }
     }
 
-    r.setResolution(xResolution, yResolution, false);
     this.mapTiles = r.getMapTiles();
+    this.mapRenderingCorner = getMapRenderingCorner();
     tileSizeX = r.getMapTiles().get(0).getWidth();
     tileSizeY = r.getMapTiles().get(0).getHeight();
 
@@ -239,10 +238,6 @@ public class Renderer {
 
   private void renderHUD() {
 
-  }
-
-  private boolean isBetween(double lowerBound, double upperBound, double num) {
-    return num <= upperBound && num >= lowerBound;
   }
 
   private void setFillColour(int colour) {
