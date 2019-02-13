@@ -1,13 +1,13 @@
 package objects;
 
 import ai.routefinding.RouteFinder;
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import javafx.scene.image.Image;
 import utils.Renderable;
 import utils.ResourceLoader;
 import utils.enums.Direction;
-import java.awt.Point;
 
 public class Entity implements Renderable {
 
@@ -102,7 +102,7 @@ public class Entity implements Renderable {
 
   public void setPacMan(Boolean pac) {
     this.pacMan = pac;
-    this.velocity = pacMan ? 0.2 : 0.1;
+    this.velocity = pacMan ? 0.08 : 0.06;
   }
 
   public void updateImages(ResourceLoader resourceLoader) {

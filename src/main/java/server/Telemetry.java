@@ -11,6 +11,7 @@ import objects.Entity;
 import utils.Input;
 import utils.Map;
 import utils.Methods;
+import utils.ResourceLoader;
 import utils.enums.Direction;
 
 public class Telemetry {
@@ -25,6 +26,7 @@ public class Telemetry {
     private ServerGameplayHandler server;
     private AILoopControl ai;
     private boolean aiRunning;
+  private ResourceLoader resourceLoader;
 
     public Telemetry(Map map, ServerGameplayHandler server) {
         this.map = map;
@@ -38,12 +40,13 @@ public class Telemetry {
         startGame();
     }
 
-    public Telemetry(Map map, Queue<Input> clientQueue) {
+  public Telemetry(Map map, Queue<Input> clientQueue, ResourceLoader resourceLoader) {
         this.map = map;
         inputs = new LinkedBlockingQueue<>();
         outputs = new LinkedBlockingQueue<>();
         singlePlayer = true;
         this.clientQueue = clientQueue;
+    this.resourceLoader = resourceLoader;
         initialise();
         startGame();
     }
@@ -55,9 +58,9 @@ public class Telemetry {
      * @param agents array of entities in current state
      * @return array of entities in new state
      * @author Alex Banks, Matthew Jones
-     * @see this#entityCollision(Entity, Entity, Double)
+     * @see this#entityCollision(Entity, Entity, Double, ResourceLoader)
      */
-    public static Entity[] processPhysics(Entity[] agents, Map m) {
+    public static Entity[] processPhysics(Entity[] agents, Map m, ResourceLoader resourceLoader) {
 
         for (int i = 0; i < AGENT_COUNT; i++) {
             Point2D.Double nextLocation =
@@ -114,17 +117,17 @@ public class Telemetry {
         }
 
         // separate loop for checking collision after iteration
-    /*
+
     for (int i = 0; i < AGENT_COUNT; i++) {
       for (int j = i + 1; j < AGENT_COUNT; j++) {
           if ((int) agents[i].getLocation().getX() == (int) agents[j].getLocation().getX()
                   && (int) agents[i].getLocation().getY() == (int) agents[j].getLocation().getY()) {
-          entityCollision(agents[i], agents[j], m.getRandomSpawnPoint());
+            entityCollision(agents[i], agents[j], m.getRandomSpawnPoint(), resourceLoader);
           System.out.println("collision");
         }
       }
     }
-    */
+
         return agents;
     }
 
@@ -136,17 +139,22 @@ public class Telemetry {
      * @param y            Entity two
      * @param respawnPoint Point to relocate new ghoul too
      */
-    private static void entityCollision(Entity x, Entity y, Double respawnPoint) {
+    private static void entityCollision(Entity x, Entity y, Double respawnPoint,
+        ResourceLoader resourceLoader) {
         if (x.isPacman() && !y.isPacman()) {
             x.setPacMan(false);
             y.setPacMan(true);
             x.setLocation(respawnPoint);
             x.setDirection(Direction.UP);
-        } else if (y.isPacman() && !y.isPacman()) {
+          x.updateImages(resourceLoader);
+          y.updateImages(resourceLoader);
+        } else if (y.isPacman() && !x.isPacman()) {
             y.setPacMan(false);
             x.setPacMan(true);
             y.setLocation(respawnPoint);
             y.setDirection(Direction.UP);
+          x.updateImages(resourceLoader);
+          y.updateImages(resourceLoader);
         }
     }
 
@@ -201,7 +209,7 @@ public class Telemetry {
           //System.out.println(change);
           processInputs();
           informClients();
-          agents = processPhysics(agents, map);
+          agents = processPhysics(agents, map, resourceLoader);
           updateClients();
         } else {
           //System.out.println("skipped");
