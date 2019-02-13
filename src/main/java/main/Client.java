@@ -1,12 +1,6 @@
 package main;
 
 import audio.AudioController;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -27,6 +21,13 @@ import utils.Map;
 import utils.Methods;
 import utils.ResourceLoader;
 import utils.enums.Direction;
+import utils.enums.ScreenResolution;
+
+import java.awt.*;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Client extends Application {
 
@@ -38,8 +39,8 @@ public class Client extends Application {
   private Scene gameScene;
   private Stage primaryStage;
   private Renderer renderer;
-  private int xRes = 1920;
-  private int yRes = 1080;
+    private int xRes = 1366;
+    private int yRes = 768;
   private ResourceLoader resourceLoader;
   private Entity[] agents;
   private Queue<Input> inputs;
@@ -134,6 +135,29 @@ public class Client extends Application {
     }
 
   }
+    
+    public void updateResolution(ScreenResolution s) {
+        switch (s) {
+            case LOW:
+                primaryStage.setWidth(1366);
+                primaryStage.setHeight(768);
+                xRes = 1366;
+                yRes = 768;
+                break;
+            case MEDIUM:
+                primaryStage.setWidth(1920);
+                primaryStage.setHeight(1080);
+                xRes = 1920;
+                yRes = 1080;
+                break;
+            case HIGH:
+                primaryStage.setWidth(2650);
+                primaryStage.setHeight(1440);
+                xRes = 2650;
+                yRes = 1440;
+                break;
+        }
+    }
 
   private void startGame() {
     //inputs = new Queue<Input>();

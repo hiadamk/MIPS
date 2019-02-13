@@ -30,6 +30,8 @@ public class Renderer {
   private double tileSizeX;
   private double tileSizeY;
 
+  int clientID;
+
   private ArrayList<Point2D.Double> traversalOrder = new ArrayList<>();
 
   /**
@@ -80,7 +82,6 @@ public class Renderer {
     //sort entities to get rendering order
     entities.sort(Comparator.comparingDouble(
         o -> o.getLocation().getX() + o.getLocation().getY()));
-
 
     int entityCounter = 0;
     Image currentSprite;
@@ -135,10 +136,12 @@ public class Renderer {
 
     }
 
-    renderHUD();
+    renderHUD(entities);
   }
 
-
+  public void setClientID(int _id) {
+    this.clientID = _id;
+  }
   private void renderBackground(Map map) {
     //render backing image
     gc.drawImage(background, 0, 0, xResolution, yResolution);
@@ -236,8 +239,22 @@ public class Renderer {
     //return new Point2D.Double(getIsoCoord(0,map),getIsoCoord(0,0,tileSizeY).getY())
   }
 
-  private void renderHUD() {
+  private void renderHUD(ArrayList<Entity> entities) {
+    final double paddingRatio = 0.05;
+    final double xOffset = paddingRatio * xResolution;
+    final double yOffset = paddingRatio * yResolution;
+    double textLength = 0;
+    Point2D.Double topLeft = new Double(xOffset, yOffset);
+    Point2D.Double topRight = new Double(xResolution - xOffset - textLength, yOffset);
+    Point2D.Double botLeft = new Double(xOffset, yResolution + yOffset);
+    Point2D.Double botRight = new Double(xResolution - xOffset - textLength,
+        yResolution - yOffset - textLength);
 
+    ArrayList<Point2D.Double> scoreCoord = new ArrayList<Point2D.Double>(
+        Arrays.asList(topLeft, topRight, botLeft, botRight));
+    for (Point2D.Double coord : scoreCoord) {
+
+    }
   }
 
   private void setFillColour(int colour) {
