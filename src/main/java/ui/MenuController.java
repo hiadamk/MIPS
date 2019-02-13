@@ -19,6 +19,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.Client;
+import utils.enums.ScreenResolution;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,21 +58,41 @@ public class MenuController {
     private Button createGameBtn;
     private Button joinGameBtn;
     private Button createLobbyBtn;
-    private ImageView volumeImg;
     private Button incrVolumeBtn;
     private Button decrVolumeBtn;
+    private Button startMGameBtn;
+    private Button lowRes;
+    private Button medRes;
+    private Button highRes;
+    
+    private ImageView volumeImg;
+    private ImageView lowResImageView;
+    private ImageView medResImageView;
+    private ImageView highResImageView;
+    
+    private Image highResW;
+    private Image highResG;
+    private Image medResW;
+    private Image medResG;
+    private Image lowResW;
+    private Image lowResG;
+    
     private Label lobbyStatusLbl;
     private Label loadingDots;
+    
     private VBox multiplayerOptions;
+    private VBox gameModeOptions;
+    private VBox resolutionOptions;
     private Font font;
-    private Button startMGameBtn;
+    
+    
     private boolean isHome = true;
     
     /**
      * Constructor takes in the audio controller stage and game scene
      *
-     * @param audio     Global audio controller which is passed around the system
-     * @param stage     The game window
+     * @param audio Global audio controller which is passed around the system
+     * @param stage The game window
      */
     public MenuController(AudioController audio, Stage stage, Client client) {
         this.audioController = audio;
@@ -109,6 +130,28 @@ public class MenuController {
     }
     
     
+    private void updateView(ScreenResolution s) {
+        client.updateResolution(s);
+        switch (s) {
+            case LOW:
+                lowResImageView.setImage(lowResW);
+                medResImageView.setImage(medResG);
+                highResImageView.setImage(highResG);
+                
+                break;
+            case MEDIUM:
+                lowResImageView.setImage(lowResG);
+                medResImageView.setImage(medResW);
+                highResImageView.setImage(highResG);
+                break;
+            case HIGH:
+                lowResImageView.setImage(lowResG);
+                medResImageView.setImage(medResG);
+                highResImageView.setImage(highResW);
+                break;
+        }
+    }
+    
     /**
      * Creates all the menu items and defines their functionality.
      *
@@ -117,17 +160,14 @@ public class MenuController {
     public Node createMainMenu() {
     
         try {
-            // load a custom font from a specific location (change path!)
-            // 12 is the size to use
             this.font = Font.loadFont(new FileInputStream(new File("src/main/resources/ui/PressStart2P.ttf")), 40);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         StackPane root = new StackPane();
         root.setPrefSize(1920, 1080);
-
-
-//        ImageView bg = new ImageView("ui/EditedBackground.png");
+    
+    
         ImageView bg = new ImageView("sprites/default/backgrounds/default.png");
         bg.fitWidthProperty().bind(this.primaryStage.widthProperty());
         root.getChildren().add(bg);
@@ -136,7 +176,6 @@ public class MenuController {
     
         ImageView logo = new ImageView("ui/MIPS-B.png");
         logo.preserveRatioProperty();
-//        logo.setFitWidth(600);
         StackPane.setAlignment(logo, Pos.TOP_CENTER);
         StackPane.setMargin(logo, new Insets(200, 0, 0, 0));
         root.getChildren().add(logo);
@@ -158,7 +197,6 @@ public class MenuController {
         startMGameBtn = new Button();
         StackPane.setAlignment(startMGameBtn, Pos.BOTTOM_CENTER);
         StackPane.setMargin(startMGameBtn, new Insets(0, 0, 200, 0));
-//        Image startMImg = new Image("ui/start.png");
         startMGameBtn.setGraphic(new ImageView(startImg));
         startMGameBtn.setStyle("-fx-background-color: transparent;");
         root.getChildren().add(startMGameBtn);
@@ -169,8 +207,6 @@ public class MenuController {
         });
         
         this.singlePlayerBtn = new Button();
-        StackPane.setAlignment(this.singlePlayerBtn, Pos.CENTER);
-        StackPane.setMargin(this.singlePlayerBtn, new Insets(160, 0, 0, 0));
         Image singleplayerImg = new Image("ui/Single-Player.png");
         this.singlePlayerBtn.setGraphic(new ImageView(singleplayerImg));
         this.singlePlayerBtn.setStyle("-fx-background-color: transparent;");
@@ -182,26 +218,83 @@ public class MenuController {
         });
         
         root.getChildren().add(this.singlePlayerBtn);
-        this.singlePlayerBtn.setVisible(false);
+        this.singlePlayerBtn.setVisible(true);
         
         this.multiplayerBtn = new Button();
-        StackPane.setAlignment(this.multiplayerBtn, Pos.CENTER);
-        StackPane.setMargin(this.multiplayerBtn, new Insets(320, 0, 0, 0));
         Image multiplayerImg = new Image("ui/Multiplayer.png");
         this.multiplayerBtn.setGraphic(new ImageView(multiplayerImg));
         this.multiplayerBtn.setStyle("-fx-background-color: transparent;");
         this.multiplayerBtn.setOnAction(e -> {
             audioController.playSound(Sounds.click);
             moveItemsToBackTree();
-//            itemsOnScreen.add(createGameBtn);
-//            itemsOnScreen.add(joinGameBtn);
             itemsOnScreen.add(multiplayerOptions);
             showItemsOnScreen();
             
         });
         root.getChildren().add(this.multiplayerBtn);
-        this.multiplayerBtn.setVisible(false);
-        
+        this.multiplayerBtn.setVisible(true);
+    
+        lowRes = new Button();
+        lowRes.setStyle("-fx-background-color: transparent;");
+        root.getChildren().add(lowRes);
+        lowResW = new Image("ui/1366x768-W.png");
+        lowResG = new Image("ui/1366x768-G.png");
+        lowResImageView = new ImageView(lowResG);
+        lowResImageView.setPreserveRatio(true);
+        lowResImageView.setFitWidth(350);
+        lowRes.setGraphic(lowResImageView);
+        lowRes.setVisible(true);
+        lowRes.setOnAction(event -> {
+            audioController.playSound(Sounds.click);
+            updateView(ScreenResolution.LOW);
+//            lowResImageView.setImage(lowResW);
+//            medResImageView.set
+        });
+    
+        medRes = new Button();
+        medRes.setStyle("-fx-background-color: transparent;");
+        root.getChildren().add(medRes);
+        medResW = new Image("ui/1920x1080-W.png");
+        medResG = new Image("ui/1920x1080-G.png");
+        medResImageView = new ImageView(medResG);
+        medResImageView.setPreserveRatio(true);
+        medResImageView.setFitWidth(350);
+        medRes.setGraphic(medResImageView);
+        medRes.setVisible(true);
+        medRes.setOnAction(event -> {
+            audioController.playSound(Sounds.click);
+            updateView(ScreenResolution.MEDIUM);
+        });
+    
+        highRes = new Button();
+        highRes.setStyle("-fx-background-color: transparent;");
+        root.getChildren().add(highRes);
+        highResW = new Image("ui/2650x1440-W.png");
+        highResG = new Image("ui/2650x1440-G.png");
+        highResImageView = new ImageView(highResG);
+        highResImageView.setPreserveRatio(true);
+        highResImageView.setFitWidth(350);
+        highRes.setGraphic(highResImageView);
+        highRes.setVisible(true);
+        highRes.setOnAction(event -> {
+            audioController.playSound(Sounds.click);
+            updateView(ScreenResolution.HIGH);
+        });
+    
+        resolutionOptions = new VBox(20, lowRes, medRes, highRes);
+        resolutionOptions.setAlignment(Pos.CENTER_RIGHT);
+        StackPane.setAlignment(resolutionOptions, Pos.CENTER_RIGHT);
+        StackPane.setMargin(resolutionOptions, new Insets(100, 20, 0, 0));
+        root.getChildren().add(resolutionOptions);
+    
+        resolutionOptions.setVisible(false);
+    
+        gameModeOptions = new VBox(10, singlePlayerBtn, multiplayerBtn);
+        gameModeOptions.setAlignment(Pos.CENTER);
+        StackPane.setAlignment(gameModeOptions, Pos.CENTER);
+        StackPane.setMargin(gameModeOptions, new Insets(100, 0, 0, 0));
+        root.getChildren().add(gameModeOptions);
+        gameModeOptions.setVisible(false);
         
         playBtn = new Button();
         StackPane.setAlignment(playBtn, Pos.CENTER);
@@ -214,8 +307,7 @@ public class MenuController {
             isHome = false;
             backBtn.setVisible(true);
             moveItemsToBackTree();
-            itemsOnScreen.add(singlePlayerBtn);
-            itemsOnScreen.add(multiplayerBtn);
+            itemsOnScreen.add(gameModeOptions);
             showItemsOnScreen();
         });
         root.getChildren().add(playBtn);
@@ -288,7 +380,7 @@ public class MenuController {
         incrVolumeBtn.setGraphic(incrView);
         incrVolumeBtn.setVisible(false);
         incrVolumeBtn.setOnAction(event -> {
-        
+    
             audioController.playSound(Sounds.click);
             audioController.increaseVolume();
         });
@@ -338,6 +430,7 @@ public class MenuController {
                 soundFxBtn.setVisible(true);
                 creditsBtn.setVisible(true);
                 volumeImg.setVisible(true);
+                resolutionOptions.setVisible(true);
                 viewSettings = true;
                 incrVolumeBtn.setVisible(true);
                 decrVolumeBtn.setVisible(true);
@@ -350,6 +443,7 @@ public class MenuController {
                 soundFxBtn.setVisible(false);
                 viewSettings = false;
                 creditsBtn.setVisible(false);
+                resolutionOptions.setVisible(false);
                 volumeImg.setVisible(false);
                 incrVolumeBtn.setVisible(false);
                 decrVolumeBtn.setVisible(false);
@@ -375,14 +469,12 @@ public class MenuController {
         quitBtn.setOnAction(event -> {
             audioController.playSound(Sounds.click);
             System.exit(0);
-        
+    
         });
     
     
         joinGameBtn = new Button();
         joinGameBtn.setPickOnBounds(true);
-//        StackPane.setAlignment(joinGameBtn, Pos.CENTER);
-//        StackPane.setMargin(joinGameBtn, new Insets(100, 0, 0, 0));
         joinGameBtn.setStyle("-fx-background-color: transparent;");
         root.getChildren().add(joinGameBtn);
         Image joinGameImg = new Image("ui/join-game.png");
@@ -395,8 +487,6 @@ public class MenuController {
         
         createGameBtn = new Button();
         createGameBtn.setPickOnBounds(true);
-//        StackPane.setAlignment(createGameBtn, Pos.CENTER);
-//        StackPane.setMargin(createGameBtn, new Insets(0, 0, 0, 0));
         Image createGameImg = new Image("ui/create-game.png");
         createGameBtn.setStyle("-fx-background-color: transparent;");
         ImageView createGameView = new ImageView(createGameImg);
@@ -453,13 +543,13 @@ public class MenuController {
     
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, event -> {
-                   
-                        String statusText = loadingDots.getText();
-                        loadingDots.setText(
-                                (" . . .".equals(statusText))
-                                        ? " ."
-                                        : statusText + " ."
-                        );
+    
+                    String statusText = loadingDots.getText();
+                    loadingDots.setText(
+                            (" . . .".equals(statusText))
+                                    ? " ."
+                                    : statusText + " ."
+                    );
                 }),
                 new KeyFrame(Duration.millis(1000))
         );
@@ -473,8 +563,6 @@ public class MenuController {
         backBtn.setGraphic(new ImageView(backImg));
         backBtn.setStyle("-fx-background-color: transparent;");
         backBtn.setOnAction(event -> {
-            System.out.println("BACK CLICKED");
-            System.out.println(backTree.toString());
             audioController.playSound(Sounds.click);
             if (backTree.isEmpty()) {
             } else {
@@ -491,10 +579,10 @@ public class MenuController {
                     backBtn.setVisible(false);
                     isHome = true;
                 }
-            
+    
             }
-            System.out.println("ITEMS ON SCREEN" + this.itemsOnScreen.toString());
         });
+    
         backBtn.setVisible(false);
         root.getChildren().add(backBtn);
         
