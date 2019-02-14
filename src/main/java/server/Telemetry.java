@@ -7,6 +7,7 @@ import ai.AILoopControl;
 import java.awt.geom.Point2D.Double;
 import java.util.Arrays;
 import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
@@ -158,11 +159,13 @@ public class Telemetry {
 
   private void initialise() {
     agents = new Entity[AGENT_COUNT];
-    agents[0] = new Entity(true, 0, new Double(1.5, 2.5));
+    agents[0] = new Entity(false, 0, new Double(1.5, 2.5));
     agents[1] = new Entity(false, 1, new Double(1.5, 18.5));
-    //agents[2] = new Entity(false, 2, new Double(1.5, 16.5));
-    //agents[3] = new Entity(false, 3, new Double(1.5, 2.5));
-    //agents[4] = new Entity(false, 4, new Double(1.5, 2.5));
+    agents[2] = new Entity(false, 2, new Double(1.5, 16.5));
+    agents[3] = new Entity(false, 3, new Double(1.5, 2.5));
+    agents[4] = new Entity(false, 4, new Double(1.5, 2.5));
+    agents[(new Random()).nextInt(AGENT_COUNT)].setPacMan(true);
+
     System.out.println(Arrays.toString(agents));
     int aiCount = AGENT_COUNT - (server == null ? 1 : server.getPlayerCount());
     if (aiCount < 0) {
