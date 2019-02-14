@@ -3,10 +3,15 @@ package server;
 import main.Client;
 import utils.Input;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Queue;
 
 public class ClientLobbySession {
@@ -34,42 +39,39 @@ public class ClientLobbySession {
         public void run() {
             super.run();
             try {
-                DatagramSocket ds = new DatagramSocket(NetworkUtility.CLIENT_DGRAM_PORT);
-                
+                Socket soc = new Socket(serverIP, NetworkUtility.SERVER_DGRAM_PORT);
+                PrintWriter out = new PrintWriter(soc.getOutputStream());
+                BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+
                 String str = NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX;
-                DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), serverIP, NetworkUtility.SERVER_DGRAM_PORT);
-                ds.send(dp);
-                
-                byte[] buf = new byte[1024];
-                dp = new DatagramPacket(buf, 1024);
-                ds.receive(dp);
-                String r = new String(dp.getData(), 0, dp.getLength());
-                r = r.replaceAll("\u0000.*", "");
+                out.println(str);
+                out.flush();
+
+
+                String r = in.readLine();
                 int id = Integer.parseInt(r);
                 client.setId(id);
                 
-                
-                buf = new byte[1024];
-                dp = new DatagramPacket(buf, 1024);
-                ds.receive(dp);
-                r = new String(dp.getData(), 0, dp.getLength());
-                r = r.replaceAll("\u0000.*", "");
-                
+
+                r = in.readLine();
                 if (r.equals("SUCCESS")) {
                     System.out.println("Server connection success");
                 }
-                
-                buf = new byte[1024];
-                dp = new DatagramPacket(buf, 1024);
-                ds.receive(dp);
-                r = new String(dp.getData(), 0, dp.getLength());
-                
-                if (r.equals("STARTGAME")) {
+                out.close();
+                in.close();
+                soc.close();
+
+
+                soc = new ServerSocket(NetworkUtility.CLIENT_DGRAM_PORT).accept();
+                in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+                r = in.readLine();
+                                if (r.equals("STARTGAME")) {
                     handler = new ClientGameplayHandler(serverIP, keypressQueue, clientIn);
                 }
                 
                 System.out.println(r);
-                ds.close();
+                in.close();
+                soc.close();
             } catch (IOException e) {
             
             }

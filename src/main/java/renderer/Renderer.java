@@ -3,12 +3,16 @@ package renderer;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import objects.Entity;
 import utils.Map;
 import utils.Renderable;
@@ -17,10 +21,11 @@ import utils.enums.MapElement;
 
 public class Renderer {
 
+  private ResourceLoader r;
   private static final double MAP_BORDER = 10;
   private final GraphicsContext gc;
-  private final int xResolution;
-  private final int yResolution;
+  private int xResolution;
+  private int yResolution;
   private Point2D.Double mapRenderingCorner;
 
   private ArrayList<Image> mapTiles;
@@ -30,7 +35,10 @@ public class Renderer {
   private double tileSizeX;
   private double tileSizeY;
 
-  int clientID;
+  private int clientID;
+
+  private Font geoSmall;
+  private Font geoLarge;
 
   private ArrayList<Point2D.Double> traversalOrder = new ArrayList<>();
 
@@ -39,6 +47,7 @@ public class Renderer {
    * @param _yResolution Game y resolution
    */
   public Renderer(GraphicsContext _gc, int _xResolution, int _yResolution, ResourceLoader r) {
+    this.r = r;
     this.gc = _gc;
     this.xResolution = _xResolution;
     this.yResolution = _yResolution;
@@ -63,11 +72,27 @@ public class Renderer {
       }
     }
 
+    this.init();
+  }
+
+  public void init() {
     this.mapTiles = r.getMapTiles();
     this.mapRenderingCorner = getMapRenderingCorner();
     tileSizeX = r.getMapTiles().get(0).getWidth();
     tileSizeY = r.getMapTiles().get(0).getHeight();
 
+    //set fonts
+    final double fontRatio = 0.07;
+    try {
+      this.geoLarge = Font
+          .loadFont(new FileInputStream(new File("src/main/resources/font/Geo-Regular.ttf")),
+              xResolution * fontRatio);
+      this.geoSmall = Font
+          .loadFont(new FileInputStream(new File("src/main/resources/font/Geo-Regular.ttf")),
+              0.8 * xResolution * fontRatio);
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -142,6 +167,7 @@ public class Renderer {
   public void setClientID(int _id) {
     this.clientID = _id;
   }
+
   private void renderBackground(Map map) {
     //render backing image
     gc.drawImage(background, 0, 0, xResolution, yResolution);
@@ -240,26 +266,51 @@ public class Renderer {
   }
 
   private void renderHUD(ArrayList<Entity> entities) {
-    final double paddingRatio = 0.05;
-    final double xOffset = paddingRatio * xResolution;
-    final double yOffset = paddingRatio * yResolution;
-    double textLength = 0;
-    Point2D.Double topLeft = new Double(xOffset, yOffset);
-    Point2D.Double topRight = new Double(xResolution - xOffset - textLength, yOffset);
-    Point2D.Double botLeft = new Double(xOffset, yResolution + yOffset);
+    gc.setFill(Color.WHITE);
+    final double paddingRatio = 0.1;
+    final double xOffset = paddingRatio * yResolution;
+    final double yOffset = paddingRatio * xResolution;
+    double textLength = 270;
+    double nameScoreGap = 100;
+
+    //calculate corner coordinate to render other players scores from
+    Point2D.Double topLeft = new Double(xOffset, yOffset - nameScoreGap);
+    Point2D.Double topRight = new Double(xResolution - xOffset - textLength,
+        yOffset - nameScoreGap);
+    Point2D.Double botLeft = new Double(xOffset, yResolution - yOffset);
     Point2D.Double botRight = new Double(xResolution - xOffset - textLength,
-        yResolution - yOffset - textLength);
+        yResolution - yOffset);
 
-    ArrayList<Point2D.Double> scoreCoord = new ArrayList<Point2D.Double>(
+    ArrayList<Point2D.Double> scoreCoord = new ArrayList<>(
         Arrays.asList(topLeft, topRight, botLeft, botRight));
-    for (Point2D.Double coord : scoreCoord) {
 
+    int cornerCounter = 0;
+    gc.setFont(geoSmall);
+    for (Entity e : entities) {
+      if (e.getClientId() == clientID) { //render own score
+        gc.setFont(geoLarge);
+        gc.fillText("Score:" + e.getScore(), xResolution / 2 - textLength / 2, yResolution / 15);
+      } else {//render other players score and name
+        Point2D.Double cornerCoord = scoreCoord.get(cornerCounter);
+        cornerCounter++;
+        gc.setFont(geoSmall);
+        gc.fillText("Score:" + e.getScore(), cornerCoord.getX(), cornerCoord.getY() + nameScoreGap);
+        gc.setFont(geoLarge);
+        gc.fillText("Player" + e.getClientId(), cornerCoord.getX(), cornerCoord.getY());
+      }
     }
   }
 
   private void setFillColour(int colour) {
     gc.setFill(new Color((colour >> 16 & 0xFF) / (double) 255, (colour >> 8 & 0xFF) / (double) 255,
         (colour & 0xFF) / (double) 255, 1));
+  }
+
+  public void setResolution(int x, int y, boolean integerScaling) {
+    r.setResolution(x, y, integerScaling);
+    xResolution = x;
+    yResolution = y;
+    this.init();
   }
 
 }

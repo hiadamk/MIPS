@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import javafx.scene.image.Image;
+import utils.Methods;
 import utils.Renderable;
 import utils.ResourceLoader;
 import utils.enums.Direction;
@@ -27,20 +28,42 @@ public class Entity implements Renderable {
     this.clientId = clientId;
     this.location = location;
     this.score = 0;
-      this.velocity = pacMan ? 0.08 : 0.06;
-    //updateImages();
+    this.velocity = pacMan ? 0.08 : 0.06;
+    this.direction = Direction.UP;
+    // updateImages();
   }
 
   public RouteFinder getRouteFinder() {
-      return routeFinder;
+    return routeFinder;
   }
-    
-    public void setRouteFinder(RouteFinder routeFinder) {
-        this.routeFinder = routeFinder;
-    }
+
+  public void setRouteFinder(RouteFinder routeFinder) {
+    this.routeFinder = routeFinder;
+  }
 
   public Point2D.Double getLocation() {
     return location;
+  }
+
+  public Point2D.Double getFaceLocation(int x, int y) {
+
+    if (this.direction != null) {
+      switch (this.direction) {
+        case UP:
+          return new Point2D.Double(
+              this.location.getX(), Methods.mod(this.location.getY() - 0.5, y));
+        case DOWN:
+          return new Point2D.Double(
+              this.location.getX(), Methods.mod(this.location.getY() + 0.5, y));
+        case LEFT:
+          return new Point2D.Double(
+              Methods.mod(this.location.getX() - 0.5, x), this.location.getY());
+        case RIGHT:
+          return new Point2D.Double(
+              Methods.mod(this.location.getX() + 0.5, x), this.location.getY());
+      }
+    }
+    return this.location;
   }
 
   public void setLastGridCoord(Point position) {
@@ -50,10 +73,10 @@ public class Entity implements Renderable {
   public Point getLastGridCoord() {
     return lastGridCoord;
   }
-    
-    public void setLocation(Point2D.Double location) {
-        this.location = location;
-    }
+
+  public void setLocation(Point2D.Double location) {
+    this.location = location;
+  }
 
   @Override
   public ArrayList<Image> getImage() {
@@ -76,7 +99,7 @@ public class Entity implements Renderable {
   }
 
   public void setDirection(Direction direction) {
-    if(this.direction!=direction){
+    if (this.direction != direction) {
       this.direction = direction;
       if (direction != null) {
         currentImage = images.get(direction.toInt());
@@ -106,7 +129,10 @@ public class Entity implements Renderable {
   }
 
   public void updateImages(ResourceLoader resourceLoader) {
-    images = pacMan ? resourceLoader.getPlayableMip(clientId) : resourceLoader.getPlayableGhoul(clientId);
+    images =
+        pacMan
+            ? resourceLoader.getPlayableMip(clientId)
+            : resourceLoader.getPlayableGhoul(clientId);
   }
 
   @Override

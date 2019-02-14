@@ -13,11 +13,10 @@ public class Methods {
   }
 
   public static boolean validiateDirection(Direction d, Entity e, Map m) {
-    Point2D.Double newLoc = new Point2D.Double(e.getLocation().getX(),
-        e.getLocation().getY());
-    double xpart = newLoc.getX() - Math.floor(newLoc.getX());
-    double ypart = newLoc.getY() - Math.floor(newLoc.getY());
-    //if( ypart >= 0.60 || ypart <= 0.40 || xpart >= 0.60 || xpart <= 0.40) return false;
+    Point2D.Double newLoc = new Point2D.Double(e.getLocation().getX(), e.getLocation().getY());
+    double xpart = mod(newLoc.getX(), 1);
+    double ypart = mod(newLoc.getY(), 1);
+    // if( ypart >= 0.60 || ypart <= 0.40 || xpart >= 0.60 || xpart <= 0.40) return false;
     double offset = 0.8 + e.getVelocity();
     switch (d) {
       case RIGHT:
@@ -34,5 +33,17 @@ public class Methods {
         break;
     }
     return !m.isWall(newLoc);
+  }
+
+  /**
+   * true modulo instead of %
+   *
+   * @param dividend dividend
+   * @param divisor divisor
+   * @return dividend mod divisor
+   * @author Alex Banks
+   */
+  public static double mod(double dividend, int divisor) {
+    return (dividend + divisor) % divisor;
   }
 }
