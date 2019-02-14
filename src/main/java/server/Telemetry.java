@@ -1,10 +1,6 @@
 package server;
 
-import static java.lang.Math.abs;
-import static utils.Methods.mod;
-
 import ai.AILoopControl;
-import java.awt.geom.Point2D.Double;
 import java.util.Arrays;
 import java.util.Queue;
 import java.util.Random;
@@ -15,6 +11,7 @@ import objects.Entity;
 import utils.Input;
 import utils.Map;
 import utils.Methods;
+import utils.Point;
 import utils.ResourceLoader;
 import utils.enums.Direction;
 
@@ -71,34 +68,9 @@ public class Telemetry {
     final int MAXY = m.getMaxY();
 
     for (int i = 0; i < AGENT_COUNT; i++) {
-      Double prevLocation = agents[i].getLocation();
-      double offset = agents[i].getVelocity();
-
-      double nextX = prevLocation.getX();
-      double nextY = prevLocation.getY();
-
-      if (agents[i].getDirection() != null) {
-        switch (agents[i].getDirection()) {
-          case RIGHT:
-            nextX = mod(nextX + offset, MAXX);
-            nextY = mod((int) nextY + 0.5, MAXY);
-            break;
-          case LEFT:
-            nextX = mod(nextX - offset, MAXX);
-            nextY = mod((int) nextY + 0.5, MAXY);
-            break;
-          case DOWN:
-            nextY = mod(nextY + offset, MAXY);
-            nextX = mod((int) nextX + 0.5, MAXX);
-            break;
-          case UP:
-            nextY = mod(nextY - offset, MAXY);
-            nextX = mod((int) nextX + 0.5, MAXX);
-            break;
-        }
-
-        agents[i].setLocation(new Double(nextX, nextY));
-        Double faceLocation = agents[i].getFaceLocation(MAXX, MAXY);
+      Point prevLocation = agents[i].getLocation();
+      agents[i].move();
+      Point faceLocation = agents[i].getFaceLocation();
 
         if (m.isWall(faceLocation)) {
           agents[i].setDirection(null);
@@ -110,7 +82,7 @@ public class Telemetry {
         }
       }
       // TODO add points for pellet collision
-    }
+
 
     // separate loop for checking collision after iteration
 
@@ -137,13 +109,10 @@ public class Telemetry {
    */
   private static void detectEntityCollision(
       Entity pacman, Entity ghoul, ResourceLoader resourceLoader) {
-    Double pacmanCenter = pacman.getLocation();
-    Double ghoulFace =
-        ghoul.getFaceLocation(resourceLoader.getMap().getMaxX(), resourceLoader.getMap().getMaxY());
+    Point pacmanCenter = pacman.getLocation();
+    Point ghoulFace = ghoul.getFaceLocation();
 
-    if (mod(abs(pacmanCenter.getX() - ghoulFace.getX()), resourceLoader.getMap().getMaxX()) <= 0.5
-        && mod(abs(pacmanCenter.getY() - ghoulFace.getY()), resourceLoader.getMap().getMaxY())
-        <= 0.5) {
+    if (pacmanCenter.inRange(ghoulFace)) {
 
       pacman.setPacMan(false);
       ghoul.setPacMan(true);
@@ -159,11 +128,11 @@ public class Telemetry {
 
   private void initialise() {
     agents = new Entity[AGENT_COUNT];
-    agents[0] = new Entity(false, 0, new Double(1.5, 2.5));
-    agents[1] = new Entity(false, 1, new Double(1.5, 18.5));
-    agents[2] = new Entity(false, 2, new Double(1.5, 16.5));
-    agents[3] = new Entity(false, 3, new Double(1.5, 2.5));
-    agents[4] = new Entity(false, 4, new Double(1.5, 2.5));
+    agents[0] = new Entity(false, 0, new Point(1.5, 2.5));
+    agents[1] = new Entity(false, 1, new Point(1.5, 18.5));
+    agents[2] = new Entity(false, 2, new Point(1.5, 16.5));
+    agents[3] = new Entity(false, 3, new Point(1.5, 2.5));
+    agents[4] = new Entity(false, 4, new Point(1.5, 2.5));
     agents[(new Random()).nextInt(AGENT_COUNT)].setPacMan(true);
 
     System.out.println(Arrays.toString(agents));

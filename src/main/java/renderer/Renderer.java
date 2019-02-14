@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import objects.Entity;
 import utils.Map;
+import utils.Point;
 import utils.Renderable;
 import utils.ResourceLoader;
 import utils.enums.MapElement;
@@ -111,7 +112,7 @@ public class Renderer {
     int entityCounter = 0;
     Image currentSprite;
     Point2D.Double rendCoord;
-    Point2D.Double spriteCoord = new Point2D.Double(java.lang.Double.MAX_VALUE,
+    Point spriteCoord = new Point(java.lang.Double.MAX_VALUE,
         java.lang.Double.MAX_VALUE);
 
     int x;
