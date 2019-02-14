@@ -1,6 +1,12 @@
 package main;
 
 import audio.AudioController;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -22,12 +28,6 @@ import utils.Methods;
 import utils.ResourceLoader;
 import utils.enums.Direction;
 import utils.enums.ScreenResolution;
-
-import java.awt.*;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class Client extends Application {
 
@@ -157,6 +157,10 @@ public class Client extends Application {
                 yRes = 1440;
                 break;
         }
+      renderer.setResolution(xRes, yRes, false);
+      for (Entity e : agents) {
+        e.updateImages(resourceLoader);
+      }
     }
 
   private void startGame() {
