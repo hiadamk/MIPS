@@ -19,7 +19,7 @@ import utils.enums.Direction;
 
 public class Telemetry {
 
-  private static final int AGENT_COUNT = 5;
+  private static final int AGENT_COUNT = 2;
   private BlockingQueue<Input> inputs;
   private BlockingQueue<Input> outputs;
   private Entity[] agents;
@@ -102,10 +102,10 @@ public class Telemetry {
         if (m.isWall(faceLocation)) {
           agents[i].setDirection(null);
           agents[i].setLocation(prevLocation);
-          System.err.println(i + "prev: " + prevLocation);
+          System.err.println(i + "prev: " + prevLocation + " " + agents[i].getClientId());
           System.err.println(i + "face: " + faceLocation);
         } else {
-          System.out.println(i + "face: " + faceLocation);
+          //System.out.println(i + "face: " + faceLocation);
         }
       }
       // TODO add points for pellet collision
@@ -160,9 +160,9 @@ public class Telemetry {
     agents = new Entity[AGENT_COUNT];
     agents[0] = new Entity(true, 0, new Double(1.5, 2.5));
     agents[1] = new Entity(false, 1, new Double(1.5, 18.5));
-    agents[2] = new Entity(false, 2, new Double(1.5, 16.5));
-    agents[3] = new Entity(false, 3, new Double(1.5, 2.5));
-    agents[4] = new Entity(false, 4, new Double(1.5, 2.5));
+    //agents[2] = new Entity(false, 2, new Double(1.5, 16.5));
+    //agents[3] = new Entity(false, 3, new Double(1.5, 2.5));
+    //agents[4] = new Entity(false, 4, new Double(1.5, 2.5));
     System.out.println(Arrays.toString(agents));
     int aiCount = AGENT_COUNT - (server == null ? 1 : server.getPlayerCount());
     if (aiCount < 0) {

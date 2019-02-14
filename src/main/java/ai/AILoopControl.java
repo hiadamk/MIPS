@@ -101,7 +101,6 @@ public class AILoopControl extends Thread {
                     break;
                 }
                 case 3: {
-                    // TODO
                     routeFinder = new RandomRouteFinder();
                     break;
                 }
@@ -229,29 +228,28 @@ public class AILoopControl extends Thread {
                     fixRouteFinder = ent;
                 }
                 // TODO only calculate new route if not at last coordinate OR current direction is invalid
-                if (ent.getLocation() != null && !atPreviousCoordinate(ent) || !Methods.validiateDirection(ent.getDirection(), ent, map)){
-                    ent.setLastGridCoord(Mapping.getGridCoord(ent.getLocation()));
-                    // only route find on junctions
-                    if (junctions.contains(Mapping.getGridCoord(ent.getLocation()))) {
-                        executeRoute(ent);
-                    }
-                    else {
-                        if (ent.getDirection()==null || !Methods.validiateDirection(ent.getDirection(), ent, map)) {
-                            Point2D.Double nearestJunct = Mapping.findNearestJunction(ent.getLocation(), map, junctions);
-                            try {
-                                if (nearestJunct!=ent.getLocation()) {
-                                    ent.setDirection(Mapping.directionBetweenPoints(ent.getLocation(), nearestJunct));
-                                }
-                                else {
-                                    Direction dir = new RandomRouteFinder().getRoute(ent.getLocation(), controlAgents[mipsmanID].getLocation());
-                                    while (!Methods.validiateDirection(dir,ent,map)) {
-                                        dir = new RandomRouteFinder().getRoute(ent.getLocation(), controlAgents[mipsmanID].getLocation());
+                if (ent.getLocation() != null && Methods.centreOfSquare(ent)){
+                    if (!atPreviousCoordinate(ent) || !Methods.validiateDirection(ent.getDirection(), ent, map)) {
+                        ent.setLastGridCoord(Mapping.getGridCoord(ent.getLocation()));
+                        // only route find on junctions
+                        if (junctions.contains(Mapping.getGridCoord(ent.getLocation()))) {
+                            executeRoute(ent);
+                        } else {
+                            if (ent.getDirection() == null || !Methods.validiateDirection(ent.getDirection(), ent, map)) {
+                                Point2D.Double nearestJunct = Mapping.findNearestJunction(ent.getLocation(), map, junctions);
+                                try {
+                                    if (nearestJunct != ent.getLocation()) {
+                                        ent.setDirection(Mapping.directionBetweenPoints(ent.getLocation(), nearestJunct));
+                                    } else {
+                                        Direction dir = new RandomRouteFinder().getRoute(ent.getLocation(), gameAgents[mipsmanID].getLocation());
+                                        while (!Methods.validiateDirection(dir, ent, map)) {
+                                            dir = new RandomRouteFinder().getRoute(ent.getLocation(), gameAgents[mipsmanID].getLocation());
+                                        }
+                                        ent.setDirection(dir);
                                     }
-                                    ent.setDirection(dir);
+                                } catch (NullPointerException e) {
+                                    System.out.println("Images not set");
                                 }
-                            }
-                            catch (NullPointerException e) {
-                                System.out.println("Images not set");
                             }
                         }
                     }

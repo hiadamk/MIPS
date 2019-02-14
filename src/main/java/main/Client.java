@@ -199,7 +199,7 @@ public class Client extends Application {
     if (input == null || input == current) {
       return;
     }
-    System.out.println(input.toString() + "     " + current + " ID: " + id);
+    //System.out.println(input.toString() + "     " + current + " ID: " + id);
     if (!Methods.validiateDirection(input, agents[0], map)) {
       return;
     }
