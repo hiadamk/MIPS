@@ -82,7 +82,7 @@ public class Map {
    *
    * @return 2D Array of ints
    */
-  int[][] raw() {
+  public int[][] raw() {
     return MAP;
   }
 
