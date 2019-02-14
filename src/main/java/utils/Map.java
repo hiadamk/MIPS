@@ -44,7 +44,7 @@ public class Map {
     ArrayList<Double> spawnPoints = new ArrayList<>();
     for (int i = 0; i < MAX_X; i++) {
       for (int j = 0; j < MAX_Y; j++) {
-        if (MAP[i][j] == MapElement.WALL.toInt()) { // SPAWNPOINT.toInt()
+        if (MAP[i][j] != MapElement.WALL.toInt()) { // SPAWNPOINT.toInt()
           spawnPoints.add(new Double(i + 0.5, j + 0.5));
         }
       }
