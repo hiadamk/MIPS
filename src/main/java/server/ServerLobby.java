@@ -1,6 +1,9 @@
 package server;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -75,32 +78,38 @@ public class ServerLobby {
         public void run() {
             super.run();
             try {
-                DatagramSocket ds = new DatagramSocket(NetworkUtility.SERVER_DGRAM_PORT);
+
                 
                 while (!isInterrupted()) {
                     if (playerCount < 5) {
+                        Socket soc = new ServerSocket(NetworkUtility.SERVER_DGRAM_PORT).accept();
+                        BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+                        PrintWriter out = new PrintWriter(soc.getOutputStream());
                         System.out.println("Waiting for new connection...");
-                        byte[] buf = new byte[1024];
-                        DatagramPacket dp = new DatagramPacket(buf, 1024);
-                        ds.receive(dp);
-                        String r = new String(dp.getData(), 0, dp.getLength());
+
+                        String r = in.readLine();
                         if (r.equals(NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX)) {
                             System.out.println(r);
-                            InetAddress ip = dp.getAddress();
+
+                            InetAddress ip = soc.getInetAddress();
                             System.out.println("Connecting to: " + ip);
                             playerIPs.add(ip);
+
                             int playerID = playerCount;
-                            dp = new DatagramPacket(String.valueOf(playerID).getBytes(), 1, ip, NetworkUtility.CLIENT_DGRAM_PORT);
-                            ds.send(dp);
+                            out.println(""+playerID);
+                            out.flush();
                             System.out.println("Sent client " + playerID + " their ID...");
-                            dp = new DatagramPacket("SUCCESS".getBytes(), "SUCCESS".length(), ip, NetworkUtility.CLIENT_DGRAM_PORT);
-                            ds.send(dp);
+
+                            out.println("SUCCESS");
+                            out.flush();
                             System.out.println("Sent client " + playerID + " a successful connection message...");
                             playerCount++;
+                            in.close();
+                            out.close();
+                            soc.close();
                         }
                         
                     } else {
-                        ds.close();
                         return;
                     }
                     
@@ -125,11 +134,13 @@ public class ServerLobby {
         System.out.printf("Server starting game...");
         for (InetAddress ip : playerIPs) {
             try {
-                DatagramSocket ds = new DatagramSocket();
+                Socket soc = new Socket(ip, NetworkUtility.CLIENT_DGRAM_PORT);
+                PrintWriter out = new PrintWriter(soc.getOutputStream());
                 String str = "START GAME";
-                DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), ip, NetworkUtility.CLIENT_DGRAM_PORT);
-                ds.send(dp);
-                ds.close();
+
+                out.println(str);
+                out.flush();
+                out.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
