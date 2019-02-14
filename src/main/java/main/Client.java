@@ -136,6 +136,10 @@ public class Client extends Application {
         
     }
     
+    public void setMap(Map m) {
+        this.map = m;
+    }
+    
     public void updateResolution(ScreenResolution s) {
         switch (s) {
             case LOW:
