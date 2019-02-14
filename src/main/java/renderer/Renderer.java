@@ -162,7 +162,7 @@ public class Renderer {
 
     }
 
-    renderHUD(entities);
+    renderHUD(entityArr);
   }
 
   public void setClientID(int _id) {
@@ -266,7 +266,7 @@ public class Renderer {
     //return new Point2D.Double(getIsoCoord(0,map),getIsoCoord(0,0,tileSizeY).getY())
   }
 
-  private void renderHUD(ArrayList<Entity> entities) {
+  private void renderHUD(Entity[] entities) {
     gc.setFill(Color.WHITE);
     final double paddingRatio = 0.1;
     final double xOffset = paddingRatio * yResolution;
