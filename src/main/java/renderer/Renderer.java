@@ -21,10 +21,11 @@ import utils.enums.MapElement;
 
 public class Renderer {
 
+  private ResourceLoader r;
   private static final double MAP_BORDER = 10;
   private final GraphicsContext gc;
-  private final int xResolution;
-  private final int yResolution;
+  private int xResolution;
+  private int yResolution;
   private Point2D.Double mapRenderingCorner;
 
   private ArrayList<Image> mapTiles;
@@ -46,6 +47,7 @@ public class Renderer {
    * @param _yResolution Game y resolution
    */
   public Renderer(GraphicsContext _gc, int _xResolution, int _yResolution, ResourceLoader r) {
+    this.r = r;
     this.gc = _gc;
     this.xResolution = _xResolution;
     this.yResolution = _yResolution;
@@ -70,22 +72,27 @@ public class Renderer {
       }
     }
 
+    this.init();
+  }
+
+  public void init() {
     this.mapTiles = r.getMapTiles();
     this.mapRenderingCorner = getMapRenderingCorner();
     tileSizeX = r.getMapTiles().get(0).getWidth();
     tileSizeY = r.getMapTiles().get(0).getHeight();
 
     //set fonts
+    final double fontRatio = 0.07;
     try {
       this.geoLarge = Font
-          .loadFont(new FileInputStream(new File("src/main/resources/font/Geo-Regular.ttf")), 132);
+          .loadFont(new FileInputStream(new File("src/main/resources/font/Geo-Regular.ttf")),
+              xResolution * fontRatio);
       this.geoSmall = Font
-          .loadFont(new FileInputStream(new File("src/main/resources/font/Geo-Regular.ttf")), 100);
+          .loadFont(new FileInputStream(new File("src/main/resources/font/Geo-Regular.ttf")),
+              0.8 * xResolution * fontRatio);
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
-
-
   }
 
   /**
@@ -260,10 +267,10 @@ public class Renderer {
 
   private void renderHUD(ArrayList<Entity> entities) {
     gc.setFill(Color.WHITE);
-    final double paddingRatio = 0.15;
+    final double paddingRatio = 0.1;
     final double xOffset = paddingRatio * yResolution;
-    final double yOffset = paddingRatio * yResolution;
-    double textLength = 250;
+    final double yOffset = paddingRatio * xResolution;
+    double textLength = 270;
     double nameScoreGap = 100;
 
     //calculate corner coordinate to render other players scores from
@@ -289,7 +296,7 @@ public class Renderer {
         gc.setFont(geoSmall);
         gc.fillText("Score:" + e.getScore(), cornerCoord.getX(), cornerCoord.getY() + nameScoreGap);
         gc.setFont(geoLarge);
-        gc.fillText("Player" + clientID, cornerCoord.getX(), cornerCoord.getY());
+        gc.fillText("Player" + e.getClientId(), cornerCoord.getX(), cornerCoord.getY());
       }
     }
   }
@@ -297,6 +304,13 @@ public class Renderer {
   private void setFillColour(int colour) {
     gc.setFill(new Color((colour >> 16 & 0xFF) / (double) 255, (colour >> 8 & 0xFF) / (double) 255,
         (colour & 0xFF) / (double) 255, 1));
+  }
+
+  public void setResolution(int x, int y, boolean integerScaling) {
+    r.setResolution(x, y, integerScaling);
+    xResolution = x;
+    yResolution = y;
+    this.init();
   }
 
 }

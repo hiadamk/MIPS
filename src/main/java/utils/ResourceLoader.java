@@ -118,9 +118,9 @@ public class ResourceLoader {
   /**
    * @param x new x resolution
    * @param y new y resolution
-   * @param pixelPerfect if true, only scales images by integer scale factor
+   * @param integerScaling if true, only scales images by integer scale factor
    */
-  public void setResolution(int x, int y, boolean pixelPerfect) {
+  public void setResolution(int x, int y, boolean integerScaling) {
     double mapToScreenRatio = 0.7;
 
     //find dimensions of rendered map we want based on mapToScreenRatio
@@ -138,7 +138,7 @@ public class ResourceLoader {
     double ratio = Math.min(targetX / (double) currentX, (double) targetY / currentY);
     System.out.println(ratio);
 
-    ratio = (pixelPerfect) ? Math.floor(ratio) : ratio;
+    ratio = (integerScaling) ? Math.floor(ratio) : ratio;
 
     for (int i = 0; i < mipSprites.size(); i++) {
       resizeSpritesSmooth(mipSprites.get(i), ratio);
