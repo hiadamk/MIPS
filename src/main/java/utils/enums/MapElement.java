@@ -1,7 +1,6 @@
 package utils.enums;
 
 public enum MapElement {
-
   FLOOR(0, -1) {
     @Override
     public String toString() {

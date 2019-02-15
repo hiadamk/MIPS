@@ -3,13 +3,13 @@ package audio;
 import java.util.concurrent.TimeUnit;
 
 public class Test {
-    
+
     public static void main(String[] args) {
         AudioController audioController = new AudioController();
         test2(audioController);
         sleep(10);
     }
-    
+
     private static void sleep(int x) {
         try {
             TimeUnit.SECONDS.sleep(x);
@@ -17,7 +17,7 @@ public class Test {
             e.printStackTrace();
         }
     }
-    
+
     private static void test3(AudioController audioController) {
         audioController.playSound(Sounds.death);
         sleep(3);
@@ -38,7 +38,7 @@ public class Test {
         audioController.setMusicVolume(0.4);
         sleep(3);
     }
-    
+
     private static void test2(AudioController audioController) {
         System.out.println("Playing intro sound as music");
         audioController.playMusic(Sounds.intro);
@@ -55,7 +55,7 @@ public class Test {
         sleep(5);
         audioController.playMusic(Sounds.death);
     }
-    
+
     private static void test1(AudioController audioController) {
         System.out.println("Playing intro sound");
         audioController.playSound(Sounds.intro);

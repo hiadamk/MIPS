@@ -1,6 +1,12 @@
 package main;
 
 import audio.AudioController;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -23,14 +29,8 @@ import utils.ResourceLoader;
 import utils.enums.Direction;
 import utils.enums.ScreenResolution;
 
-import java.awt.*;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
-
 public class Client extends Application {
-    
+
     Map map;
     private int id;
     private KeyController keyController;
@@ -48,28 +48,27 @@ public class Client extends Application {
     private ServerGameplayHandler serverGameplayHandler;
     private ClientLobbySession clientLobbySession;
     private boolean isHost;
-    
-    
+
     public int getId() {
         return id;
     }
-    
+
     public void setId(int id) {
         this.id = id;
     }
-    
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();
         xRes = screenRes.width;
         yRes = screenRes.height;
-        
+
         int id = 0; // This will be changed if main joins a lobby, telemetry will give it new id
         audioController = new AudioController();
         keyController = new KeyController();
         resourceLoader = new ResourceLoader("src/main/resources/");
         this.primaryStage = primaryStage;
-//        audioController.playMusic(Sounds.intro);
+        //        audioController.playMusic(Sounds.intro);
         MenuController menuController = new MenuController(audioController, primaryStage, this);
         StackPane root = (StackPane) menuController.createMainMenu();
         Scene scene = new Scene(root, xRes, yRes);
@@ -82,24 +81,24 @@ public class Client extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-    
+
     public void startSinglePlayerGame() {
-        
+
         System.out.println("Starting single player game...");
         // If hosting if not telemetry will be set by connection method along with new main id
         map = resourceLoader.getMap();
-        
+
         Queue<Input> incomingQueue = new LinkedList<>();
-        
+
         this.telemetry = new Telemetry(map, incomingQueue, resourceLoader);
         this.primaryStage.setScene(gameScene);
         this.id = 0;
-        
+
         gameScene.setOnKeyPressed(keyController);
-        
+
         startGame();
     }
-    
+
     public void createMultiplayerLobby() {
         isHost = true;
         Queue<String> clientIn = new LinkedList<>();
@@ -111,7 +110,7 @@ public class Client extends Application {
             e.printStackTrace();
         }
     }
-    
+
     public void joinMultiplayerLobby() {
         isHost = false;
         Queue<String> clientIn = new LinkedList<>();
@@ -121,25 +120,23 @@ public class Client extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
     }
-    
+
     public void startMultiplayerGame() {
-        
+
         if (isHost) {
             ServerGameplayHandler s = server.gameStart();
             this.telemetry = new Telemetry(this.map, s);
         } else {
-            //TODO Implement what needs to happen when the game starts and they are not the host
-            //TODO Surely each client needs to know the start locations of each entity for rendering
+            // TODO Implement what needs to happen when the game starts and they are not the host
+            // TODO Surely each client needs to know the start locations of each entity for rendering
         }
-        
     }
-    
+
     public void setMap(Map m) {
         this.map = m;
     }
-    
+
     public void updateResolution(ScreenResolution s) {
         switch (s) {
             case LOW:
@@ -166,16 +163,16 @@ public class Client extends Application {
             e.updateImages(resourceLoader);
         }
     }
-    
+
     private void startGame() {
-        //inputs = new Queue<Input>();
-        
-        //agents = new Entity[1];
-        //agents[0] = new Entity(true, 0, new Double(0.5, 0.5));
-        //agents[1] = new Entity(false, 1, new Double(0.5, 1.5));
-        //agents[2] = new Entity(false, 2, new Double(0.5, 1.5));
-        //agents[3] = new Entity(false, 3, new Double(0.5, 1.5));
-        //agents[4] = new Entity(false, 4, new Double(0.5, 1.5));
+        // inputs = new Queue<Input>();
+
+        // agents = new Entity[1];
+        // agents[0] = new Entity(true, 0, new Double(0.5, 0.5));
+        // agents[1] = new Entity(false, 1, new Double(0.5, 1.5));
+        // agents[2] = new Entity(false, 2, new Double(0.5, 1.5));
+        // agents[3] = new Entity(false, 3, new Double(0.5, 1.5));
+        // agents[4] = new Entity(false, 4, new Double(0.5, 1.5));
         if (telemetry != null) {
             agents = telemetry.getAgents();
             map = telemetry.getMap();
@@ -195,15 +192,15 @@ public class Client extends Application {
         }.start();
         telemetry.startAI();
     }
-    
+
     private void processInput() {
         Direction input = keyController.getActiveKey();
         Direction current = agents[id].getDirection();
-        
+
         if (input == null || input == current) {
             return;
         }
-//    System.out.println(input.toString() + "     " + current + " ID: " + id);
+        //    System.out.println(input.toString() + "     " + current + " ID: " + id);
         if (!Methods.validiateDirection(input, agents[0], map)) {
             return;
         }
@@ -230,7 +227,7 @@ public class Client extends Application {
                 break;
         }
     }
-    
+
     private void informServer(Input input) {
         if (id == 0) {
             telemetry.addInput(input);
@@ -238,7 +235,7 @@ public class Client extends Application {
             // TODO integrate with networking to send to telemetry
         }
     }
-    
+
     private void render() {
         renderer.render(map, agents);
     }

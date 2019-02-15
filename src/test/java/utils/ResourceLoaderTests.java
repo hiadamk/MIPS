@@ -16,7 +16,7 @@ import utils.enums.MapElement;
 
 public class ResourceLoaderTests {
 
-  //MAP TESTS
+  // MAP TESTS
 
   @Test
   void map1X1() {
@@ -71,50 +71,48 @@ public class ResourceLoaderTests {
   }
 
   @Test
-  void correctMipNumLoaded(){
+  void correctMipNumLoaded() {
     ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
     ArrayList<ArrayList<Image>> mipSprites = resourceLoader.getPlayableMip(0);
-    assertEquals(4,mipSprites.size());
-    assertEquals(2,mipSprites.get(0).size());
-    assertEquals(2,mipSprites.get(1).size());
+    assertEquals(4, mipSprites.size());
+    assertEquals(2, mipSprites.get(0).size());
+    assertEquals(2, mipSprites.get(1).size());
   }
 
   @Test
-  void correctGhoulNumLoaded(){
+  void correctGhoulNumLoaded() {
     ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
     ArrayList<ArrayList<Image>> ghoulSprites = resourceLoader.getPlayableGhoul(0);
-    assertEquals(4,ghoulSprites.size());
-    assertEquals(1,ghoulSprites.get(0).size());
+    assertEquals(4, ghoulSprites.size());
+    assertEquals(1, ghoulSprites.get(0).size());
   }
 
   @Test
-  void recolouredMipPink(){
+  void recolouredMipPink() {
     ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
     ArrayList<ArrayList<Image>> mipSprites = resourceLoader.getPlayableMip(1);
-    BufferedImage firstSprite = SwingFXUtils.fromFXImage(mipSprites.get(0).get(0),null);
+    BufferedImage firstSprite = SwingFXUtils.fromFXImage(mipSprites.get(0).get(0), null);
 
-
-
-    assertEquals(testPaletteLoader("mip_palette").getRGB(0,1),firstSprite.getRGB(11,9));
+    assertEquals(testPaletteLoader("mip_palette").getRGB(0, 1), firstSprite.getRGB(11, 9));
   }
 
   @Test
-  void recolouredMipGreen(){
+  void recolouredMipGreen() {
     ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
     ArrayList<ArrayList<Image>> mipSprites = resourceLoader.getPlayableMip(2);
-    BufferedImage firstSprite = SwingFXUtils.fromFXImage(mipSprites.get(0).get(0),null);
-    assertEquals(testPaletteLoader("mip_palette").getRGB(0,2),firstSprite.getRGB(11,9));
+    BufferedImage firstSprite = SwingFXUtils.fromFXImage(mipSprites.get(0).get(0), null);
+    assertEquals(testPaletteLoader("mip_palette").getRGB(0, 2), firstSprite.getRGB(11, 9));
   }
 
   /**
    * tests end of sheet edge case
    */
   @Test
-  void recolouredMipRed(){
+  void recolouredMipRed() {
     ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
     ArrayList<ArrayList<Image>> mipSprites = resourceLoader.getPlayableMip(4);
-    BufferedImage firstSprite = SwingFXUtils.fromFXImage(mipSprites.get(0).get(0),null);
-    assertEquals(testPaletteLoader("mip_palette").getRGB(0,4),firstSprite.getRGB(11,9));
+    BufferedImage firstSprite = SwingFXUtils.fromFXImage(mipSprites.get(0).get(0), null);
+    assertEquals(testPaletteLoader("mip_palette").getRGB(0, 4), firstSprite.getRGB(11, 9));
   }
 
   @Test
@@ -127,8 +125,8 @@ public class ResourceLoaderTests {
   @Test
   void floorLoaded() {
     ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
-    BufferedImage floor = SwingFXUtils
-        .fromFXImage(resourceLoader.getMapTiles().get(MapElement.FLOOR.toInt()), null);
+    BufferedImage floor =
+        SwingFXUtils.fromFXImage(resourceLoader.getMapTiles().get(MapElement.FLOOR.toInt()), null);
     assertEquals(19, floor.getHeight());
     assertEquals(39, floor.getWidth());
   }
@@ -136,13 +134,13 @@ public class ResourceLoaderTests {
   @Test
   void wallLoaded() {
     ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
-    BufferedImage wall = SwingFXUtils
-        .fromFXImage(resourceLoader.getMapTiles().get(MapElement.WALL.toInt()), null);
+    BufferedImage wall =
+        SwingFXUtils.fromFXImage(resourceLoader.getMapTiles().get(MapElement.WALL.toInt()), null);
     assertEquals(29, wall.getHeight());
     assertEquals(39, wall.getWidth());
   }
 
-  BufferedImage testPaletteLoader(String paletteName){
+  BufferedImage testPaletteLoader(String paletteName) {
     File file = new File("src/test/resources/sprites/default/playable/" + paletteName + ".png");
     BufferedImage palette = null;
     try {
@@ -153,7 +151,4 @@ public class ResourceLoaderTests {
 
     return palette;
   }
-
-
 }
-

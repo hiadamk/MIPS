@@ -3,10 +3,13 @@ package ai.routefinding;
 import utils.Point;
 import utils.enums.Direction;
 
-/**Interface used to allow a {@link Direction} to be produced based on implemented conditions.
- * @author Lewis Ackroyd*/
+/**
+ * Interface used to allow a {@link Direction} to be produced based on implemented conditions.
+ *
+ * @author Lewis Ackroyd
+ */
 public interface RouteFinder {
-    
+
     /**
      * Returns the direction to travel in until the next junction is reached.
      *
@@ -15,5 +18,4 @@ public interface RouteFinder {
      * @return The direction to travel in.
      */
     public Direction getRoute(Point myLocation, Point targetLocation);
-    
 }
