@@ -86,11 +86,11 @@ public class MenuController {
     private Button nameEntryBtn;
     private ImageView nameEntryImg;
     
-    
     private VBox multiplayerOptions;
     private VBox gameModeOptions;
     private VBox resolutionOptions;
     private VBox nameEntryOptions;
+    private VBox searchingForMutiplayers;
     private Font font;
     
     
@@ -168,7 +168,7 @@ public class MenuController {
     public Node createMainMenu() {
     
         try {
-            this.font = Font.loadFont(new FileInputStream(new File("src/main/resources/ui/PressStart2P.ttf")), 40);
+            this.font = Font.loadFont(new FileInputStream(new File("src/main/resources/ui/PressStart2P.ttf")), 26);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -235,7 +235,6 @@ public class MenuController {
         this.multiplayerBtn.setOnAction(e -> {
             audioController.playSound(Sounds.click);
             moveItemsToBackTree();
-//            itemsOnScreen.add(multiplayerOptions);
             itemsOnScreen.add(nameEntryOptions);
             showItemsOnScreen();
             
@@ -256,8 +255,6 @@ public class MenuController {
         lowRes.setOnAction(event -> {
             audioController.playSound(Sounds.click);
             updateView(ScreenResolution.LOW);
-//            lowResImageView.setImage(lowResW);
-//            medResImageView.set
         });
     
         medRes = new Button();
@@ -377,7 +374,6 @@ public class MenuController {
         root.getChildren().add(volumeImg);
         volumeImg.setFitWidth(250);
     
-    
         incrVolumeBtn = new Button();
         StackPane.setAlignment(incrVolumeBtn, Pos.CENTER_LEFT);
         StackPane.setMargin(incrVolumeBtn, new Insets(530, 0, 0, 250));
@@ -478,9 +474,7 @@ public class MenuController {
         quitBtn.setOnAction(event -> {
             audioController.playSound(Sounds.click);
             System.exit(0);
-    
         });
-    
     
         joinGameBtn = new Button();
         joinGameBtn.setPickOnBounds(true);
@@ -505,24 +499,19 @@ public class MenuController {
         createGameBtn.setOnAction(event -> {
             audioController.playSound(Sounds.click);
             moveItemsToBackTree();
-            itemsOnScreen.add(lobbyStatusLbl);
-            itemsOnScreen.add(loadingDots);
+            itemsOnScreen.add(searchingForMutiplayers);
             itemsOnScreen.add(startMGameBtn);
-            lobbyStatusLbl.setVisible(true);
-            loadingDots.setVisible(true);
+            searchingForMutiplayers.setVisible(true);
             startMGameBtn.setVisible(true);
             client.createMultiplayerLobby();
         });
     
-        multiplayerOptions = new VBox(10, joinGameBtn, createGameBtn);
+        multiplayerOptions = new VBox(10, createGameBtn, joinGameBtn);
         multiplayerOptions.setAlignment(Pos.CENTER);
         StackPane.setAlignment(multiplayerOptions, Pos.CENTER);
         StackPane.setMargin(multiplayerOptions, new Insets(100, 0, 0, 0));
         root.getChildren().add(multiplayerOptions);
-    
-    
         multiplayerOptions.setVisible(false);
-        
         
         createLobbyBtn = new Button();
         StackPane.setAlignment(createGameBtn, Pos.BOTTOM_CENTER);
@@ -536,7 +525,6 @@ public class MenuController {
     
         lobbyStatusLbl = new Label("Searching for players");
         lobbyStatusLbl.setTextFill(Color.WHITE);
-        lobbyStatusLbl.setVisible(false);
         lobbyStatusLbl.setFont(this.font);
         StackPane.setAlignment(lobbyStatusLbl, Pos.CENTER);
         StackPane.setMargin(lobbyStatusLbl, new Insets(0, 0, 350, 0));
@@ -544,12 +532,18 @@ public class MenuController {
     
         loadingDots = new Label(" .");
         loadingDots.setTextFill(Color.WHITE);
-        loadingDots.setVisible(false);
         loadingDots.setFont(this.font);
         StackPane.setAlignment(loadingDots, Pos.CENTER);
         StackPane.setMargin(loadingDots, new Insets(0, 0, 300, 0));
         root.getChildren().add(loadingDots);
     
+        searchingForMutiplayers = new VBox(5, lobbyStatusLbl, loadingDots);
+        searchingForMutiplayers.setAlignment(Pos.CENTER);
+        StackPane.setAlignment(searchingForMutiplayers, Pos.CENTER);
+        StackPane.setMargin(searchingForMutiplayers, new Insets(100, 0, 0, 0));
+        root.getChildren().add(searchingForMutiplayers);
+        searchingForMutiplayers.setVisible(false);
+        
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, event -> {
     
@@ -566,26 +560,36 @@ public class MenuController {
         timeline.play();
     
         nameEntry = new TextField();
-//        nameEntry.setFont(Font.loadFont("src/main/resources/ui/PressStart2P.ttf", 30));
-        nameEntry.setStyle("-fx-text-fill: white; -fx-prompt-text-fill: red");
+        Font nameEntryFont = Font.font("Verdana");
+        try {
+            nameEntryFont = Font.loadFont(new FileInputStream(new File("src/main/resources/ui/PressStart2P.ttf")), 16);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         nameEntry.setPromptText("Please enter your player name...");
-        nameEntry.setStyle("-fx-background-color: transparent;");
+        nameEntry.setStyle("-fx-text-inner-color: white; " +
+                "-fx-prompt-text-fill: white; " +
+                "-fx-background-color: transparent;");
+        nameEntry.setFont(nameEntryFont);
         nameEntry.setAlignment(Pos.CENTER);
-//        nameEntry.
     
         Line clear = new Line(0, 100, 600, 100);
-//        clear.
         clear.setStroke(Color.WHITE);
         VBox nameAndLine = new VBox(nameEntry, clear);
         nameAndLine.setAlignment(Pos.CENTER);
-        
         
         nameEntryBtn = new Button();
         nameEntryBtn.setStyle("-fx-background-color: transparent;");
         Image continueImg = new Image("ui/continue.png");
         ImageView continueView = new ImageView(continueImg);
         nameEntryBtn.setGraphic(continueView);
-    
+        nameEntryBtn.setOnAction(event -> {
+            audioController.playSound(Sounds.click);
+            moveItemsToBackTree();
+            itemsOnScreen.add(multiplayerOptions);
+            showItemsOnScreen();
+        });
+        
         nameEntryOptions = new VBox(30, nameAndLine, nameEntryBtn);
         nameEntryOptions.setAlignment(Pos.CENTER);
         StackPane.setAlignment(nameEntryOptions, Pos.CENTER);
@@ -593,7 +597,6 @@ public class MenuController {
         nameEntryOptions.setPrefWidth(300);
         nameEntryOptions.setVisible(false);
         root.getChildren().add(nameEntryOptions);
-    
     
         backBtn = new Button();
         StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);
