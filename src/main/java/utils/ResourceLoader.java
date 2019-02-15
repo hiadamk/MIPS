@@ -44,13 +44,14 @@ public class ResourceLoader {
    */
   public ResourceLoader(String baseDir) {
     BASE_DIR = baseDir;
-    //BASE_DIR = "";
 
     this.loadMap("default");
     this.loadPlayableMip("default");
     this.loadPlayableGhoul("default");
     this.loadMapTiles("default");
     this.loadBackground("default");
+    this.loadClientMarker("default");
+    this.loadMipMarker("default");
     this.loadThemes();
 
   }
@@ -167,12 +168,12 @@ public class ResourceLoader {
 
     ratio = (integerScaling) ? Math.floor(ratio) : ratio;
 
-    for (int i = 0; i < mipSprites.size(); i++) {
-      resizeSpritesSmooth(mipSprites.get(i), ratio);
+    for (ArrayList<BufferedImage> mipSprite : mipSprites) {
+      resizeSpritesSmooth(mipSprite, ratio);
     }
 
-    for (int i = 0; i < mipSprites.size(); i++) {
-      resizeSpritesSmooth(ghoulSprites.get(i), ratio);
+    for (ArrayList<BufferedImage> ghoulSprite : ghoulSprites) {
+      resizeSpritesSmooth(ghoulSprite, ratio);
     }
 
     resizeSpritesSmooth(mapTiles, ratio);
