@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 
 
@@ -44,7 +43,7 @@ public class MenuController {
     private boolean soundFX = true;
     private boolean music = true;
     private Stage primaryStage;
-    private Stack backTree = new Stack();
+    private Stack<ArrayList<Node>> backTree = new Stack<>();
     private ArrayList<Node> itemsOnScreen = new ArrayList<>();
     
     private Button singlePlayerBtn;
@@ -124,7 +123,7 @@ public class MenuController {
      */
     private void moveItemsToBackTree() {
         hideItemsOnScreen();
-        List<Node> components = new ArrayList<>(itemsOnScreen);
+        ArrayList<Node> components = new ArrayList<>(itemsOnScreen);
         backTree.push(components);
         itemsOnScreen.clear();
     }
@@ -603,13 +602,13 @@ public class MenuController {
         backBtn.setStyle("-fx-background-color: transparent;");
         backBtn.setOnAction(event -> {
             audioController.playSound(Sounds.click);
-            if (backTree.isEmpty()) {
-            } else {
+    
+            if (!backTree.isEmpty()) {
                 for (Node item : itemsOnScreen) {
                     item.setVisible(false);
                 }
                 itemsOnScreen.clear();
-                ArrayList<Node> toShow = (ArrayList<Node>) backTree.pop();
+                ArrayList<Node> toShow = backTree.pop();
                 for (Node item : toShow) {
                     item.setVisible(true);
                     itemsOnScreen.add(item);
@@ -618,7 +617,6 @@ public class MenuController {
                     backBtn.setVisible(false);
                     isHome = true;
                 }
-    
             }
         });
     
