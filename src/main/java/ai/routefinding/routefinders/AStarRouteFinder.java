@@ -1,16 +1,14 @@
 package ai.routefinding.routefinders;
 
-import java.awt.Point;
-import java.awt.geom.Point2D;
-import java.util.HashMap;
-import java.util.HashSet;
-
 import ai.mapping.Mapping;
 import ai.routefinding.AStarData;
 import ai.routefinding.RouteFinder;
-import objects.Entity;
 import utils.Map;
+import utils.Point;
 import utils.enums.Direction;
+
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**A* route finding algorithm implementation.
  * @author Lewis Ackroyd*/
@@ -29,24 +27,24 @@ public class AStarRouteFinder implements RouteFinder {
 		this.map = map;
 	}
 	
-    /**
-     * Returns the direction to travel in until the next junction is reached. Requires {@link
-     * #setAgents(Entity[], int) setAgents()} method to have been called before use.
-     *
-     * @param pacmanID The main ID of the entity that is currently pacman.
-     * @param myLocation
-     * @param targetLocation
-     * @return The direction to travel in.
-     * @throws IllegalStateException    The gameAgents have not been set. Call {@link
-     *                                  #setAgents(Entity[], int) setAgents()} before calling this method.
-     * @throws IllegalArgumentException PacmanID must be within the range of gameAgents Array.
-     */
+	//    /**
+//     * Returns the direction to travel in until the next junction is reached. Requires {@link
+//     * #setAgents(Entity[], int) setAgents()} method to have been called before use.
+//     *
+//     * @param pacmanID The main ID of the entity that is currently pacman.
+//     * @param myLocation
+//     * @param targetLocation
+//     * @return The direction to travel in.
+//     * @throws IllegalStateException    The gameAgents have not been set. Call {@link
+//     *                                  #setAgents(Entity[], int) setAgents()} before calling this method.
+//     * @throws IllegalArgumentException PacmanID must be within the range of gameAgents Array.
+//     */
 	@Override
-	public Direction getRoute(Point2D.Double myLocPointDouble, Point2D.Double targetLocPointDouble) {
+	public Direction getRoute(Point myLocPointDouble, Point targetLocPointDouble) {
 		Point myLocation = Mapping.getGridCoord(myLocPointDouble);
 		Point targetLocation = Mapping.getGridCoord(targetLocPointDouble);
 		if (!junctions.contains(myLocation)) {
-			Point2D.Double nearestJunct = Mapping.findNearestJunction(myLocPointDouble, map, junctions);
+			Point nearestJunct = Mapping.findNearestJunction(myLocPointDouble, map, junctions);
 			return Mapping.directionBetweenPoints(myLocPointDouble, nearestJunct);
 		}
 		Point targetJunction;

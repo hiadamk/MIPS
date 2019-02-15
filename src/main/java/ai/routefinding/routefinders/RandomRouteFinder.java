@@ -1,9 +1,10 @@
 package ai.routefinding.routefinders;
 
-import utils.enums.Direction;
-import java.awt.geom.Point2D;
-import java.util.Random;
 import ai.routefinding.RouteFinder;
+import utils.Point;
+import utils.enums.Direction;
+
+import java.util.Random;
 
 /**Random direction generator. Twice as likely to produce a route towards the target as one away from it.
  * @author Lewis Ackroyd*/
@@ -27,7 +28,7 @@ public class RandomRouteFinder implements RouteFinder {
      * @throws NullPointerException One or both of positions are null.
      */
     @Override
-    public Direction getRoute(Point2D.Double myLocation, Point2D.Double targetLocation) {
+    public Direction getRoute(Point myLocation, Point targetLocation) {
     	if (myLocation == null || targetLocation == null) {
     		throw new NullPointerException("One or both positions are null.");
     	}

@@ -59,4 +59,10 @@ public class Point {
   public String toString() {
     return "[Point] x = " + x + ", y = " + y;
   }
+  
+  public double distance(Point to) {
+    double aSquared = Math.pow(this.x - to.getX(), 2);
+    double bSquared = Math.pow(this.y - to.getY(), 2);
+    return Math.sqrt(aSquared + bSquared);
+  }
 }

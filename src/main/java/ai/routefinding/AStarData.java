@@ -1,6 +1,6 @@
 package ai.routefinding;
 
-import java.awt.Point;
+import utils.Point;
 
 public class AStarData {
 	private final Point myPosition;

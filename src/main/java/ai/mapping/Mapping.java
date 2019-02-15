@@ -1,8 +1,9 @@
 package ai.mapping;
 
 import utils.Map;
+import utils.Point;
 import utils.enums.Direction;
-import java.awt.Point;
+
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,31 +18,31 @@ public abstract class Mapping {
      * @param map The map having junctions identified on.
      * @return A {@link HashSet}&lt;{@link Point Point}&gt; containing all points of junctions.
      */
-    public static HashSet<Point> getJunctions(Map map) {
+    public static HashSet<utils.Point> getJunctions(Map map) {
         
         HashSet<Point> junctions = new HashSet<Point>();
         for (int x = 0; x < map.getMaxX(); x++) {
             for (int y = 0; y < map.getMaxY(); y++) {
                 // left right down up
                 boolean[] isPath = {false, false, false, false};
-                if (!map.isWall(new Point.Double(x, y))) {
+                if (!map.isWall(new Point(x, y))) {
                     if (x > 0) { // left
-                        if (!map.isWall(new Point.Double(x - 1, y))) {
+                        if (!map.isWall(new Point(x - 1, y))) {
                             isPath[0] = true;
                         }
                     }
                     if (x < (map.getMaxX() - 1)) { // right
-                        if (!map.isWall(new Point.Double(x + 1, y))) {
+                        if (!map.isWall(new Point(x + 1, y))) {
                             isPath[1] = true;
                         }
                     }
                     if (y > 0) { // down
-                        if (!map.isWall(new Point.Double(x, y - 1))) {
+                        if (!map.isWall(new Point(x, y - 1))) {
                             isPath[2] = true;
                         }
                     }
                     if (y < (map.getMaxY() - 1)) { // up
-                        if (!map.isWall(new Point.Double(x, y + 1))) {
+                        if (!map.isWall(new Point(x, y + 1))) {
                             isPath[3] = true;
                         }
                     }
@@ -83,10 +84,10 @@ public abstract class Mapping {
         // generates links for every junction
         for (Point p : junctions) {
             HashSet<Point> edgeSet = new HashSet<Point>();
-            int currentX = p.x - 1;
+            double currentX = p.getX() - 1;
             // a wall or junction will terminate the search
-            while (currentX > 0 && !(map.isWall(new Point.Double(currentX, p.y)))) {
-                Point testPoint = new Point(currentX, p.y);
+            while (currentX > 0 && !(map.isWall(new Point(currentX, p.getY())))) {
+                Point testPoint = new Point(currentX, p.getY());
                 if (junctions.contains(testPoint)) {
                     // if a junction is found it is added to the edge pairing
                     edgeSet.add(testPoint);
@@ -94,10 +95,10 @@ public abstract class Mapping {
                 }
                 currentX--;
             }
-            currentX = p.x + 1;
+            currentX = p.getX() + 1;
             // a wall or junction will terminate the search
-            while (currentX < map.getMaxX() && (!map.isWall(new Point.Double(currentX, p.y)))) {
-                Point testPoint = new Point(currentX, p.y);
+            while (currentX < map.getMaxX() && (!map.isWall(new Point(currentX, p.getY())))) {
+                Point testPoint = new Point(currentX, p.getY());
                 if (junctions.contains(testPoint)) {
                     // if a junction is found it is added to the edge pairing
                     edgeSet.add(testPoint);
@@ -105,10 +106,10 @@ public abstract class Mapping {
                 }
                 currentX++;
             }
-            int currentY = p.y - 1;
+            double currentY = p.getY() - 1;
             // a wall or junction will terminate the search
-            while (currentY > 0 && !(map.isWall(new Point.Double(p.x, currentY)))) {
-                Point testPoint = new Point(p.x, currentY);
+            while (currentY > 0 && !(map.isWall(new Point(p.getX(), currentY)))) {
+                Point testPoint = new Point(p.getX(), currentY);
                 if (junctions.contains(testPoint)) {
                     // if a junction is found it is added to the edge pairing
                     edgeSet.add(testPoint);
@@ -116,10 +117,10 @@ public abstract class Mapping {
                 }
                 currentY--;
             }
-            currentY = p.y + 1;
+            currentY = p.getY() + 1;
             // a wall or junction will terminate the search
-            while (currentY < map.getMaxY() && (!map.isWall(new Point.Double(p.x, currentY)))) {
-                Point testPoint = new Point(p.x, currentY);
+            while (currentY < map.getMaxY() && (!map.isWall(new Point(p.getX(), currentY)))) {
+                Point testPoint = new Point(p.getX(), currentY);
                 if (junctions.contains(testPoint)) {
                     // if a junction is found it is added to the edge pairing
                     edgeSet.add(testPoint);
@@ -132,7 +133,7 @@ public abstract class Mapping {
         return edgeMap;
     }
     
-    public static Point getGridCoord(Point2D.Double position) {
+    public static Point getGridCoord(Point position) {
         return new Point((int) Math.floor(position.getX()), (int) Math.floor(position.getY()));
     }
 
@@ -141,8 +142,8 @@ public abstract class Mapping {
         Point2D.Double t = new Point2D.Double(target.getX(), target.getY());
         return directionBetweenPoints(s,t);
     }
-
-    public static Direction directionBetweenPoints(Point2D.Double start, Point2D.Double target) {
+    
+    public static Direction directionBetweenPoints(Point2D start, Point2D target) {
         if (start.getX()==target.getX()) {
             if (start.getY()>target.getY()) {
                 return Direction.UP;
@@ -158,26 +159,26 @@ public abstract class Mapping {
             return Direction.RIGHT;
         }
     }
-
-    public static Point2D.Double findNearestJunction(Point2D.Double position, Map map, HashSet<Point> junctions) {
+    
+    public static Point findNearestJunction(Point position, Map map, HashSet<Point> junctions) {
         double vertical = costVertical(position, map, junctions);
         double horizontal = costHorizontal(position, map, junctions);
-        Point2D.Double output;
+        Point output;
         if (Math.abs(vertical)<Math.abs(horizontal)) {
-            output = new Point2D.Double(position.getX(), position.getY() + vertical);
+            output = new Point(position.getX(), position.getY() + vertical);
         }
         else {
-            output = new Point2D.Double(position.getX()+horizontal, position.getY());
+            output = new Point(position.getX() + horizontal, position.getY());
         }
         if (map.withinBounds(output)) {
             return output;
         }
         return position;
     }
-
-    private static double costVertical(Point2D.Double position, Map map, HashSet<Point> junctions) {
-        Point2D.Double up = new Point2D.Double(position.getX(), position.getY());
-        Point2D.Double down = new Point2D.Double(position.getX(), position.getY());
+    
+    private static double costVertical(Point position, Map map, HashSet<Point> junctions) {
+        Point up = new Point(position.getX(), position.getY());
+        Point down = new Point(position.getX(), position.getY());
         while (!map.isWall(up)||!map.isWall(down)) {
             if (!map.isWall(up)) {
                 if (junctions.contains(Mapping.getGridCoord(up))) {
@@ -194,10 +195,10 @@ public abstract class Mapping {
         }
         return Double.MAX_VALUE;
     }
-
-    private static double costHorizontal(Point2D.Double position, Map map, HashSet<Point> junctions) {
-        Point2D.Double left = new Point2D.Double(position.getX(), position.getY());
-        Point2D.Double right = new Point2D.Double(position.getX(), position.getY());
+    
+    private static double costHorizontal(Point position, Map map, HashSet<Point> junctions) {
+        Point left = new Point(position.getX(), position.getY());
+        Point right = new Point(position.getX(), position.getY());
         while (!map.isWall(left)||!map.isWall(right)) {
             if (!map.isWall(left)) {
                 if (junctions.contains(Mapping.getGridCoord(left))) {
