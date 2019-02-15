@@ -15,7 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import objects.Entity;
 import utils.Map;
-import utils.Renderable;
+import utils.Point;
 import utils.ResourceLoader;
 import utils.enums.MapElement;
 
@@ -111,7 +111,7 @@ public class Renderer {
     int entityCounter = 0;
     Image currentSprite;
     Point2D.Double rendCoord;
-    Point2D.Double spriteCoord = new Point2D.Double(java.lang.Double.MAX_VALUE,
+    Point spriteCoord = new Point(java.lang.Double.MAX_VALUE,
         java.lang.Double.MAX_VALUE);
 
     int x;
@@ -123,7 +123,8 @@ public class Renderer {
       y = (int) coord.getY();
 
       if (MapElement.FLOOR.toInt() == rawMap[x][y]) {
-        rendCoord = getIsoCoord(x, y, mapTiles.get(MapElement.FLOOR.toInt()).getHeight());
+        rendCoord = getIsoCoord(x, y, mapTiles.get(MapElement.FLOOR.toInt()).getHeight(),
+            mapTiles.get(MapElement.FLOOR.toInt()).getWidth());
         gc.drawImage(mapTiles.get(MapElement.FLOOR.toInt()), rendCoord.x, rendCoord.y);
       }
     }
@@ -134,7 +135,7 @@ public class Renderer {
       y = (int) coord.getY();
 
       currentSprite = mapTiles.get(rawMap[x][y]);
-      rendCoord = getIsoCoord(x, y, currentSprite.getHeight());
+      rendCoord = getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
       if (MapElement.FLOOR.toInt() == rawMap[x][y]) {
         continue;
       }
@@ -173,19 +174,19 @@ public class Renderer {
     gc.drawImage(background, 0, 0, xResolution, yResolution);
 
     //Render map base
-    Point2D.Double tmpCoord = getIsoCoord(0, 0, tileSizeY);
+    Point2D.Double tmpCoord = getIsoCoord(0, 0, tileSizeY, tileSizeX);
     Point2D.Double topLeft = new Double(tmpCoord.getX() + 0.5 * tileSizeX,
         tmpCoord.getY() - 0.5 * MAP_BORDER);
 
-    tmpCoord = getIsoCoord(map.getMaxX(), 0, tileSizeY);
+    tmpCoord = getIsoCoord(map.getMaxX(), 0, tileSizeY, tileSizeX);
     Point2D.Double topRight = new Double(tmpCoord.getX() + MAP_BORDER + tileSizeX,
         tmpCoord.getY() + 0.5 * tileSizeY);
 
-    tmpCoord = getIsoCoord(0, map.getMaxY(), tileSizeY);
+    tmpCoord = getIsoCoord(0, map.getMaxY(), tileSizeY, tileSizeX);
     Point2D.Double bottomLeft = new Double(tmpCoord.getX() - 0.5 * MAP_BORDER,
         tmpCoord.getY() + 0.5 * tileSizeY);
 
-    tmpCoord = getIsoCoord(map.getMaxX(), map.getMaxY(), tileSizeY);
+    tmpCoord = getIsoCoord(map.getMaxX(), map.getMaxY(), tileSizeY, tileSizeX);
     Point2D.Double bottomRight = new Double(tmpCoord.getX() + 0.5 * tileSizeX,
         tmpCoord.getY() + 0.5 * MAP_BORDER + tileSizeY);
 
@@ -203,7 +204,8 @@ public class Renderer {
     double ratio = ((percentageXRes * xResolution) / yChange) * (map.getMaxY() / (double) 20);
 
     //double x = bottomRight.getX() - xChange * ratio;
-    double x = getIsoCoord(map.getMaxX() / (double) 2, map.getMaxY() / (double) 2, tileSizeY)
+    double x = getIsoCoord(map.getMaxX() / (double) 2, map.getMaxY() / (double) 2, tileSizeY,
+        tileSizeX)
         .getX();
     double y = bottomRight.getY() + yChange * ratio;
 
@@ -238,8 +240,9 @@ public class Renderer {
    * @param y cartesian Y coordinate
    * @param spriteHeight vertical offset
    */
-  private Point2D.Double getIsoCoord(double x, double y, double spriteHeight) {
-    double isoX = mapRenderingCorner.getX() - (y - x) * (this.tileSizeX / (double) 2);
+  private Point2D.Double getIsoCoord(double x, double y, double spriteHeight, double spriteWidth) {
+    double isoX = mapRenderingCorner.getX() - (y - x) * (this.tileSizeX / (double) 2) + (tileSizeX
+        - spriteWidth);
     double isoY =
         mapRenderingCorner.getY() + (y + x) * (this.tileSizeY / (double) 2) + (tileSizeY
             - spriteHeight);
@@ -249,12 +252,23 @@ public class Renderer {
   /**
    * @param e entity to render
    */
-  private void renderEntity(Renderable e) {
+  private void renderEntity(Entity e) {
     Image currentSprite = e.getImage().get(0);
     Point2D.Double rendCoord = getIsoCoord(e.getLocation().getX() - 0.5,
         e.getLocation().getY() - 0.5,
-        currentSprite.getHeight());
+        currentSprite.getHeight(), currentSprite.getWidth());
     gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
+
+    //render marker for entity
+    if (e.getClientId() != clientID || !e.isPacman()) {
+      return;
+    }
+
+    Image marker = (e.isPacman()) ? r.getMipMarker() : r.getMClientMarker();
+    Point2D.Double coord = getIsoCoord(e.getLocation().getX(), e.getLocation().getY(),
+        marker.getHeight(), marker.getWidth());
+
+    gc.drawImage(marker, coord.getX(), coord.getY() + currentSprite.getHeight());
   }
 
   /**

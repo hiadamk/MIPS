@@ -2,8 +2,7 @@ package ai;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.awt.Point;
-import java.awt.geom.Point2D;
+import utils.Point;
 import java.util.HashMap;
 import java.util.HashSet;
 

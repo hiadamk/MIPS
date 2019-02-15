@@ -3,14 +3,15 @@ package ai;
 import ai.mapping.Mapping;
 import ai.routefinding.NoRouteFinderException;
 import ai.routefinding.RouteFinder;
-import ai.routefinding.routefinders.*;
+import ai.routefinding.routefinders.MipsManRouteFinder;
+import ai.routefinding.routefinders.RandomRouteFinder;
 import objects.Entity;
 import utils.Input;
 import utils.Map;
 import utils.Methods;
+import utils.Point;
 import utils.enums.Direction;
-import java.awt.Point;
-import java.awt.geom.Point2D;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.BlockingQueue;
@@ -244,9 +245,9 @@ public class AILoopControl extends Thread {
                             executeRoute(ent);
                         } else {
                             if (ent.getDirection() == null || !Methods.validiateDirection(ent.getDirection(), ent, map)) {
-                                Point2D.Double nearestJunct = Mapping.findNearestJunction(ent.getLocation(), map, junctions);
+                                Point nearestJunct = Mapping.findNearestJunction(ent.getLocation(), map, junctions);
                                 try {
-                                    if (nearestJunct != ent.getLocation()) {
+                                    if (!nearestJunct.equals(ent.getLocation())) {
 
                                         ent.setDirection(Mapping.directionBetweenPoints(ent.getLocation(), nearestJunct));
                                     } else {
@@ -330,8 +331,8 @@ public class AILoopControl extends Thread {
      */
     private void executeRoute(Entity ent) {
         RouteFinder r = ent.getRouteFinder();
-        Point2D.Double myLoc = ent.getLocation();
-        Point2D.Double mipsManLoc = gameAgents[mipsmanID].getLocation();
+        Point myLoc = ent.getLocation();
+        Point mipsManLoc = gameAgents[mipsmanID].getLocation();
         Direction direction;
         direction = r.getRoute(myLoc, mipsManLoc);
         // re-process a random direction if an invalid move is detected

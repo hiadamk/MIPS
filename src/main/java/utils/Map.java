@@ -1,11 +1,10 @@
 package utils;
 
-import static utils.Methods.mod;
 
-import java.awt.geom.Point2D.Double;
+import utils.enums.MapElement;
+
 import java.util.ArrayList;
 import java.util.Random;
-import utils.enums.MapElement;
 
 /**
  * Encapsulates map with utilities methods
@@ -18,7 +17,7 @@ public class Map {
   private final int MAX_Y;
 
   private final int[][] MAP;
-  private final ArrayList<Double> SPAWN_POINTS;
+  private final ArrayList<Point> SPAWN_POINTS;
 
   /**
    * basic constructor that takes raw ints and performs preprocessing
@@ -40,12 +39,12 @@ public class Map {
    * @return Array of Point2D.Double spawnPoint.
    * @see this#Map(int[][])
    */
-  private ArrayList<Double> loadSpawnPoints() {
-    ArrayList<Double> spawnPoints = new ArrayList<>();
+  private ArrayList<Point> loadSpawnPoints() {
+    ArrayList<Point> spawnPoints = new ArrayList<>();
     for (int i = 0; i < MAX_X; i++) {
       for (int j = 0; j < MAX_Y; j++) {
         if (MAP[i][j] != MapElement.WALL.toInt()) { // SPAWNPOINT.toInt()
-          spawnPoints.add(new Double(i + 0.5, j + 0.5));
+          spawnPoints.add(new Point(i + 0.5, j + 0.5));
         }
       }
     }
@@ -59,8 +58,8 @@ public class Map {
   public int getMaxY() {
     return MAX_Y;
   }
-
-  public boolean withinBounds(Double point) {
+  
+  public boolean withinBounds(Point point) {
     boolean x = point.getX() >= 0 && point.getX() < MAX_X;
     boolean y = point.getY() >= 0 && point.getY() < MAX_Y;
     return x && y;
@@ -72,8 +71,8 @@ public class Map {
    * @param point location to be checked
    * @return true if wall, false otherwise
    */
-  public boolean isWall(Double point) {
-    return MAP[(int) mod(point.getX(), MAX_X)][(int) mod(point.getY(), MAX_Y)]
+  public boolean isWall(Point point) {
+    return MAP[(int) point.getX()][(int) point.getY()]
         == MapElement.WALL.toInt();
   }
 
@@ -89,7 +88,7 @@ public class Map {
   /**
    * @return random location to position ghouls at if caught
    */
-  public Double getRandomSpawnPoint() {
+  public Point getRandomSpawnPoint() {
     return SPAWN_POINTS.get((new Random()).nextInt(SPAWN_POINTS.size()));
   }
 }

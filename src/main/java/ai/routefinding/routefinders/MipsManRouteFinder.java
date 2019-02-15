@@ -1,8 +1,7 @@
 package ai.routefinding.routefinders;
 
-import java.awt.geom.Point2D;
-
 import ai.routefinding.RouteFinder;
+import utils.Point;
 import utils.enums.Direction;
 
 /**Route finding algorithm that controls Mipsman. Will aim to reach the nearest pellet whilst avoiding any ghouls.
@@ -10,7 +9,7 @@ import utils.enums.Direction;
 public class MipsManRouteFinder implements RouteFinder {
 
 	@Override
-	public Direction getRoute(Point2D.Double myLocation, Point2D.Double targetLocation) {
+	public Direction getRoute(Point myLocation, Point targetLocation) {
 		// TODO Auto-generated method stub
 		return new RandomRouteFinder().getRoute(myLocation,targetLocation);
 	}

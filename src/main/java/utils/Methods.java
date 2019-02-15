@@ -1,6 +1,5 @@
 package utils;
 
-import java.awt.geom.Point2D;
 import objects.Entity;
 import utils.enums.Direction;
 
@@ -13,7 +12,7 @@ public class Methods {
   }
 
   public static boolean validiateDirection(Direction d, Entity e, Map m) {
-    Point2D.Double newLoc = new Point2D.Double(e.getLocation().getX(), e.getLocation().getY());
+    Point newLoc = new Point(e.getLocation().getX(), e.getLocation().getY());
     double xpart = mod(newLoc.getX(), 1);
     double ypart = mod(newLoc.getY(), 1);
     if( ypart >= 0.60 || ypart <= 0.40 || xpart >= 0.60 || xpart <= 0.40) return false;
@@ -36,9 +35,8 @@ public class Methods {
     }
     return !m.isWall(newLoc);
   }
-
   public static boolean centreOfSquare(Entity e) {
-    Point2D.Double newLoc = new Point2D.Double(e.getLocation().getX(), e.getLocation().getY());
+    Point newLoc = new Point(e.getLocation().getX(), e.getLocation().getY());
     double xpart = mod(newLoc.getX(), 1);
     double ypart = mod(newLoc.getY(), 1);
     if( ypart >= 0.60 || ypart <= 0.40 || xpart >= 0.60 || xpart <= 0.40) return false;

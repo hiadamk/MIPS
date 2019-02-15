@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -80,9 +81,15 @@ public class MenuController {
     private Label lobbyStatusLbl;
     private Label loadingDots;
     
+    private TextField nameEntry;
+    private Button nameEntryBtn;
+    private ImageView nameEntryImg;
+    
+    
     private VBox multiplayerOptions;
     private VBox gameModeOptions;
     private VBox resolutionOptions;
+    private VBox nameEntryOptions;
     private Font font;
     
     
@@ -227,7 +234,8 @@ public class MenuController {
         this.multiplayerBtn.setOnAction(e -> {
             audioController.playSound(Sounds.click);
             moveItemsToBackTree();
-            itemsOnScreen.add(multiplayerOptions);
+//            itemsOnScreen.add(multiplayerOptions);
+            itemsOnScreen.add(nameEntryOptions);
             showItemsOnScreen();
             
         });
@@ -555,6 +563,28 @@ public class MenuController {
         );
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+    
+        nameEntry = new TextField();
+        nameEntry.setFont(Font.loadFont("src/main/resources/ui/PressStart2P.ttf", 30));
+        nameEntry.setPromptText("Please enter your player name...");
+        nameEntry.setPrefWidth(200);
+//        nameEntry.setStyle("-fx-background-color: transparent;");
+//        nameEntry.
+    
+        nameEntryBtn = new Button();
+        nameEntryBtn.setStyle("-fx-background-color: transparent;");
+        Image continueImg = new Image("ui/continue.png");
+        ImageView continueView = new ImageView(continueImg);
+        nameEntryBtn.setGraphic(continueView);
+    
+        nameEntryOptions = new VBox(30, nameEntry, nameEntryBtn);
+        nameEntryOptions.setAlignment(Pos.CENTER);
+        StackPane.setAlignment(nameEntryOptions, Pos.CENTER);
+        StackPane.setMargin(nameEntryOptions, new Insets(100, 250, 0, 250));
+        nameEntryOptions.setPrefWidth(300);
+        nameEntryOptions.setVisible(false);
+        root.getChildren().add(nameEntryOptions);
+        
     
         backBtn = new Button();
         StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);

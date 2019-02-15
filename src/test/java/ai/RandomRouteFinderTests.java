@@ -2,11 +2,10 @@ package ai;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.awt.geom.Point2D;
+import utils.Point;
 import java.util.HashMap;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import ai.mapping.Mapping;
 import ai.routefinding.routefinders.RandomRouteFinder;
 import objects.Entity;
 import utils.enums.Direction;
@@ -31,7 +30,7 @@ class RandomRouteFinderTests {
 				new Entity(false, 3, null),
 				new Entity(false, 4, null)};
 		for (int i = 0; i < gas.length; i++) {
-			gas[i].setLocation(new Point2D.Double(0, i));
+			gas[i].setLocation(new Point(0, i));
 		}
 		rrf.getRoute(gas[1].getLocation(), gas[0].getLocation());
 	}
@@ -48,7 +47,7 @@ class RandomRouteFinderTests {
 		Executable e = () -> rrf.getRoute(gas[1].getLocation(), gas[0].getLocation());
 		assertThrows(NullPointerException.class, e);
 		
-		gas[0].setLocation(new Point2D.Double(1,1));
+		gas[0].setLocation(new Point(1,1));
 		
 		e = () -> rrf.getRoute(gas[1].getLocation(), gas[0].getLocation());
 		assertThrows(NullPointerException.class, e);
@@ -68,7 +67,7 @@ class RandomRouteFinderTests {
 				new Entity(false, 4, null)};
 
 		for (int i = 0; i < gas.length; i++) {
-			gas[i].setLocation(new Point2D.Double(i, i));
+			gas[i].setLocation(new Point(i, i));
 		}
 		
 		HashMap<Direction, Integer> counters = new HashMap<Direction, Integer>();

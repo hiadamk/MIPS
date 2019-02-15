@@ -1,10 +1,9 @@
 package ai;
 
 import static org.junit.jupiter.api.Assertions.*;
-import java.awt.geom.Point2D;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
+import utils.Point;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import ai.routefinding.RouteFinder;
@@ -67,7 +66,7 @@ class AILoopControlTests {
 		ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
 		int[] ids = {4};
 		for (int i = 0; i<ALL_AGENTS.length; i++) {
-			ALL_AGENTS[i].setLocation(new Point2D.Double(1 + i, 1));
+			ALL_AGENTS[i].setLocation(new Point(1 + i, 1));
 			ALL_AGENTS[i].updateImages(resourceLoader);
 		}
 

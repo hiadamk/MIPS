@@ -1,20 +1,17 @@
 package objects;
 
 import ai.routefinding.RouteFinder;
-import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import javafx.scene.image.Image;
-import utils.Methods;
+import utils.Point;
 import utils.Renderable;
 import utils.ResourceLoader;
 import utils.enums.Direction;
 
 public class Entity implements Renderable {
 
-  private boolean test = false;
-
-  private Point2D.Double location;
+  private boolean test;
+  private Point location;
   private double velocity; // The velocity of the entity currently
   private Direction direction;
   private int score;
@@ -25,7 +22,7 @@ public class Entity implements Renderable {
   private RouteFinder routeFinder;
   private Point lastGridCoord;
 
-  public Entity(Boolean pacMan, int clientId, Point2D.Double location) {
+  public Entity(Boolean pacMan, int clientId, Point location) {
     this.pacMan = pacMan;
     this.clientId = clientId;
     this.location = location;
@@ -51,29 +48,43 @@ public class Entity implements Renderable {
     this.routeFinder = routeFinder;
   }
 
-  public Point2D.Double getLocation() {
+  public Point getLocation() {
     return location;
   }
 
-  public Point2D.Double getFaceLocation(int x, int y) {
+  public void setLocation(Point location) {
+    this.location = location;
+  }
+
+  private Point moveInDirection(double offset) {
+    Point loc = Point.copyOf(this.location);
 
     if (this.direction != null) {
       switch (this.direction) {
         case UP:
-          return new Point2D.Double(
-              this.location.getX(), Methods.mod(this.location.getY() - 0.5, y));
+          loc.increaseY(-offset);
+          break;
         case DOWN:
-          return new Point2D.Double(
-              this.location.getX(), Methods.mod(this.location.getY() + 0.5, y));
+          loc.increaseY(offset);
+          break;
         case LEFT:
-          return new Point2D.Double(
-              Methods.mod(this.location.getX() - 0.5, x), this.location.getY());
+          loc.increaseX(-offset);
+          break;
         case RIGHT:
-          return new Point2D.Double(
-              Methods.mod(this.location.getX() + 0.5, x), this.location.getY());
+          loc.increaseX(offset);
+          break;
       }
     }
-    return this.location;
+
+    return loc;
+  }
+
+  public void move() {
+    this.location = moveInDirection(this.velocity);
+  }
+
+  public Point getFaceLocation() {
+    return moveInDirection(0.5);
   }
 
   public void setLastGridCoord(Point position) {
@@ -82,10 +93,6 @@ public class Entity implements Renderable {
 
   public Point getLastGridCoord() {
     return lastGridCoord;
-  }
-
-  public void setLocation(Point2D.Double location) {
-    this.location = location;
   }
 
   @Override
