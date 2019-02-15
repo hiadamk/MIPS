@@ -36,6 +36,9 @@ public class ResourceLoader {
   private BufferedImage background;
   private BufferedImage backgroundPalette;
 
+  private BufferedImage mipMarker;
+  private BufferedImage clientMarker;
+
   /**
    * @param baseDir path to the resources folder
    */
@@ -104,6 +107,30 @@ public class ResourceLoader {
     return map;
   }
 
+  private void resizeSpritesSmooth(ArrayList<BufferedImage> sprites, double ratio) {
+    BufferedImage temp;
+
+    for (int i = 0; i < sprites.size(); i++) {
+      temp = sprites.get(i);
+      int newWidth = (int) (temp.getWidth() * ratio);
+      int newHeight = (int) (temp.getHeight() * ratio);
+      BufferedImage resizedSprite = new BufferedImage(newWidth, newHeight,
+          BufferedImage.TYPE_4BYTE_ABGR);
+      Graphics2D g = resizedSprite.createGraphics();
+      g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+          RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+      g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,
+          RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+      g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
+
+      g.drawImage(temp, 0, 0, newWidth, newHeight, null);
+      g.dispose();
+
+      sprites.set(i, resizedSprite);
+    }
+
+  }
+
   /**
    * @param theme name of folder which contains the assets for that theme
    */
@@ -152,29 +179,6 @@ public class ResourceLoader {
 
   }
 
-  private void resizeSpritesSmooth(ArrayList<BufferedImage> sprites, double ratio) {
-    BufferedImage temp;
-
-    for (int i = 0; i < sprites.size(); i++) {
-      temp = sprites.get(i);
-      int newWidth = (int) (temp.getWidth() * ratio);
-      int newHeight = (int) (temp.getHeight() * ratio);
-      BufferedImage resizedSprite = new BufferedImage(newWidth, newHeight,
-          BufferedImage.TYPE_4BYTE_ABGR);
-      Graphics2D g = resizedSprite.createGraphics();
-      g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-          RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-      g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,
-          RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-      g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
-
-      g.drawImage(temp, 0, 0, newWidth, newHeight, null);
-      g.dispose();
-
-      sprites.set(i, resizedSprite);
-    }
-
-  }
 
   /**
    * creates coloured sprites of mip according to the colour id selected
@@ -255,6 +259,22 @@ public class ResourceLoader {
 
   public BufferedImage getBackgroundPalette() {
     return this.backgroundPalette;
+  }
+
+  public void loadMipMarker(String theme) {
+    this.mipMarker = loadImageFile("sprites/" + theme + "/misc/", "mip_marker");
+  }
+
+  public Image getMipMarker() {
+    return SwingFXUtils.toFXImage(this.mipMarker, null);
+  }
+
+  public void loadClientMarker(String theme) {
+    this.clientMarker = loadImageFile("sprites/" + theme + "/misc/", "client_marker");
+  }
+
+  public Image getMClientMarker() {
+    return SwingFXUtils.toFXImage(this.clientMarker, null);
   }
 
 
