@@ -81,6 +81,7 @@ public class MenuController {
     
     private Label lobbyStatusLbl;
     private Label loadingDots;
+    private Label playersInLobby;
     
     private TextField nameEntry;
     private Button nameEntryBtn;
@@ -415,55 +416,6 @@ public class MenuController {
         creditsBtn.setGraphic(new ImageView(creditsImg));
         creditsBtn.setVisible(false);
         
-        GaussianBlur gaussianBlur = new GaussianBlur();
-        gaussianBlur.setRadius(11);
-        
-        settingsBtn = new Button();
-        settingsBtn.setStyle("-fx-background-color: transparent;");
-        StackPane.setAlignment(settingsBtn, Pos.TOP_LEFT);
-        StackPane.setMargin(settingsBtn, new Insets(50, 0, 0, 50));
-        Image settingsImg = new Image("ui/settings.png");
-        ImageView settingsView = new ImageView(settingsImg);
-        settingsView.setFitHeight(50);
-        settingsView.setFitWidth(50);
-        settingsView.setPreserveRatio(true);
-        settingsBtn.setGraphic(settingsView);
-        settingsBtn.setOnAction(event -> {
-            audioController.playSound(Sounds.click);
-            if (!viewSettings) {
-                musicBtn.setVisible(true);
-                soundFxBtn.setVisible(true);
-                creditsBtn.setVisible(true);
-                volumeImg.setVisible(true);
-                resolutionOptions.setVisible(true);
-                viewSettings = true;
-                incrVolumeBtn.setVisible(true);
-                decrVolumeBtn.setVisible(true);
-                bg.setEffect(gaussianBlur);
-                hideItemsOnScreen();
-                backBtn.setVisible(false);
-                
-            } else {
-                musicBtn.setVisible(false);
-                soundFxBtn.setVisible(false);
-                viewSettings = false;
-                creditsBtn.setVisible(false);
-                resolutionOptions.setVisible(false);
-                volumeImg.setVisible(false);
-                incrVolumeBtn.setVisible(false);
-                decrVolumeBtn.setVisible(false);
-                bg.setEffect(null);
-                showItemsOnScreen();
-                if (!isHome) {
-                    backBtn.setVisible(true);
-                }
-            }
-    
-        });
-    
-    
-        root.getChildren().add(settingsBtn);
-        
         quitBtn = new Button();
         StackPane.setAlignment(quitBtn, Pos.TOP_RIGHT);
         StackPane.setMargin(quitBtn, new Insets(50, 50, 0, 0));
@@ -526,21 +478,18 @@ public class MenuController {
         lobbyStatusLbl = new Label("Searching for players");
         lobbyStatusLbl.setTextFill(Color.WHITE);
         lobbyStatusLbl.setFont(this.font);
-        StackPane.setAlignment(lobbyStatusLbl, Pos.CENTER);
-        StackPane.setMargin(lobbyStatusLbl, new Insets(0, 0, 350, 0));
-        root.getChildren().add(lobbyStatusLbl);
     
         loadingDots = new Label(" .");
         loadingDots.setTextFill(Color.WHITE);
         loadingDots.setFont(this.font);
-        StackPane.setAlignment(loadingDots, Pos.CENTER);
-        StackPane.setMargin(loadingDots, new Insets(0, 0, 300, 0));
-        root.getChildren().add(loadingDots);
     
-        searchingForMutiplayers = new VBox(5, lobbyStatusLbl, loadingDots);
+        playersInLobby = new Label("Players in lobby: 0");
+        playersInLobby.setTextFill(Color.WHITE);
+        playersInLobby.setFont(this.font);
+    
+        searchingForMutiplayers = new VBox(5, lobbyStatusLbl, loadingDots, playersInLobby);
         searchingForMutiplayers.setAlignment(Pos.CENTER);
         StackPane.setAlignment(searchingForMutiplayers, Pos.CENTER);
-        StackPane.setMargin(searchingForMutiplayers, new Insets(100, 0, 0, 0));
         root.getChildren().add(searchingForMutiplayers);
         searchingForMutiplayers.setVisible(false);
         
@@ -598,6 +547,54 @@ public class MenuController {
         nameEntryOptions.setVisible(false);
         root.getChildren().add(nameEntryOptions);
     
+        GaussianBlur gaussianBlur = new GaussianBlur();
+        gaussianBlur.setRadius(11);
+    
+        settingsBtn = new Button();
+        settingsBtn.setStyle("-fx-background-color: transparent;");
+        StackPane.setAlignment(settingsBtn, Pos.TOP_LEFT);
+        StackPane.setMargin(settingsBtn, new Insets(50, 0, 0, 50));
+        Image settingsImg = new Image("ui/settings.png");
+        ImageView settingsView = new ImageView(settingsImg);
+        settingsView.setFitHeight(50);
+        settingsView.setFitWidth(50);
+        settingsView.setPreserveRatio(true);
+        settingsBtn.setGraphic(settingsView);
+        settingsBtn.setOnAction(event -> {
+            audioController.playSound(Sounds.click);
+            if (!viewSettings) {
+                musicBtn.setVisible(true);
+                soundFxBtn.setVisible(true);
+                creditsBtn.setVisible(true);
+                volumeImg.setVisible(true);
+                resolutionOptions.setVisible(true);
+                viewSettings = true;
+                incrVolumeBtn.setVisible(true);
+                decrVolumeBtn.setVisible(true);
+                bg.setEffect(gaussianBlur);
+                hideItemsOnScreen();
+                backBtn.setVisible(false);
+            
+            } else {
+                musicBtn.setVisible(false);
+                soundFxBtn.setVisible(false);
+                viewSettings = false;
+                creditsBtn.setVisible(false);
+                resolutionOptions.setVisible(false);
+                volumeImg.setVisible(false);
+                incrVolumeBtn.setVisible(false);
+                decrVolumeBtn.setVisible(false);
+                bg.setEffect(null);
+                showItemsOnScreen();
+                if (!isHome) {
+                    backBtn.setVisible(true);
+                }
+            }
+        
+        });
+    
+        root.getChildren().add(settingsBtn);
+        
         backBtn = new Button();
         StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);
         StackPane.setMargin(backBtn, new Insets(0, 0, 100, 0));
