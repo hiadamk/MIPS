@@ -2,6 +2,9 @@ package utils;
 
 import static java.lang.Math.abs;
 
+/**
+ * encapsulates point in 2d space on a map if given map, will ensure modularity
+ */
 public class Point {
 
   private double x;
@@ -34,6 +37,10 @@ public class Point {
     this.MAX_Y = max_y;
     this.mapped = true;
     mod();
+  }
+
+  public static Point copyOf(Point p) {
+    return new Point(p.x, p.y, p.MAX_X, p.MAX_Y);
   }
 
   public double getX() {
