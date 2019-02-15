@@ -217,7 +217,9 @@ public class AILoopControl extends Thread {
     public void run() {
         RouteFinder lastGhostRouteFinder = null;
         System.out.println("Starting AI loop...");
+        // TODO
         while (runAILoop && (controlAgents.length > 0)) {
+            System.out.println("startAI");
             Entity fixRouteFinder = null;
             // every AI entity
             for (Entity ent : controlAgents) {
@@ -228,8 +230,14 @@ public class AILoopControl extends Thread {
                     fixRouteFinder = ent;
                 }
                 // TODO only calculate new route if not at last coordinate OR current direction is invalid
-                if (ent.getLocation() != null && Methods.centreOfSquare(ent)){
-                    if (!atPreviousCoordinate(ent) || !Methods.validiateDirection(ent.getDirection(), ent, map)) {
+                if (ent.getLocation() == null) {
+                    System.err.println("no location " + ent.toString());
+                }
+                else {
+                    System.out.println("AI1" + ent.getClientId());
+                    if (Methods.centreOfSquare(ent)) {
+                    System.out.println("AI2");
+                    if (!atPreviousCoordinate(ent) || ent.getDirection()==null|| !Methods.validiateDirection(ent.getDirection(), ent, map)) {
                         ent.setLastGridCoord(Mapping.getGridCoord(ent.getLocation()));
                         // only route find on junctions
                         if (junctions.contains(Mapping.getGridCoord(ent.getLocation()))) {
@@ -239,12 +247,15 @@ public class AILoopControl extends Thread {
                                 Point2D.Double nearestJunct = Mapping.findNearestJunction(ent.getLocation(), map, junctions);
                                 try {
                                     if (nearestJunct != ent.getLocation()) {
+
                                         ent.setDirection(Mapping.directionBetweenPoints(ent.getLocation(), nearestJunct));
                                     } else {
                                         Direction dir = new RandomRouteFinder().getRoute(ent.getLocation(), gameAgents[mipsmanID].getLocation());
+                                        System.out.println("before1");
                                         while (!Methods.validiateDirection(dir, ent, map)) {
                                             dir = new RandomRouteFinder().getRoute(ent.getLocation(), gameAgents[mipsmanID].getLocation());
                                         }
+                                        System.out.println("after1");
                                         ent.setDirection(dir);
                                     }
                                 } catch (NullPointerException e) {
@@ -252,6 +263,7 @@ public class AILoopControl extends Thread {
                                 }
                             }
                         }
+                    }
                     }
                 }
             }
@@ -262,7 +274,7 @@ public class AILoopControl extends Thread {
                 if (lastGhostRouteFinder != null) {
                     fixRouteFinder.setRouteFinder(lastGhostRouteFinder);
                 } else {
-                    throw new IllegalStateException("Mipsman routefinder incorrectly given to ghost.");
+                    //throw new IllegalStateException("Mipsman routefinder incorrectly given to ghost.");
                 }
             }
 
@@ -271,6 +283,7 @@ public class AILoopControl extends Thread {
             } catch (InterruptedException e) {
                 runAILoop = false;
             }
+            System.out.println("endAI");
         }
     }
 
@@ -322,9 +335,12 @@ public class AILoopControl extends Thread {
         Direction direction;
         direction = r.getRoute(myLoc, mipsManLoc);
         // re-process a random direction if an invalid move is detected
+
+        System.out.println("before2");
         while (!Methods.validiateDirection(direction, ent, map)) {
             direction = new RandomRouteFinder().getRoute(myLoc, mipsManLoc);
         }
+        System.out.println("after2");
         try {
             ent.setDirection(direction);
             directionsOut.add(new Input(ent.getClientId(), direction));

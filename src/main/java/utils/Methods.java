@@ -31,6 +31,8 @@ public class Methods {
       case UP:
         newLoc.setLocation(newLoc.getX(), newLoc.getY() - offset);
         break;
+      default:
+        return false;
     }
     return !m.isWall(newLoc);
   }

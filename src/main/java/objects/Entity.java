@@ -12,6 +12,8 @@ import utils.enums.Direction;
 
 public class Entity implements Renderable {
 
+  private boolean test = false;
+
   private Point2D.Double location;
   private double velocity; // The velocity of the entity currently
   private Direction direction;
@@ -31,6 +33,14 @@ public class Entity implements Renderable {
     this.velocity = pacMan ? 0.08 : 0.06;
     this.direction = Direction.UP;
     // updateImages();
+  }
+
+  public void setTest() {
+    test = true;
+  }
+
+  public boolean getTest() {
+    return test;
   }
 
   public RouteFinder getRouteFinder() {
@@ -99,6 +109,7 @@ public class Entity implements Renderable {
   }
 
   public void setDirection(Direction direction) {
+    System.out.println(this.clientId + " " + direction);
     if (this.direction != direction) {
       this.direction = direction;
       if (direction != null) {
@@ -137,10 +148,26 @@ public class Entity implements Renderable {
 
   @Override
   public String toString() {
+    String outStr = "";
     if (this.pacMan) {
-      return "mip" + clientId;
+      outStr += "mip" + clientId;
     } else {
-      return "ghoul" + clientId;
+      outStr += "ghoul" + clientId;
     }
+    return outStr;
+  }
+
+  public String toStringExpanded() {
+    String outStr = "";
+    if (this.pacMan) {
+      outStr += "mip" + clientId;
+    } else {
+      outStr += "ghoul" + clientId;
+    }
+    outStr += "\nmyloc " + location.toString();
+    outStr += "\nmydir " + direction;
+    outStr += "\nroutefinder " + routeFinder;
+    outStr += "\nlastPos " + lastGridCoord;
+    return outStr;
   }
 }

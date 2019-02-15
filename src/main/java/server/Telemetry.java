@@ -20,7 +20,7 @@ import utils.enums.Direction;
 
 public class Telemetry {
 
-  private static final int AGENT_COUNT = 2;
+  private static final int AGENT_COUNT = 5;
   private BlockingQueue<Input> inputs;
   private BlockingQueue<Input> outputs;
   private Entity[] agents;
@@ -101,10 +101,13 @@ public class Telemetry {
         Double faceLocation = agents[i].getFaceLocation(MAXX, MAXY);
 
         if (m.isWall(faceLocation)) {
+          System.err.println("before " + agents[i].getDirection());
           agents[i].setDirection(null);
+          System.err.println("after");
           agents[i].setLocation(prevLocation);
           System.err.println(i + "prev: " + prevLocation + " " + agents[i].getClientId());
           System.err.println(i + "face: " + faceLocation);
+          //System.err.println(agents[i].toStringExpanded());
         } else {
           //System.out.println(i + "face: " + faceLocation);
         }
@@ -150,6 +153,7 @@ public class Telemetry {
       pacman.setLocation(resourceLoader.getMap().getRandomSpawnPoint());
       pacman.setDirection(Direction.UP);
       pacman.updateImages(resourceLoader);
+      pacman.setTest();
       ghoul.updateImages(resourceLoader);
 
       System.out.println(

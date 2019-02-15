@@ -12,7 +12,7 @@ public class MipsManRouteFinder implements RouteFinder {
 	@Override
 	public Direction getRoute(Point2D.Double myLocation, Point2D.Double targetLocation) {
 		// TODO Auto-generated method stub
-		return Direction.DOWN;
+		return new RandomRouteFinder().getRoute(myLocation,targetLocation);
 	}
 
 }
