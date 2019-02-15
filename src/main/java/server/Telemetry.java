@@ -17,7 +17,7 @@ import utils.enums.Direction;
 
 public class Telemetry {
 
-  private static final int AGENT_COUNT = 1;
+  private static final int AGENT_COUNT = 5;
   private BlockingQueue<Input> inputs;
   private BlockingQueue<Input> outputs;
   private Entity[] agents;
@@ -75,8 +75,8 @@ public class Telemetry {
           System.err.println(i + "face: " + faceLocation);
           agents[i].setLocation(prevLocation);
           agents[i].setDirection(null);
-        } else {
-          System.out.println(i + "face: " + faceLocation);
+//        } else {
+//          System.out.println(i + "face: " + faceLocation);
         }
       }
     }
@@ -127,10 +127,10 @@ public class Telemetry {
   private void initialise() {
     agents = new Entity[AGENT_COUNT];
     agents[0] = new Entity(false, 0, new Point(1.5, 2.5, map));
-    //    agents[1] = new Entity(false, 1, new Point(1.5, 18.5,map));
-    //    agents[2] = new Entity(false, 2, new Point(1.5, 16.5,map));
-    //    agents[3] = new Entity(false, 3, new Point(1.5, 2.5,map));
-    //    agents[4] = new Entity(false, 4, new Point(1.5, 2.5,map));
+    agents[1] = new Entity(false, 1, new Point(1.5, 18.5, map));
+    agents[2] = new Entity(false, 2, new Point(1.5, 16.5, map));
+    agents[3] = new Entity(false, 3, new Point(1.5, 2.5, map));
+    agents[4] = new Entity(false, 4, new Point(1.5, 2.5, map));
     agents[(new Random()).nextInt(AGENT_COUNT)].setPacMan(true);
 
     System.out.println(Arrays.toString(agents));

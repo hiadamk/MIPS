@@ -39,8 +39,16 @@ public class Point {
     mod();
   }
 
+  private Point(double x, double y, int max_x, int max_y, boolean mapped) {
+    this.x = x;
+    this.y = y;
+    this.MAX_X = max_x;
+    this.MAX_Y = max_y;
+    this.mapped = mapped;
+  }
+
   public static Point copyOf(Point p) {
-    return new Point(p.x, p.y, p.MAX_X, p.MAX_Y);
+    return new Point(p.x, p.y, p.MAX_X, p.MAX_Y, p.mapped);
   }
 
   public double getX() {
