@@ -16,6 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -565,26 +566,34 @@ public class MenuController {
         timeline.play();
     
         nameEntry = new TextField();
-        nameEntry.setFont(Font.loadFont("src/main/resources/ui/PressStart2P.ttf", 30));
+//        nameEntry.setFont(Font.loadFont("src/main/resources/ui/PressStart2P.ttf", 30));
+        nameEntry.setStyle("-fx-text-fill: white; -fx-prompt-text-fill: red");
         nameEntry.setPromptText("Please enter your player name...");
-        nameEntry.setPrefWidth(200);
-//        nameEntry.setStyle("-fx-background-color: transparent;");
+        nameEntry.setStyle("-fx-background-color: transparent;");
+        nameEntry.setAlignment(Pos.CENTER);
 //        nameEntry.
     
+        Line clear = new Line(0, 100, 600, 100);
+//        clear.
+        clear.setStroke(Color.WHITE);
+        VBox nameAndLine = new VBox(nameEntry, clear);
+        nameAndLine.setAlignment(Pos.CENTER);
+        
+        
         nameEntryBtn = new Button();
         nameEntryBtn.setStyle("-fx-background-color: transparent;");
         Image continueImg = new Image("ui/continue.png");
         ImageView continueView = new ImageView(continueImg);
         nameEntryBtn.setGraphic(continueView);
     
-        nameEntryOptions = new VBox(30, nameEntry, nameEntryBtn);
+        nameEntryOptions = new VBox(30, nameAndLine, nameEntryBtn);
         nameEntryOptions.setAlignment(Pos.CENTER);
         StackPane.setAlignment(nameEntryOptions, Pos.CENTER);
         StackPane.setMargin(nameEntryOptions, new Insets(100, 250, 0, 250));
         nameEntryOptions.setPrefWidth(300);
         nameEntryOptions.setVisible(false);
         root.getChildren().add(nameEntryOptions);
-        
+    
     
         backBtn = new Button();
         StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);

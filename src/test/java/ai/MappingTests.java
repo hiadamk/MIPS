@@ -1,17 +1,15 @@
 package ai;
 
-import static org.junit.jupiter.api.Assertions.*;
+import ai.mapping.Mapping;
+import org.junit.jupiter.api.Test;
+import utils.Map;
+import utils.Point;
 
-import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.junit.jupiter.api.Test;
-
-import ai.mapping.Mapping;
-import utils.Map;
-import utils.enums.Direction;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**Unit tests for the {@link Mapping} class.
  * @author Lewis Ackroyd*/
