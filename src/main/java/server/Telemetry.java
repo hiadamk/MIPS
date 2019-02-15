@@ -56,7 +56,7 @@ public class Telemetry {
    * Static method for updating game state increments positions if valid, increments points, and
    * detects and treats entity collisions
    *
-   * TODO: increment points functionality
+   * <p>TODO: increment points functionality
    *
    * @param agents array of entities in current state
    * @author Alex Banks, Matthew Jones
@@ -64,25 +64,23 @@ public class Telemetry {
    */
   public static void processPhysics(Entity[] agents, Map m, ResourceLoader resourceLoader) {
 
-    final int MAXX = m.getMaxX();
-    final int MAXY = m.getMaxY();
-
     for (int i = 0; i < AGENT_COUNT; i++) {
-      Point prevLocation = agents[i].getLocation();
-      agents[i].move();
-      Point faceLocation = agents[i].getFaceLocation();
+      if (agents[i].getDirection() != null) {
+        Point prevLocation = agents[i].getLocation();
+        agents[i].move();
+        Point faceLocation = agents[i].getFaceLocation();
 
         if (m.isWall(faceLocation)) {
-          agents[i].setDirection(null);
-          agents[i].setLocation(prevLocation);
           System.err.println(i + "prev: " + prevLocation);
           System.err.println(i + "face: " + faceLocation);
-        } else {
-          System.out.println(i + "face: " + faceLocation);
+          agents[i].setLocation(prevLocation);
+          agents[i].setDirection(null);
+//        } else {
+//          System.out.println(i + "face: " + faceLocation);
         }
       }
-      // TODO add points for pellet collision
-
+    }
+    // TODO add points for pellet collision
 
     // separate loop for checking collision after iteration
 
@@ -128,11 +126,11 @@ public class Telemetry {
 
   private void initialise() {
     agents = new Entity[AGENT_COUNT];
-    agents[0] = new Entity(false, 0, new Point(1.5, 2.5));
-    agents[1] = new Entity(false, 1, new Point(1.5, 18.5));
-    agents[2] = new Entity(false, 2, new Point(1.5, 16.5));
-    agents[3] = new Entity(false, 3, new Point(1.5, 2.5));
-    agents[4] = new Entity(false, 4, new Point(1.5, 2.5));
+    agents[0] = new Entity(false, 0, new Point(1.5, 2.5, map));
+    agents[1] = new Entity(false, 1, new Point(1.5, 18.5, map));
+    agents[2] = new Entity(false, 2, new Point(1.5, 16.5, map));
+    agents[3] = new Entity(false, 3, new Point(1.5, 2.5, map));
+    agents[4] = new Entity(false, 4, new Point(1.5, 2.5, map));
     agents[(new Random()).nextInt(AGENT_COUNT)].setPacMan(true);
 
     System.out.println(Arrays.toString(agents));

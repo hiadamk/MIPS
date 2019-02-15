@@ -48,30 +48,34 @@ public class Entity implements Renderable {
   }
 
   private Point moveInDirection(double offset) {
-    Point face = this.location;
+    Point loc = Point.copyOf(this.location);
 
     if (this.direction != null) {
       switch (this.direction) {
         case UP:
-          face.increaseY(-offset);
+          loc.increaseY(-offset);
           break;
         case DOWN:
-          face.increaseY(offset);
+          loc.increaseY(offset);
           break;
         case LEFT:
-          face.increaseX(-offset);
+          loc.increaseX(-offset);
           break;
         case RIGHT:
-          face.increaseX(offset);
+          loc.increaseX(offset);
           break;
       }
     }
 
-    return face;
+    return loc;
   }
 
   public void move() {
-    moveInDirection(this.velocity);
+    this.location = moveInDirection(this.velocity);
+  }
+
+  public Point getFaceLocation() {
+    return moveInDirection(0.5);
   }
 
   public void setLastGridCoord(Point position) {
@@ -80,10 +84,6 @@ public class Entity implements Renderable {
 
   public Point getLastGridCoord() {
     return lastGridCoord;
-  }
-
-  public Point getFaceLocation() {
-    return moveInDirection(0.5);
   }
 
   @Override
