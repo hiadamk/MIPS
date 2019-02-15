@@ -241,8 +241,8 @@ public class Renderer {
    * @param spriteHeight vertical offset
    */
   private Point2D.Double getIsoCoord(double x, double y, double spriteHeight, double spriteWidth) {
-    double isoX = mapRenderingCorner.getX() - (y - x) * (this.tileSizeX / (double) 2) + (tileSizeX
-        - spriteWidth);
+    double isoX = mapRenderingCorner.getX() - (y - x) * (this.tileSizeX / (double) 2) + ((tileSizeX
+        - spriteWidth) / 2);
     double isoY =
         mapRenderingCorner.getY() + (y + x) * (this.tileSizeY / (double) 2) + (tileSizeY
             - spriteHeight);
@@ -254,21 +254,23 @@ public class Renderer {
    */
   private void renderEntity(Entity e) {
     Image currentSprite = e.getImage().get(0);
-    Point2D.Double rendCoord = getIsoCoord(e.getLocation().getX() - 0.5,
-        e.getLocation().getY() - 0.5,
+    double x = e.getLocation().getX() - 0.5;
+    double y = e.getLocation().getY() - 0.5;
+    Point2D.Double rendCoord = getIsoCoord(x,
+        y,
         currentSprite.getHeight(), currentSprite.getWidth());
     gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
 
     //render marker for entity
-    if (e.getClientId() != clientID || !e.isPacman()) {
+    if (e.getClientId() != clientID && !e.isPacman()) {
       return;
     }
 
     Image marker = (e.isPacman()) ? r.getMipMarker() : r.getMClientMarker();
-    Point2D.Double coord = getIsoCoord(e.getLocation().getX(), e.getLocation().getY(),
-        marker.getHeight(), marker.getWidth());
+    Point2D.Double coord = getIsoCoord(x, y,
+        marker.getHeight() + currentSprite.getHeight(), marker.getWidth());
 
-    gc.drawImage(marker, coord.getX(), coord.getY() + currentSprite.getHeight());
+    gc.drawImage(marker, coord.getX(), coord.getY());
   }
 
   /**
