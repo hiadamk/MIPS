@@ -1,12 +1,6 @@
 package main;
 
 import audio.AudioController;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -29,6 +23,12 @@ import utils.ResourceLoader;
 import utils.enums.Direction;
 import utils.enums.ScreenResolution;
 
+import java.awt.*;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 public class Client extends Application {
 
     Map map;
@@ -48,6 +48,7 @@ public class Client extends Application {
     private ServerGameplayHandler serverGameplayHandler;
     private ClientLobbySession clientLobbySession;
     private boolean isHost;
+    private String name;
 
     public int getId() {
         return id;
@@ -161,6 +162,14 @@ public class Client extends Application {
         renderer.setResolution(xRes, yRes, false);
         for (Entity e : agents) {
             e.updateImages(resourceLoader);
+        }
+    }
+    
+    public void setName(String n) {
+        if (n.matches(".*[a-zA-Z]+.*")) {
+            this.name = n;
+        } else {
+            this.name = "Player " + this.getId();
         }
     }
 

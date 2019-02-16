@@ -2,11 +2,6 @@ package ui;
 
 import audio.AudioController;
 import audio.Sounds;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Stack;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
@@ -27,6 +22,12 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.Client;
 import utils.enums.ScreenResolution;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Stack;
 
 /**
  * @author Adam Kona Class which handles the creation and functionality of components in the main
@@ -547,6 +548,7 @@ public class MenuController {
             event -> {
                 audioController.playSound(Sounds.click);
                 moveItemsToBackTree();
+                this.client.setName(nameEntry.getText());
                 itemsOnScreen.add(multiplayerOptions);
                 showItemsOnScreen();
             });
