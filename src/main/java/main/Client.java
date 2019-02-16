@@ -47,6 +47,8 @@ public class Client extends Application {
     private ServerLobby server;
     private ServerGameplayHandler serverGameplayHandler;
     private ClientLobbySession clientLobbySession;
+    private Queue<String> clientIn;
+    private Queue<Input> keypressQueue;
     private boolean isHost;
     private String name;
 
@@ -107,8 +109,8 @@ public class Client extends Application {
 
     public void createMultiplayerLobby() {
         isHost = true;
-        Queue<String> clientIn = new LinkedList<>();
-        Queue<Input> keypressQueue = new LinkedBlockingQueue<>();
+        clientIn = new LinkedList<>();
+        keypressQueue = new LinkedBlockingQueue<>();
         try {
             this.server = new ServerLobby();
             clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this);
@@ -119,8 +121,8 @@ public class Client extends Application {
 
     public void joinMultiplayerLobby() {
         isHost = false;
-        Queue<String> clientIn = new LinkedList<>();
-        Queue<Input> keypressQueue = new LinkedBlockingQueue<>();
+        clientIn = new LinkedList<>();
+        keypressQueue = new LinkedBlockingQueue<>();
         try {
             clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this);
         } catch (IOException e) {
