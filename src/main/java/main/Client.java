@@ -80,6 +80,9 @@ public class Client extends Application {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         renderer = new Renderer(gc, xRes, yRes, resourceLoader);
         primaryStage.setScene(scene);
+        primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
+            menuController.scaleImages((double) newVal, (double) oldVal);
+        });
         primaryStage.show();
     }
 
