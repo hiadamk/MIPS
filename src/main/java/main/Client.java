@@ -83,7 +83,9 @@ public class Client extends Application {
         primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
             menuController.scaleImages((double) newVal, (double) oldVal);
         });
+    
         primaryStage.show();
+        updateResolution(ScreenResolution.LOW);
     }
 
     public void startSinglePlayerGame() {
@@ -163,9 +165,9 @@ public class Client extends Application {
                 break;
         }
         renderer.setResolution(xRes, yRes, false);
-        for (Entity e : agents) {
-            e.updateImages(resourceLoader);
-        }
+//        for (Entity e : agents) {
+//            e.updateImages(resourceLoader);
+//        }
     }
     
     public void setName(String n) {
