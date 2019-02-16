@@ -139,7 +139,6 @@ public class MenuController {
     
     
     private void updateView(ScreenResolution s) {
-        client.updateResolution(s);
         switch (s) {
             case LOW:
                 lowResImageView.setImage(lowResW);
@@ -158,6 +157,7 @@ public class MenuController {
                 highResImageView.setImage(highResW);
                 break;
         }
+        client.updateResolution(s);
     }
     
     /**
@@ -177,6 +177,7 @@ public class MenuController {
     
     
         ImageView bg = new ImageView("sprites/default/backgrounds/default.png");
+    
         bg.fitWidthProperty().bind(this.primaryStage.widthProperty());
         root.getChildren().add(bg);
         StackPane.setAlignment(bg, Pos.CENTER);
@@ -186,6 +187,7 @@ public class MenuController {
         logo.preserveRatioProperty();
         StackPane.setAlignment(logo, Pos.TOP_CENTER);
         StackPane.setMargin(logo, new Insets(200, 0, 0, 0));
+        logo.setPreserveRatio(true);
         root.getChildren().add(logo);
         logo.setVisible(true);
         
@@ -193,7 +195,8 @@ public class MenuController {
         StackPane.setAlignment(startGameBtn, Pos.CENTER);
         StackPane.setMargin(startGameBtn, new Insets(160, 0, 0, 0));
         Image startImg = new Image("ui/start.png");
-        startGameBtn.setGraphic(new ImageView(startImg));
+        ImageView starting = new ImageView(startImg);
+        startGameBtn.setGraphic(starting);
         startGameBtn.setStyle("-fx-background-color: transparent;");
         root.getChildren().add(startGameBtn);
         startGameBtn.setVisible(false);
@@ -306,7 +309,8 @@ public class MenuController {
         StackPane.setAlignment(playBtn, Pos.CENTER);
         StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
         Image playImg = new Image("ui/play.png");
-        playBtn.setGraphic(new ImageView(playImg));
+        ImageView playView = new ImageView(playImg);
+        playBtn.setGraphic(playView);
         playBtn.setStyle("-fx-background-color: transparent;");
         playBtn.setOnAction(e -> {
             audioController.playSound(Sounds.click);
