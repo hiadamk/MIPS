@@ -12,13 +12,32 @@ public class Methods {
   }
 
   public static boolean validiateDirection(Direction d, Entity e, Map m) {
-    Point newLoc = e.moveInDirection(0.6, d);
+
+    Point prevLoc = e.getLocation();
+    Direction prevDir = e.getDirection();
+    boolean isValid = true;
+
+    e.setDirection(d);
+    e.move();
     Point faceLoc = e.getFaceLocation();
-    double xpart = faceLoc.getX() % 1;
-    double ypart = faceLoc.getY() % 1;
-    if (ypart >= 0.60 || ypart <= 0.40 || xpart >= 0.60 || xpart <= 0.40) {
-      return false;
+    double xpart = prevLoc.getX() % 1;
+    double ypart = prevLoc.getY() % 1;
+    System.out.println(xpart + "," + ypart);
+    if (ypart >= 0.6 || ypart <= 0.4 || xpart >= 0.4 || xpart <= 0.6) {
+      isValid = false;
     }
-    return !m.isWall(newLoc);
+
+    isValid = isValid && !m.isWall(faceLoc);
+
+    if (isValid) {
+      System.out.println("~~~" + e.getClientId() + " try " + d);
+    } else {
+      System.err.println("~~~" + e.getClientId() + " try " + d);
+      System.err.println("~~~" + faceLoc + ", " + xpart + ", " + ypart);
+    }
+
+    e.setLocation(prevLoc);
+    e.setDirection(prevDir);
+    return isValid;
   }
 }

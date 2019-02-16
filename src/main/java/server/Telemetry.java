@@ -72,8 +72,13 @@ public class Telemetry {
 
         if (m.isWall(faceLocation)) {
           System.out.println("~Player" + i + " drove into a wall");
+          System.err.println(
+              "~~" + agents[i].getClientId() + agents[i].getDirection() + agents[i].getLocation());
           agents[i].setLocation(prevLocation);
           agents[i].setDirection(null);
+        } else {
+          System.out.println(
+              "~~" + agents[i].getClientId() + agents[i].getDirection() + agents[i].getLocation());
         }
       }
     }

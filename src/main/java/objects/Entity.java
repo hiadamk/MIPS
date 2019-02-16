@@ -47,7 +47,7 @@ public class Entity implements Renderable {
     this.location = location;
   }
 
-  public Point moveInDirection(double offset, Direction d) {
+  public Point getMoveInDirection(double offset, Direction d) {
     Point loc = Point.copyOf(this.location);
     if (d == null) {
       d = this.direction;
@@ -73,11 +73,11 @@ public class Entity implements Renderable {
   }
 
   public void move() {
-    this.location = moveInDirection(this.velocity, null);
+    this.location = getMoveInDirection(this.velocity, null);
   }
 
   public Point getFaceLocation() {
-    return moveInDirection(0.5, null);
+    return getMoveInDirection(0.5, null);
   }
 
   public void setLastGridCoord(Point position) {
