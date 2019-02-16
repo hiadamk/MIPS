@@ -1,6 +1,13 @@
 package main;
 
 import audio.AudioController;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Random;
+import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -19,15 +26,10 @@ import ui.MenuController;
 import utils.Input;
 import utils.Map;
 import utils.Methods;
+import utils.Point;
 import utils.ResourceLoader;
 import utils.enums.Direction;
 import utils.enums.ScreenResolution;
-
-import java.awt.*;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class Client extends Application {
 
@@ -136,6 +138,15 @@ public class Client extends Application {
         } else {
             // TODO Implement what needs to happen when the game starts and they are not the host
             // TODO Surely each client needs to know the start locations of each entity for rendering
+          agents = new Entity[5];
+          agents[0] = new Entity(false, 0, new utils.Point(1.5, 2.5, map));
+          agents[1] = new Entity(false, 1, new utils.Point(1.5, 18.5, map));
+          agents[2] = new Entity(false, 2, new utils.Point(1.5, 16.5, map));
+          agents[3] = new Entity(false, 3, new utils.Point(11.5, 2.5, map));
+          agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
+          agents[(new Random()).nextInt(5)]
+              .setPacMan(true); // TODO this info needs to be recieved over network
+
         }
     }
 
@@ -210,7 +221,6 @@ public class Client extends Application {
     private void processInput() {
         Direction input = keyController.getActiveKey();
         Direction current = agents[id].getDirection();
-
         if (input == null || input == current) {
             return;
         }
