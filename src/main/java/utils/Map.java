@@ -1,10 +1,8 @@
 package utils;
 
-
-import utils.enums.MapElement;
-
 import java.util.ArrayList;
 import java.util.Random;
+import utils.enums.MapElement;
 
 /**
  * Encapsulates map with utilities methods
@@ -58,7 +56,7 @@ public class Map {
   public int getMaxY() {
     return MAX_Y;
   }
-  
+
   public boolean withinBounds(Point point) {
     boolean x = point.getX() >= 0 && point.getX() < MAX_X;
     boolean y = point.getY() >= 0 && point.getY() < MAX_Y;
@@ -72,8 +70,7 @@ public class Map {
    * @return true if wall, false otherwise
    */
   public boolean isWall(Point point) {
-    return MAP[(int) point.getX()][(int) point.getY()]
-        == MapElement.WALL.toInt();
+    return MAP[(int) point.getX()][(int) point.getY()] == MapElement.WALL.toInt();
   }
 
   /**

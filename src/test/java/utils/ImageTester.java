@@ -1,5 +1,7 @@
 package utils;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -8,8 +10,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
 import objects.Entity;
 import renderer.Renderer;
-
-import java.awt.*;
 
 public class ImageTester extends Application {
 
@@ -29,15 +29,15 @@ public class ImageTester extends Application {
 
     resourceLoader.loadMap("9x18plain");
     Map map = resourceLoader.getMap();
-      Renderer r = new Renderer(gc, xRes, yRes, resourceLoader);
-  
+    Renderer r = new Renderer(gc, xRes, yRes, resourceLoader);
+
     Entity mip = new Entity(true, 1, new Point(1, 1));
     mip.setPacMan(true);
-  
+
     Entity ghoul = new Entity(false, 4, new Point(1.5, 5.8));
     System.out.println(ghoul.getLocation().toString());
     ghoul.setPacMan(false);
-    //ghoul.setDirection(Direction.RIGHT);
+    // ghoul.setDirection(Direction.RIGHT);
 
     Entity[] entities = new Entity[]{ghoul};
     Methods.updateImages(entities, resourceLoader);
@@ -45,6 +45,5 @@ public class ImageTester extends Application {
     r.render(map, entities);
     stage.setScene(new Scene(new Group(canvas)));
     stage.show();
-
   }
 }

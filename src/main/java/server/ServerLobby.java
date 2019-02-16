@@ -4,86 +4,90 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.net.NetworkInterface;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-
-//TODO Use multi-casting to constantly ping the number of players in the game in a thread.
-//TODO Use multi-casting to constantly ping the current players in the game in a thread
+// TODO Use multi-casting to constantly ping the number of players in the game in a thread.
+// TODO Use multi-casting to constantly ping the current players in the game in a thread
 public class ServerLobby {
-    
+
     private int playerCount;
     private ArrayList<InetAddress> playerIPs;
     private boolean gameStarted;
     private ServerGameplayHandler s;
-    
+
     public ServerLobby() {
         pinger.start();
         this.playerCount = 0;
         this.playerIPs = new ArrayList<>();
         acceptConnections.start();
     }
-    
+
     /**
      * Thread which sends messages to multicast group to make server IP known
      */
-    Thread pinger = new Thread() {
+    Thread pinger =
+        new Thread() {
         @Override
         public void run() {
             super.run();
             try {
                 MulticastSocket socket = new MulticastSocket();
                 InetAddress group = NetworkUtility.GROUP;
-                
-                
+
                 byte[] buf;
                 String message = "PING";
-                
+
                 buf = message.getBytes();
-                DatagramPacket sending = new DatagramPacket(buf, 0, buf.length, group, NetworkUtility.CLIENT_M_PORT);
-                
+                DatagramPacket sending =
+                    new DatagramPacket(buf, 0, buf.length, group, NetworkUtility.CLIENT_M_PORT);
+
                 while (!isInterrupted()) {
                     Enumeration<NetworkInterface> faces = NetworkInterface.getNetworkInterfaces();
                     a:
                     while (faces.hasMoreElements()) {
                         NetworkInterface iface = faces.nextElement();
-                        if (iface.isLoopback() || !iface.isUp())
+                        if (iface.isLoopback() || !iface.isUp()) {
                             continue;
-                        
+                        }
+
                         Enumeration<InetAddress> addresses = iface.getInetAddresses();
                         while (addresses.hasMoreElements()) {
                             InetAddress addr = addresses.nextElement();
                             socket.setInterface(addr);
                             socket.send(sending);
-                            
                         }
                     }
                     Thread.sleep(1000);
                 }
-                
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        
-    };
-    
-    
+        };
+
     /**
      * Accepts connections from clients
      */
-    Thread acceptConnections = new Thread() {
+    Thread acceptConnections =
+        new Thread() {
         @Override
         public void run() {
             super.run();
             try {
 
-                
                 while (!isInterrupted()) {
                     if (playerCount < 5) {
                         Socket soc = new ServerSocket(NetworkUtility.SERVER_DGRAM_PORT).accept();
-                        BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+                        BufferedReader in = new BufferedReader(
+                            new InputStreamReader(soc.getInputStream()));
                         PrintWriter out = new PrintWriter(soc.getOutputStream());
                         System.out.println("Waiting for new connection...");
 
@@ -96,36 +100,32 @@ public class ServerLobby {
                             playerIPs.add(ip);
 
                             int playerID = playerCount;
-                            out.println(""+playerID);
+                            out.println("" + playerID);
                             out.flush();
                             System.out.println("Sent client " + playerID + " their ID...");
 
                             out.println("SUCCESS");
                             out.flush();
-                            System.out.println("Sent client " + playerID + " a successful connection message...");
+                            System.out.println(
+                                "Sent client " + playerID + " a successful connection message...");
                             playerCount++;
                             in.close();
                             out.close();
                             soc.close();
                         }
-                        
+
                     } else {
                         return;
                     }
-                    
                 }
             } catch (IOException e) {
-            
+
             }
-            
         }
-    };
-    
-    
+        };
+
     /**
      * Starts the game for all clients
-     *
-     * @return
      */
     public ServerGameplayHandler gameStart() {
         pinger.interrupt();
@@ -144,28 +144,25 @@ public class ServerLobby {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            
         }
         try {
             this.s = new ServerGameplayHandler(this.playerIPs, playerCount);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
         return s;
-        
     }
-    
+
     /**
      * Stops the game for clients.
      */
     public void gameStop() {
-        //TODO Implement
+        // TODO Implement
     }
-    
-    
+
     public static void main(String[] args) throws IOException {
         ServerLobby s = new ServerLobby();
-//        s.acceptConnections();
+        //        s.acceptConnections();
     }
 }

@@ -53,7 +53,6 @@ public class ResourceLoader {
     this.loadClientMarker("default");
     this.loadMipMarker("default");
     this.loadThemes();
-
   }
 
   public static void main(String[] args) {
@@ -85,7 +84,7 @@ public class ResourceLoader {
 
   /**
    * @param name name of map: if file is default.png the name is default reads a png map image,
-   * converts rbg colour pixels into map tile numbers
+   *     converts rbg colour pixels into map tile numbers
    */
   public void loadMap(String name) {
 
@@ -115,13 +114,13 @@ public class ResourceLoader {
       temp = sprites.get(i);
       int newWidth = (int) (temp.getWidth() * ratio);
       int newHeight = (int) (temp.getHeight() * ratio);
-      BufferedImage resizedSprite = new BufferedImage(newWidth, newHeight,
-          BufferedImage.TYPE_4BYTE_ABGR);
+      BufferedImage resizedSprite =
+          new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_4BYTE_ABGR);
       Graphics2D g = resizedSprite.createGraphics();
-      g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-          RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-      g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,
-          RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+      g.setRenderingHint(
+          RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+      g.setRenderingHint(
+          RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
       g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
 
       g.drawImage(temp, 0, 0, newWidth, newHeight, null);
@@ -129,7 +128,6 @@ public class ResourceLoader {
 
       sprites.set(i, resizedSprite);
     }
-
   }
 
   /**
@@ -151,18 +149,18 @@ public class ResourceLoader {
   public void setResolution(int x, int y, boolean integerScaling) {
     double mapToScreenRatio = 0.7;
 
-    //find dimensions of rendered map we want based on mapToScreenRatio
+    // find dimensions of rendered map we want based on mapToScreenRatio
     int targetX = (int) (x * mapToScreenRatio);
     int targetY = (int) (y * mapToScreenRatio);
 
     int tileHeight = this.mapTiles.get(MapElement.FLOOR.toInt()).getHeight();
     int tileWidth = this.mapTiles.get(MapElement.FLOOR.toInt()).getWidth();
 
-    //find the dimensions of the rendered map based on default sprite scaling
+    // find the dimensions of the rendered map based on default sprite scaling
     int currentX = tileHeight + (int) (0.5 * tileHeight * map.getMaxX());
     int currentY = tileHeight + (int) (0.5 * tileWidth * map.getMaxY());
 
-    //choose the smallest ratio to make sure map fits on screen
+    // choose the smallest ratio to make sure map fits on screen
     double ratio = Math.min(targetX / (double) currentX, (double) targetY / currentY);
     System.out.println(ratio);
 
@@ -177,16 +175,14 @@ public class ResourceLoader {
     }
 
     resizeSpritesSmooth(mapTiles, ratio);
-
   }
-
 
   /**
    * creates coloured sprites of mip according to the colour id selected
    *
    * @param _colourID row of palette sheet to apply to sprite
    * @return 2d ArrayList of images - first dimension is the direction, second is each animation
-   * frame
+   *     frame
    */
   public ArrayList<ArrayList<Image>> getPlayableMip(int _colourID) {
 
@@ -203,9 +199,7 @@ public class ResourceLoader {
     return bufferedToJavaFxImage2D(this.mipSprites);
   }
 
-  /**
-   * @param theme name of folder which contains the assets for that theme
-   */
+  /** @param theme name of folder which contains the assets for that theme */
   public void loadPlayableGhoul(String theme) {
     BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "ghoul");
 
@@ -220,7 +214,7 @@ public class ResourceLoader {
    *
    * @param _colourID row of palette sheet to apply to sprite
    * @return 2d ArrayList of images - first dimension is the direction, second is each animation
-   * frame
+   *     frame
    */
   public ArrayList<ArrayList<Image>> getPlayableGhoul(int _colourID) {
     for (ArrayList<BufferedImage> imgs : this.ghoulSprites) {
@@ -232,9 +226,7 @@ public class ResourceLoader {
     return bufferedToJavaFxImage2D(this.ghoulSprites);
   }
 
-  /**
-   * @param theme name of folder which contains the assets for that theme
-   */
+  /** @param theme name of folder which contains the assets for that theme */
   public void loadMapTiles(String theme) {
     ArrayList<BufferedImage> _mapTiles = new ArrayList<>();
     for (MapElement m : MapElement.values()) {
@@ -249,9 +241,8 @@ public class ResourceLoader {
 
   public void loadBackground(String theme) {
     this.background = loadImageFile("sprites/" + theme + "/backgrounds/", theme);
-    this.backgroundPalette = loadImageFile("sprites/" + theme + "/backgrounds/",
-        theme + "_palette");
-
+    this.backgroundPalette =
+        loadImageFile("sprites/" + theme + "/backgrounds/", theme + "_palette");
   }
 
   public Image getBackground() {
@@ -277,7 +268,6 @@ public class ResourceLoader {
   public Image getMClientMarker() {
     return SwingFXUtils.toFXImage(this.clientMarker, null);
   }
-
 
   /**
    * @param folderPath folder that contains the images
@@ -311,7 +301,7 @@ public class ResourceLoader {
    * @param spriteWidth x dimension of an individual sprite
    * @param spriteHeight y dimension of an individual sprite
    * @param spriteSheet loaded image containing sprites in a grid - each row contains a direction
-   * and each column contains an animation frame of that direction
+   *     and each column contains an animation frame of that direction
    */
   private ArrayList<ArrayList<BufferedImage>> splitSpriteSheet(
       int spriteWidth, int spriteHeight, BufferedImage spriteSheet) {
@@ -332,8 +322,7 @@ public class ResourceLoader {
    * @param sprites BufferedImages to convert to JavaFX images
    * @return converted images in same arraylist structure
    */
-  private ArrayList<Image> bufferedToJavaFxImage(
-      ArrayList<BufferedImage> sprites) {
+  private ArrayList<Image> bufferedToJavaFxImage(ArrayList<BufferedImage> sprites) {
     ArrayList<Image> convertedSprites = new ArrayList<>();
 
     for (BufferedImage img : sprites) {

@@ -13,8 +13,8 @@ public class Methods {
 
   public static boolean validiateDirection(Direction d, Entity e, Map m) {
     Point newLoc = new Point(e.getLocation().getX(), e.getLocation().getY());
-//    double xpart = mod(newLoc.getX(), 1);
-//    double ypart = mod(newLoc.getY(), 1);
+    //    double xpart = mod(newLoc.getX(), 1);
+    //    double ypart = mod(newLoc.getY(), 1);
     // if( ypart >= 0.60 || ypart <= 0.40 || xpart >= 0.60 || xpart <= 0.40) return false;
     double offset = 0.8 + e.getVelocity();
     switch (d) {
