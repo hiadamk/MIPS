@@ -114,7 +114,6 @@ public class Telemetry {
       pacman.setLocation(resourceLoader.getMap().getRandomSpawnPoint());
       pacman.setDirection(Direction.UP);
       pacman.updateImages(resourceLoader);
-      pacman.setTest();
       ghoul.updateImages(resourceLoader);
 
       System.out.println(
@@ -124,10 +123,10 @@ public class Telemetry {
 
   private void initialise() {
     agents = new Entity[AGENT_COUNT];
-    agents[0] = new Entity(false, 0, new Point(1.5, 2.5, map));
+    agents[0] = new Entity(false, 0, new Point(1.5, 1.5, map));
     agents[1] = new Entity(false, 1, new Point(1.5, 18.5, map));
-    agents[2] = new Entity(false, 2, new Point(1.5, 16.5, map));
-    agents[3] = new Entity(false, 3, new Point(11.5, 2.5, map));
+    agents[2] = new Entity(false, 2, new Point(9.5, 15.5, map));
+    agents[3] = new Entity(false, 3, new Point(11.5, 1.5, map));
     agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
     agents[(new Random()).nextInt(AGENT_COUNT)].setPacMan(true);
 

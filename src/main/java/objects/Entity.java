@@ -10,7 +10,6 @@ import utils.enums.Direction;
 
 public class Entity implements Renderable {
 
-  private boolean test;
   private Point location;
   private double velocity; // The velocity of the entity currently
   private Direction direction;
@@ -30,14 +29,6 @@ public class Entity implements Renderable {
     this.velocity = pacMan ? 0.08 : 0.06;
     this.direction = Direction.UP;
     // updateImages();
-  }
-
-  public void setTest() {
-    test = true;
-  }
-
-  public boolean getTest() {
-    return test;
   }
 
   public RouteFinder getRouteFinder() {

@@ -1,7 +1,6 @@
 package ai;
 
 import ai.mapping.Mapping;
-import ai.routefinding.NoRouteFinderException;
 import ai.routefinding.RouteFinder;
 import ai.routefinding.routefinders.MipsManRouteFinder;
 import ai.routefinding.routefinders.RandomRouteFinder;
@@ -22,7 +21,7 @@ import utils.enums.Direction;
  */
 public class AILoopControl extends Thread {
 
-    private static final long SLEEP_TIME = 1;
+    private static final long SLEEP_TIME = 25;
     private final Entity[] controlAgents;
     private final HashSet<Point> junctions;
     private final HashMap<Point, HashSet<Point>> edges;
@@ -32,19 +31,8 @@ public class AILoopControl extends Thread {
     private boolean runAILoop;
     private int mipsmanID;
 
-    /**
-     * Initialises the control for the AI Control Loop.
-     *
-     * @param gameAgents All agents within the game.
-     * @param controlIds The main ID of agents which will be AI controlled.
-     * @param map        The map on which route finding will occur.
-     * @throws IllegalArgumentException gameAgent array contains duplicate client IDs.
-     * @throws IllegalStateException    Control ID does not match a gameAgent main ID.
-     * @throws IllegalStateException    Cannot have more than one Mipsman.
-     */
-    public AILoopControl(
-            Entity[] gameAgents, int[] controlIds, Map map, BlockingQueue<Input> directionsOut) {
-        validateInputs(gameAgents);
+    public AILoopControl(Entity[] gameAgents, int[] controlIds, Map map, BlockingQueue<Input> directionsOut) {
+        validateAgents(gameAgents);
 
         this.setDaemon(true);
         this.runAILoop = true;
@@ -55,38 +43,40 @@ public class AILoopControl extends Thread {
         this.directionsOut = directionsOut;
         this.map = map;
 
-        generateRouteFinders(gameAgents, controlIds);
+        generateRouteFinders();
         correctMipsmanRouteFinder();
+        assignControlEntities(controlIds);
+
+    }
+
+    private void validateAgents(Entity[] gameAgents) throws IllegalArgumentException, IllegalStateException{
+        HashSet<Integer> ids = new HashSet<Integer>();
+        for (Entity e : gameAgents) {
+            if (!ids.add(e.getClientId())) {
+                throw new IllegalArgumentException("gameAgent array contains duplicate main IDs.");
+            }
+        }
+
+        boolean mipsmanFound = false;
         for (Entity ent : gameAgents) {
-            if (ent.isPacman()) {
-                mipsmanID = ent.getClientId();
-                break;
+            if (ent.isPacman() && mipsmanFound) {
+                throw new IllegalStateException("Cannot have more than one mipsman.");
+            } else if (ent.isPacman()) {
+                mipsmanFound = true;
             }
         }
     }
 
-    /*
-     * Generates a {@link RouteFinder} for all entities that are controlled by the
-     * AI.
-     *
-     * @param gameAgents The array of all agents within the game.
-     *
-     * @param controlIds The array of all main IDs that the AI will control.
-     *
-     * @throws IllegalStateException A main ID in controlIds does not exist for an
-     * {@link Entity} in gameAgents.
-     */
-    private void generateRouteFinders(Entity[] gameAgents, int[] controlIds)
-            throws IllegalStateException {
-        for (int i = 0; i < controlIds.length; i++) {
+    private void generateRouteFinders() throws IllegalStateException {
+        for (int i = 0; i< gameAgents.length; i++) {
             RouteFinder routeFinder;
             switch (i) {
-                case 1: {
+                case 0: {
                     // TODO
                     routeFinder = new RandomRouteFinder();
                     break;
                 }
-                case 0: {
+                case 1: {
                     // TODO
                     routeFinder = new RandomRouteFinder(); // new AStarRouteFinder(junctions,edges,map);
                     break;
@@ -109,207 +99,108 @@ public class AILoopControl extends Thread {
                     break;
                 }
             }
-            validateId(gameAgents, controlIds, i, routeFinder);
+            gameAgents[i].setRouteFinder(routeFinder);
         }
     }
 
-    /*
-     * Checks that the given ID exists as the main ID of an {@link Entity} in
-     * gameAgents.
-     *
-     * @param gameAgents The array of all agents within the game.
-     *
-     * @param controlIds The array of all main IDs that the AI will control.
-     *
-     * @param i The current index within the controlAgents array.
-     *
-     * @param routeFinder The {@link RouteFinder} that is being assigned to the
-     * {@link Entity} with the corresponding main ID.
-     *
-     * @throws IllegalStateException The control ID does not match an agent main ID.
-     */
-    private void validateId(Entity[] gameAgents, int[] controlIds, int i, RouteFinder routeFinder)
-            throws IllegalStateException {
-        boolean agentNotFound = true;
-        for (Entity ent : gameAgents) {
-            if (ent.getClientId() == controlIds[i]) {
-                controlAgents[i] = ent;
-                ent.setRouteFinder(routeFinder);
-                agentNotFound = false;
-                break;
+    private void assignControlEntities(int[] controlIds) {
+        for (int i = 0; i<controlIds.length; i++) {
+            boolean agentNotFound = true;
+            for (Entity ent : gameAgents) {
+                if (ent.getClientId() == controlIds[i]) {
+                    controlAgents[i] = ent;
+                    agentNotFound = false;
+                    break;
+                }
             }
-        }
-        if (agentNotFound) {
-            throw new IllegalStateException("The control ID does not match an agent main ID.");
-        }
-    }
-
-    /*
-     * Checks that the given array does not contain any duplicate IDs and that
-     * Mipsman is only declared once.
-     *
-     * @param gameAgents The array of all agents within the game.
-     *
-     * @throws IllegalArgumentException gameAgent array contains duplicate main IDs.
-     *
-     * @throws IllegalStateException Cannot have more than one Mipsman.
-     */
-    private void validateInputs(Entity[] gameAgents)
-            throws IllegalArgumentException, IllegalStateException {
-        HashSet<Integer> ids = new HashSet<Integer>();
-        for (Entity e : gameAgents) {
-            if (!ids.add(e.getClientId())) {
-                throw new IllegalArgumentException("gameAgent array contains duplicate main IDs.");
-            }
-        }
-
-        boolean mipsmanFound = false;
-        for (Entity ent : gameAgents) {
-            if (ent.isPacman() && mipsmanFound) {
-                throw new IllegalStateException("Cannot have more than one mipsman.");
-            } else if (ent.isPacman()) {
-                mipsmanFound = true;
+            if (agentNotFound) {
+                throw new IllegalStateException("The control ID does not match an agent main ID.");
             }
         }
     }
 
-    /*
-     * If Mipsman is one of the control agents, ensures that agent has the {@link
-     * MipsManRouteFinder}.
-     */
-    private void correctMipsmanRouteFinder() {
+    private synchronized void correctMipsmanRouteFinder() {
         Entity mipsman = null;
-        Entity mipsRoute = null;
-        for (Entity ent : controlAgents) {
+        Entity mipsmanRoute = null;
+        for (Entity ent : gameAgents) {
             if (ent.isPacman()) {
                 mipsman = ent;
+                mipsmanID = ent.getClientId();
             }
-            // an entity has the Mipsman RouteFinder but is not Mipsman
-            else if (ent.getRouteFinder().getClass() == MipsManRouteFinder.class) {
-                mipsRoute = ent;
+            if (ent.getRouteFinder().getClass() == MipsManRouteFinder.class) {
+                mipsmanRoute = ent;
             }
         }
-        if (mipsman != null) {
-            if (mipsman.getRouteFinder().getClass() != MipsManRouteFinder.class) {
-                // only one MipsManRouteFinder will be created so if it exists then it can be
-                // swapped
-                if (mipsRoute != null) {
-                    RouteFinder r = mipsman.getRouteFinder();
-                    mipsman.setRouteFinder(mipsRoute.getRouteFinder());
-                    mipsRoute.setRouteFinder(r);
-                } else {
-                    mipsman.setRouteFinder(new MipsManRouteFinder());
-                }
-            }
+        if (mipsman!=null && mipsmanRoute!=null) {
+            RouteFinder r = mipsman.getRouteFinder();
+            mipsman.setRouteFinder(mipsmanRoute.getRouteFinder());
+            mipsmanRoute.setRouteFinder(r);
         }
     }
 
-
-    /**
-     * Runs the AI path-finding loop.
-     *
-     * @throws IllegalStateException Mipsman routefinder incorrectly given to ghost.
-     */
     @Override
     public void run() {
-        RouteFinder lastGhostRouteFinder = null;
         System.out.println("Starting AI loop...");
-        // TODO
-        while (runAILoop && (controlAgents.length > 0)) {
-            System.out.println("startAI");
-            Entity fixRouteFinder = null;
-            // every AI entity
+
+        while (runAILoop && controlAgents.length>0) {
             for (Entity ent : controlAgents) {
-                System.out.println("1");
-                // positions must be set
-                try {
-                    lastGhostRouteFinder = updateRouteFinder(ent, lastGhostRouteFinder);
-                    System.out.println("2");
-                } catch (NoRouteFinderException e) {
-                    fixRouteFinder = ent;
-                }
-                // TODO only calculate new route if not at last coordinate OR current direction is invalid
                 Point currentLocation = Point.copyOf(ent.getLocation());
+                Point currentGridLocation = Mapping.getGridCoord(currentLocation);
                 if (Methods.centreOfSquare(currentLocation)) {
-                    System.out.println("3");
-                    if (!atPreviousCoordinate(ent, currentLocation) || ent.getDirection() == null || !Methods.validiateDirection(ent.getDirection(), ent, map)) {
-                        ent.setLastGridCoord(Mapping.getGridCoord(currentLocation));
-                        System.out.println("4");
-                        // only route find on junctions
-                        if (junctions.contains(Mapping.getGridCoord(currentLocation))) {
-                            ent.setDirection(null);
-                            System.out.println("5");
-                            executeRoute(ent, currentLocation);
-                            System.out.println("6");
-                        } else {
-                            System.out.println("7");
-                            if (ent.getDirection() == null || !Methods.validiateDirection(ent.getDirection(), ent, map)) {
-                                System.out.println("8");
-                                Point nearestJunct = Mapping.findNearestJunction(currentLocation, map, junctions);
-                                System.out.println("9");
-                                try {
-                                    Direction dir;
-                                    System.out.println("10");
-                                    if (!nearestJunct.equals(currentLocation)) {
-                                        System.out.println("11");
-                                        dir = Mapping.directionBetweenPoints(currentLocation, nearestJunct);
-                                        System.out.println("12");
-                                    } else {
-                                        System.out.println("13");
-                                        dir = new RandomRouteFinder().getRoute(currentLocation, gameAgents[mipsmanID].getLocation());
-                                        System.out.println("14");
-                                    }
-                                    System.out.println("15");
-                                    dir = getRandomDirection(ent, currentLocation, dir);
-                                    System.out.println("16");
-                                    ent.setDirection(dir);
-                                    System.out.println("17");
-                                } catch (NullPointerException e) {
-                                    System.out.println("Images not set");
-                                }
+                    if (ent.getDirection()==null||!Methods.validiateDirection(ent.getDirection(), ent, currentLocation, map)) {
+                        if (atPreviousCoordinate(ent, currentGridLocation)) {
+                            Point nearestJunction = Mapping.findNearestJunction(currentLocation, map, junctions);
+
+                            Direction dir;
+                            if (!nearestJunction.equals(currentGridLocation)) {
+                                dir = Mapping.directionBetweenPoints(currentLocation, nearestJunction);
+                            }
+                            else {
+                                dir = new RandomRouteFinder().getRoute(currentLocation, gameAgents[mipsmanID].getLocation());
+                            }
+                            dir = confirmOrReplaceDirection(ent, currentLocation, dir);
+                            directionsOut.add(new Input(ent.getClientId(), dir));
+                        }
+                        else {
+                            ent.setLastGridCoord(currentGridLocation);
+                            if (junctions.contains(currentGridLocation)) {
+                                executeRoute(ent, currentLocation);
                             }
                         }
                     }
-                } else if (!Methods.validiateDirection(ent.getDirection(), ent, map)) {
+                }
+                else if (!Methods.validiateDirection(ent.getDirection(), ent, currentLocation, map)) {
                     Direction dir = new RandomRouteFinder().getRoute(currentLocation, gameAgents[mipsmanID].getLocation());
-                    dir = getRandomDirection(ent, currentLocation, dir);
-                    ent.setDirection(dir);
+                    dir = confirmOrReplaceDirection(ent, currentLocation, dir);
+                    directionsOut.add(new Input(ent.getClientId(), dir));
                 }
             }
 
-            System.out.println("18");
-            if (fixRouteFinder != null) {
-                try {
-                    if (lastGhostRouteFinder != null) {
-                        fixRouteFinder.setRouteFinder(lastGhostRouteFinder);
-                    } else {
-                        //throw new IllegalStateException("Mipsman routefinder incorrectly given to ghost.");
+            correctMipsmanRouteFinder();
 
-                    }
-                } catch (NullPointerException e) {
-                    System.out.println("Images not set");
-                }
-            }
-
-            System.out.println("19");
             try {
                 Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
                 runAILoop = false;
             }
         }
-        System.out.println("endAI");
     }
 
-    private Direction getRandomDirection(Entity ent, Point currentLocation, Direction dir) {
-        System.out.println("a");
-        boolean[] dirs = {false, false, false, false};
-        for (int counter = 0; counter < 1000000; counter++) {
-            if (Methods.validiateDirection(dir, ent, map)) {
-                break;
-            }
+    private void executeRoute(Entity ent, Point currentLocation) {
+        RouteFinder r = ent.getRouteFinder();
+        Point mipsManLoc = gameAgents[mipsmanID].getLocation();
+        Direction direction = r.getRoute(currentLocation, mipsManLoc);
+        direction = confirmOrReplaceDirection(ent, currentLocation, direction);
+        directionsOut.add(new Input(ent.getClientId(), direction));
+    }
 
-            //while (!Methods.validiateDirection(dir, ent, map)) {
+    private boolean atPreviousCoordinate(Entity ent, Point currentLocation) {
+        return ent.getLastGridCoord()==null||ent.getLastGridCoord().equals(currentLocation);
+    }
+
+    private Direction confirmOrReplaceDirection(Entity ent, Point currentLocation, Direction dir) {
+        boolean[] dirs = {false, false, false, false};
+        while (!Methods.validiateDirection(dir, ent, currentLocation, map)) {
             dir = new RandomRouteFinder().getRoute(currentLocation, gameAgents[mipsmanID].getLocation());
             dirs[dir.toInt()] = true;
             boolean allTried = true;
@@ -319,107 +210,23 @@ public class AILoopControl extends Thread {
                     break;
                 }
             }
+
             if (allTried) {
                 System.err.println("ALL DIRECTIONS TRIED");
+                System.err.println(ent.getClientId());
                 System.err.println(currentLocation);
-
                 System.err.println(ent.getLocation());
-                //double x = currentLocation.getX() - (currentLocation.getX()%0.5);
-                //double y = currentLocation.getY() - (currentLocation.getY()%0.5);
-                //ent.setLocation(new Point(x,y));
-                //break;
+                return null;
             }
         }
-        System.out.println("b");
-        if (!Methods.validiateDirection(dir, ent, map)) {
-            System.out.println("c");
-            return null;
+        if (!Methods.validiateDirection(dir, ent, currentLocation, map)) {
+            throw new IllegalStateException("ERROR");
         }
-        System.out.println("d");
         return dir;
     }
 
-
-    private boolean atPreviousCoordinate(Entity ent, Point currentLocation) {
-        return !(ent.getLastGridCoord() == null
-                || !ent.getLastGridCoord().equals(Mapping.getGridCoord(currentLocation)));
+    public boolean killAI() {
+        runAILoop = false;
+        return isAlive();
     }
-
-
-    private boolean atPreviousCoordinate(Entity ent) {
-        return !(ent.getLastGridCoord() == null
-                || !ent.getLastGridCoord().equals(Mapping.getGridCoord(ent.getLocation())));
-    }
-
-    /*
-     * Updates the {@link RouteFinder} in the event that Mipsman is caught. The new
-     * Mipsman needs to have the Mipsman {@link RouteFinder} and the old Mipsman
-     * needs to have the new Mipsman's old {@link RouteFinder}.
-     *
-     * @param ent The entity having it's {@link RouteFinder} updated.
-     *
-     * @param lastGhostRouteFinder The {@link RouteFinder} that will replace this
-     * {@link Entity}'s {@link RouteFinder} if this {@link Entity} is Mipsman.
-     *
-     * @throws NoRouteFinderException The value of lastGhostRouteFinder is null and
-     * so the {@link Entity} that caught Mipsman has not yet been identified.
-     */
-    private RouteFinder updateRouteFinder(Entity ent, RouteFinder lastGhostRouteFinder)
-            throws NoRouteFinderException {
-        RouteFinder r = ent.getRouteFinder();
-        // correct new Mipsman
-        if (ent.isPacman() && !r.getClass().equals(MipsManRouteFinder.class)) {
-            lastGhostRouteFinder = r;
-            ent.setRouteFinder(new MipsManRouteFinder());
-            mipsmanID = ent.getClientId();
-        }
-        // correct old Mipsman if possible, if not false is returned because this is the
-        // first capture.
-        if (!ent.isPacman() && r.getClass().equals(MipsManRouteFinder.class)) {
-            if (lastGhostRouteFinder != null) {
-                ent.setRouteFinder(lastGhostRouteFinder);
-            } else {
-                throw new NoRouteFinderException();
-            }
-        }
-        return lastGhostRouteFinder;
-    }
-
-    /*
-     * Executes the current {@link RouteFinder} and sets the next direction
-     * instruction for the agent.
-     */
-    private void executeRoute(Entity ent, Point myLoc) {
-        RouteFinder r = ent.getRouteFinder();
-        Point mipsManLoc = gameAgents[mipsmanID].getLocation();
-        Direction direction;
-        direction = r.getRoute(myLoc, mipsManLoc);
-        // re-process a random direction if an invalid move is detected
-
-        System.out.println("before2");
-        direction = getRandomDirection(ent, myLoc, direction);
-        System.out.println("after2");
-        try {
-            ent.setDirection(direction);
-            directionsOut.add(new Input(ent.getClientId(), direction));
-        } catch (NullPointerException e) {
-            System.err.println("image file null in entity" + ent.getClientId());
-        }
-
-    }
-
-
-
-  /**
-   * Terminates the AI route finding loop upon completion of the current iteration.
-   *
-   * @return True if the current thread is alive and so the AI can be terminated.
-   */
-  public boolean killAI() {
-    runAILoop = false;
-    if (isAlive()) {
-      return true;
-    }
-    return false;
-  }
 }

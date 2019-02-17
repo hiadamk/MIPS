@@ -2,6 +2,7 @@ package utils;
 
 import static java.lang.Math.abs;
 
+import ai.mapping.Mapping;
 import objects.Entity;
 import utils.enums.Direction;
 
@@ -23,7 +24,7 @@ public class Methods {
    * @author Alex Banks, Matty Jones
    */
   public static boolean validiateDirection(Direction d, Entity e, Map m) {
-    Point prevLoc = e.getLocation();
+    Point prevLoc =  Point.copyOf(e.getLocation());
     Direction prevDir = e.getDirection();
     boolean isValid = true;
 
@@ -42,6 +43,46 @@ public class Methods {
     e.setDirection(prevDir);
     return isValid;
   }
+
+  public static boolean validiateDirection(Direction d, Entity e, Point p, Map m) {
+    boolean isValid = true;
+    Point gridPoint = Mapping.getGridCoord(p);
+    gridPoint.increaseX(0);
+    gridPoint.increaseY(0);
+
+    Point movedPoint = produceMovement(d,gridPoint,1);
+    double xpart = abs((p.getX() % 1) - 0.5);
+    double ypart = abs((p.getY() % 1) - 0.5);
+    if (xpart >= 0.1 || ypart >= 0.1) {
+      isValid = false;
+    }
+
+    isValid = isValid && !m.isWall(movedPoint);
+
+    return isValid;
+  }
+
+  public static Point produceMovement(Direction direction, Point p, double offset) {
+    Point loc = Point.copyOf(p);
+    if (direction != null) {
+      switch (direction) {
+        case UP:
+          loc.increaseY(-offset);
+          break;
+        case DOWN:
+          loc.increaseY(offset);
+          break;
+        case LEFT:
+          loc.increaseX(-offset);
+          break;
+        case RIGHT:
+          loc.increaseX(offset);
+          break;
+      }
+    }
+    return loc;
+  }
+
   public static boolean centreOfSquare(Entity e) {
     Point newLoc = new Point(e.getLocation().getX(), e.getLocation().getY());
     double xpart = mod(newLoc.getX(), 1);

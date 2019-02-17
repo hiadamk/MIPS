@@ -162,12 +162,8 @@ public abstract class Mapping {
   }
 
   public static Point findNearestJunction(Point position, Map map, HashSet<Point> junctions) {
-
-    System.out.println("m1");
     double vertical = costVertical(position, map, junctions);
-    System.out.println("m2");
     double horizontal = costHorizontal(position, map, junctions);
-    System.out.println("m3");
     Point output;
     if (Math.abs(vertical) < Math.abs(horizontal)) {
       output = new Point(position.getX(), position.getY() + vertical);
