@@ -63,6 +63,7 @@ public class Client extends Application {
     
     public void setId(int id) {
         this.id = id;
+        this.renderer.setClientID(id);
     }
     
     public void setName(String name) {
