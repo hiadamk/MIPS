@@ -1,5 +1,7 @@
 package utils;
 
+import static java.lang.Math.abs;
+
 import objects.Entity;
 import utils.enums.Direction;
 
@@ -11,8 +13,16 @@ public class Methods {
     }
   }
 
+  /**
+   * checks whether an entity is allowed to move in a certain direction
+   *
+   * @param d Direction to move in
+   * @param e Entity to be checked
+   * @param m Map the entity is moving on
+   * @return true if the move is valid
+   * @author Alex Banks, Matty Jones
+   */
   public static boolean validiateDirection(Direction d, Entity e, Map m) {
-
     Point prevLoc = e.getLocation();
     Direction prevDir = e.getDirection();
     boolean isValid = true;
@@ -20,21 +30,13 @@ public class Methods {
     e.setDirection(d);
     e.move();
     Point faceLoc = e.getFaceLocation();
-    double xpart = prevLoc.getX() % 1;
-    double ypart = prevLoc.getY() % 1;
-    System.out.println(xpart + "," + ypart);
-    if (ypart >= 0.6 || ypart <= 0.4 || xpart >= 0.4 || xpart <= 0.6) {
+    double xpart = abs((prevLoc.getX() % 1) - 0.5);
+    double ypart = abs((prevLoc.getY() % 1) - 0.5);
+    if (xpart >= 0.1 || ypart >= 0.1) {
       isValid = false;
     }
 
     isValid = isValid && !m.isWall(faceLoc);
-
-    if (isValid) {
-      System.out.println("~~~" + e.getClientId() + " try " + d);
-    } else {
-      System.err.println("~~~" + e.getClientId() + " try " + d);
-      System.err.println("~~~" + faceLoc + ", " + xpart + ", " + ypart);
-    }
 
     e.setLocation(prevLoc);
     e.setDirection(prevDir);

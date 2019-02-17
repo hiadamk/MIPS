@@ -62,7 +62,7 @@ public class Telemetry {
    * @author Alex Banks, Matthew Jones
    * @see this#detectEntityCollision(Entity, Entity, ResourceLoader)
    */
-  public static void processPhysics(Entity[] agents, Map m, ResourceLoader resourceLoader) {
+  private static void processPhysics(Entity[] agents, Map m, ResourceLoader resourceLoader) {
 
     for (int i = 0; i < AGENT_COUNT; i++) {
       if (agents[i].getDirection() != null) {
@@ -72,13 +72,8 @@ public class Telemetry {
 
         if (m.isWall(faceLocation)) {
           System.out.println("~Player" + i + " drove into a wall");
-          System.err.println(
-              "~~" + agents[i].getClientId() + agents[i].getDirection() + agents[i].getLocation());
           agents[i].setLocation(prevLocation);
           agents[i].setDirection(null);
-        } else {
-          System.out.println(
-              "~~" + agents[i].getClientId() + agents[i].getDirection() + agents[i].getLocation());
         }
       }
     }
