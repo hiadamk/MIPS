@@ -21,7 +21,7 @@ import utils.enums.Direction;
  */
 public class AILoopControl extends Thread {
 
-    private static final long SLEEP_TIME = 25;
+    private static final long SLEEP_TIME = 1;
     private final Entity[] controlAgents;
     private final HashSet<Point> junctions;
     private final HashMap<Point, HashSet<Point>> edges;
@@ -143,6 +143,7 @@ public class AILoopControl extends Thread {
         System.out.println("Starting AI loop...");
 
         while (runAILoop && controlAgents.length>0) {
+            System.out.println("StartAI");
             for (Entity ent : controlAgents) {
                 Point currentLocation = Point.copyOf(ent.getLocation());
                 Point currentGridLocation = Mapping.getGridCoord(currentLocation);
@@ -183,6 +184,7 @@ public class AILoopControl extends Thread {
             } catch (InterruptedException e) {
                 runAILoop = false;
             }
+            System.out.println("endAI");
         }
     }
 

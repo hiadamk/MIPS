@@ -51,8 +51,8 @@ public class Methods {
     gridPoint.increaseY(0);
 
     Point movedPoint = produceMovement(d,gridPoint,1);
-    double xpart = abs((p.getX() % 1) - 0.5);
-    double ypart = abs((p.getY() % 1) - 0.5);
+    double xpart = abs((gridPoint.getX() % 1) - 0.5);
+    double ypart = abs((gridPoint.getY() % 1) - 0.5);
     if (xpart >= 0.1 || ypart >= 0.1) {
       isValid = false;
     }
