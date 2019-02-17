@@ -8,6 +8,10 @@ import utils.enums.Direction;
 
 public class Pellet implements Renderable {
 
+  public void setLocation(Point location) {
+    this.location = location;
+  }
+
   private Point location;
   private ArrayList<Image> currentImage;
   private boolean active;
@@ -33,5 +37,13 @@ public class Pellet implements Renderable {
 
   public Direction getDirection() {
     return null;
+  }
+
+  public boolean isActive() {
+    return active;
+  }
+
+  public void setActive(boolean active) {
+    this.active = active;
   }
 }
