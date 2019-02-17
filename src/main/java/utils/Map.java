@@ -70,7 +70,10 @@ public class Map {
    * @return true if wall, false otherwise
    */
   public boolean isWall(Point point) {
-    return MAP[(int) point.getX()][(int) point.getY()] == MapElement.WALL.toInt();
+    if (withinBounds(point)) {
+      return MAP[(int) point.getX()][(int) point.getY()] == MapElement.WALL.toInt();
+    }
+    return false;
   }
 
   /**

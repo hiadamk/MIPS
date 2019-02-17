@@ -219,58 +219,65 @@ public class AILoopControl extends Thread {
             Entity fixRouteFinder = null;
             // every AI entity
             for (Entity ent : controlAgents) {
+                System.out.println("1");
                 // positions must be set
                 try {
                     lastGhostRouteFinder = updateRouteFinder(ent, lastGhostRouteFinder);
+                    System.out.println("2");
                 } catch (NoRouteFinderException e) {
                     fixRouteFinder = ent;
                 }
                 // TODO only calculate new route if not at last coordinate OR current direction is invalid
-
-                if (ent.getLocation() == null) {
-                    System.err.println("no location " + ent.toString());
-                }
-                else {
-                    System.out.println("AI1" + ent.getClientId());
-                    if (Methods.centreOfSquare(ent)) {
-                    System.out.println("AI2");
-                    if (!atPreviousCoordinate(ent) || ent.getDirection()==null|| !Methods.validiateDirection(ent.getDirection(), ent, map)) {
-                        ent.setLastGridCoord(Mapping.getGridCoord(ent.getLocation()));
+                Point currentLocation = Point.copyOf(ent.getLocation());
+                if (Methods.centreOfSquare(currentLocation)) {
+                    System.out.println("3");
+                    if (!atPreviousCoordinate(ent, currentLocation) || ent.getDirection()==null|| !Methods.validiateDirection(ent.getDirection(), ent, map)) {
+                        ent.setLastGridCoord(Mapping.getGridCoord(currentLocation));
+                        System.out.println("4");
                         // only route find on junctions
-                        if (junctions.contains(Mapping.getGridCoord(ent.getLocation()))) {
-                            executeRoute(ent);
+                        if (junctions.contains(Mapping.getGridCoord(currentLocation))) {
+                            ent.setDirection(null);
+                            System.out.println("5");
+                            executeRoute(ent, currentLocation);
+                            System.out.println("6");
                         } else {
+                            System.out.println("7");
                             if (ent.getDirection() == null || !Methods.validiateDirection(ent.getDirection(), ent, map)) {
-                                Point nearestJunct = Mapping.findNearestJunction(ent.getLocation(), map, junctions);
+                                System.out.println("8");
+                                Point nearestJunct = Mapping.findNearestJunction(currentLocation, map, junctions);
+                                System.out.println("9");
                                 try {
-                                    if (!nearestJunct.equals(ent.getLocation())) {
-                                        System.out.println("before3");
-                                        Direction dir = Mapping.directionBetweenPoints(ent.getLocation(), nearestJunct);
-                                        while (!Methods.validiateDirection(dir, ent, map)) {
-                                            dir = new RandomRouteFinder().getRoute(ent.getLocation(), gameAgents[mipsmanID].getLocation());
-                                        }
-                                        System.out.println("after3");
-                                        ent.setDirection(dir);
+                                    Direction dir;
+                                    System.out.println("10");
+                                    if (!nearestJunct.equals(currentLocation)) {
+                                        System.out.println("11");
+                                        dir = Mapping.directionBetweenPoints(currentLocation, nearestJunct);
+                                        System.out.println("12");
                                     } else {
-                                        Direction dir = new RandomRouteFinder().getRoute(ent.getLocation(), gameAgents[mipsmanID].getLocation());
-                                        System.out.println("before1");
-                                        while (!Methods.validiateDirection(dir, ent, map)) {
-                                            dir = new RandomRouteFinder().getRoute(ent.getLocation(), gameAgents[mipsmanID].getLocation());
-                                        }
-                                        System.out.println("after1");
-                                        ent.setDirection(dir);
-
+                                        System.out.println("13");
+                                        dir = new RandomRouteFinder().getRoute(currentLocation, gameAgents[mipsmanID].getLocation());
+                                        System.out.println("14");
                                     }
+                                    System.out.println("15");
+                                    dir = getRandomDirection(ent, currentLocation, dir);
+                                    System.out.println("16");
+                                    ent.setDirection(dir);
+                                    System.out.println("17");
                                 } catch (NullPointerException e) {
                                     System.out.println("Images not set");
                                 }
                             }
                         }
                     }
-                    }
+                }
+                else if (!Methods.validiateDirection(ent.getDirection(), ent, map)) {
+                    Direction dir = new RandomRouteFinder().getRoute(currentLocation, gameAgents[mipsmanID].getLocation());
+                    dir = getRandomDirection(ent, currentLocation, dir);
+                    ent.setDirection(dir);
                 }
             }
 
+            System.out.println("18");
             if (fixRouteFinder != null) {
                 if (lastGhostRouteFinder != null) {
                     fixRouteFinder.setRouteFinder(lastGhostRouteFinder);
@@ -279,18 +286,57 @@ public class AILoopControl extends Thread {
                 }
             }
 
+            System.out.println("19");
             try {
                 Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
                 runAILoop = false;
             }
-            System.out.println("endAI");
         }
+        System.out.println("endAI");
     }
 
-    private boolean atPreviousCoordinate(Entity ent) {
+    private Direction getRandomDirection(Entity ent, Point currentLocation, Direction dir) {
+        System.out.println("a");
+        boolean[] dirs = {false, false, false, false};
+        for (int counter = 0; counter<1000000; counter ++) {
+            if (Methods.validiateDirection(dir, ent, map)) {
+                break;
+            }
+
+        //while (!Methods.validiateDirection(dir, ent, map)) {
+            dir = new RandomRouteFinder().getRoute(currentLocation, gameAgents[mipsmanID].getLocation());
+            dirs[dir.toInt()] = true;
+            boolean allTried = true;
+            for (int i = 0; i<4; i++) {
+                if (!dirs[i]) {
+                    allTried = false;
+                    break;
+                }
+            }
+            if (allTried) {
+                System.err.println("ALL DIRECTIONS TRIED");
+                System.err.println(currentLocation);
+
+                System.err.println(ent.getLocation());
+                //double x = currentLocation.getX() - (currentLocation.getX()%0.5);
+                //double y = currentLocation.getY() - (currentLocation.getY()%0.5);
+                //ent.setLocation(new Point(x,y));
+                //break;
+            }
+        }
+        System.out.println("b");
+        if (!Methods.validiateDirection(dir, ent, map)) {
+            System.out.println("c");
+            return null;
+        }
+        System.out.println("d");
+        return dir;
+    }
+
+    private boolean atPreviousCoordinate(Entity ent, Point currentLocation) {
         return !(ent.getLastGridCoord() == null
-            || !ent.getLastGridCoord().equals(Mapping.getGridCoord(ent.getLocation())));
+            || !ent.getLastGridCoord().equals(Mapping.getGridCoord(currentLocation)));
     }
 
     /*
@@ -331,18 +377,15 @@ public class AILoopControl extends Thread {
      * Executes the current {@link RouteFinder} and sets the next direction
      * instruction for the agent.
      */
-    private void executeRoute(Entity ent) {
+    private void executeRoute(Entity ent, Point myLoc) {
         RouteFinder r = ent.getRouteFinder();
-        Point myLoc = ent.getLocation();
         Point mipsManLoc = gameAgents[mipsmanID].getLocation();
         Direction direction;
         direction = r.getRoute(myLoc, mipsManLoc);
         // re-process a random direction if an invalid move is detected
 
         System.out.println("before2");
-        while (!Methods.validiateDirection(direction, ent, map)) {
-            direction = new RandomRouteFinder().getRoute(myLoc, mipsManLoc);
-        }
+        direction = getRandomDirection(ent, myLoc, direction);
         System.out.println("after2");
         try {
             ent.setDirection(direction);
