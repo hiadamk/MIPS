@@ -1,16 +1,17 @@
 package ai;
 
 import static org.junit.jupiter.api.Assertions.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import utils.Point;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
+
 import ai.routefinding.RouteFinder;
 import ai.routefinding.routefinders.MipsManRouteFinder;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import objects.Entity;
-import utils.Map;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import utils.Input;
+import utils.Map;
+import utils.Point;
 import utils.ResourceLoader;
 
 /**Unit tests for the {@link AILoopControl} class.
@@ -53,13 +54,14 @@ class AILoopControlTests {
   	
 	private static final BlockingQueue<Input> QUEUE = new LinkedBlockingQueue<Input>();
   	private static final Map MAP = new Map(MAP_RAW);
-	
-	private static final Entity[] ALL_AGENTS= {
+
+	private static final Entity[] ALL_AGENTS = {
 			new Entity(true, 0, null),
 			new Entity(false, 1, null),
 			new Entity(false, 2, null),
 			new Entity(false, 3, null),
-			new Entity(false, 4, null)};
+			new Entity(false, 4, null)
+	};
 
 	@Test
 	void testRunValid() {

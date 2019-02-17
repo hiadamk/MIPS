@@ -1,40 +1,36 @@
 package server;
 
-import main.Client;
-import utils.Input;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Queue;
+import main.Client;
+import utils.Input;
 
 public class ClientLobbySession {
-    
+
     private Queue<String> clientIn;
     private Queue<Input> keypressQueue;
     private InetAddress serverIP;
     private ClientGameplayHandler handler;
     private Client client;
-    
-    
-    public ClientLobbySession(Queue<String> clientIn,
-                              Queue<Input> keypressQueue, Client client) throws IOException {
-        
+
+    public ClientLobbySession(Queue<String> clientIn, Queue<Input> keypressQueue, Client client)
+        throws IOException {
+
         this.clientIn = clientIn;
         this.keypressQueue = keypressQueue;
         this.serverIP = NetworkUtility.getServerIP();
         this.client = client;
         joiner.start();
-        
     }
-    
-    Thread joiner = new Thread() {
+
+    Thread joiner =
+        new Thread() {
         @Override
         public void run() {
             super.run();
@@ -47,11 +43,9 @@ public class ClientLobbySession {
                 out.println(str);
                 out.flush();
 
-
                 String r = in.readLine();
                 int id = Integer.parseInt(r);
                 client.setId(id);
-                
 
                 r = in.readLine();
                 if (r.equals("SUCCESS")) {
@@ -61,28 +55,25 @@ public class ClientLobbySession {
                 in.close();
                 soc.close();
 
-
                 soc = new ServerSocket(NetworkUtility.CLIENT_DGRAM_PORT).accept();
                 in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
                 r = in.readLine();
-                                if (r.equals("STARTGAME")) {
+                if (r.equals("STARTGAME")) {
                     handler = new ClientGameplayHandler(serverIP, keypressQueue, clientIn);
                 }
-                
+
                 System.out.println(r);
                 in.close();
                 soc.close();
             } catch (IOException e) {
-            
+
             }
-            
         }
-    };
-    
-    
+        };
+
     public static void main(String[] args) throws IOException {
-//        ClientLobbySession c = new ClientLobbySession(new LinkedBlockingQueue<String>(),
-//                new LinkedBlockingQueue<String>(), new LinkedBlockingQueue<Integer>());
-//        c.join();
+        //        ClientLobbySession c = new ClientLobbySession(new LinkedBlockingQueue<String>(),
+        //                new LinkedBlockingQueue<String>(), new LinkedBlockingQueue<Integer>());
+        //        c.join();
     }
 }

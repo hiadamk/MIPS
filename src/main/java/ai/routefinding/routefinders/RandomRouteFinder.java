@@ -1,24 +1,27 @@
 package ai.routefinding.routefinders;
 
 import ai.routefinding.RouteFinder;
+import java.util.Random;
 import utils.Point;
 import utils.enums.Direction;
 
-import java.util.Random;
-
-/**Random direction generator. Twice as likely to produce a route towards the target as one away from it.
- * @author Lewis Ackroyd*/
+/**
+ * Random direction generator. Twice as likely to produce a route towards the target as one away
+ * from it.
+ *
+ * @author Lewis Ackroyd
+ */
 public class RandomRouteFinder implements RouteFinder {
-    
+
     private static final Random R = new Random();
     private static final Direction DEFAULT = Direction.UP;
-    
+
     /**
      * Creates an instance of this routeFinder.
      */
-    public RandomRouteFinder() {}
-    
-    
+    public RandomRouteFinder() {
+    }
+
     /**
      * Returns the direction to travel in until the next junction is reached.
      *
@@ -29,9 +32,9 @@ public class RandomRouteFinder implements RouteFinder {
      */
     @Override
     public Direction getRoute(Point myLocation, Point targetLocation) {
-    	if (myLocation == null || targetLocation == null) {
-    		throw new NullPointerException("One or both positions are null.");
-    	}
+        if (myLocation == null || targetLocation == null) {
+            throw new NullPointerException("One or both positions are null.");
+        }
         Direction dir = DEFAULT;
         int dirValue = R.nextInt(6);
         switch (dirValue) {

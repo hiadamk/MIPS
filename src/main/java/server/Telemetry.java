@@ -71,12 +71,9 @@ public class Telemetry {
         Point faceLocation = agents[i].getFaceLocation();
 
         if (m.isWall(faceLocation)) {
-          System.err.println(i + "prev: " + prevLocation);
-          System.err.println(i + "face: " + faceLocation);
+          System.out.println("~Player" + i + " drove into a wall");
           agents[i].setLocation(prevLocation);
           agents[i].setDirection(null);
-//        } else {
-//          System.out.println(i + "face: " + faceLocation);
         }
       }
     }
@@ -121,7 +118,7 @@ public class Telemetry {
       ghoul.updateImages(resourceLoader);
 
       System.out.println(
-          "ghoul " + ghoul.getClientId() + " collided with mipsman " + pacman.getClientId());
+          "~Ghoul" + ghoul.getClientId() + " captured Mipsman" + pacman.getClientId());
     }
   }
 
@@ -130,8 +127,8 @@ public class Telemetry {
     agents[0] = new Entity(false, 0, new Point(1.5, 2.5, map));
     agents[1] = new Entity(false, 1, new Point(1.5, 18.5, map));
     agents[2] = new Entity(false, 2, new Point(1.5, 16.5, map));
-    agents[3] = new Entity(false, 3, new Point(1.5, 2.5, map));
-    agents[4] = new Entity(false, 4, new Point(1.5, 2.5, map));
+    agents[3] = new Entity(false, 3, new Point(11.5, 2.5, map));
+    agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
     agents[(new Random()).nextInt(AGENT_COUNT)].setPacMan(true);
 
     System.out.println(Arrays.toString(agents));
