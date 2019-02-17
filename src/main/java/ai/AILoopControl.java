@@ -248,8 +248,13 @@ public class AILoopControl extends Thread {
                                 Point nearestJunct = Mapping.findNearestJunction(ent.getLocation(), map, junctions);
                                 try {
                                     if (!nearestJunct.equals(ent.getLocation())) {
-
-                                        ent.setDirection(Mapping.directionBetweenPoints(ent.getLocation(), nearestJunct));
+                                        System.out.println("before3");
+                                        Direction dir = Mapping.directionBetweenPoints(ent.getLocation(), nearestJunct);
+                                        while (!Methods.validiateDirection(dir, ent, map)) {
+                                            dir = new RandomRouteFinder().getRoute(ent.getLocation(), gameAgents[mipsmanID].getLocation());
+                                        }
+                                        System.out.println("after3");
+                                        ent.setDirection(dir);
                                     } else {
                                         Direction dir = new RandomRouteFinder().getRoute(ent.getLocation(), gameAgents[mipsmanID].getLocation());
                                         System.out.println("before1");
