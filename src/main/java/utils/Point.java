@@ -92,6 +92,9 @@ public class Point {
 
   private void mod() {
     if (mapped) {
+      if (MAX_Y > 0 && MAX_X > 0) {
+        System.err.println("Mapped Point has no MaxX or MaxY");
+      }
       while (this.x < 0) {
         x += MAX_X;
       }
