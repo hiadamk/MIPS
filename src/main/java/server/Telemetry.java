@@ -62,7 +62,7 @@ public class Telemetry {
    * @author Alex Banks, Matthew Jones
    * @see this#detectEntityCollision(Entity, Entity, ResourceLoader)
    */
-  public static void processPhysics(Entity[] agents, Map m, ResourceLoader resourceLoader) {
+  private static void processPhysics(Entity[] agents, Map m, ResourceLoader resourceLoader) {
 
     for (int i = 0; i < AGENT_COUNT; i++) {
       if (agents[i].getDirection() != null) {

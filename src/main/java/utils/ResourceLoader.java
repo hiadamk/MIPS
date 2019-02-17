@@ -15,14 +15,10 @@ import utils.enums.MapElement;
 public class ResourceLoader {
 
   private final String BASE_DIR;
-
-  private String[] themes;
-
-  private Map map;
-
   private final int spriteWidth = 39;
   private final int spriteHeight = 36;
-
+  private String[] themes;
+  private Map map;
   private ArrayList<ArrayList<BufferedImage>> mipSprites;
   private BufferedImage mipPalette;
   private int mipColourID;
@@ -39,9 +35,7 @@ public class ResourceLoader {
   private BufferedImage mipMarker;
   private BufferedImage clientMarker;
 
-  /**
-   * @param baseDir path to the resources folder
-   */
+  /** @param baseDir path to the resources folder */
   public ResourceLoader(String baseDir) {
     BASE_DIR = baseDir;
 
@@ -130,9 +124,7 @@ public class ResourceLoader {
     }
   }
 
-  /**
-   * @param theme name of folder which contains the assets for that theme
-   */
+  /** @param theme name of folder which contains the assets for that theme */
   public void loadPlayableMip(String theme) {
     BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "mip");
     this.mipSprites = splitSpriteSheet(spriteWidth, spriteHeight, spriteSheet);
