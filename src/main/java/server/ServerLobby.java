@@ -20,6 +20,8 @@ public class ServerLobby {
     private boolean gameStarted;
     private ServerGameplayHandler s;
     private String[] names = new String[5];
+    private Queue<String> outputQueue;
+
     public ServerLobby() {
         pinger.start();
         this.playerCount = 0;
@@ -134,6 +136,7 @@ public class ServerLobby {
      * @return
      */
     public ServerGameplayHandler gameStart(Queue<Input> inputQueue, Queue<String> outputQueue) {
+        this.outputQueue = outputQueue;
         pinger.interrupt();
         acceptConnections.interrupt();
         gameStarted = true;
@@ -170,7 +173,10 @@ public class ServerLobby {
      * Stops the game for clients.
      */
     public void gameStop() {
-        //TODO Implement
+        if (gameStarted) {
+            outputQueue.add(NetworkUtility.STOP_CODE);
+            //TODO close server side objects and stuff
+        }
     }
 
     public int getPlayerCount(){

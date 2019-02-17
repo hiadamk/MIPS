@@ -1,5 +1,6 @@
 package server;
 
+import sun.nio.ch.sctp.Shutdown;
 import utils.Input;
 
 import java.io.IOException;
@@ -95,11 +96,11 @@ public class ClientGameplayHandler {
                                     clientIn.add(data);
                                     System.out.println("Got instruction from server");
                                 } else if (data.startsWith(NetworkUtility.STOP_CODE)) {
+                                    clientIn.add(data);
                                     receiver.shutdown();
                                     sender.shutdown();
                                     outgoingPacketManager.interrupt();
                                     incomingPacketManager.interrupt();
-                                    System.out.println("Recieved Stop Instruction");
                                 } else {
                                     throw new Exception();
                                 }

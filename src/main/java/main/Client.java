@@ -271,6 +271,14 @@ public void setPlayerNames(String[] names){
 
     }
   }
+//communicates to slients
+  private void stopMultiplayerGame(){
+    if (isHost) {
+      server.gameStop();
+      //add some stuff that stops rendering the game?
+    }
+    //TODO add options in future for client to quit a game
+  }
 
   private void render() {
     renderer.render(map, agents);

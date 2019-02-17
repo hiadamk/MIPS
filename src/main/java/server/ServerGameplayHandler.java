@@ -78,41 +78,5 @@ public class ServerGameplayHandler {
                         }
                     }
                 };
-        
-        // reads inputs from the incoming queue into the relevant queue - position queue or collision
-        // queue
-        // could be parallelised in adding positions and collisions to the queue - hogging was unlikely
-        // as collisions
-        // occur a lot less than position updates
-    
-        //Don't think this is needed anymore as the packet sender is directly watching the outgoing queue which the telemetry adds to.
-
-//        this.outgoingPacketManager =
-//                new Thread() {
-//                    public void run() {
-//                        while (!isInterrupted()) {
-//                            try {
-//                                if (po.isEmpty()) {
-//                                    continue;
-//                                } else {
-//                                    String data = collisionQueue.poll();
-//                                    data = NetworkUtility.COLLISIONS_CODE + data;
-//                                    outgoingQueue.add(data);
-//                                }
-//                                if (positionQueue.isEmpty()) {
-//                                    continue;
-//                                } else {
-//                                    String data = positionQueue.poll();
-//                                    data = NetworkUtility.POSITION_CODE + data;
-//                                    outgoingQueue.add(data);
-//                                }
-//                                Thread.sleep(50);
-//
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }
-//                };
   }
 }

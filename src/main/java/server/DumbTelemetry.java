@@ -23,8 +23,6 @@ public class DumbTelemetry implements Telemeters{
   private Entity[] agents;
   private Map map;
   private Queue<Input> clientQueue;
-  private AILoopControl ai;
-  private boolean aiRunning;
   private ResourceLoader resourceLoader;
 
 
@@ -164,6 +162,8 @@ public class DumbTelemetry implements Telemeters{
          setEntityMovement(input.substring(4));
         case "POS3":
           setEntityPositions(input.substring(4));
+        case NetworkUtility.STOP_CODE:
+          //TODO - add code for game end procedures down the game on the server end
         default:
           throw new IllegalArgumentException();
       }
