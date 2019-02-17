@@ -24,7 +24,7 @@ public class Methods {
    * @author Alex Banks, Matty Jones
    */
   public static boolean validiateDirection(Direction d, Entity e, Map m) {
-    Point prevLoc =  Point.copyOf(e.getLocation());
+    Point prevLoc = e.getLocation().getCopy();
     Direction prevDir = e.getDirection();
     boolean isValid = true;
 
@@ -63,7 +63,7 @@ public class Methods {
   }
 
   public static Point produceMovement(Direction direction, Point p, double offset) {
-    Point loc = Point.copyOf(p);
+    Point loc = p.getCopy();
     if (direction != null) {
       switch (direction) {
         case UP:

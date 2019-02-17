@@ -143,9 +143,9 @@ public class AILoopControl extends Thread {
         System.out.println("Starting AI loop...");
 
         while (runAILoop && controlAgents.length>0) {
-            System.out.println("StartAI");
+            //System.out.println("StartAI");
             for (Entity ent : controlAgents) {
-                Point currentLocation = Point.copyOf(ent.getLocation());
+                Point currentLocation = ent.getLocation().getCopy();
                 Point currentGridLocation = Mapping.getGridCoord(currentLocation);
                 if (Methods.centreOfSquare(currentLocation)) {
                     if (ent.getDirection()==null||!Methods.validiateDirection(ent.getDirection(), ent, currentLocation, map)) {
@@ -184,7 +184,7 @@ public class AILoopControl extends Thread {
             } catch (InterruptedException e) {
                 runAILoop = false;
             }
-            System.out.println("endAI");
+            //System.out.println("endAI");
         }
     }
 

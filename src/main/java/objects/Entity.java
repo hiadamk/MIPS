@@ -48,7 +48,7 @@ public class Entity implements Renderable {
   }
 
   public Point getMoveInDirection(double offset, Direction... d) {
-    Point loc = Point.copyOf(this.location);
+    Point loc = this.location.getCopy();
     Direction direction = d.length > 0 ? d[0] : this.direction;
     if (direction != null) {
       switch (direction) {
