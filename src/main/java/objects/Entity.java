@@ -77,12 +77,12 @@ public class Entity implements Renderable {
     return getMoveInDirection(0.5);
   }
 
-  public void setLastGridCoord(Point position) {
-    this.lastGridCoord = position;
-  }
-
   public Point getLastGridCoord() {
     return lastGridCoord;
+  }
+
+  public void setLastGridCoord(Point position) {
+    this.lastGridCoord = position;
   }
 
   @Override

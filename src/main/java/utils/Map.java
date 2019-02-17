@@ -82,9 +82,7 @@ public class Map {
     return MAP;
   }
 
-  /**
-   * @return random location to position ghouls at if caught
-   */
+  /** @return random location to position ghouls at if caught */
   public Point getRandomSpawnPoint() {
     return SPAWN_POINTS.get((new Random()).nextInt(SPAWN_POINTS.size()));
   }

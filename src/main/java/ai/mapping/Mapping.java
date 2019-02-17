@@ -80,7 +80,7 @@ public abstract class Mapping {
    *
    * @param map The map to produce the junction pairs from.
    * @param junctions All the junctions within the map. These can be generated using the {@link #
-   * getJunctions(Map) getJunctions} method.
+   *     getJunctions(Map) getJunctions} method.
    * @return A mapping of every junction to all connected junctions.
    */
   public static HashMap<Point, HashSet<Point>> getEdges(Map map, HashSet<Point> junctions) {

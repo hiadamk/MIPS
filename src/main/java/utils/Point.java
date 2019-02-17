@@ -2,16 +2,14 @@ package utils;
 
 import static java.lang.Math.abs;
 
-/**
- * encapsulates point in 2d space on a map if given map, will ensure modularity
- */
+/** encapsulates point in 2d space on a map if given map, will ensure modularity */
 public class Point {
 
-  private double x;
-  private double y;
   private final int MAX_X;
   private final int MAX_Y;
   private final boolean mapped;
+  private double x;
+  private double y;
 
   public Point(double x, double y) {
     this.x = x;

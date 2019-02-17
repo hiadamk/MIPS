@@ -21,9 +21,9 @@ import utils.enums.MapElement;
 
 public class Renderer {
 
-  private ResourceLoader r;
   private static final double MAP_BORDER = 10;
   private final GraphicsContext gc;
+  private ResourceLoader r;
   private int xResolution;
   private int yResolution;
   private Point2D.Double mapRenderingCorner;
@@ -197,8 +197,8 @@ public class Renderer {
 
     setFillColour(palette.getRGB(0, 0));
     gc.fillPolygon(
-        new double[]{topLeft.getX(), topRight.getX(), bottomRight.getX(), bottomLeft.getX()},
-        new double[]{topLeft.getY(), topRight.getY(), bottomRight.getY(), bottomLeft.getY()},
+        new double[] {topLeft.getX(), topRight.getX(), bottomRight.getX(), bottomLeft.getX()},
+        new double[] {topLeft.getY(), topRight.getY(), bottomRight.getY(), bottomLeft.getY()},
         4);
 
     // Render Pyramid underside
@@ -219,31 +219,31 @@ public class Renderer {
 
     setFillColour(palette.getRGB(2, 0));
     gc.fillPolygon(
-        new double[]{topRight.getX(), bottomRight.getX(), pyramidVertex.getX()},
-        new double[]{topRight.getY(), bottomRight.getY(), pyramidVertex.getY()},
+        new double[] {topRight.getX(), bottomRight.getX(), pyramidVertex.getX()},
+        new double[] {topRight.getY(), bottomRight.getY(), pyramidVertex.getY()},
         3);
 
     setFillColour(palette.getRGB(1, 0));
     gc.fillPolygon(
-        new double[]{bottomLeft.getX(), bottomRight.getX(), pyramidVertex.getX()},
-        new double[]{bottomLeft.getY(), bottomRight.getY(), pyramidVertex.getY()},
+        new double[] {bottomLeft.getX(), bottomRight.getX(), pyramidVertex.getX()},
+        new double[] {bottomLeft.getY(), bottomRight.getY(), pyramidVertex.getY()},
         3);
 
     // Draw outline
     gc.setStroke(Color.BLACK);
     gc.strokePolygon(
-        new double[]{bottomLeft.getX(), bottomRight.getX(), pyramidVertex.getX()},
-        new double[]{bottomLeft.getY(), bottomRight.getY(), pyramidVertex.getY()},
+        new double[] {bottomLeft.getX(), bottomRight.getX(), pyramidVertex.getX()},
+        new double[] {bottomLeft.getY(), bottomRight.getY(), pyramidVertex.getY()},
         3);
 
     gc.strokePolygon(
-        new double[]{topRight.getX(), bottomRight.getX(), pyramidVertex.getX()},
-        new double[]{topRight.getY(), bottomRight.getY(), pyramidVertex.getY()},
+        new double[] {topRight.getX(), bottomRight.getX(), pyramidVertex.getX()},
+        new double[] {topRight.getY(), bottomRight.getY(), pyramidVertex.getY()},
         3);
 
     gc.strokePolygon(
-        new double[]{topLeft.getX(), topRight.getX(), bottomRight.getX(), bottomLeft.getX()},
-        new double[]{topLeft.getY(), topRight.getY(), bottomRight.getY(), bottomLeft.getY()},
+        new double[] {topLeft.getX(), topRight.getX(), bottomRight.getX(), bottomLeft.getX()},
+        new double[] {topLeft.getY(), topRight.getY(), bottomRight.getY(), bottomLeft.getY()},
         4);
   }
 
@@ -264,9 +264,7 @@ public class Renderer {
     return new Point2D.Double(isoX, isoY);
   }
 
-  /**
-   * @param e entity to render
-   */
+  /** @param e entity to render */
   private void renderEntity(Entity e) {
     Image currentSprite = e.getImage().get(0);
     double x = e.getLocation().getX() - 0.5;
@@ -287,9 +285,7 @@ public class Renderer {
     gc.drawImage(marker, coord.getX(), coord.getY());
   }
 
-  /**
-   * @return The top right corner coordinate to start rendering game map from
-   */
+  /** @return The top right corner coordinate to start rendering game map from */
   private Point2D.Double getMapRenderingCorner() {
     return new Point2D.Double(this.xResolution / (double) 2, this.yResolution / (double) 10);
     // return new Point2D.Double(getIsoCoord(0,map),getIsoCoord(0,0,tileSizeY).getY())
