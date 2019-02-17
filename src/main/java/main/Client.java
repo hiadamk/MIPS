@@ -1,13 +1,6 @@
 package main;
 
 import audio.AudioController;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Random;
-import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -23,13 +16,17 @@ import server.ServerGameplayHandler;
 import server.ServerLobby;
 import server.Telemetry;
 import ui.MenuController;
-import utils.Input;
-import utils.Map;
-import utils.Methods;
 import utils.Point;
-import utils.ResourceLoader;
+import utils.*;
 import utils.enums.Direction;
 import utils.enums.ScreenResolution;
+
+import java.awt.*;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Random;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Client extends Application {
 
@@ -60,6 +57,7 @@ public class Client extends Application {
 
   public void setId(int id) {
     this.id = id;
+      this.renderer.setClientID(id);
   }
 
   @Override
