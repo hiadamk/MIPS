@@ -13,6 +13,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import objects.Entity;
 import utils.Map;
 import utils.Point;
@@ -197,8 +198,8 @@ public class Renderer {
 
     setFillColour(palette.getRGB(0, 0));
     gc.fillPolygon(
-        new double[] {topLeft.getX(), topRight.getX(), bottomRight.getX(), bottomLeft.getX()},
-        new double[] {topLeft.getY(), topRight.getY(), bottomRight.getY(), bottomLeft.getY()},
+        new double[]{topLeft.getX(), topRight.getX(), bottomRight.getX(), bottomLeft.getX()},
+        new double[]{topLeft.getY(), topRight.getY(), bottomRight.getY(), bottomLeft.getY()},
         4);
 
     // Render Pyramid underside
@@ -219,31 +220,31 @@ public class Renderer {
 
     setFillColour(palette.getRGB(2, 0));
     gc.fillPolygon(
-        new double[] {topRight.getX(), bottomRight.getX(), pyramidVertex.getX()},
-        new double[] {topRight.getY(), bottomRight.getY(), pyramidVertex.getY()},
+        new double[]{topRight.getX(), bottomRight.getX(), pyramidVertex.getX()},
+        new double[]{topRight.getY(), bottomRight.getY(), pyramidVertex.getY()},
         3);
 
     setFillColour(palette.getRGB(1, 0));
     gc.fillPolygon(
-        new double[] {bottomLeft.getX(), bottomRight.getX(), pyramidVertex.getX()},
-        new double[] {bottomLeft.getY(), bottomRight.getY(), pyramidVertex.getY()},
+        new double[]{bottomLeft.getX(), bottomRight.getX(), pyramidVertex.getX()},
+        new double[]{bottomLeft.getY(), bottomRight.getY(), pyramidVertex.getY()},
         3);
 
     // Draw outline
     gc.setStroke(Color.BLACK);
     gc.strokePolygon(
-        new double[] {bottomLeft.getX(), bottomRight.getX(), pyramidVertex.getX()},
-        new double[] {bottomLeft.getY(), bottomRight.getY(), pyramidVertex.getY()},
+        new double[]{bottomLeft.getX(), bottomRight.getX(), pyramidVertex.getX()},
+        new double[]{bottomLeft.getY(), bottomRight.getY(), pyramidVertex.getY()},
         3);
 
     gc.strokePolygon(
-        new double[] {topRight.getX(), bottomRight.getX(), pyramidVertex.getX()},
-        new double[] {topRight.getY(), bottomRight.getY(), pyramidVertex.getY()},
+        new double[]{topRight.getX(), bottomRight.getX(), pyramidVertex.getX()},
+        new double[]{topRight.getY(), bottomRight.getY(), pyramidVertex.getY()},
         3);
 
     gc.strokePolygon(
-        new double[] {topLeft.getX(), topRight.getX(), bottomRight.getX(), bottomLeft.getX()},
-        new double[] {topLeft.getY(), topRight.getY(), bottomRight.getY(), bottomLeft.getY()},
+        new double[]{topLeft.getX(), topRight.getX(), bottomRight.getX(), bottomLeft.getX()},
+        new double[]{topLeft.getY(), topRight.getY(), bottomRight.getY(), bottomLeft.getY()},
         4);
   }
 
@@ -264,7 +265,9 @@ public class Renderer {
     return new Point2D.Double(isoX, isoY);
   }
 
-  /** @param e entity to render */
+  /**
+   * @param e entity to render
+   */
   private void renderEntity(Entity e) {
     Image currentSprite = e.getImage().get(0);
     double x = e.getLocation().getX() - 0.5;
@@ -285,7 +288,9 @@ public class Renderer {
     gc.drawImage(marker, coord.getX(), coord.getY());
   }
 
-  /** @return The top right corner coordinate to start rendering game map from */
+  /**
+   * @return The top right corner coordinate to start rendering game map from
+   */
   private Point2D.Double getMapRenderingCorner() {
     return new Point2D.Double(this.xResolution / (double) 2, this.yResolution / (double) 10);
     // return new Point2D.Double(getIsoCoord(0,map),getIsoCoord(0,0,tileSizeY).getY())
@@ -294,36 +299,51 @@ public class Renderer {
   private void renderHUD(Entity[] entities) {
     gc.setFill(Color.WHITE);
     final double paddingRatio = 0.1;
-    final double xOffset = paddingRatio * yResolution;
-    final double yOffset = paddingRatio * xResolution;
-    double textLength = 270;
-    double nameScoreGap = 100;
+    final double offset = paddingRatio * yResolution;
+    double nameScoreGap = yResolution * paddingRatio;
 
     // calculate corner coordinate to render other players scores from
-    Point2D.Double topLeft = new Double(xOffset, yOffset - nameScoreGap);
-    Point2D.Double topRight =
-        new Double(xResolution - xOffset - textLength, yOffset - nameScoreGap);
-    Point2D.Double botLeft = new Double(xOffset, yResolution - yOffset);
-    Point2D.Double botRight = new Double(xResolution - xOffset - textLength, yResolution - yOffset);
+    Point2D.Double topLeft = new Double(offset, offset);
+    Point2D.Double topRight = new Double(xResolution - offset, offset);
+    Point2D.Double botLeft = new Double(offset, yResolution - offset - nameScoreGap);
+    Point2D.Double botRight = new Double(xResolution - offset,
+        yResolution - offset - nameScoreGap);
 
     ArrayList<Point2D.Double> scoreCoord =
         new ArrayList<>(Arrays.asList(topLeft, topRight, botLeft, botRight));
 
-    int cornerCounter = 0;
-    gc.setFont(geoSmall);
+    Entity[] otherPlayers = new Entity[4];
+    Entity self = null;
+    int playerCounter = 0;
     for (Entity e : entities) {
-      if (e.getClientId() == clientID) { // render own score
-        gc.setFont(geoLarge);
-        gc.fillText("Score:" + e.getScore(), xResolution / 2 - textLength / 2, yResolution / 15);
-      } else { // render other players score and name
-        Point2D.Double cornerCoord = scoreCoord.get(cornerCounter);
-        cornerCounter++;
-        gc.setFont(geoSmall);
-        gc.fillText("Score:" + e.getScore(), cornerCoord.getX(), cornerCoord.getY() + nameScoreGap);
-        gc.setFont(geoLarge);
-        gc.fillText("Player" + e.getClientId(), cornerCoord.getX(), cornerCoord.getY());
+      if (e.getClientId() != clientID) {
+        otherPlayers[playerCounter] = e;
+        playerCounter++;
+      } else {
+        self = e;
       }
     }
+
+    //render own score
+    gc.setTextAlign(TextAlignment.CENTER);
+    gc.setFont(geoLarge);
+    gc.fillText("Score:" + self.getScore(), xResolution / 2, yResolution / 13);
+
+    //render other players scores
+    for (int i = 0; i < otherPlayers.length; i++) {
+      if ((i % 2 == 0)) {
+        gc.setTextAlign(TextAlignment.LEFT);
+      } else {
+        gc.setTextAlign(TextAlignment.RIGHT);
+      }
+      Point2D.Double cornerCoord = scoreCoord.get(i);
+      gc.setFont(geoSmall);
+      gc.fillText("Score:" + otherPlayers[i].getScore(), cornerCoord.getX(),
+          cornerCoord.getY() + nameScoreGap);
+      gc.setFont(geoLarge);
+      gc.fillText("Player" + otherPlayers[i].getClientId(), cornerCoord.getX(), cornerCoord.getY());
+    }
+
   }
 
   private void setFillColour(int colour) {
