@@ -167,4 +167,12 @@ public class Entity implements Renderable {
     outStr += "\nlastPos " + lastGridCoord;
     return outStr;
   }
+
+  public void incrementScore(int... i) {
+    if (i.length > 0) {
+      score = score + i[0];
+    } else {
+      score++;
+    }
+  }
 }
