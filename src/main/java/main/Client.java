@@ -157,14 +157,15 @@ public void setPlayerNames(String[] names){
 
   }
 
-  public void startMultiplayerGame(int playerCount) {
+  public void startMultiplayerGame() {
 
     if (isHost) {
       BlockingQueue<Input> inputQueue = new LinkedBlockingQueue<Input>();
       BlockingQueue<String> outputQueue = new LinkedBlockingQueue<String>();
       ServerGameplayHandler s = server.gameStart(inputQueue, outputQueue);
-      this.telemetry = new Telemetry(this.map, playerCount, inputQueue, outputQueue);
 
+      int playerCount = server.getPlayerCount();
+      this.telemetry = new Telemetry(this.map, playerCount, inputQueue, outputQueue);
       map = resourceLoader.getMap();
       gameScene.setOnKeyPressed(keyController);
       startGame();

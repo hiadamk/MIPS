@@ -26,7 +26,8 @@ public class ServerLobby {
         this.playerIPs = new ArrayList<>();
         acceptConnections.start();
     }
-    
+
+
     /**
      * Thread which sends messages to multicast group to make server IP known
      */
@@ -171,8 +172,14 @@ public class ServerLobby {
     public void gameStop() {
         //TODO Implement
     }
-    
-    
+
+    public int getPlayerCount(){
+        return this.playerCount;
+    }
+
+
+
+
     public static void main(String[] args) throws IOException {
         ServerLobby s = new ServerLobby();
 //        s.acceptConnections();

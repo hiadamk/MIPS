@@ -45,10 +45,7 @@ public class ServerGameplayHandler {
         this.sender.start();
         this.receiver.start();
     }
-    
-    public int getPlayerCount() {
-        return this.playerCount;
-    }
+
 
     
     public static void main(String[] args) throws IOException {
