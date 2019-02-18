@@ -143,7 +143,6 @@ public class AILoopControl extends Thread {
         System.out.println("Starting AI loop...");
 
         while (runAILoop && controlAgents.length>0) {
-            //System.out.println("StartAI");
             for (Entity ent : controlAgents) {
                 Point currentLocation = ent.getLocation().getCopy();
                 Point currentGridLocation = Mapping.getGridCoord(currentLocation);
@@ -184,8 +183,8 @@ public class AILoopControl extends Thread {
             } catch (InterruptedException e) {
                 runAILoop = false;
             }
-            //System.out.println("endAI");
         }
+        System.out.println("AI safely terminated.");
     }
 
     private void executeRoute(Entity ent, Point currentLocation) {
