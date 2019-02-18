@@ -167,7 +167,9 @@ public class Telemetry {
     for (int i = 0; i < map.getMaxX(); i++) {
       for (int j = 0; j < map.getMaxY(); j++) {
         Point point = new Point(i + 0.5, j + 0.5);
-        pellets.put(Integer.toString(i) + Integer.toString(j), new Pellet(point));
+        if (!map.isWall(point)) {
+          pellets.put(Integer.toString(i) + Integer.toString(j), new Pellet(point));
+        }
       }
     }
   }
