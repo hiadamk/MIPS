@@ -1,19 +1,16 @@
 package server;
 
 import ai.AILoopControl;
+import javafx.animation.AnimationTimer;
+import objects.Entity;
+import utils.*;
+import utils.enums.Direction;
+
 import java.util.Arrays;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import javafx.animation.AnimationTimer;
-import objects.Entity;
-import utils.Input;
-import utils.Map;
-import utils.Methods;
-import utils.Point;
-import utils.ResourceLoader;
-import utils.enums.Direction;
 
 public class Telemetry implements Telemeters {
 
@@ -201,13 +198,13 @@ public class Telemetry implements Telemeters {
   }
 // adds string valid input of the entity and location.
   private void informClients(Input input, Point location) {
-    while (!outputs.isEmpty()) {
+      System.out.println("Server making entity movement packet: ");
       outputs.add(NetworkUtility.makeEntitiyMovementPacket(input, location));
-    }
   }
 
 
   private void updateClients(Entity[] agents) {
+      System.out.println("Server updating clients of all positions ");
     outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents));
   }
 
