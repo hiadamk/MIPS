@@ -115,6 +115,7 @@ public class Client extends Application {
     }
     
     public void createMultiplayerLobby() {
+        System.out.println("Created multiplayer lobby");
         isHost = true;
         
         clientIn = new LinkedList<>();
@@ -157,11 +158,13 @@ public class Client extends Application {
     public void startMultiplayerGame() {
         
         if (isHost) {
+            System.out.println("Starting multiplayer for host");
             BlockingQueue<Input> inputQueue = new LinkedBlockingQueue<Input>();
             BlockingQueue<String> outputQueue = new LinkedBlockingQueue<String>();
             ServerGameplayHandler s = server.gameStart(inputQueue, outputQueue);
             
             int playerCount = server.getPlayerCount();
+            map = resourceLoader.getMap();
             this.telemetry = new Telemetry(this.map, playerCount, inputQueue, outputQueue);
             map = resourceLoader.getMap();
             gameScene.setOnKeyPressed(keyController);
