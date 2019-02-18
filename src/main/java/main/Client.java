@@ -104,10 +104,7 @@ public class Client extends Application {
     System.out.println("Starting single player game...");
     // If hosting if not telemetry will be set by connection method along with new main id
     map = resourceLoader.getMap();
-
-    Queue<Input> incomingQueue = new LinkedList<>();
-
-    this.telemetry = new Telemetry(map, incomingQueue, resourceLoader);
+    this.telemetry = new Telemetry(map, resourceLoader);
     this.primaryStage.setScene(gameScene);
     this.id = 0;
 

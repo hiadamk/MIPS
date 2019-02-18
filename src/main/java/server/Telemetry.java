@@ -3,7 +3,6 @@ package server;
 import ai.AILoopControl;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -31,7 +30,6 @@ public class Telemetry {
   }
 
   private HashMap<String, Pellet> pellets;
-  private Queue<Input> clientQueue;
   private ServerGameplayHandler server;
   private AILoopControl ai;
   private boolean aiRunning;
@@ -49,12 +47,11 @@ public class Telemetry {
     startGame();
   }
 
-  public Telemetry(Map map, Queue<Input> clientQueue, ResourceLoader resourceLoader) {
+  public Telemetry(Map map, ResourceLoader resourceLoader) {
     this.map = map;
     inputs = new LinkedBlockingQueue<>();
     outputs = new LinkedBlockingQueue<>();
     singlePlayer = true;
-    this.clientQueue = clientQueue;
     this.resourceLoader = resourceLoader;
     initialise();
     startGame();
@@ -134,7 +131,7 @@ public class Telemetry {
   private static void pelletCollision(Entity[] agents, HashMap<String, Pellet> pellets) {
     for (Entity agent : agents) {
       if (!agent.isPacman()) {
-        return;
+        continue;
       }
       Point p = agent.getFaceLocation();
       int x = (int) p.getX();
@@ -236,14 +233,7 @@ public class Telemetry {
   }
 
   private void informClients() {
-    while (!outputs.isEmpty()) {
-      Input input = outputs.poll();
-      if (singlePlayer) {
-        clientQueue.add(input);
-      } else {
-        server.sendPacket(input);
-      }
-    }
+
   }
 
   private void updateClients() {
