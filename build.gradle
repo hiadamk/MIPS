@@ -11,6 +11,10 @@ repositories {
     mavenCentral()
 }
 
+application{
+    mainClassName='main.Client'
+}
+
 group 'ui'
 dependencies {
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.1'
