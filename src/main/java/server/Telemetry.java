@@ -1,60 +1,56 @@
 package server;
 
 import ai.AILoopControl;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import objects.Entity;
 import objects.Pellet;
-import utils.Input;
-import utils.Map;
-import utils.Methods;
-import utils.Point;
-import utils.ResourceLoader;
+import utils.*;
 import utils.enums.Direction;
 
-public class Telemetry {
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Queue;
+import java.util.Random;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+public class Telemetry implements Telemeters {
 
   private static final int AGENT_COUNT = 5;
   private BlockingQueue<Input> inputs;
-  private BlockingQueue<Input> outputs;
+  private BlockingQueue<String> outputs;
   private Entity[] agents;
   private boolean singlePlayer;
   private Map map;
-
-  public HashMap<String, Pellet> getPellets() {
-    return pellets;
-  }
-
   private HashMap<String, Pellet> pellets;
-  private ServerGameplayHandler server;
   private AILoopControl ai;
   private boolean aiRunning;
   private ResourceLoader resourceLoader;
-
-  public Telemetry(Map map, ServerGameplayHandler server) {
+  private final int playerCount;
+  
+  public Telemetry(Map map, int playerCount, Queue<Input> inputQueue, Queue<String> outputQueue) {
     this.map = map;
-    inputs = new LinkedBlockingQueue<>();
-    outputs = new LinkedBlockingQueue<>();
-
-    this.server = server;
+    inputs = (BlockingQueue<Input>) inputQueue;
+    outputs = (BlockingQueue<String>) outputQueue;
+    this.playerCount = playerCount;
     this.singlePlayer = false;
-
     initialise();
     startGame();
   }
-
-  public Telemetry(Map map, ResourceLoader resourceLoader) {
+  
+  public Telemetry(Map map, Queue<Input> clientQueue, ResourceLoader resourceLoader) {
     this.map = map;
-    inputs = new LinkedBlockingQueue<>();
+    inputs = (BlockingQueue<Input>) clientQueue;
     outputs = new LinkedBlockingQueue<>();
+    this.playerCount = 1;
     singlePlayer = true;
     this.resourceLoader = resourceLoader;
     initialise();
     startGame();
+  }
+  
+  public HashMap<String, Pellet> getPellets() {
+    return pellets;
   }
 
   /**
@@ -154,7 +150,7 @@ public class Telemetry {
     agents[(new Random()).nextInt(AGENT_COUNT)].setPacMan(true);
 
     System.out.println(Arrays.toString(agents));
-    int aiCount = AGENT_COUNT - (server == null ? 1 : server.getPlayerCount());
+    int aiCount = AGENT_COUNT - playerCount;
     if (aiCount < 0) {
       aiCount = 0;
     }
@@ -206,9 +202,8 @@ public class Telemetry {
         if (change >= DELAY) {
           oldTime = now;
           processInputs();
-          informClients();
           processPhysics(agents, map, resourceLoader, pellets);
-          updateClients();
+          updateClients(agents);
         }
       }
     }.start();
@@ -219,7 +214,7 @@ public class Telemetry {
       ai.start();
     }
   }
-
+  
   private void processInputs() {
     while (!inputs.isEmpty()) {
       Input input = inputs.poll();
@@ -227,17 +222,23 @@ public class Telemetry {
       Direction d = input.getMove();
       if (Methods.validiateDirection(d, agents[id], map)) {
         agents[id].setDirection(d);
-        outputs.add(input); // To send to the other clients
+        if (!singlePlayer) {
+          //this is currently what's set to update on other clients' systems. they'll get valid inputs
+          informClients(input, agents[id].getLocation()); // Inputs sent to the other clients
+        }
       }
     }
   }
-
-  private void informClients() {
-
+  
+  private void informClients(Input input, Point location) {
+//        System.out.println("Server making entity movement packet: ");
+    outputs.add(NetworkUtility.makeEntitiyMovementPacket(input, location));
   }
-
-  private void updateClients() {
-    // TODO implement
+  
+  
+  private void updateClients(Entity[] agents) {
+//    System.out.println("Server updating clients of all positions ");
+    outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents));
   }
 
   public Entity[] getAgents() {

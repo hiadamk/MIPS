@@ -1,11 +1,7 @@
 package server;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-import java.net.NetworkInterface;
+import java.net.*;
 import java.util.Enumeration;
 import java.util.Queue;
 
@@ -71,8 +67,9 @@ public class PacketReceiver extends Thread {
         ds.receive(packet);
 
         String received = new String(packet.getData(), 0, packet.getLength());
-        System.out.println(received);
+        System.out.println("SOMEONE RECEIVED: " + received);
         received = received.replaceAll("\u0000.*", "");
+  
         if (received.startsWith(NetworkUtility.PREFIX)
             && received.endsWith(NetworkUtility.SUFFIX)) {
           received =

@@ -2,13 +2,6 @@ package ui;
 
 import audio.AudioController;
 import audio.Sounds;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
@@ -29,6 +22,14 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.Client;
 import utils.enums.ScreenResolution;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * @author Adam Kona Class which handles the creation and functionality of components in the main
@@ -222,21 +223,6 @@ public class MenuController {
         e -> {
           audioController.playSound(Sounds.click);
           client.startSinglePlayerGame();
-        });
-
-    startMGameBtn = new Button();
-    StackPane.setAlignment(startMGameBtn, Pos.BOTTOM_CENTER);
-    StackPane.setMargin(startMGameBtn, new Insets(0, 0, 200, 0));
-
-    startingM = new ImageView(startImg);
-    startMGameBtn.setGraphic(startingM);
-    startMGameBtn.setStyle("-fx-background-color: transparent;");
-    root.getChildren().add(startMGameBtn);
-    startMGameBtn.setVisible(false);
-    startMGameBtn.setOnAction(
-        e -> {
-          audioController.playSound(Sounds.click);
-          client.startMultiplayerGame();
         });
 
     this.singlePlayerBtn = new Button();
@@ -451,20 +437,6 @@ public class MenuController {
     creditsBtn.setGraphic(creditsView);
     creditsBtn.setVisible(false);
 
-    quitBtn = new Button();
-    StackPane.setAlignment(quitBtn, Pos.TOP_RIGHT);
-    StackPane.setMargin(quitBtn, new Insets(50, 50, 0, 0));
-    quitBtn.setStyle("-fx-background-color: transparent;");
-    root.getChildren().add(quitBtn);
-    Image quitImg = new Image("ui/quit.png");
-    quitView = new ImageView(quitImg);
-    quitBtn.setGraphic(quitView);
-    quitBtn.setOnAction(
-        event -> {
-          audioController.playSound(Sounds.click);
-          System.exit(0);
-        });
-
     joinGameBtn = new Button();
     joinGameBtn.setPickOnBounds(true);
     joinGameBtn.setStyle("-fx-background-color: transparent;");
@@ -587,7 +559,21 @@ public class MenuController {
     nameEntryOptions.setPrefWidth(300);
     nameEntryOptions.setVisible(false);
     root.getChildren().add(nameEntryOptions);
-
+  
+    quitBtn = new Button();
+    StackPane.setAlignment(quitBtn, Pos.TOP_RIGHT);
+    StackPane.setMargin(quitBtn, new Insets(50, 50, 0, 0));
+    quitBtn.setStyle("-fx-background-color: transparent;");
+    root.getChildren().add(quitBtn);
+    Image quitImg = new Image("ui/quit.png");
+    quitView = new ImageView(quitImg);
+    quitBtn.setGraphic(quitView);
+    quitBtn.setOnAction(
+            event -> {
+              audioController.playSound(Sounds.click);
+              System.exit(0);
+            });
+    
     GaussianBlur gaussianBlur = new GaussianBlur();
     gaussianBlur.setRadius(11);
 
@@ -635,7 +621,23 @@ public class MenuController {
         });
 
     root.getChildren().add(settingsBtn);
-
+  
+    startMGameBtn = new Button();
+    StackPane.setAlignment(startMGameBtn, Pos.BOTTOM_CENTER);
+    StackPane.setMargin(startMGameBtn, new Insets(0, 0, 200, 0));
+  
+    startingM = new ImageView(startImg);
+    startMGameBtn.setGraphic(startingM);
+    startMGameBtn.setStyle("-fx-background-color: transparent;");
+    root.getChildren().add(startMGameBtn);
+    startMGameBtn.setVisible(false);
+    startMGameBtn.setOnAction(
+            e -> {
+              audioController.playSound(Sounds.click);
+              client.startMultiplayerGame();
+            
+            });
+    
     backBtn = new Button();
     StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(backBtn, new Insets(0, 0, 100, 0));

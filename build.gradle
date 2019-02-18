@@ -11,6 +11,10 @@ repositories {
     mavenCentral()
 }
 
+application{
+    mainClassName='main.Client'
+}
+
 group 'ui'
 dependencies {
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.1'
@@ -23,7 +27,7 @@ dependencies {
 }
 
 task(runMain, dependsOn: 'classes', type: JavaExec) {
-    main = 'ui.main'
+    main = 'main.Client'
     classpath = sourceSets.main.runtimeClasspath
     applicationDefaultJvmArgs = ["-Djava.net.preferIPv4Stack=true"]
 }
