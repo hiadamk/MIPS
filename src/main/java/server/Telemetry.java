@@ -204,7 +204,7 @@ public class Telemetry implements Telemeters {
 
 
   private void updateClients(Entity[] agents) {
-      System.out.println("Server updating clients of all positions ");
+    System.out.println("Server updating clients of all positions ");
     outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents));
   }
 

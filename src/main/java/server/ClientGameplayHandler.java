@@ -1,6 +1,5 @@
 package server;
 
-import sun.nio.ch.sctp.Shutdown;
 import utils.Input;
 
 import java.io.IOException;
@@ -70,6 +69,7 @@ public class ClientGameplayHandler {
                             try {
                                 key = keypressQueue.take();
                                 //sends inputs as strings, which are converted back by ServerGameplay handler
+                                System.out.println("ADDING KEY TO OUTGOING QUEUE: " + key.toString());
                                 outgoingQueue.add(key.toString());
                                 Thread.sleep(50);
                             } catch (InterruptedException e) {

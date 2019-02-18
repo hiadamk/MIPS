@@ -197,6 +197,5 @@ public class ServerLobby {
 
     public static void main(String[] args) throws IOException {
         ServerLobby s = new ServerLobby();
-//        s.acceptConnections();
     }
 }

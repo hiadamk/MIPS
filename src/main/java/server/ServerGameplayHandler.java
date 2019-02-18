@@ -14,10 +14,7 @@ public class ServerGameplayHandler {
     private Queue<Input> inputQueue;
     private Queue<String> outgoingQueue;
     private Queue<String> incomingQueue;
-
-//    private BlockingQueue<Integer> keypressQueue;
     
-    //    private Thread outgoingPacketManager;
     private Thread incomingPacketManager;
     
     private PacketSender sender;
@@ -62,11 +59,11 @@ public class ServerGameplayHandler {
         this.incomingPacketManager =
                 new Thread() {
                     public void run() {
-                        Integer key;
                         while (!isInterrupted()) {
                             if (incomingQueue.isEmpty()) {
                                 continue;
                             }
+                            System.out.println("SERVER RECEIVED -> " + incomingQueue.peek());
                             inputQueue.add(Input.fromString(incomingQueue.poll()));
 
                             try {
