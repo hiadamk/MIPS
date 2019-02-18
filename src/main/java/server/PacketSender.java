@@ -101,25 +101,6 @@ public class PacketSender extends Thread {
       DatagramPacket packet = new DatagramPacket(buf, 0, buf.length, ip, this.port);
       ds.send(packet);
     }
-
-    //        Enumeration<NetworkInterface> faces = NetworkInterface.getNetworkInterfaces();
-    //        while (faces.hasMoreElements()) {
-    //            NetworkInterface iface = faces.nextElement();
-    //            if (iface.isLoopback() || !iface.isUp()) {
-    //                continue;
-    //            }
-    //
-    //            Enumeration<InetAddress> addresses = iface.getInetAddresses();
-    //            while (addresses.hasMoreElements()) {
-    //                InetAddress addr = addresses.nextElement();
-    //                if (addr.toString().equals(networkInterface)) {
-    //                    socket.setInterface(addr);
-    //                    socket.send(sending);
-    //                    System.out.println("Packet sent");
-    //                    return;
-    //                }
-    //            }
-    //        }
       System.out.println("SENT A PACKET: " + message);
   }
 
