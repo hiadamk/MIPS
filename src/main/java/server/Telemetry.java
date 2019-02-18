@@ -2,12 +2,14 @@ package server;
 
 import ai.AILoopControl;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import objects.Entity;
+import objects.Pellet;
 import utils.Input;
 import utils.Map;
 import utils.Methods;
@@ -23,6 +25,7 @@ public class Telemetry {
   private Entity[] agents;
   private boolean singlePlayer;
   private Map map;
+  private HashMap<String, Pellet> pellets;
   private Queue<Input> clientQueue;
   private ServerGameplayHandler server;
   private AILoopControl ai;
@@ -121,6 +124,22 @@ public class Telemetry {
     }
   }
 
+  private static void DetectPelletCollision(Entity[] agents, HashMap<String, Pellet> pellets) {
+    for (Entity agent : agents) {
+      if (!agent.isPacman()) {
+        return;
+      }
+      Point p = agent.getFaceLocation();
+      int x = (int) p.getX();
+      int y = (int) p.getY();
+      Pellet pellet = pellets.get(x + y);
+      if (pellet != null && pellet.isActive()) {
+        pellet.setActive(false);
+        agent.incrementScore();
+      }
+    }
+  }
+
   private void initialise() {
     agents = new Entity[AGENT_COUNT];
     agents[0] = new Entity(false, 0, new Point(1.5, 1.5, map));
@@ -170,13 +189,10 @@ public class Telemetry {
         change = now - oldTime;
         if (change >= DELAY) {
           oldTime = now;
-          // System.out.println(change);
           processInputs();
           informClients();
           processPhysics(agents, map, resourceLoader);
           updateClients();
-          //        } else {
-          //           System.out.println("skipped");
         }
       }
     }.start();
@@ -192,9 +208,6 @@ public class Telemetry {
     while (!inputs.isEmpty()) {
       Input input = inputs.poll();
       int id = input.getClientID();
-      if (id != 0) {
-        System.err.println("none 0 input found");
-      }
       Direction d = input.getMove();
       if (Methods.validiateDirection(d, agents[id], map)) {
         agents[id].setDirection(d);

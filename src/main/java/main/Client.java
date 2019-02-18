@@ -232,22 +232,18 @@ public class Client extends Application {
     }
     switch (input) {
       case UP: // Add code here
-        System.out.println("Direction up");
         informServer(new Input(this.id, Direction.UP));
         agents[id].setDirection(input);
         break;
       case DOWN: // Add code here
-        System.out.println("Direction down");
         informServer(new Input(this.id, Direction.DOWN));
         agents[id].setDirection(input);
         break;
       case LEFT: // Add code here
-        System.out.println("Direction left");
         informServer(new Input(this.id, Direction.LEFT));
         agents[id].setDirection(input);
         break;
       case RIGHT: // Add code here
-        System.out.println("Direction right");
         informServer(new Input(this.id, Direction.RIGHT));
         agents[id].setDirection(input);
         break;
