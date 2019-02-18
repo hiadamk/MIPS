@@ -27,6 +27,8 @@ public class ResourceLoader {
   private BufferedImage ghoulPalette;
   private int ghoulColourID;
 
+  private ArrayList<BufferedImage> pellets;
+
   private ArrayList<BufferedImage> mapTiles;
 
   private BufferedImage background;
@@ -46,6 +48,7 @@ public class ResourceLoader {
     this.loadBackground("default");
     this.loadClientMarker("default");
     this.loadMipMarker("default");
+    this.loadPellet("default");
     this.loadThemes();
   }
 
@@ -124,14 +127,6 @@ public class ResourceLoader {
     }
   }
 
-  /** @param theme name of folder which contains the assets for that theme */
-  public void loadPlayableMip(String theme) {
-    BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "mip");
-    this.mipSprites = splitSpriteSheet(spriteWidth, spriteHeight, spriteSheet);
-
-    this.mipPalette = loadImageFile("sprites/" + theme + "/playable/", "mip_palette");
-    this.mipColourID = 0;
-  }
 
   /**
    * @param x new x resolution
@@ -167,6 +162,17 @@ public class ResourceLoader {
     }
 
     resizeSpritesSmooth(mapTiles, ratio);
+  }
+
+  /**
+   * @param theme name of folder which contains the assets for that theme
+   */
+  public void loadPlayableMip(String theme) {
+    BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "mip");
+    this.mipSprites = splitSpriteSheet(spriteWidth, spriteHeight, spriteSheet);
+
+    this.mipPalette = loadImageFile("sprites/" + theme + "/playable/", "mip_palette");
+    this.mipColourID = 0;
   }
 
   /**
@@ -216,6 +222,16 @@ public class ResourceLoader {
     }
     this.ghoulColourID = _colourID;
     return bufferedToJavaFxImage2D(this.ghoulSprites);
+  }
+
+  public void loadPellet(String theme) {
+    //this.pellets = splitSpriteSheet(14,34,loadImageFile("sprites/" + theme + "/consumable/","pellet")).get(0);
+    this.pellets = new ArrayList<>(
+        Arrays.asList(loadImageFile("sprites/" + theme + "/consumable/", "pellet")));
+  }
+
+  public ArrayList<Image> getPellet() {
+    return bufferedToJavaFxImage(this.pellets);
   }
 
   /** @param theme name of folder which contains the assets for that theme */

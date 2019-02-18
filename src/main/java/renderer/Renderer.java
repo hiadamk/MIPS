@@ -143,12 +143,25 @@ public class Renderer {
                 mapTiles.get(MapElement.FLOOR.toInt()).getWidth());
         gc.drawImage(mapTiles.get(MapElement.FLOOR.toInt()), rendCoord.x, rendCoord.y);
       }
+
     }
 
     // Loop through grid in diagonal traversal to render walls and entities by depth
     for (Point2D.Double coord : traversalOrder) {
       x = (int) coord.getX();
       y = (int) coord.getY();
+
+      // render consumable objects on top
+      Pellet currentPellet = pellets.get(Integer.toString(x) + y);
+      if (currentPellet != null && currentPellet.isActive()) {
+        currentSprite = currentPellet.getImage().get(0);
+        double x_ = currentPellet.getLocation().getX() - 0.5;
+        double y_ = currentPellet.getLocation().getY() - 0.5;
+        System.out.println(x_ + " " + y_ + "  gggggggggggggg");
+        rendCoord =
+            getIsoCoord(x_, y_, currentSprite.getHeight(), currentSprite.getWidth());
+        gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
+      }
 
       currentSprite = mapTiles.get(rawMap[x][y]);
       rendCoord = getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
@@ -307,7 +320,6 @@ public class Renderer {
       e.setTimeSinceLastFrame(e.getTimeSinceLastFrame() + timeElapsed);
     }
     Image currentSprite = currentSprites.get(e.getCurrentFrame());
-
 
     double x = e.getLocation().getX() - 0.5;
     double y = e.getLocation().getY() - 0.5;

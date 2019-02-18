@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import javafx.scene.image.Image;
 import utils.Point;
 import utils.Renderable;
+import utils.ResourceLoader;
 import utils.enums.Direction;
 
 public class Pellet implements Renderable {
@@ -45,6 +46,10 @@ public class Pellet implements Renderable {
 
   public void setActive(boolean active) {
     this.active = active;
+  }
+
+  public void updateImages(ResourceLoader r) {
+    currentImage = r.getPellet();
   }
 
   @Override
