@@ -25,6 +25,11 @@ public class Telemetry {
   private Entity[] agents;
   private boolean singlePlayer;
   private Map map;
+
+  public HashMap<String, Pellet> getPellets() {
+    return pellets;
+  }
+
   private HashMap<String, Pellet> pellets;
   private Queue<Input> clientQueue;
   private ServerGameplayHandler server;
