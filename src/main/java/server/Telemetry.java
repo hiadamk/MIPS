@@ -134,7 +134,7 @@ public class Telemetry {
   private static void pelletCollision(Entity[] agents, HashMap<String, Pellet> pellets) {
     for (Entity agent : agents) {
       if (!agent.isPacman()) {
-        return;
+        continue;
       }
       Point p = agent.getFaceLocation();
       int x = (int) p.getX();
