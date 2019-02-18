@@ -9,12 +9,14 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import objects.Entity;
+import objects.Pellet;
 import utils.Map;
 import utils.Point;
 import utils.ResourceLoader;
@@ -109,7 +111,7 @@ public class Renderer {
    * @param map Game map
    * @param entityArr Playable entities
    */
-  public void render(Map map, Entity[] entityArr, long now) {
+  public void render(Map map, Entity[] entityArr, long now, HashMap<String, Pellet> pellets) {
 
     gc.clearRect(0, 0, xResolution, yResolution);
     renderBackground(map);

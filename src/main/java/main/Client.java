@@ -4,6 +4,7 @@ import audio.AudioController;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
@@ -17,6 +18,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import objects.Entity;
+import objects.Pellet;
 import renderer.Renderer;
 import server.ClientLobbySession;
 import server.ServerGameplayHandler;
@@ -53,6 +55,7 @@ public class Client extends Application {
   private Queue<Input> keypressQueue;
   private boolean isHost;
   private String name;
+  private HashMap<String, Pellet> pellets;
 
   public int getId() {
     return id;
@@ -206,6 +209,7 @@ public class Client extends Application {
     if (telemetry != null) {
       agents = telemetry.getAgents();
       map = telemetry.getMap();
+      pellets = telemetry.getPellets();
     }
     Methods.updateImages(agents, resourceLoader);
     this.primaryStage.setScene(gameScene);
@@ -214,7 +218,7 @@ public class Client extends Application {
       @Override
       public void handle(long now) {
         processInput();
-        renderer.render(map, agents, now);
+        renderer.render(map, agents, now, pellets);
       }
     }.start();
     telemetry.startAI();

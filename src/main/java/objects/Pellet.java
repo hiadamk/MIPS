@@ -46,4 +46,10 @@ public class Pellet implements Renderable {
   public void setActive(boolean active) {
     this.active = active;
   }
+
+  @Override
+  public String toString() {
+    String a = active ? "active" : "not active";
+    return "x = " + location.getX() + " y= " + location.getY() + " active = " + a;
+  }
 }
