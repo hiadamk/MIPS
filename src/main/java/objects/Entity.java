@@ -1,12 +1,13 @@
 package objects;
 
 import ai.routefinding.RouteFinder;
-import java.util.ArrayList;
 import javafx.scene.image.Image;
 import utils.Point;
 import utils.Renderable;
 import utils.ResourceLoader;
 import utils.enums.Direction;
+
+import java.util.ArrayList;
 
 public class Entity implements Renderable {
 
@@ -48,7 +49,7 @@ public class Entity implements Renderable {
   }
 
   public Point getMoveInDirection(double offset, Direction... d) {
-    Point loc = Point.copyOf(this.location);
+      Point loc = this.location.getCopy();
     Direction direction = d.length > 0 ? d[0] : this.direction;
     if (direction != null) {
       switch (direction) {
@@ -106,6 +107,7 @@ public class Entity implements Renderable {
   }
 
   public void setDirection(Direction direction) {
+      System.out.println(this.clientId + " " + direction);
     if (this.direction != direction) {
       this.direction = direction;
       if (direction != null) {
@@ -144,10 +146,34 @@ public class Entity implements Renderable {
 
   @Override
   public String toString() {
+      String outStr = "";
     if (this.pacMan) {
-      return "mip" + clientId;
+        outStr += "mip" + clientId;
     } else {
-      return "ghoul" + clientId;
+        outStr += "ghoul" + clientId;
+    }
+      return outStr;
+  }
+    
+    public String toStringExpanded() {
+        String outStr = "";
+        if (this.pacMan) {
+            outStr += "mip" + clientId;
+        } else {
+            outStr += "ghoul" + clientId;
+        }
+        outStr += "\nmyloc " + location.toString();
+        outStr += "\nmydir " + direction;
+        outStr += "\nroutefinder " + routeFinder;
+        outStr += "\nlastPos " + lastGridCoord;
+        return outStr;
+    }
+    
+    public void incrementScore(int... i) {
+        if (i.length > 0) {
+            score = score + i[0];
+        } else {
+            score++;
     }
   }
 }

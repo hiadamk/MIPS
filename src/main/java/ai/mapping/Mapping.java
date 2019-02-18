@@ -1,11 +1,12 @@
 package ai.mapping;
 
-import java.awt.geom.Point2D;
-import java.util.HashMap;
-import java.util.HashSet;
 import utils.Map;
 import utils.Point;
 import utils.enums.Direction;
+
+import java.awt.geom.Point2D;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Methods to facilitate the abstraction of the game {@link Map}, allowing it to be represented as a
@@ -179,19 +180,25 @@ public abstract class Mapping {
   private static double costVertical(Point position, Map map, HashSet<Point> junctions) {
     Point up = new Point(position.getX(), position.getY());
     Point down = new Point(position.getX(), position.getY());
-    while (!map.isWall(up) || !map.isWall(down)) {
-      if (!map.isWall(up)) {
+      boolean upWall = false;
+      boolean downWall = false;
+      while ((map.withinBounds(up) && !map.isWall(up)) || (map.withinBounds(down) && !map.isWall(down))) {
+          if (!map.isWall(up) && !upWall) {
         if (junctions.contains(Mapping.getGridCoord(up))) {
           return up.getY() - position.getY();
         }
-        up.setLocation(up.getX(), up.getY() - 1);
-      }
-      if (!map.isWall(down)) {
+      } else {
+              upWall = true;
+          }
+          if (!map.isWall(down) && !downWall) {
         if (junctions.contains(Mapping.getGridCoord(down))) {
           return down.getY() - position.getY();
         }
-        up.setLocation(down.getX(), down.getY() + 1);
-      }
+      } else {
+              downWall = true;
+          }
+          up.setLocation(up.getX(), up.getY() - 1);
+          down.setLocation(down.getX(), down.getY() + 1);
     }
     return Double.MAX_VALUE;
   }
@@ -199,19 +206,25 @@ public abstract class Mapping {
   private static double costHorizontal(Point position, Map map, HashSet<Point> junctions) {
     Point left = new Point(position.getX(), position.getY());
     Point right = new Point(position.getX(), position.getY());
-    while (!map.isWall(left) || !map.isWall(right)) {
-      if (!map.isWall(left)) {
+      boolean leftWall = false;
+      boolean rightWall = false;
+      while ((map.withinBounds(left) && !map.isWall(left)) || (map.withinBounds(right) && !map.isWall(right))) {
+          if (!map.isWall(left) && !leftWall) {
         if (junctions.contains(Mapping.getGridCoord(left))) {
-          return left.getX() - position.getX();
+            return left.getY() - position.getY();
         }
-        left.setLocation(left.getX() - 1, left.getY());
-      }
-      if (!map.isWall(right)) {
+      } else {
+              leftWall = true;
+          }
+          if (!map.isWall(right) && !rightWall) {
         if (junctions.contains(Mapping.getGridCoord(right))) {
-          return right.getX() - position.getX();
+            return right.getY() - position.getY();
         }
-        right.setLocation(right.getX() + 1, right.getY());
-      }
+          } else {
+              rightWall = true;
+          }
+          left.setLocation(left.getX() - 1, left.getY());
+          right.setLocation(right.getX() + 1, right.getY());
     }
     return Double.MAX_VALUE;
   }

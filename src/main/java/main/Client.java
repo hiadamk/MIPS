@@ -219,7 +219,7 @@ public class Client extends Application {
                 if (id > 0) {
                     Telemetry.processPhysics(agents, map, resourceLoader);
                 }
-                render();
+                renderer.render(map, agents, now);
             }
         }.start();
         if (id == 0) {
@@ -279,8 +279,8 @@ public class Client extends Application {
         }
         //TODO add options in future for client to quit a game
     }
-    
-    private void render() {
-        renderer.render(map, agents);
-    }
+
+//    private void render() {
+//        renderer.render(map, agents);
+//    }
 }

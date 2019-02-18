@@ -1,8 +1,9 @@
 package utils;
 
+import utils.enums.MapElement;
+
 import java.util.ArrayList;
 import java.util.Random;
-import utils.enums.MapElement;
 
 /**
  * Encapsulates map with utilities methods
@@ -15,7 +16,7 @@ public class Map {
   private final int MAX_Y;
 
   private final int[][] MAP;
-  private final ArrayList<Point> SPAWN_POINTS;
+    private final ArrayList<utils.Point> SPAWN_POINTS;
 
   /**
    * basic constructor that takes raw ints and performs preprocessing
@@ -37,12 +38,12 @@ public class Map {
    * @return Array of Point2D.Double spawnPoint.
    * @see this#Map(int[][])
    */
-  private ArrayList<Point> loadSpawnPoints() {
-    ArrayList<Point> spawnPoints = new ArrayList<>();
+  private ArrayList<utils.Point> loadSpawnPoints() {
+      ArrayList<utils.Point> spawnPoints = new ArrayList<>();
     for (int i = 0; i < MAX_X; i++) {
       for (int j = 0; j < MAX_Y; j++) {
         if (MAP[i][j] != MapElement.WALL.toInt()) { // SPAWNPOINT.toInt()
-          spawnPoints.add(new Point(i + 0.5, j + 0.5));
+            spawnPoints.add(new utils.Point(i + 0.5, j + 0.5, MAX_X, MAX_Y, true));
         }
       }
     }
@@ -70,7 +71,10 @@ public class Map {
    * @return true if wall, false otherwise
    */
   public boolean isWall(Point point) {
-    return MAP[(int) point.getX()][(int) point.getY()] == MapElement.WALL.toInt();
+      if (withinBounds(point)) {
+          return MAP[(int) point.getX()][(int) point.getY()] == MapElement.WALL.toInt();
+      }
+      return false;
   }
 
   /**

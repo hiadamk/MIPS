@@ -1,14 +1,15 @@
 package ai;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import ai.mapping.Mapping;
-import java.util.HashMap;
-import java.util.HashSet;
 import org.junit.jupiter.api.Test;
 import utils.Map;
 import utils.Point;
+
+import java.util.HashMap;
+import java.util.HashSet;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for the {@link Mapping} class.
