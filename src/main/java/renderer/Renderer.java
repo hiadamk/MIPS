@@ -21,6 +21,7 @@ import utils.Map;
 import utils.Point;
 import utils.ResourceLoader;
 import utils.enums.MapElement;
+import utils.enums.RenderingMode;
 
 public class Renderer {
 
@@ -406,8 +407,8 @@ public class Renderer {
             1));
   }
 
-  public void setResolution(int x, int y, boolean integerScaling) {
-    r.setResolution(x, y, integerScaling);
+  public void setResolution(int x, int y, RenderingMode mode) {
+    r.setResolution(x, y, mode);
     xResolution = x;
     yResolution = y;
     this.init();

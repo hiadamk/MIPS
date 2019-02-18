@@ -11,13 +11,18 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
 import utils.enums.MapElement;
+import utils.enums.RenderingMode;
 
 public class ResourceLoader {
 
   private final String BASE_DIR;
+
   private final int spriteWidth = 39;
   private final int spriteHeight = 36;
+
   private String[] themes;
+  private final String DEFAULT_THEME = "default";
+
   private Map map;
   private ArrayList<ArrayList<BufferedImage>> mipSprites;
   private BufferedImage mipPalette;
@@ -37,31 +42,25 @@ public class ResourceLoader {
   private BufferedImage mipMarker;
   private BufferedImage clientMarker;
 
-  /** @param baseDir path to the resources folder */
+  /**
+   * @param baseDir path to the resources folder
+   */
   public ResourceLoader(String baseDir) {
     BASE_DIR = baseDir;
 
-    this.loadMap("default");
-    this.loadPlayableMip("default");
-    this.loadPlayableGhoul("default");
-    this.loadMapTiles("default");
-    this.loadBackground("default");
-    this.loadClientMarker("default");
-    this.loadMipMarker("default");
-    this.loadPellet("default");
+    this.init();
     this.loadThemes();
   }
 
-  public static void main(String[] args) {
-    ResourceLoader rl = new ResourceLoader("src/main/resources/");
-    rl.loadMap("default");
-    System.out.println(
-        Arrays.deepToString(rl.getMap().raw())
-            .replace("], ", "]\n")
-            .replace("[[", "[")
-            .replace("]]", "]"));
-
-    rl.setResolution(3840, 2160, false);
+  private void init() {
+    this.loadMap(DEFAULT_THEME);
+    this.loadPlayableMip(DEFAULT_THEME);
+    this.loadPlayableGhoul(DEFAULT_THEME);
+    this.loadMapTiles(DEFAULT_THEME);
+    this.loadBackground(DEFAULT_THEME);
+    this.loadClientMarker(DEFAULT_THEME);
+    this.loadMipMarker(DEFAULT_THEME);
+    this.loadPellet(DEFAULT_THEME);
   }
 
   private void loadThemes() {
@@ -81,7 +80,7 @@ public class ResourceLoader {
 
   /**
    * @param name name of map: if file is default.png the name is default reads a png map image,
-   *     converts rbg colour pixels into map tile numbers
+   * converts rbg colour pixels into map tile numbers
    */
   public void loadMap(String name) {
 
@@ -104,7 +103,7 @@ public class ResourceLoader {
     return map;
   }
 
-  private void resizeSpritesSmooth(ArrayList<BufferedImage> sprites, double ratio) {
+  private void resizeSprites(ArrayList<BufferedImage> sprites, double ratio) {
     BufferedImage temp;
 
     for (int i = 0; i < sprites.size(); i++) {
@@ -131,9 +130,9 @@ public class ResourceLoader {
   /**
    * @param x new x resolution
    * @param y new y resolution
-   * @param integerScaling if true, only scales images by integer scale factor
+   * @param mode tells ResourceLoader how to scale sprites
    */
-  public void setResolution(int x, int y, boolean integerScaling) {
+  public void setResolution(int x, int y, RenderingMode mode) {
     double mapToScreenRatio = 0.7;
 
     // find dimensions of rendered map we want based on mapToScreenRatio
@@ -151,17 +150,45 @@ public class ResourceLoader {
     double ratio = Math.min(targetX / (double) currentX, (double) targetY / currentY);
     System.out.println(ratio);
 
-    ratio = (integerScaling) ? Math.floor(ratio) : ratio;
+    boolean smoothEdges = false;
 
-    for (ArrayList<BufferedImage> mipSprite : mipSprites) {
-      resizeSpritesSmooth(mipSprite, ratio);
+    switch (mode) {
+      case NO_SCALING:
+        init();
+        return;
+      case INTEGER_SCALING: {
+        System.out.println("ratio before:" + ratio);
+        ratio = Math.floor(ratio);
+        System.out.println("ratio after:" + ratio);
+        break;
+      }
+      case SMOOTH_SCALING: {
+        smoothEdges = true;
+        break;
+      }
+      case STANDARD_SCALING: {
+        smoothEdges = false;
+        break;
+      }
+      default: {
+        System.out.println("invalid rendering mode");
+        return;
+      }
     }
 
-    for (ArrayList<BufferedImage> ghoulSprite : ghoulSprites) {
-      resizeSpritesSmooth(ghoulSprite, ratio);
+    if (smoothEdges) {
+
+    } else {
+      for (ArrayList<BufferedImage> mipSprite : mipSprites) {
+        resizeSprites(mipSprite, ratio);
+      }
+
+      for (ArrayList<BufferedImage> ghoulSprite : ghoulSprites) {
+        resizeSprites(ghoulSprite, ratio);
+      }
+      resizeSprites(pellets, ratio);
+      resizeSprites(mapTiles, ratio);
     }
-    resizeSpritesSmooth(pellets, ratio);
-    resizeSpritesSmooth(mapTiles, ratio);
 
   }
 
@@ -181,7 +208,7 @@ public class ResourceLoader {
    *
    * @param _colourID row of palette sheet to apply to sprite
    * @return 2d ArrayList of images - first dimension is the direction, second is each animation
-   *     frame
+   * frame
    */
   public ArrayList<ArrayList<Image>> getPlayableMip(int _colourID) {
 
@@ -198,7 +225,9 @@ public class ResourceLoader {
     return bufferedToJavaFxImage2D(this.mipSprites);
   }
 
-  /** @param theme name of folder which contains the assets for that theme */
+  /**
+   * @param theme name of folder which contains the assets for that theme
+   */
   public void loadPlayableGhoul(String theme) {
     BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "ghoul");
 
@@ -213,7 +242,7 @@ public class ResourceLoader {
    *
    * @param _colourID row of palette sheet to apply to sprite
    * @return 2d ArrayList of images - first dimension is the direction, second is each animation
-   *     frame
+   * frame
    */
   public ArrayList<ArrayList<Image>> getPlayableGhoul(int _colourID) {
     for (ArrayList<BufferedImage> imgs : this.ghoulSprites) {
@@ -235,7 +264,9 @@ public class ResourceLoader {
     return bufferedToJavaFxImage(this.pellets);
   }
 
-  /** @param theme name of folder which contains the assets for that theme */
+  /**
+   * @param theme name of folder which contains the assets for that theme
+   */
   public void loadMapTiles(String theme) {
     ArrayList<BufferedImage> _mapTiles = new ArrayList<>();
     for (MapElement m : MapElement.values()) {
@@ -310,7 +341,7 @@ public class ResourceLoader {
    * @param spriteWidth x dimension of an individual sprite
    * @param spriteHeight y dimension of an individual sprite
    * @param spriteSheet loaded image containing sprites in a grid - each row contains a direction
-   *     and each column contains an animation frame of that direction
+   * and each column contains an animation frame of that direction
    */
   private ArrayList<ArrayList<BufferedImage>> splitSpriteSheet(
       int spriteWidth, int spriteHeight, BufferedImage spriteSheet) {

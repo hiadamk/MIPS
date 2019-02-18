@@ -31,6 +31,7 @@ import utils.Methods;
 import utils.Point;
 import utils.ResourceLoader;
 import utils.enums.Direction;
+import utils.enums.RenderingMode;
 import utils.enums.ScreenResolution;
 
 public class Client extends Application {
@@ -180,7 +181,7 @@ public class Client extends Application {
         yRes = 1440;
         break;
     }
-    renderer.setResolution(xRes, yRes, false);
+    renderer.setResolution(xRes, yRes, RenderingMode.INTEGER_SCALING);
     //        for (Entity e : agents) {
     //            e.updateImages(resourceLoader);
     //        }
