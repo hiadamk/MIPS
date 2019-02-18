@@ -65,7 +65,8 @@ public class Telemetry {
    * @author Alex Banks, Matthew Jones
    * @see this#detectEntityCollision(Entity, Entity, ResourceLoader)
    */
-  private static void processPhysics(Entity[] agents, Map m, ResourceLoader resourceLoader) {
+  private static void processPhysics(Entity[] agents, Map m, ResourceLoader resourceLoader,
+      HashMap<String, Pellet> pellets) {
 
     for (int i = 0; i < AGENT_COUNT; i++) {
       if (agents[i].getDirection() != null) {
@@ -96,6 +97,7 @@ public class Telemetry {
         }
       }
     }
+    pelletCollision(agents, pellets);
   }
 
   /**
@@ -124,7 +126,7 @@ public class Telemetry {
     }
   }
 
-  private static void DetectPelletCollision(Entity[] agents, HashMap<String, Pellet> pellets) {
+  private static void pelletCollision(Entity[] agents, HashMap<String, Pellet> pellets) {
     for (Entity agent : agents) {
       if (!agent.isPacman()) {
         return;
@@ -201,7 +203,7 @@ public class Telemetry {
           oldTime = now;
           processInputs();
           informClients();
-          processPhysics(agents, map, resourceLoader);
+          processPhysics(agents, map, resourceLoader, pellets);
           updateClients();
         }
       }
