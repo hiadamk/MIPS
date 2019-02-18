@@ -107,7 +107,7 @@ public class Entity implements Renderable {
   }
 
   public void setDirection(Direction direction) {
-      System.out.println(this.clientId + " " + direction);
+//      System.out.println(this.clientId + " " + direction);
     if (this.direction != direction) {
       this.direction = direction;
       if (direction != null) {

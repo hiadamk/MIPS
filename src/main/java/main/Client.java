@@ -164,6 +164,7 @@ public class Client extends Application {
             ServerGameplayHandler s = server.gameStart(inputQueue, outputQueue);
             
             int playerCount = server.getPlayerCount();
+            System.out.println("PLAYER COUNT IS: " + playerCount);
             map = resourceLoader.getMap();
             this.telemetry = new Telemetry(this.map, playerCount, inputQueue, outputQueue);
             map = resourceLoader.getMap();
@@ -269,6 +270,7 @@ public class Client extends Application {
         if (singlePlayer) {
             incomingQueue.add(input);
         } else {
+            System.out.println("TRIED TO SEND MY KEY MOVEMENT");
             keypressQueue.add(input);
             
         }

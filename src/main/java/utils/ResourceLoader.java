@@ -1,16 +1,16 @@
 package utils;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
+import utils.enums.MapElement;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.Image;
-import javax.imageio.ImageIO;
-import utils.enums.MapElement;
 
 public class ResourceLoader {
 
@@ -154,7 +154,7 @@ public class ResourceLoader {
 
     // choose the smallest ratio to make sure map fits on screen
     double ratio = Math.min(targetX / (double) currentX, (double) targetY / currentY);
-    System.out.println(ratio);
+//    System.out.println(ratio);
 
     ratio = (integerScaling) ? Math.floor(ratio) : ratio;
 

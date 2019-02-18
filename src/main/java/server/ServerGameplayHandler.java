@@ -67,7 +67,7 @@ public class ServerGameplayHandler {
                             if (incomingQueue.isEmpty()) {
                                 continue;
                             }
-                            System.out.println(incomingQueue.peek());
+//                            System.out.println(incomingQueue.peek());
                             inputQueue.add(Input.fromString(incomingQueue.poll()));
 
                             try {

@@ -120,6 +120,7 @@ public class PacketSender extends Thread {
     //                }
     //            }
     //        }
+      System.out.println("SENT A PACKET: " + message);
   }
 
   /** Stops thread execution. */

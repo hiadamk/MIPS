@@ -1,14 +1,16 @@
 package server;
 
+import utils.Input;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Queue;
-import utils.Input;
 
 
 //TODO Use multi-casting to constantly ping the number of players in the game in a thread.
@@ -27,6 +29,7 @@ public class ServerLobby {
         this.playerCount = 0;
         this.playerIPs = new ArrayList<>();
         acceptConnections.start();
+    
     }
 
 
@@ -141,6 +144,7 @@ public class ServerLobby {
         acceptConnections.interrupt();
         gameStarted = true;
         System.out.printf("Server starting game...");
+        System.out.println("THE IPS I WILL SEND TO: " + playerIPs.toString());
         for (InetAddress ip : playerIPs) {
             try {
                 Socket soc = new Socket(ip, NetworkUtility.CLIENT_DGRAM_PORT);
@@ -148,10 +152,15 @@ public class ServerLobby {
                 String str = "START GAME";
 
                 out.println(str);
-
+                out.flush();
+                System.out.println("SERVER SENT START GAME");
+                System.out.println("NAMES IN NAMES ARRAY: " + Arrays.toString(names));
                 for (String name:names){
                     out.println(name);
+                    out.flush();
+                    System.out.println("SENT THE NAME: " + name);
                 }
+    
                 out.flush();
                 out.close();
             } catch (IOException e) {
