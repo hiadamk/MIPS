@@ -1,6 +1,13 @@
 package main;
 
 import audio.AudioController;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Random;
+import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -16,17 +23,13 @@ import server.ServerGameplayHandler;
 import server.ServerLobby;
 import server.Telemetry;
 import ui.MenuController;
+import utils.Input;
+import utils.Map;
+import utils.Methods;
 import utils.Point;
-import utils.*;
+import utils.ResourceLoader;
 import utils.enums.Direction;
 import utils.enums.ScreenResolution;
-
-import java.awt.*;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Random;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class Client extends Application {
 
@@ -57,7 +60,7 @@ public class Client extends Application {
 
   public void setId(int id) {
     this.id = id;
-      this.renderer.setClientID(id);
+    this.renderer.setClientID(id);
   }
 
   @Override
@@ -211,7 +214,7 @@ public class Client extends Application {
       @Override
       public void handle(long now) {
         processInput();
-        render();
+        renderer.render(map, agents, now);
       }
     }.start();
     telemetry.startAI();
@@ -278,9 +281,5 @@ public class Client extends Application {
     } else {
       // TODO integrate with networking to send to telemetry
     }
-  }
-
-  private void render() {
-    renderer.render(map, agents);
   }
 }

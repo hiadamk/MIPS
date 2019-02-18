@@ -41,6 +41,12 @@ public class Renderer {
   private Font geoSmall;
   private Font geoLarge;
 
+  private final long secondInNanoseconds = (long) Math.pow(10, 9);
+  private long lastFrame;
+  private int fps = 0;
+  private int frameCounter = 0;
+  private long timeSum;
+
   private ArrayList<Point2D.Double> traversalOrder = new ArrayList<>();
 
   /**
@@ -102,7 +108,8 @@ public class Renderer {
    * @param map Game map
    * @param entityArr Playable entities
    */
-  public void render(Map map, Entity[] entityArr) {
+  public void render(Map map, Entity[] entityArr, long now) {
+
     gc.clearRect(0, 0, xResolution, yResolution);
     renderBackground(map);
     int[][] rawMap = map.raw();
@@ -168,6 +175,25 @@ public class Renderer {
     }
 
     renderHUD(entityArr);
+    showFPS(now);
+
+  }
+
+  private void showFPS(long now) {
+    //calculate frames
+    long timeElapsed = now - lastFrame;
+    lastFrame = now;
+    gc.setTextAlign(TextAlignment.CENTER);
+    if (timeSum > secondInNanoseconds) {
+      fps = frameCounter / (int) (timeSum / secondInNanoseconds);
+      gc.fillText("FPS:" + fps, xResolution / 2, yResolution - 100);
+      timeSum = 0;
+      frameCounter = 0;
+    } else {
+      gc.fillText("FPS:" + fps, xResolution / 2, yResolution - 100);
+      timeSum += timeElapsed;
+      frameCounter++;
+    }
   }
 
   public void setClientID(int _id) {
@@ -345,6 +371,7 @@ public class Renderer {
     }
 
   }
+
 
   private void setFillColour(int colour) {
     gc.setFill(
