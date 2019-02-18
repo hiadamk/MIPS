@@ -157,7 +157,6 @@ public class Renderer {
         currentSprite = currentPellet.getImage().get(0);
         double x_ = currentPellet.getLocation().getX() - 0.5;
         double y_ = currentPellet.getLocation().getY() - 0.5;
-        System.out.println(x_ + " " + y_ + "  gggggggggggggg");
         rendCoord =
             getIsoCoord(x_, y_, currentSprite.getHeight(), currentSprite.getWidth());
         gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());

@@ -140,6 +140,7 @@ public class Entity implements Renderable {
   }
 
   public void updateImages(ResourceLoader resourceLoader) {
+    currentFrame = 0;
     images =
         pacMan
             ? resourceLoader.getPlayableMip(clientId)
