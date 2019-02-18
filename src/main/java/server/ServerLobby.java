@@ -85,12 +85,12 @@ public class ServerLobby {
         @Override
         public void run() {
             super.run();
+    
             try {
-
-                
+                ServerSocket server = new ServerSocket(NetworkUtility.SERVER_DGRAM_PORT);
                 while (!isInterrupted()) {
                     if (playerCount < 5) {
-                        Socket soc = new ServerSocket(NetworkUtility.SERVER_DGRAM_PORT).accept();
+                        Socket soc = server.accept();
                         BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
                         PrintWriter out = new PrintWriter(soc.getOutputStream());
                         System.out.println("Waiting for new connection...");
@@ -126,7 +126,7 @@ public class ServerLobby {
                     
                 }
             } catch (IOException e) {
-            
+                e.printStackTrace();
             }
             
         }

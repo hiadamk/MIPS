@@ -46,7 +46,9 @@ public class ClientLobbySession {
     
                 String str = NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX;
                 out.println(str);
+                System.out.println("SENT CONNECT TO SERVER");
                 out.println(clientName);
+                System.out.println("SENT CLIENT NAME: " + clientName);
                 out.flush();
     
     
