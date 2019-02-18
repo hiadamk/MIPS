@@ -104,6 +104,7 @@ public class Renderer {
     }
   }
 
+
   /**
    * @param map Game map
    * @param entityArr Playable entities
@@ -164,7 +165,7 @@ public class Renderer {
       while (entityCounter < entities.size()
           && ((x + y) >= ((int) spriteCoord.getX() + (int) spriteCoord.getY()))
           && spriteCoord.getX() > x) {
-        renderEntity(entities.get(entityCounter));
+        renderEntity(entities.get(entityCounter), now - lastFrame);
         entityCounter++;
 
         // point to the next entity
@@ -294,8 +295,18 @@ public class Renderer {
   /**
    * @param e entity to render
    */
-  private void renderEntity(Entity e) {
-    Image currentSprite = e.getImage().get(0);
+  private void renderEntity(Entity e, long timeElapsed) {
+    //choose correct animation
+    ArrayList<Image> currentSprites = e.getImage();
+    if (secondInNanoseconds / e.getAnimationSpeed() < e.getTimeSinceLastFrame()) {
+      e.setTimeSinceLastFrame(0);
+      e.nextFrame();
+    } else {
+      e.setTimeSinceLastFrame(e.getTimeSinceLastFrame() + timeElapsed);
+    }
+    Image currentSprite = currentSprites.get(e.getCurrentFrame());
+
+
     double x = e.getLocation().getX() - 0.5;
     double y = e.getLocation().getY() - 0.5;
     Point2D.Double rendCoord =

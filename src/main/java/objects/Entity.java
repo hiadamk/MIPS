@@ -20,6 +20,10 @@ public class Entity implements Renderable {
   private ArrayList<Image> currentImage;
   private RouteFinder routeFinder;
   private Point lastGridCoord;
+  //animation variables
+  private final int animationSpeed = 5;
+  private long timeSinceLastFrame = 0;
+  private int currentFrame = 0;
 
   public Entity(Boolean pacMan, int clientId, Point location) {
     this.pacMan = pacMan;
@@ -28,7 +32,7 @@ public class Entity implements Renderable {
     this.score = 0;
     this.velocity = pacMan ? 0.08 : 0.06;
     this.direction = Direction.UP;
-    // updateImages();
+    //updateImages();
   }
 
   public RouteFinder getRouteFinder() {
@@ -173,6 +177,35 @@ public class Entity implements Renderable {
       score = score + i[0];
     } else {
       score++;
+    }
+  }
+
+  public long getTimeSinceLastFrame() {
+    return timeSinceLastFrame;
+  }
+
+  public void setTimeSinceLastFrame(long n) {
+    this.timeSinceLastFrame = n;
+  }
+
+  public int getAnimationSpeed() {
+    return animationSpeed;
+  }
+
+  public int getCurrentFrame() {
+    return currentFrame;
+  }
+
+  public void nextFrame() {
+    if (getImage().size() == 1) {
+      currentFrame = 0;
+    } else {
+      //currentFrame = (currentFrame + 1) % (getImage().size() - 1);
+      if (currentFrame == getImage().size() - 1) {
+        currentFrame = 0;
+      } else {
+        currentFrame++;
+      }
     }
   }
 }
