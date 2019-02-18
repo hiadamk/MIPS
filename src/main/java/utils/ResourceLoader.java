@@ -160,8 +160,9 @@ public class ResourceLoader {
     for (ArrayList<BufferedImage> ghoulSprite : ghoulSprites) {
       resizeSpritesSmooth(ghoulSprite, ratio);
     }
-
+    resizeSpritesSmooth(pellets, ratio);
     resizeSpritesSmooth(mapTiles, ratio);
+
   }
 
   /**
