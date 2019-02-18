@@ -132,7 +132,7 @@ public class Telemetry {
       Point p = agent.getFaceLocation();
       int x = (int) p.getX();
       int y = (int) p.getY();
-      Pellet pellet = pellets.get(x + y);
+      Pellet pellet = pellets.get(Integer.toString(x) + Integer.toString(y));
       if (pellet != null && pellet.isActive()) {
         pellet.setActive(false);
         agent.incrementScore();
@@ -162,6 +162,14 @@ public class Telemetry {
     }
     aiRunning = false;
     ai = new AILoopControl(agents, aiControlled, map, inputs);
+
+    pellets = new HashMap<String, Pellet>();
+    for (int i = 0; i < map.getMaxX(); i++) {
+      for (int j = 0; j < map.getMaxY(); j++) {
+        Point point = new Point(i + 0.5, j + 0.5);
+        pellets.put(Integer.toString(i) + Integer.toString(j), new Pellet(point));
+      }
+    }
   }
 
   public Map getMap() {
