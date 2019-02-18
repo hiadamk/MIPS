@@ -92,11 +92,11 @@ public class AudioController {
 
   /** Decreases master game volume. */
   public void decreaseVolume() {
-    if (getMusicVolume() > 0) {
+    if (getMusicVolume() >= 0.1) {
       setMusicVolume(getMusicVolume() - 0.1);
     }
 
-    if (getSoundVolume() > 0) {
+    if (getSoundVolume() >= 0.1) {
       setSoundVolume(getSoundVolume() - 0.1);
     }
   }
@@ -147,7 +147,7 @@ public class AudioController {
     if (volume > 1.0) {
       volume = 1.0;
     }
-    if (volume < 0.0) {
+    if (volume < 0.1) {
       volume = 0.0;
     }
     FloatControl control = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
