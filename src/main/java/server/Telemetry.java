@@ -75,7 +75,7 @@ public class Telemetry implements Telemeters {
 
         if (m.isWall(faceLocation)) {
           System.out.println("~Player" + i + " drove into a wall");
-          agents[i].setLocation(prevLocation);
+          agents[i].setLocation(prevLocation.centralise());
           agents[i].setDirection(null);
         }
       }

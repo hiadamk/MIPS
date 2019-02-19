@@ -80,6 +80,13 @@ public class Point {
     mod();
   }
 
+  public Point centralise() {
+    x = (int) x + 0.5;
+    y = (int) y + 0.5;
+    mod();
+    return this;
+  }
+
   public boolean inRange(Point p) {
     Point temp = new Point(this.x - p.getX(), this.y - p.getY(), this.MAX_X, this.MAX_Y);
     return (abs(temp.getX()) <= 0.5 && abs(temp.getY()) <= 0.5);
