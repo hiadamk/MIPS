@@ -208,16 +208,13 @@ public class Client extends Application {
                 break;
         }
         renderer.setResolution(xRes, yRes, RenderingMode.INTEGER_SCALING);
-        //        for (Entity e : agents) {
-        //            e.updateImages(resourceLoader);
-        //        }
     }
     
     public void setName(String n) {
         if (n.matches(".*[a-zA-Z]+.*")) {
             this.name = n;
         } else {
-            this.name = "Player " + this.getId();
+            this.name = "Joe Bloggs";
         }
     }
     
