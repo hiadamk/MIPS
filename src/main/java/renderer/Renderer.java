@@ -147,6 +147,9 @@ public class Renderer {
 
     }
 
+    //TODO refactor the way the translucent pellet is fetched
+    Image translucentPellet = r.getTranslucentPellet().get(0);
+
     // Loop through grid in diagonal traversal to render walls and entities by depth
     for (Point2D.Double coord : traversalOrder) {
       x = (int) coord.getX();
@@ -155,7 +158,21 @@ public class Renderer {
       // render consumable objects on top
       Pellet currentPellet = pellets.get(Integer.toString(x) + y);
       if (currentPellet != null && currentPellet.isActive()) {
-        currentSprite = currentPellet.getImage().get(0);
+        boolean clientMipsman = false;
+
+        //TODO refactor the way the render knows the client is MIPSman
+        for (Entity e : entities) {
+          if (e.isPacman() && e.getClientId() == clientID) {
+            clientMipsman = true;
+            break;
+          }
+        }
+        if (clientMipsman) {
+          currentSprite = currentPellet.getImage().get(0);
+        } else {
+
+          currentSprite = translucentPellet;
+        }
         double x_ = currentPellet.getLocation().getX() - 0.5;
         double y_ = currentPellet.getLocation().getY() - 0.5;
         rendCoord =

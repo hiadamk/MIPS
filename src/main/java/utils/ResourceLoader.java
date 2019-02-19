@@ -1,5 +1,6 @@
 package utils;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -33,6 +34,7 @@ public class ResourceLoader {
   private int ghoulColourID;
 
   private ArrayList<BufferedImage> pellets;
+  private ArrayList<BufferedImage> translucentPellets;
 
   private ArrayList<BufferedImage> mapTiles;
 
@@ -205,6 +207,7 @@ public class ResourceLoader {
         resizeSprites(ghoulSprite, ratio);
       }
       resizeSprites(pellets, ratio);
+      resizeSprites(translucentPellets, ratio);
       resizeSprites(mapTiles, ratio);
       mipMarker = resizeSpritesSmooth(mipMarker, ratio);
       clientMarker = resizeSpritesSmooth(clientMarker, ratio);
@@ -278,10 +281,16 @@ public class ResourceLoader {
     //this.pellets = splitSpriteSheet(14,34,loadImageFile("sprites/" + theme + "/consumable/","pellet")).get(0);
     this.pellets = new ArrayList<>(
         Arrays.asList(loadImageFile("sprites/" + theme + "/consumable/", "pellet")));
+    this.translucentPellets = new ArrayList<>(
+        Arrays.asList(transparentizeSprite(this.pellets.get(0))));
   }
 
   public ArrayList<Image> getPellet() {
     return bufferedToJavaFxImage(this.pellets);
+  }
+
+  public ArrayList<Image> getTranslucentPellet() {
+    return bufferedToJavaFxImage(this.translucentPellets);
   }
 
   /**
@@ -330,6 +339,7 @@ public class ResourceLoader {
   }
 
   /**
+   * returns loads a png image in TYPE_4BYTE_ABGR
    * @param folderPath folder that contains the images
    * @param name name of image to load (no file ending)
    */
@@ -426,5 +436,17 @@ public class ResourceLoader {
     }
 
     return sprite;
+  }
+
+  private BufferedImage transparentizeSprite(BufferedImage sprite) {
+    BufferedImage translucentImage = new BufferedImage(sprite.getWidth(), sprite.getHeight(),
+        BufferedImage.TYPE_4BYTE_ABGR);
+    Graphics2D g = translucentImage.createGraphics();
+    final float opacity = 0.5f;
+    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OUT, opacity));
+    g.drawImage(sprite, 0, 0, sprite.getWidth(), sprite.getHeight(), null);
+    g.dispose();
+
+    return translucentImage;
   }
 }
