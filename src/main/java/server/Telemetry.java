@@ -28,11 +28,12 @@ public class Telemetry implements Telemeters {
   private ResourceLoader resourceLoader;
   private final int playerCount;
   
-  public Telemetry(Map map, int playerCount, Queue<Input> inputQueue, Queue<String> outputQueue) {
+  public Telemetry(Map map, int playerCount, Queue<Input> inputQueue, Queue<String> outputQueue, ResourceLoader resourceLoader) {
     this.map = map;
     inputs = (BlockingQueue<Input>) inputQueue;
     outputs = (BlockingQueue<String>) outputQueue;
     this.playerCount = playerCount;
+    this.resourceLoader = resourceLoader;
     this.singlePlayer = false;
     initialise();
     startGame();
