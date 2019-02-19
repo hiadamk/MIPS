@@ -1,15 +1,16 @@
 package ai;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import utils.Point;
 import ai.routefinding.routefinders.RandomRouteFinder;
-import java.util.HashMap;
 import objects.Entity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import utils.Point;
 import utils.enums.Direction;
+
+import java.util.HashMap;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for the {@link RandomRouteFinder} class.
@@ -52,7 +53,7 @@ class RandomRouteFinderTests {
 		};
 		Executable e = () -> rrf.getRoute(gas[1].getLocation(), gas[0].getLocation());
 		assertThrows(NullPointerException.class, e);
-		gas[0].setLocation(new Point(1,1));
+        gas[0].setLocation(new Point(1, 1));
 		e = () -> rrf.getRoute(gas[1].getLocation(), gas[0].getLocation());
 		assertThrows(NullPointerException.class, e);
 

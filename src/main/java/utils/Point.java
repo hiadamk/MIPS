@@ -33,12 +33,12 @@ public class Point {
     this.y = y;
     this.MAX_X = max_x;
     this.MAX_Y = max_y;
-    this.mapped = MAX_X > 0 && MAX_Y > 0 ? true : false;
+      this.mapped = MAX_X > 0 && MAX_Y > 0 ? true : false;
 
     mod();
   }
-
-  public Point(double x, double y, int max_x, int max_y, boolean mapped) {
+    
+    public Point(double x, double y, int max_x, int max_y, boolean mapped) {
     this.x = x;
     this.y = y;
     this.MAX_X = max_x;
@@ -49,10 +49,10 @@ public class Point {
   public static Point copyOf(Point p) {
     return new Point(p.x, p.y, p.MAX_X, p.MAX_Y, p.mapped);
   }
-
-  public Point getCopy() {
-    return new Point(this.x, this.y, this.MAX_X, this.MAX_Y, this.mapped);
-  }
+    
+    public Point getCopy() {
+        return new Point(this.x, this.y, this.MAX_X, this.MAX_Y, this.mapped);
+    }
 
   public double getX() {
     return x;
@@ -86,8 +86,8 @@ public class Point {
   }
 
   public String toString() {
-    return "[Point] x = " + x + ", y = " + y + ", maxX = " + MAX_X + ", maxY = " + MAX_Y
-        + ", mapped = " + mapped;
+      return "[Point] x = " + x + ", y = " + y + ", maxX = " + MAX_X + ", maxY = " + MAX_Y
+              + ", mapped = " + mapped;
   }
 
   public double distance(Point to) {
@@ -98,11 +98,11 @@ public class Point {
 
   private void mod() {
     if (mapped) {
-      if (MAX_Y <= 0 && MAX_X <= 0) {
-        System.err.println("Mapped Point has no MaxX or MaxY");
-        System.out.println(toString());
-        return;
-      }
+        if (MAX_Y <= 0 && MAX_X <= 0) {
+//            System.err.println("Mapped Point has no MaxX or MaxY");
+//            System.out.println(toString());
+            return;
+        }
       while (this.x < 0) {
         x += MAX_X;
       }
