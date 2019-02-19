@@ -283,27 +283,28 @@ public class Client extends Application {
                 agents[id].setDirection(input);
                 break;
         }
-        if (clientIn == null) {
-            return;
-        }
-        while (!clientIn.isEmpty()) {
-            String in = clientIn.poll();
-            String code = in.substring(0, 4);
-            String rest = in.substring(4);
-            String position = rest.substring(rest.length() - 14);
-            double x = Double.valueOf(position.substring(0, 7));
-            double y = Double.valueOf(position.substring(7));
-            switch (code) {
-                case "POS0":
-                    break;
-                case "POS1":
-                    break;
-                case "COL0":
-                    break;
-                case "COL1":
-                    break;
-            }
-        }
+//        if (clientIn == null) {
+//            return;
+//        }
+//        while (!clientIn.isEmpty()) {
+//            String in = clientIn.poll();
+//            String code = in.substring(0, 4);
+//            String rest = in.substring(4);
+//            String position = rest.substring(rest.length() - 14);
+//            System.out.println("INPUT TO PROCESS: " + rest);
+//            double x = Double.valueOf(position.substring(0, 7));
+//            double y = Double.valueOf(position.substring(7));
+//            switch (code) {
+//                case "POS0":
+//                    break;
+//                case "POS1":
+//                    break;
+//                case "COL0":
+//                    break;
+//                case "COL1":
+//                    break;
+//            }
+//        }
     }
     
     private void informServer(Input input) {
