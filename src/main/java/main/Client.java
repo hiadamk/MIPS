@@ -57,6 +57,7 @@ public class Client extends Application {
     private boolean singlePlayer = false;
     private BlockingQueue<Input> incomingQueue; //only used in singleplayer
     private HashMap<String, Pellet> pellets;
+    private int MIPID;
     
     public int getId() {
         return id;
@@ -143,11 +144,12 @@ public class Client extends Application {
         map = resourceLoader.getMap();
         isHost = false;
         BlockingQueue<String> clientIn = new LinkedBlockingQueue<String>();
-        BlockingQueue<Input> keypressQueue = new LinkedBlockingQueue<Input>();
+        keypressQueue = new LinkedBlockingQueue<Input>();
         try {
             
             clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this, name);
             this.telemetry = new DumbTelemetry(map, clientIn, resourceLoader);
+            this.telemetry.setMipID(MIPID);
             //waits for game to start
             while (!clientLobbySession.isGameStarted()) {
                 try {
@@ -176,6 +178,7 @@ public class Client extends Application {
             System.out.println("PLAYER COUNT IS: " + playerCount);
             map = resourceLoader.getMap();
             this.telemetry = new Telemetry(this.map, playerCount, inputQueue, outputQueue, this.resourceLoader);
+            this.telemetry.setMipID(MIPID);
             map = resourceLoader.getMap();
             gameScene.setOnKeyPressed(keyController);
             startGame();
@@ -217,6 +220,10 @@ public class Client extends Application {
             this.name = "Joe Bloggs";
         }
     }
+
+    public void setMIP(int id){
+        this.MIPID = id;
+    }
     
     private void startGame() {
         // inputs = new Queue<Input>();
@@ -228,6 +235,7 @@ public class Client extends Application {
         // agents[3] = new Entity(false, 3, new Double(0.5, 1.5));
         // agents[4] = new Entity(false, 4, new Double(0.5, 1.5));
         if (telemetry != null) {
+//            telemetry.setMipID(this.MIPID);
             agents = telemetry.getAgents();
             map = telemetry.getMap();
             pellets = telemetry.getPellets();

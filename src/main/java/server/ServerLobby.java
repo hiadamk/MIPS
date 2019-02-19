@@ -7,10 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Queue;
+import java.util.*;
 
 
 //TODO Use multi-casting to constantly ping the number of players in the game in a thread.
@@ -23,13 +20,14 @@ public class ServerLobby {
     private ServerGameplayHandler s;
     private String[] names = new String[5];
     private Queue<String> outputQueue;
+    private int MIPID;
     
     public ServerLobby() {
         pinger.start();
         this.playerCount = 0;
         this.playerIPs = new ArrayList<>();
         acceptConnections.start();
-        
+        this.MIPID = (new Random()).nextInt(5);
     }
     
     
@@ -113,7 +111,8 @@ public class ServerLobby {
                             out.println("" + playerID);
                             out.flush();
                             System.out.println("Sent client " + playerID + " their ID...");
-                    
+                            out.println(""+ MIPID);
+                            out.flush();
                             out.println("SUCCESS");
                             out.flush();
                             System.out.println("Sent client " + playerID + " a successful connection message...");

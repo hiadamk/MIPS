@@ -15,5 +15,7 @@ public interface Telemeters {
     void startAI();
     
     HashMap<String, Pellet> getPellets();
+
+    void setMipID(int ID);
     
 }

@@ -56,7 +56,9 @@ public class ClientLobbySession {
                 int id = Integer.parseInt(r);
                 client.setId(id);
         
-        
+                r = in.readLine();
+                int MIPID = Integer.parseInt(r);
+                client.setMIP(MIPID);
                 r = in.readLine();
                 if (r.equals("SUCCESS")) {
                     System.out.println("Server connection success");

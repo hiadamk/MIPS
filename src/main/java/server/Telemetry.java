@@ -148,7 +148,10 @@ public class Telemetry implements Telemeters {
     agents[2] = new Entity(false, 2, new Point(9.5, 15.5, map));
     agents[3] = new Entity(false, 3, new Point(11.5, 1.5, map));
     agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
-    agents[(new Random()).nextInt(AGENT_COUNT)].setPacMan(true);
+    if(singlePlayer){
+      agents[(new Random()).nextInt(AGENT_COUNT)].setPacMan(true);
+    }
+
 
     System.out.println(Arrays.toString(agents));
     int aiCount = AGENT_COUNT - playerCount;
@@ -177,6 +180,9 @@ public class Telemetry implements Telemeters {
     }
   }
 
+  public void setMipID(int ID){
+    this.agents[ID].setPacMan(true);
+  }
   public Map getMap() {
     return map;
   }

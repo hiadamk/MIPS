@@ -134,7 +134,7 @@ public class DumbTelemetry implements Telemeters {
         agents[2] = new Entity(false, 2, new Point(1.5, 16.5, map));
         agents[3] = new Entity(false, 3, new Point(11.5, 2.5, map));
         agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
-        agents[(new Random()).nextInt(AGENT_COUNT)].setPacMan(true);
+//        agents[(new Random()).nextInt(AGENT_COUNT)].setPacMan(true);
     
         pellets = new HashMap<String, Pellet>();
         for (int i = 0; i < map.getMaxX(); i++) {
@@ -148,7 +148,11 @@ public class DumbTelemetry implements Telemeters {
             }
         }
     }
-    
+
+    public void setMipID(int ID){
+        this.agents[ID].setPacMan(true);
+    }
+
     public Map getMap() {
         return map;
     }
@@ -184,13 +188,19 @@ public class DumbTelemetry implements Telemeters {
     
     private void processInputs() {
         while (!inputs.isEmpty()) {
+            System.out.println("Dumb Telemetry received: " + inputs.peek());
+            System.out.println(inputs.peek().substring(0,4));
             String input = inputs.poll();
+
             switch (input.substring(0, 4)) { //looks at first 4 characters
                 case "POS1":
                     setEntityMovement(input.substring(4));
+                    break;
                 case "POS3":
                     setEntityPositions(input.substring(4));
+                    break;
                 case NetworkUtility.STOP_CODE:
+                    break;
                     //TODO - add code for game end procedures down the game on the server end
                 default:
                     throw new IllegalArgumentException();
