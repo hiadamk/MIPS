@@ -2,12 +2,14 @@ package server;
 
 import javafx.animation.AnimationTimer;
 import objects.Entity;
+import objects.Pellet;
 import utils.Input;
 import utils.Map;
 import utils.Point;
 import utils.ResourceLoader;
 import utils.enums.Direction;
 
+import java.util.HashMap;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
@@ -18,6 +20,7 @@ public class DumbTelemetry implements Telemeters {
     private BlockingQueue<String> inputs;
     private Entity[] agents;
     private Map map;
+    private HashMap<String, Pellet> pellets;
     private Queue<Input> clientQueue;
     private ResourceLoader resourceLoader;
     
@@ -33,6 +36,10 @@ public class DumbTelemetry implements Telemeters {
         startGame();
     }
     
+    public HashMap<String, Pellet> getPellets() {
+        return pellets;
+    }
+    
     /**
      * Static method for updating game state increments positions if valid, increments points, and
      * detects and treats entity collisions
@@ -43,40 +50,53 @@ public class DumbTelemetry implements Telemeters {
      * @author Alex Banks, Matthew Jones
      * @see this#detectEntityCollision(Entity, Entity, ResourceLoader)
      */
-    public static void processPhysics(Entity[] agents, Map m, ResourceLoader resourceLoader) {
-        
+    public static void processPhysics(Entity[] agents, Map m, ResourceLoader resourceLoader, HashMap<String, Pellet> pellets) {
+    
         for (int i = 0; i < AGENT_COUNT; i++) {
             if (agents[i].getDirection() != null) {
                 Point prevLocation = agents[i].getLocation();
                 agents[i].move();
                 Point faceLocation = agents[i].getFaceLocation();
-
-//Dumb telemetry is allowed to process its own physics at the moment
+    
                 if (m.isWall(faceLocation)) {
-                    System.err.println(i + "prev: " + prevLocation);
-                    System.err.println(i + "face: " + faceLocation);
+                    System.out.println("~Player" + i + " drove into a wall");
                     agents[i].setLocation(prevLocation);
                     agents[i].setDirection(null);
-//        } else {
-//          System.out.println(i + "face: " + faceLocation);
                 }
             }
         }
         // TODO add points for pellet collision
-        
-        //dumb telemetry is calculating its own collisions
+    
         // separate loop for checking collision after iteration
-        
+    
         for (int i = 0; i < AGENT_COUNT; i++) {
             for (int j = (i + 1); j < AGENT_COUNT; j++) {
-                
+    
                 if (agents[i].isPacman() && !agents[j].isPacman()) {
                     detectEntityCollision(agents[i], agents[j], resourceLoader);
                 }
-                
+    
                 if (agents[j].isPacman() && !agents[i].isPacman()) {
                     detectEntityCollision(agents[j], agents[i], resourceLoader);
                 }
+            }
+        }
+        pelletCollision(agents, pellets);
+    }
+    
+    
+    private static void pelletCollision(Entity[] agents, HashMap<String, Pellet> pellets) {
+        for (Entity agent : agents) {
+            if (!agent.isPacman()) {
+                continue;
+            }
+            Point p = agent.getFaceLocation();
+            int x = (int) p.getX();
+            int y = (int) p.getY();
+            Pellet pellet = pellets.get(Integer.toString(x) + y);
+            if (pellet != null && pellet.isActive()) {
+                pellet.setActive(false);
+                agent.incrementScore();
             }
         }
     }
@@ -115,6 +135,18 @@ public class DumbTelemetry implements Telemeters {
         agents[3] = new Entity(false, 3, new Point(11.5, 2.5, map));
         agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
         agents[(new Random()).nextInt(AGENT_COUNT)].setPacMan(true);
+    
+        pellets = new HashMap<String, Pellet>();
+        for (int i = 0; i < map.getMaxX(); i++) {
+            for (int j = 0; j < map.getMaxY(); j++) {
+                Point point = new Point(i + 0.5, j + 0.5);
+                if (!map.isWall(point)) {
+                    Pellet pellet = new Pellet(point);
+                    pellet.updateImages(resourceLoader);
+                    pellets.put(Integer.toString(i) + j, pellet);
+                }
+            }
+        }
     }
     
     public Map getMap() {
@@ -142,7 +174,7 @@ public class DumbTelemetry implements Telemeters {
                     // System.out.println(change);
                     processInputs();
                     //  informClients(); process inputs informs clients
-                    processPhysics(agents, map, resourceLoader);
+                    processPhysics(agents, map, resourceLoader, pellets);
                     //        } else {
                     //           System.out.println("skipped");
                 }

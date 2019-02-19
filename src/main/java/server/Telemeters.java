@@ -1,7 +1,10 @@
 package server;
 
 import objects.Entity;
+import objects.Pellet;
 import utils.Map;
+
+import java.util.HashMap;
 
 public interface Telemeters {
     
@@ -10,4 +13,7 @@ public interface Telemeters {
     Map getMap();
     
     void startAI();
+    
+    HashMap<String, Pellet> getPellets();
+    
 }

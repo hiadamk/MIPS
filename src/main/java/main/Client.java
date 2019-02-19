@@ -233,7 +233,7 @@ public class Client extends Application {
         if (telemetry != null) {
             agents = telemetry.getAgents();
             map = telemetry.getMap();
-//        pellets = telemetry.getPellets();
+            pellets = telemetry.getPellets();
         }
         Methods.updateImages(agents, resourceLoader);
         this.primaryStage.setScene(gameScene);
