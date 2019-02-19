@@ -29,6 +29,8 @@ public class ClientGameplayHandler {
     private PacketReceiver receiver;
     
     private ArrayList<InetAddress> serverIP;
+
+    private int counter = 0;
     
     //clientIn gets recievedStrings
     public ClientGameplayHandler(InetAddress serverIP, Queue<Input> keypressQueue, Queue<String> clientIn) throws IOException {
@@ -90,9 +92,11 @@ public class ClientGameplayHandler {
                                 if (incomingQueue.isEmpty()) {
                                     continue;
                                 }
+                                counter++;
                                 System.out.println("CLIENT RECEIVED -> " + incomingQueue.peek());
+                                System.out.println("THIS WAS PACKET NUMBER: " + counter);
                                 String data = incomingQueue.poll();
-                                
+
                                 if (data.startsWith(NetworkUtility.POSITION_CODE) || data.startsWith(NetworkUtility.COLLISIONS_CODE)) {
                                     clientIn.add(data);
                                     System.out.println("Got instruction from server");

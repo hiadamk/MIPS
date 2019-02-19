@@ -177,6 +177,7 @@ public class DumbTelemetry implements Telemeters {
                     oldTime = now;
                     // System.out.println(change);
                     processInputs();
+
                     //  informClients(); process inputs informs clients
                     processPhysics(agents, map, resourceLoader, pellets);
                     //        } else {
@@ -187,7 +188,9 @@ public class DumbTelemetry implements Telemeters {
     }
     
     private void processInputs() {
+        System.out.println("THE SIZE OF THE INPUT QUEUE IS: " + inputs.size());
         while (!inputs.isEmpty()) {
+
             System.out.println("Dumb Telemetry received: " + inputs.peek());
             System.out.println(inputs.peek().substring(0,4));
             String input = inputs.poll();

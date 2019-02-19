@@ -201,7 +201,7 @@ public class Entity implements Renderable {
       currentFrame = 0;
     } else {
       //currentFrame = (currentFrame + 1) % (getImage().size() - 1);
-      if (currentFrame == getImage().size() - 1) {
+      if (currentFrame >= getImage().size() - 1) {
         currentFrame = 0;
       } else {
         currentFrame++;

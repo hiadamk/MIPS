@@ -262,7 +262,7 @@ public class Client extends Application {
             return;
         }
         //    System.out.println(input.toString() + "     " + current + " ID: " + id);
-        if (!Methods.validiateDirection(input, agents[0], map)) {
+        if (!Methods.validiateDirection(input, agents[id], map)) {
             return;
         }
         switch (input) {
