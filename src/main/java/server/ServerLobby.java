@@ -125,6 +125,7 @@ public class ServerLobby {
                     }
             
                 }
+                server.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
