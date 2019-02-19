@@ -150,6 +150,7 @@ public class Client extends Application {
             clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this, name);
             this.telemetry = new DumbTelemetry(map, clientIn, resourceLoader);
             this.telemetry.setMipID(MIPID);
+            System.out.println("MIP ID: " + MIPID);
             //waits for game to start
             while (!clientLobbySession.isGameStarted()) {
                 try {
