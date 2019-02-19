@@ -67,7 +67,7 @@ public class PacketReceiver extends Thread {
         ds.receive(packet);
 
         String received = new String(packet.getData(), 0, packet.getLength());
-        System.out.println("SOMEONE RECEIVED: " + received);
+//        System.out.println("SOMEONE RECEIVED: " + received);
         received = received.replaceAll("\u0000.*", "");
   
         if (received.startsWith(NetworkUtility.PREFIX)

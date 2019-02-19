@@ -101,7 +101,7 @@ public class PacketSender extends Thread {
       DatagramPacket packet = new DatagramPacket(buf, 0, buf.length, ip, this.port);
       ds.send(packet);
     }
-      System.out.println("SENT A PACKET: " + message);
+//      System.out.println("SENT A PACKET: " + message);
   }
 
   /** Stops thread execution. */
