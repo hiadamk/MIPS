@@ -179,6 +179,7 @@ public class Client extends Application {
             map = resourceLoader.getMap();
             this.telemetry = new Telemetry(this.map, playerCount, inputQueue, outputQueue, this.resourceLoader);
             this.telemetry.setMipID(MIPID);
+            System.out.println("MIP ID: " + MIPID);
             map = resourceLoader.getMap();
             gameScene.setOnKeyPressed(keyController);
             startGame();
