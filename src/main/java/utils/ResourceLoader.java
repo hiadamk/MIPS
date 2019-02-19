@@ -126,6 +126,24 @@ public class ResourceLoader {
     }
   }
 
+  private BufferedImage resizeSpritesSmooth(BufferedImage sprite, double ratio) {
+    int newWidth = (int) (sprite.getWidth() * ratio);
+    int newHeight = (int) (sprite.getHeight() * ratio);
+    BufferedImage resizedSprite =
+        new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_4BYTE_ABGR);
+    Graphics2D g = resizedSprite.createGraphics();
+    g.setRenderingHint(
+        RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    g.setRenderingHint(
+        RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+    g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
+
+    g.drawImage(sprite, 0, 0, newWidth, newHeight, null);
+    g.dispose();
+
+    return resizedSprite;
+  }
+
 
   /**
    * @param x new x resolution
@@ -188,6 +206,8 @@ public class ResourceLoader {
       }
       resizeSprites(pellets, ratio);
       resizeSprites(mapTiles, ratio);
+      mipMarker = resizeSpritesSmooth(mipMarker, ratio);
+      clientMarker = resizeSpritesSmooth(clientMarker, ratio);
     }
 
   }
