@@ -69,8 +69,11 @@ public class ServerLobby {
                     }
                     Thread.sleep(1000);
                 }
-        
-            } catch (Exception e) {
+    
+            } catch (InterruptedException e) {
+                System.out.println("Server pinger was closed successfully");
+                return;
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

@@ -175,7 +175,7 @@ public class Client extends Application {
             int playerCount = server.getPlayerCount();
             System.out.println("PLAYER COUNT IS: " + playerCount);
             map = resourceLoader.getMap();
-            this.telemetry = new Telemetry(this.map, playerCount, inputQueue, outputQueue);
+            this.telemetry = new Telemetry(this.map, playerCount, inputQueue, outputQueue, this.resourceLoader);
             map = resourceLoader.getMap();
             gameScene.setOnKeyPressed(keyController);
             startGame();
