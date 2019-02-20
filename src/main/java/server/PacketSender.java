@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Queue;
 
 public class PacketSender extends Thread {
-
+  
   private InetAddress group;
   private MulticastSocket socket;
   private String networkInterface;
@@ -17,12 +17,12 @@ public class PacketSender extends Thread {
   private boolean running = true;
   private Queue<String> feedQueue;
   private ArrayList<InetAddress> ipStore = new ArrayList<>();
-
+  
   /**
    * Constructs a Packet Sender object
    *
-   * @param group The group we want to bind to
-   * @param port The port we want to listen to
+   * @param group     The group we want to bind to
+   * @param port      The port we want to listen to
    * @param feedQueue The queue we want to send items from.
    * @throws IOException Thrown by the multicast socket
    */
@@ -33,13 +33,13 @@ public class PacketSender extends Thread {
     this.port = port;
     this.feedQueue = feedQueue;
   }
-
+  
   /**
    * Constructs a Packet Sender object
    *
-   * @param port the port we want to send to
+   * @param port      the port we want to send to
    * @param feedQueue the queue which we are constantly reading from to send messages from.
-   * @param ips The list of IP addresses which are listening on the port for a message.
+   * @param ips       The list of IP addresses which are listening on the port for a message.
    */
   public PacketSender(int port, Queue<String> feedQueue, ArrayList<InetAddress> ips)
       throws IOException {
@@ -47,8 +47,10 @@ public class PacketSender extends Thread {
     this.feedQueue = feedQueue;
     this.ipStore = ips;
   }
-
-  /** Looks at the queue of messages and sends them to the needed recipient. */
+  
+  /**
+   * Looks at the queue of messages and sends them to the needed recipient.
+   */
   @Override
   public void run() {
     super.run();
@@ -63,7 +65,7 @@ public class PacketSender extends Thread {
         send(s);
         Thread.sleep(50);
       }
-
+      
     } catch (IOException e) {
       running = false;
       System.out.println("ServerGameplayHandler closed");
@@ -72,20 +74,20 @@ public class PacketSender extends Thread {
       e.printStackTrace();
     }
   }
-
+  
   /**
    * Takes a String and copies it into the outgoing packet byte buffer, as well as adding PREFIX and
    * SUFFIX strings to the buffer edges.
    */
   private byte[] prepareBuf(String s) { // will truncate
-
+    
     byte[] buf;
     String toSend = NetworkUtility.PREFIX + s + NetworkUtility.SUFFIX;
     buf = toSend.getBytes(NetworkUtility.CHARSET);
-
+    
     return buf;
   }
-
+  
   /**
    * Sends packets to each IP in the list of IPs listening to agreed port.
    *
@@ -94,17 +96,18 @@ public class PacketSender extends Thread {
    */
   public void send(String message) throws IOException {
     byte[] buf = prepareBuf(message);
-
+    
     DatagramSocket ds = new DatagramSocket();
-
+    
     for (InetAddress ip : ipStore) {
       DatagramPacket packet = new DatagramPacket(buf, 0, buf.length, ip, this.port);
       ds.send(packet);
     }
-//      System.out.println("SENT A PACKET: " + message);
   }
-
-  /** Stops thread execution. */
+  
+  /**
+   * Stops thread execution.
+   */
   public void shutdown() {
     this.running = false;
     socket.close();

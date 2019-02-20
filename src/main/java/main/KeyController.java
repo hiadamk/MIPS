@@ -6,19 +6,19 @@ import utils.Settings;
 import utils.enums.Direction;
 
 public class KeyController implements EventHandler<KeyEvent> {
-
+  
   private Direction mapping;
   private Direction activeKey;
-
+  
   public KeyController() {
     mapping = null;
     activeKey = null;
   }
-
+  
   public Direction getActiveKey() {
     return activeKey;
   }
-
+  
   @Override
   public void handle(KeyEvent e) {
     if (mapping != null) {

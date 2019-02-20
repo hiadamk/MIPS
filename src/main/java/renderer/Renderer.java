@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -24,34 +25,34 @@ import utils.enums.MapElement;
 import utils.enums.RenderingMode;
 
 public class Renderer {
-
+  
   private static final double MAP_BORDER = 10;
   private final GraphicsContext gc;
   private ResourceLoader r;
   private int xResolution;
   private int yResolution;
   private Point2D.Double mapRenderingCorner;
-
+  
   private ArrayList<Image> mapTiles;
   private Image background;
   private BufferedImage palette;
-
+  
   private double tileSizeX;
   private double tileSizeY;
-
+  
   private int clientID;
-
+  
   private Font geoSmall;
   private Font geoLarge;
-
+  
   private final long secondInNanoseconds = (long) Math.pow(10, 9);
   private long lastFrame;
   private int fps = 0;
   private int frameCounter = 0;
   private long timeSum;
-
+  
   private ArrayList<Point2D.Double> traversalOrder = new ArrayList<>();
-
+  
   /**
    * @param _xResolution Game x resolution
    * @param _yResolution Game y resolution
@@ -63,17 +64,17 @@ public class Renderer {
     this.yResolution = _yResolution;
     this.background = r.getBackground();
     this.palette = r.getBackgroundPalette();
-
+    
     Map map = r.getMap();
-
+    
     final int ROW = map.getMaxX();
     final int COL = map.getMaxY();
-
+    
     for (int line = 1; line <= (ROW + COL - 1); line++) {
       int start_col = Math.max(0, line - ROW);
-
+      
       int count = Math.min(line, Math.min(COL - start_col, ROW));
-
+      
       // Print elements of this line
       for (int j = 0; j < count; j++) {
         int x = Math.min(ROW, line) - j - 1;
@@ -81,16 +82,16 @@ public class Renderer {
         this.traversalOrder.add(new Double(x, y));
       }
     }
-
+    
     this.init();
   }
-
+  
   public void init() {
     this.mapTiles = r.getMapTiles();
     this.mapRenderingCorner = getMapRenderingCorner();
     tileSizeX = r.getMapTiles().get(0).getWidth();
     tileSizeY = r.getMapTiles().get(0).getHeight();
-
+    
     // set fonts
     final double fontRatio = 0.07;
     try {
@@ -106,35 +107,35 @@ public class Renderer {
       e.printStackTrace();
     }
   }
-
-
+  
+  
   /**
-   * @param map Game map
+   * @param map       Game map
    * @param entityArr Playable entities
    */
   public void render(Map map, Entity[] entityArr, long now, HashMap<String, Pellet> pellets) {
-
+    
     gc.clearRect(0, 0, xResolution, yResolution);
     renderBackground(map);
     int[][] rawMap = map.raw();
     ArrayList<Entity> entities = new ArrayList<>(Arrays.asList(entityArr));
     // sort entities to get rendering order
     entities.sort(Comparator.comparingDouble(o -> o.getLocation().getX() + o.getLocation().getY()));
-
+    
     int entityCounter = 0;
     Image currentSprite;
     Point2D.Double rendCoord;
     Point spriteCoord = new Point(java.lang.Double.MAX_VALUE, java.lang.Double.MAX_VALUE);
-
+    
     int x;
     int y;
-
+    
     // Render floor first (floors will never be on a higher layer than anything apart form the
     // background
     for (Point2D.Double coord : traversalOrder) {
       x = (int) coord.getX();
       y = (int) coord.getY();
-
+      
       if (MapElement.FLOOR.toInt() == rawMap[x][y]) {
         rendCoord =
             getIsoCoord(
@@ -144,22 +145,22 @@ public class Renderer {
                 mapTiles.get(MapElement.FLOOR.toInt()).getWidth());
         gc.drawImage(mapTiles.get(MapElement.FLOOR.toInt()), rendCoord.x, rendCoord.y);
       }
-
+      
     }
-
+    
     //TODO refactor the way the translucent pellet is fetched
     Image translucentPellet = r.getTranslucentPellet().get(0);
-
+    
     // Loop through grid in diagonal traversal to render walls and entities by depth
     for (Point2D.Double coord : traversalOrder) {
       x = (int) coord.getX();
       y = (int) coord.getY();
-
+      
       // render consumable objects on top
       Pellet currentPellet = pellets.get(Integer.toString(x) + y);
       if (currentPellet != null && currentPellet.isActive()) {
         boolean clientMipsman = false;
-
+        
         //TODO refactor the way the render knows the client is MIPSman
         for (Entity e : entities) {
           if (e.isPacman() && e.getClientId() == clientID) {
@@ -170,7 +171,7 @@ public class Renderer {
         if (clientMipsman) {
           currentSprite = currentPellet.getImage().get(0);
         } else {
-
+          
           currentSprite = translucentPellet;
         }
         double x_ = currentPellet.getLocation().getX() - 0.5;
@@ -179,27 +180,27 @@ public class Renderer {
             getIsoCoord(x_, y_, currentSprite.getHeight(), currentSprite.getWidth());
         gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
       }
-
+      
       currentSprite = mapTiles.get(rawMap[x][y]);
       rendCoord = getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
       if (MapElement.FLOOR.toInt() == rawMap[x][y]) {
         continue;
       }
-
+      
       // render wall (or any other non passable terrain)
       gc.drawImage(currentSprite, rendCoord.x, rendCoord.y);
-
+      
       if (entityCounter < entities.size()) {
         spriteCoord = entities.get(entityCounter).getLocation();
       }
-
+      
       // is the current entities depth the same or deeper than the wall just rendered?
       while (entityCounter < entities.size()
           && ((x + y) >= ((int) spriteCoord.getX() + (int) spriteCoord.getY()))
           && spriteCoord.getX() > x) {
         renderEntity(entities.get(entityCounter), now - lastFrame);
         entityCounter++;
-
+        
         // point to the next entity
         if (entityCounter < entities.size()) {
           spriteCoord = entities.get(entityCounter).getLocation();
@@ -209,9 +210,9 @@ public class Renderer {
 
 //    renderHUD(entityArr);
     showFPS(now);
-
+    
   }
-
+  
   private void showFPS(long now) {
     //calculate frames
     long timeElapsed = now - lastFrame;
@@ -228,88 +229,88 @@ public class Renderer {
       frameCounter++;
     }
   }
-
+  
   public void setClientID(int _id) {
     this.clientID = _id;
   }
-
+  
   private void renderBackground(Map map) {
     // render backing image
     gc.drawImage(background, 0, 0, xResolution, yResolution);
-
+    
     // Render map base
     Point2D.Double tmpCoord = getIsoCoord(0, 0, tileSizeY, tileSizeX);
     Point2D.Double topLeft =
         new Double(tmpCoord.getX() + 0.5 * tileSizeX, tmpCoord.getY() - 0.5 * MAP_BORDER);
-
+    
     tmpCoord = getIsoCoord(map.getMaxX(), 0, tileSizeY, tileSizeX);
     Point2D.Double topRight =
         new Double(tmpCoord.getX() + MAP_BORDER + tileSizeX, tmpCoord.getY() + 0.5 * tileSizeY);
-
+    
     tmpCoord = getIsoCoord(0, map.getMaxY(), tileSizeY, tileSizeX);
     Point2D.Double bottomLeft =
         new Double(tmpCoord.getX() - 0.5 * MAP_BORDER, tmpCoord.getY() + 0.5 * tileSizeY);
-
+    
     tmpCoord = getIsoCoord(map.getMaxX(), map.getMaxY(), tileSizeY, tileSizeX);
     Point2D.Double bottomRight =
         new Double(
             tmpCoord.getX() + 0.5 * tileSizeX, tmpCoord.getY() + 0.5 * MAP_BORDER + tileSizeY);
-
+    
     setFillColour(palette.getRGB(0, 0));
     gc.fillPolygon(
         new double[]{topLeft.getX(), topRight.getX(), bottomRight.getX(), bottomLeft.getX()},
         new double[]{topLeft.getY(), topRight.getY(), bottomRight.getY(), bottomLeft.getY()},
         4);
-
+    
     // Render Pyramid underside
-
+    
     double yChange = topRight.getX() - bottomRight.getX();
     double xChange = topRight.getY() - bottomRight.getY();
-
+    
     double percentageXRes = 0.04;
     double ratio = ((percentageXRes * xResolution) / yChange) * (map.getMaxY() / (double) 20);
-
+    
     // double x = bottomRight.getX() - xChange * ratio;
     double x =
         getIsoCoord(map.getMaxX() / (double) 2, map.getMaxY() / (double) 2, tileSizeY, tileSizeX)
             .getX();
     double y = bottomRight.getY() + yChange * ratio;
-
+    
     Point2D.Double pyramidVertex = new Point2D.Double(x, y);
-
+    
     setFillColour(palette.getRGB(2, 0));
     gc.fillPolygon(
         new double[]{topRight.getX(), bottomRight.getX(), pyramidVertex.getX()},
         new double[]{topRight.getY(), bottomRight.getY(), pyramidVertex.getY()},
         3);
-
+    
     setFillColour(palette.getRGB(1, 0));
     gc.fillPolygon(
         new double[]{bottomLeft.getX(), bottomRight.getX(), pyramidVertex.getX()},
         new double[]{bottomLeft.getY(), bottomRight.getY(), pyramidVertex.getY()},
         3);
-
+    
     // Draw outline
     gc.setStroke(Color.BLACK);
     gc.strokePolygon(
         new double[]{bottomLeft.getX(), bottomRight.getX(), pyramidVertex.getX()},
         new double[]{bottomLeft.getY(), bottomRight.getY(), pyramidVertex.getY()},
         3);
-
+    
     gc.strokePolygon(
         new double[]{topRight.getX(), bottomRight.getX(), pyramidVertex.getX()},
         new double[]{topRight.getY(), bottomRight.getY(), pyramidVertex.getY()},
         3);
-
+    
     gc.strokePolygon(
         new double[]{topLeft.getX(), topRight.getX(), bottomRight.getX(), bottomLeft.getX()},
         new double[]{topLeft.getY(), topRight.getY(), bottomRight.getY(), bottomLeft.getY()},
         4);
   }
-
+  
   /**
-   * @param x cartesian x coordinate
-   * @param y cartesian Y coordinate
+   * @param x            cartesian x coordinate
+   * @param y            cartesian Y coordinate
    * @param spriteHeight vertical offset
    */
   private Point2D.Double getIsoCoord(double x, double y, double spriteHeight, double spriteWidth) {
@@ -323,7 +324,7 @@ public class Renderer {
             + (tileSizeY - spriteHeight);
     return new Point2D.Double(isoX, isoY);
   }
-
+  
   /**
    * @param e entity to render
    */
@@ -337,25 +338,25 @@ public class Renderer {
       e.setTimeSinceLastFrame(e.getTimeSinceLastFrame() + timeElapsed);
     }
     Image currentSprite = currentSprites.get(e.getCurrentFrame());
-
+    
     double x = e.getLocation().getX() - 0.5;
     double y = e.getLocation().getY() - 0.5;
     Point2D.Double rendCoord =
         getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
     gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
-
+    
     // render marker for entity
     if (e.getClientId() != clientID && !e.isPacman()) {
       return;
     }
-
+    
     Image marker = (e.isPacman()) ? r.getMipMarker() : r.getMClientMarker();
     Point2D.Double coord =
         getIsoCoord(x, y, marker.getHeight() + currentSprite.getHeight(), marker.getWidth());
-
+    
     gc.drawImage(marker, coord.getX(), coord.getY());
   }
-
+  
   /**
    * @return The top right corner coordinate to start rendering game map from
    */
@@ -363,23 +364,23 @@ public class Renderer {
     return new Point2D.Double(this.xResolution / (double) 2, this.yResolution / (double) 10);
     // return new Point2D.Double(getIsoCoord(0,map),getIsoCoord(0,0,tileSizeY).getY())
   }
-
+  
   private void renderHUD(Entity[] entities) {
     gc.setFill(Color.WHITE);
     final double paddingRatio = 0.1;
     final double offset = paddingRatio * yResolution;
     double nameScoreGap = yResolution * paddingRatio;
-
+    
     // calculate corner coordinate to render other players scores from
     Point2D.Double topLeft = new Double(offset, offset);
     Point2D.Double topRight = new Double(xResolution - offset, offset);
     Point2D.Double botLeft = new Double(offset, yResolution - offset - nameScoreGap);
     Point2D.Double botRight = new Double(xResolution - offset,
         yResolution - offset - nameScoreGap);
-
+    
     ArrayList<Point2D.Double> scoreCoord =
         new ArrayList<>(Arrays.asList(topLeft, topRight, botLeft, botRight));
-
+    
     Entity[] otherPlayers = new Entity[4];
     Entity self = null;
     int playerCounter = 0;
@@ -391,12 +392,12 @@ public class Renderer {
         self = e;
       }
     }
-
+    
     //render own score
     gc.setTextAlign(TextAlignment.CENTER);
     gc.setFont(geoLarge);
     gc.fillText("Score:" + self.getScore(), xResolution / 2, yResolution / 13);
-
+    
     //render other players scores
     for (int i = 0; i < otherPlayers.length; i++) {
       if ((i % 2 == 0)) {
@@ -411,10 +412,10 @@ public class Renderer {
       gc.setFont(geoLarge);
       gc.fillText("Player" + otherPlayers[i].getClientId(), cornerCoord.getX(), cornerCoord.getY());
     }
-
+    
   }
-
-
+  
+  
   private void setFillColour(int colour) {
     gc.setFill(
         new Color(
@@ -423,7 +424,7 @@ public class Renderer {
             (colour & 0xFF) / (double) 255,
             1));
   }
-
+  
   public void setResolution(int x, int y, RenderingMode mode) {
     System.out.println("renderer:" + x + " " + y + " " + mode.toString());
     r.setResolution(x, y, mode);

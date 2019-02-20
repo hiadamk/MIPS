@@ -1,13 +1,13 @@
 package utils;
 
 public abstract class GameLoop extends Thread {
-
+  
   long gameSpeed;
-
+  
   public GameLoop(long gameSpeed) {
     this.gameSpeed = gameSpeed;
   }
-
+  
   @Override
   public void run() {
     long time = System.currentTimeMillis();
@@ -24,6 +24,6 @@ public abstract class GameLoop extends Thread {
       }
     }
   }
-
+  
   public abstract void handle();
 }

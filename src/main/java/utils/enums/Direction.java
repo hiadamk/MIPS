@@ -26,27 +26,27 @@ public enum Direction {
     }
   };
   private int id;
-    
-    Direction(int id) {
+  
+  Direction(int id) {
     this.id = id;
   }
-
+  
   public int toInt() {
     return id;
   }
-    
-    public static Direction fromInt(int n) {
-        switch (n) {
-            case 0:
-                return UP;
-            case 1:
-                return DOWN;
-            case 2:
-                return LEFT;
-            case 3:
-                return RIGHT;
-        }
-        return null;
+  
+  public static Direction fromInt(int n) {
+    switch (n) {
+      case 0:
+        return UP;
+      case 1:
+        return DOWN;
+      case 2:
+        return LEFT;
+      case 3:
+        return RIGHT;
     }
+    return null;
+  }
 }
 

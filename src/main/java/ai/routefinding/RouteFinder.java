@@ -9,11 +9,11 @@ import utils.enums.Direction;
  * @author Lewis Ackroyd
  */
 public interface RouteFinder {
-
+  
   /**
    * Returns the direction to travel in until the next junction is reached.
    *
-   * @param myLocation The start location for route finding.
+   * @param myLocation     The start location for route finding.
    * @param targetLocation The target of the route finding.
    * @return The direction to travel in.
    */

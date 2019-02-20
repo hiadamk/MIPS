@@ -15,14 +15,14 @@ import javax.sound.sampled.FloatControl;
  * handle the background music too. Each main will create an instance of this class to control audio
  */
 public class AudioController {
-
+  
   private Boolean mute;
   private Clip music;
   private ArrayList<Clip> openClips;
   private double musicVolume;
   private double soundVolume;
   private ClipCloser clipCloser;
-
+  
   public AudioController() {
     mute = false;
     music = null;
@@ -32,7 +32,7 @@ public class AudioController {
     clipCloser = new ClipCloser(openClips);
     clipCloser.start();
   }
-
+  
   /**
    * Gets the current music volume.
    *
@@ -41,7 +41,7 @@ public class AudioController {
   public double getMusicVolume() {
     return musicVolume;
   }
-
+  
   /**
    * Sets the music volume
    *
@@ -51,7 +51,7 @@ public class AudioController {
     this.musicVolume = musicVolume;
     refreshMusic();
   }
-
+  
   /**
    * Gets the current volume of sound effects
    *
@@ -60,7 +60,7 @@ public class AudioController {
   public double getSoundVolume() {
     return soundVolume;
   }
-
+  
   /**
    * Sets the sound effects volume.
    *
@@ -69,7 +69,7 @@ public class AudioController {
   public void setSoundVolume(double soundVolume) {
     this.soundVolume = soundVolume;
   }
-
+  
   /**
    * This toggles the mute boolean on and off to be called by the ui when a mute button is pressed
    * (can become a Setter
@@ -78,36 +78,40 @@ public class AudioController {
     mute = !mute;
     refreshMusic();
   }
-
-  /** Increases master game volume. */
+  
+  /**
+   * Increases master game volume.
+   */
   public void increaseVolume() {
     if (getMusicVolume() < 1) {
       setMusicVolume(getMusicVolume() + 0.1);
     }
-
+    
     if (getSoundVolume() < 1) {
       setSoundVolume(getSoundVolume() + 0.1);
     }
   }
-
-  /** Decreases master game volume. */
+  
+  /**
+   * Decreases master game volume.
+   */
   public void decreaseVolume() {
     if (getMusicVolume() >= 0.1) {
       setMusicVolume(getMusicVolume() - 0.1);
     }
-
+    
     if (getSoundVolume() >= 0.1) {
       setSoundVolume(getSoundVolume() - 0.1);
     }
   }
-
+  
   private void refreshMusic() {
     if (music == null) {
       return;
     }
     setClipVolume(music, mute ? 0 : musicVolume);
   }
-
+  
   /**
    * This plays the given sound
    *
@@ -131,11 +135,11 @@ public class AudioController {
       e.printStackTrace();
     }
   }
-
+  
   /**
    * Sets the volume of the given clip
    *
-   * @param clip The clip to set the volume of
+   * @param clip   The clip to set the volume of
    * @param volume the volume (between 0.0 and 1.0)
    */
   public void setClipVolume(Clip clip, double volume) {
@@ -153,7 +157,7 @@ public class AudioController {
     FloatControl control = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
     control.setValue((float) (Math.log(volume) / Math.log(10.0) * 20.0));
   }
-
+  
   /**
    * This plays the given sound as the background music (playing it until told to stop or play other
    * music)
@@ -180,17 +184,19 @@ public class AudioController {
       e.printStackTrace();
     }
   }
-
-  /** A thread to close audio clips after they have been played */
+  
+  /**
+   * A thread to close audio clips after they have been played
+   */
   private class ClipCloser extends Thread {
-
+    
     private ArrayList<Clip> clips;
     private Boolean running;
-
+    
     ClipCloser(ArrayList<Clip> clips) {
       this.clips = clips;
     }
-
+    
     @Override
     public void run() {
       running = true;

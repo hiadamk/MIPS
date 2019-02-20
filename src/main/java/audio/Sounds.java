@@ -7,11 +7,11 @@ public enum Sounds {
   death("/audio/pacman_death.wav"),
   click("/audio/click.wav");
   private final String path;
-
+  
   Sounds(String path) {
     this.path = path;
   }
-
+  
   public String getPath() {
     return path;
   }

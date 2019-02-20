@@ -11,13 +11,13 @@ import java.util.Random;
  * @author Alex Banks
  */
 public class Map {
-
+  
   private final int MAX_X;
   private final int MAX_Y;
-
+  
   private final int[][] MAP;
-    private final ArrayList<utils.Point> SPAWN_POINTS;
-
+  private final ArrayList<utils.Point> SPAWN_POINTS;
+  
   /**
    * basic constructor that takes raw ints and performs preprocessing
    *
@@ -31,7 +31,7 @@ public class Map {
     MAX_Y = MAP[0].length;
     SPAWN_POINTS = loadSpawnPoints();
   }
-
+  
   /**
    * called on construction to find and load spawn point TODO: convert back to SPAWNPOINT.toInt()
    *
@@ -39,31 +39,31 @@ public class Map {
    * @see this#Map(int[][])
    */
   private ArrayList<utils.Point> loadSpawnPoints() {
-      ArrayList<utils.Point> spawnPoints = new ArrayList<>();
+    ArrayList<utils.Point> spawnPoints = new ArrayList<>();
     for (int i = 0; i < MAX_X; i++) {
       for (int j = 0; j < MAX_Y; j++) {
         if (MAP[i][j] != MapElement.WALL.toInt()) { // SPAWNPOINT.toInt()
-            spawnPoints.add(new utils.Point(i + 0.5, j + 0.5, MAX_X, MAX_Y, true));
+          spawnPoints.add(new utils.Point(i + 0.5, j + 0.5, MAX_X, MAX_Y, true));
         }
       }
     }
     return spawnPoints;
   }
-
+  
   public int getMaxX() {
     return MAX_X;
   }
-
+  
   public int getMaxY() {
     return MAX_Y;
   }
-
+  
   public boolean withinBounds(Point point) {
     boolean x = point.getX() >= 0 && point.getX() < MAX_X;
     boolean y = point.getY() >= 0 && point.getY() < MAX_Y;
     return x && y;
   }
-
+  
   /**
    * calculates if point is out of bounds modular arithmetic for map looping
    *
@@ -71,12 +71,12 @@ public class Map {
    * @return true if wall, false otherwise
    */
   public boolean isWall(Point point) {
-      if (withinBounds(point)) {
-          return MAP[(int) point.getX()][(int) point.getY()] == MapElement.WALL.toInt();
-      }
-      return false;
+    if (withinBounds(point)) {
+      return MAP[(int) point.getX()][(int) point.getY()] == MapElement.WALL.toInt();
+    }
+    return false;
   }
-
+  
   /**
    * package method for raw processing
    *
@@ -85,8 +85,10 @@ public class Map {
   public int[][] raw() {
     return MAP;
   }
-
-  /** @return random location to position ghouls at if caught */
+  
+  /**
+   * @return random location to position ghouls at if caught
+   */
   public Point getRandomSpawnPoint() {
     return SPAWN_POINTS.get((new Random()).nextInt(SPAWN_POINTS.size()));
   }

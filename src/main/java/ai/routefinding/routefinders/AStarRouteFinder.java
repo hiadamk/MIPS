@@ -3,8 +3,10 @@ package ai.routefinding.routefinders;
 import ai.mapping.Mapping;
 import ai.routefinding.AStarData;
 import ai.routefinding.RouteFinder;
+
 import java.util.HashMap;
 import java.util.HashSet;
+
 import utils.Map;
 import utils.Point;
 import utils.enums.Direction;
@@ -15,18 +17,20 @@ import utils.enums.Direction;
  * @author Lewis Ackroyd
  */
 public class AStarRouteFinder implements RouteFinder {
-
+  
   private final HashSet<Point> junctions;
   private final HashMap<Point, HashSet<Point>> edges;
   private final Map map;
-
-  /** Creates an instance of this routeFinder. */
+  
+  /**
+   * Creates an instance of this routeFinder.
+   */
   public AStarRouteFinder(HashSet<Point> junctions, HashMap<Point, HashSet<Point>> edges, Map map) {
     this.junctions = junctions;
     this.edges = edges;
     this.map = map;
   }
-
+  
   //    /**
   //     * Returns the direction to travel in until the next junction is reached. Requires {@link
   //     * #setAgents(Entity[], int) setAgents()} method to have been called before use.
@@ -91,14 +95,14 @@ public class AStarRouteFinder implements RouteFinder {
         break;
       }
     }
-
+    
     return outDirection;
   }
-
+  
   private double movementCost(Point start, Point target) {
     return start.distance(target);
   }
-
+  
   private double heuristicCost(Point start, Point target) {
     return start.distance(target);
   }
