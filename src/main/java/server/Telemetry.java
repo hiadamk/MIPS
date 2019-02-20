@@ -1,18 +1,21 @@
 package server;
 
 import ai.AILoopControl;
-import javafx.animation.AnimationTimer;
-import objects.Entity;
-import objects.Pellet;
-import utils.*;
-import utils.enums.Direction;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import objects.Entity;
+import objects.Pellet;
+import utils.GameLoop;
+import utils.Input;
+import utils.Map;
+import utils.Methods;
+import utils.Point;
+import utils.ResourceLoader;
+import utils.enums.Direction;
 
 public class Telemetry implements Telemeters {
 
@@ -27,8 +30,9 @@ public class Telemetry implements Telemeters {
   private boolean aiRunning;
   private ResourceLoader resourceLoader;
   private final int playerCount;
-  
-  public Telemetry(Map map, int playerCount, Queue<Input> inputQueue, Queue<String> outputQueue, ResourceLoader resourceLoader) {
+
+  public Telemetry(Map map, int playerCount, Queue<Input> inputQueue, Queue<String> outputQueue,
+      ResourceLoader resourceLoader) {
     this.map = map;
     inputs = (BlockingQueue<Input>) inputQueue;
     outputs = (BlockingQueue<String>) outputQueue;
@@ -38,7 +42,7 @@ public class Telemetry implements Telemeters {
     initialise();
     startGame();
   }
-  
+
   public Telemetry(Map map, Queue<Input> clientQueue, ResourceLoader resourceLoader) {
     this.map = map;
     inputs = (BlockingQueue<Input>) clientQueue;
@@ -49,7 +53,7 @@ public class Telemetry implements Telemeters {
     initialise();
     startGame();
   }
-  
+
   public HashMap<String, Pellet> getPellets() {
     return pellets;
   }
@@ -148,10 +152,9 @@ public class Telemetry implements Telemeters {
     agents[2] = new Entity(false, 2, new Point(9.5, 15.5, map));
     agents[3] = new Entity(false, 3, new Point(11.5, 1.5, map));
     agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
-    if(singlePlayer){
+    if (singlePlayer) {
       agents[(new Random()).nextInt(AGENT_COUNT)].setPacMan(true);
     }
-
 
     System.out.println(Arrays.toString(agents));
     int aiCount = AGENT_COUNT - playerCount;
@@ -180,9 +183,10 @@ public class Telemetry implements Telemeters {
     }
   }
 
-  public void setMipID(int ID){
+  public void setMipID(int ID) {
     this.agents[ID].setPacMan(true);
   }
+
   public Map getMap() {
     return map;
   }
@@ -196,22 +200,31 @@ public class Telemetry implements Telemeters {
   }
 
   private void startGame() {
-    final long DELAY = 1000000;
+    final long DELAY = (long) Math.pow(10, 8);
     // TODO implement
 
-    new AnimationTimer() {
-      long change;
-      long oldTime = System.nanoTime();
+//    new AnimationTimer() {
+//      long change;
+//      long oldTime = System.nanoTime();
+//
+//      @Override
+//      public void handle(long now) {
+//        change = now - oldTime;
+//        if (change >= DELAY) {
+//          oldTime = now;
+//          processInputs();
+//          processPhysics(agents, map, resourceLoader, pellets);
+////          updateClients(agents);
+//        }
+//      }
+//    }.start();
 
+    new GameLoop(10) {
       @Override
-      public void handle(long now) {
-        change = now - oldTime;
-        if (change >= DELAY) {
-          oldTime = now;
-          processInputs();
-          processPhysics(agents, map, resourceLoader, pellets);
-//          updateClients(agents);
-        }
+      public void handle() {
+        processInputs();
+        processPhysics(agents, map, resourceLoader, pellets);
+        //System.out.println("Game loop");
       }
     }.start();
   }
@@ -221,7 +234,7 @@ public class Telemetry implements Telemeters {
       ai.start();
     }
   }
-  
+
   private void processInputs() {
     while (!inputs.isEmpty()) {
       Input input = inputs.poll();
@@ -236,13 +249,13 @@ public class Telemetry implements Telemeters {
       }
     }
   }
-  
+
   private void informClients(Input input, Point location) {
 //        System.out.println("Server making entity movement packet: ");
     outputs.add(NetworkUtility.makeEntitiyMovementPacket(input, location));
   }
-  
-  
+
+
   private void updateClients(Entity[] agents) {
 //    System.out.println("Server updating clients of all positions ");
     outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents));

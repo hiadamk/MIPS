@@ -1,17 +1,16 @@
 package server;
 
-import javafx.animation.AnimationTimer;
+import java.util.HashMap;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import objects.Entity;
 import objects.Pellet;
+import utils.GameLoop;
 import utils.Input;
 import utils.Map;
 import utils.Point;
 import utils.ResourceLoader;
 import utils.enums.Direction;
-
-import java.util.HashMap;
-import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
 
 public class DumbTelemetry implements Telemeters {
     
@@ -168,21 +167,30 @@ public class DumbTelemetry implements Telemeters {
     
     
     private void startGame() {
-        final long DELAY = 1000000;
+      final long DELAY = (long) Math.pow(10, 8);
         // TODO implement
-        
-        new AnimationTimer() {
-            long change;
-            long oldTime = System.nanoTime();
-            
+
+//        new AnimationTimer() {
+//            long change;
+//            long oldTime = System.nanoTime();
+//
+//            @Override
+//            public void handle(long now) {
+//                change = now - oldTime;
+//                if (change >= DELAY) {
+//                    oldTime = now;
+//                    processInputs();
+//                    processPhysics(agents, map, resourceLoader, pellets);
+//                }
+//            }
+//        }.start();
+
+      new GameLoop(10) {
             @Override
-            public void handle(long now) {
-                change = now - oldTime;
-                if (change >= DELAY) {
-                    oldTime = now;
-                    processInputs();
-                    processPhysics(agents, map, resourceLoader, pellets);
-                }
+            public void handle() {
+              processInputs();
+              processPhysics(agents, map, resourceLoader, pellets);
+              System.out.println("Game loop2");
             }
         }.start();
     }

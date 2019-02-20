@@ -266,7 +266,7 @@ public class Client extends Application {
         }
         Methods.updateImages(agents, resourceLoader);
         this.primaryStage.setScene(gameScene);
-        // AnimationTimer started once game has started
+      //AnimationTimer started once game has started
         new AnimationTimer() {
             @Override
             public void handle(long now) {

@@ -135,6 +135,7 @@ public class Entity implements Renderable {
   }
 
   public void setPacMan(Boolean pac) {
+    this.currentFrame = 0;
     this.pacMan = pac;
     this.velocity = pacMan ? 0.08 : 0.06;
   }
