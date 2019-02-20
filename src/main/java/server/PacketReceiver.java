@@ -1,25 +1,29 @@
 package server;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.net.NetworkInterface;
 import java.util.Enumeration;
 import java.util.Queue;
 
 public class PacketReceiver extends Thread {
-  
+
   private InetAddress group;
   private MulticastSocket socket;
   private boolean running = false;
   private Queue<String> feedQueue;
   private int port;
   private DatagramSocket ds;
-  
+
   /**
    * Constructor only needs the multicasting group to communicate
    *
-   * @param port      The port we want to bind to
+   * @param port The port we want to bind to
    * @param feedQueue The queue we want to send packets from
-   * @param group     The multi-casting group that we will connect to
+   * @param group The multi-casting group that we will connect to
    * @throws IOException caused by the use of sockets
    */
   public PacketReceiver(InetAddress group, int port, Queue<String> feedQueue) throws IOException {
@@ -28,13 +32,13 @@ public class PacketReceiver extends Thread {
     setUpNetworkInterfaces();
     this.feedQueue = feedQueue;
   }
-  
+
   public PacketReceiver(int port, Queue<String> feedQueue) throws IOException {
     this.port = port;
     this.ds = new DatagramSocket(port);
     this.feedQueue = feedQueue;
   }
-  
+
   private void setUpNetworkInterfaces() throws IOException {
     Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
     while (interfaces.hasMoreElements()) {
@@ -42,7 +46,7 @@ public class PacketReceiver extends Thread {
       if (iface.isLoopback() || !iface.isUp()) {
         continue;
       }
-      
+
       Enumeration<InetAddress> addresses = iface.getInetAddresses();
       while (addresses.hasMoreElements()) {
         InetAddress addr = addresses.nextElement();
@@ -51,7 +55,7 @@ public class PacketReceiver extends Thread {
       }
     }
   }
-  
+
   /**
    * Continuously listens to the port agreed and adds the messages to the relevant queue in the
    * client/server
@@ -65,10 +69,10 @@ public class PacketReceiver extends Thread {
         byte[] buf = new byte[NetworkUtility.STRING_LIMIT];
         DatagramPacket packet = new DatagramPacket(buf, buf.length);
         ds.receive(packet);
-        
+
         String received = new String(packet.getData(), 0, packet.getLength());
         received = received.replaceAll("\u0000.*", "");
-        
+
         if (received.startsWith(NetworkUtility.PREFIX)
             && received.endsWith(NetworkUtility.SUFFIX)) {
           received =
@@ -85,7 +89,7 @@ public class PacketReceiver extends Thread {
       }
     }
   }
-  
+
   public void shutdown() {
     this.running = false;
     socket.close();

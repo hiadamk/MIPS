@@ -14,14 +14,9 @@ import utils.enums.Direction;
  */
 public class Pellet implements Renderable {
 
-  public void setLocation(Point location) {
-    this.location = location;
-  }
-
   private Point location;
   private ArrayList<Image> currentImage;
   private boolean active; // Weather or not the item is visible and able to be interacted with
-
   public Pellet(double x, double y) {
     this.location = new Point(x, y);
     active = true;
@@ -34,6 +29,10 @@ public class Pellet implements Renderable {
 
   public Point getLocation() {
     return location;
+  }
+
+  public void setLocation(Point location) {
+    this.location = location;
   }
 
   @Override

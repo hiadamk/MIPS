@@ -1,39 +1,41 @@
 package server;
 
-import utils.Input;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import utils.Input;
 
-//input switched from string to input form in this stage
+// input switched from string to input form in this stage
 public class ServerGameplayHandler {
-  
+
   private Queue<Input> inputQueue;
   private Queue<String> outgoingQueue;
   private Queue<String> incomingQueue;
-  
+
   private Thread incomingPacketManager;
-  
+
   private PacketSender sender;
   private PacketReceiver receiver;
-  
+
   private ArrayList<InetAddress> ipStore;
-  
-  
+
   private int playerCount;
-  
-  public ServerGameplayHandler(ArrayList<InetAddress> ips, int numPlayers,
-                               Queue<Input> inputQueue, Queue<String> outputQueue) throws IOException {
-    
+
+  public ServerGameplayHandler(
+      ArrayList<InetAddress> ips,
+      int numPlayers,
+      Queue<Input> inputQueue,
+      Queue<String> outputQueue)
+      throws IOException {
+
     this.inputQueue = inputQueue;
     outgoingQueue = outputQueue;
     incomingQueue = new ConcurrentLinkedQueue<>();
     this.playerCount = numPlayers;
     initialisePacketManagers();
-    
+
     // outgoingQueue.add("POS"); //why
     this.ipStore = ips;
     this.sender = new PacketSender(NetworkUtility.CLIENT_DGRAM_PORT, this.outgoingQueue, ipStore);
@@ -42,8 +44,7 @@ public class ServerGameplayHandler {
     this.sender.start();
     this.receiver.start();
   }
-  
-  
+
   /**
    * Initialises the packet managers
    */
@@ -58,7 +59,7 @@ public class ServerGameplayHandler {
               }
               System.out.println("SERVER RECEIVED -> " + incomingQueue.peek());
               inputQueue.add(Input.fromString(incomingQueue.poll()));
-              
+
               try {
                 Thread.sleep(50);
               } catch (InterruptedException e) {

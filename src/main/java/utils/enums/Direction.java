@@ -26,15 +26,11 @@ public enum Direction {
     }
   };
   private int id;
-  
+
   Direction(int id) {
     this.id = id;
   }
-  
-  public int toInt() {
-    return id;
-  }
-  
+
   public static Direction fromInt(int n) {
     switch (n) {
       case 0:
@@ -48,5 +44,8 @@ public enum Direction {
     }
     return null;
   }
-}
 
+  public int toInt() {
+    return id;
+  }
+}

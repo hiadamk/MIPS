@@ -1,9 +1,8 @@
 package utils;
 
-import utils.enums.MapElement;
-
 import java.util.ArrayList;
 import java.util.Random;
+import utils.enums.MapElement;
 
 /**
  * Encapsulates map with utilities methods
@@ -11,13 +10,13 @@ import java.util.Random;
  * @author Alex Banks
  */
 public class Map {
-  
+
   private final int MAX_X;
   private final int MAX_Y;
-  
+
   private final int[][] MAP;
   private final ArrayList<utils.Point> SPAWN_POINTS;
-  
+
   /**
    * basic constructor that takes raw ints and performs preprocessing
    *
@@ -31,7 +30,7 @@ public class Map {
     MAX_Y = MAP[0].length;
     SPAWN_POINTS = loadSpawnPoints();
   }
-  
+
   /**
    * called on construction to find and load spawn point TODO: convert back to SPAWNPOINT.toInt()
    *
@@ -49,21 +48,21 @@ public class Map {
     }
     return spawnPoints;
   }
-  
+
   public int getMaxX() {
     return MAX_X;
   }
-  
+
   public int getMaxY() {
     return MAX_Y;
   }
-  
+
   public boolean withinBounds(Point point) {
     boolean x = point.getX() >= 0 && point.getX() < MAX_X;
     boolean y = point.getY() >= 0 && point.getY() < MAX_Y;
     return x && y;
   }
-  
+
   /**
    * calculates if point is out of bounds modular arithmetic for map looping
    *
@@ -76,7 +75,7 @@ public class Map {
     }
     return false;
   }
-  
+
   /**
    * package method for raw processing
    *
@@ -85,7 +84,7 @@ public class Map {
   public int[][] raw() {
     return MAP;
   }
-  
+
   /**
    * @return random location to position ghouls at if caught
    */

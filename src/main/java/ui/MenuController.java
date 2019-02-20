@@ -2,7 +2,6 @@ package ui;
 
 import audio.AudioController;
 import audio.Sounds;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -10,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
@@ -36,21 +34,21 @@ import utils.enums.RenderingMode;
 import utils.enums.ScreenResolution;
 
 /**
- * @author Adam Kona
- * Class which handles the creation and functionality of components in the main menu.
+ * @author Adam Kona Class which handles the creation and functionality of components in the main
+ *     menu.
  */
 public class MenuController {
-  
+
   private AudioController audioController;
   private Client client;
-  
+
   private boolean viewSettings = false;
   private boolean soundFX = true;
   private boolean music = true;
   private Stage primaryStage;
   private Stack<ArrayList<Node>> backTree = new Stack<>();
   private ArrayList<Node> itemsOnScreen = new ArrayList<>();
-  
+
   private Button singlePlayerBtn;
   private Button multiplayerBtn;
   private Button startGameBtn;
@@ -70,7 +68,7 @@ public class MenuController {
   private Button lowRes;
   private Button medRes;
   private Button highRes;
-  
+
   private ImageView volumeImg;
   private ImageView lowResImageView;
   private ImageView medResImageView;
@@ -93,40 +91,39 @@ public class MenuController {
   private ImageView continueView;
   private ImageView settingsView;
   private ImageView backImageView;
-  
+
   private Image highResW;
   private Image highResG;
   private Image medResW;
   private Image medResG;
   private Image lowResW;
   private Image lowResG;
-  
+
   private Label lobbyStatusLbl;
   private Label loadingDots;
   private Label playersInLobby;
-  
+
   private TextField nameEntry;
   private Button nameEntryBtn;
   private ImageView nameEntryImg;
-  
+
   private VBox multiplayerOptions;
   private VBox gameModeOptions;
   private VBox resolutionOptions;
   private VBox nameEntryOptions;
   private VBox searchingForMutiplayers;
   private Font font;
-  
+
   private List<ImageView> imageViews;
   private List<Double> originalViewWidths;
   private List<Double> minimumViewWidths;
-  
+
   private boolean isHome = true;
-  
+
   /**
    * @param audio Global audio controller which is passed around the system
    * @param stage The game window
-   * @author Adam Kona
-   * Constructor takes in the audio controller stage and game scene
+   * @author Adam Kona Constructor takes in the audio controller stage and game scene
    */
   public MenuController(AudioController audio, Stage stage, Client client) {
     this.audioController = audio;
@@ -135,7 +132,7 @@ public class MenuController {
     originalViewWidths = new ArrayList<>();
     minimumViewWidths = new ArrayList<>();
   }
-  
+
   /**
    * Hides the components on the screen
    */
@@ -144,11 +141,10 @@ public class MenuController {
       item.setVisible(false);
     }
   }
-  
+
   /**
-   * @author Adam Kona
-   * Hides the items currently on the screen and moves them onto the stack which will store which
-   * components were previously showing
+   * @author Adam Kona Hides the items currently on the screen and moves them onto the stack which
+   *     will store which components were previously showing
    */
   private void moveItemsToBackTree() {
     hideItemsOnScreen();
@@ -156,21 +152,18 @@ public class MenuController {
     backTree.push(components);
     itemsOnScreen.clear();
   }
-  
-  /**
-   * @author Adam Kona
-   * Shows items on the screen which have been previously set to hidden.
-   */
+
+  /** @author Adam Kona Shows items on the screen which have been previously set to hidden. */
   private void showItemsOnScreen() {
     for (Node item : itemsOnScreen) {
       item.setVisible(true);
     }
   }
-  
+
   /**
    * @param s The screen resolution we want to update the game to.
-   * @author Adam Kona
-   * Handles the changing of images corresponding to the different resolutions available in the game.
+   * @author Adam Kona Handles the changing of images corresponding to the different resolutions
+   *     available in the game.
    */
   private void updateView(ScreenResolution s) {
     switch (s) {
@@ -178,7 +171,7 @@ public class MenuController {
         lowResImageView.setImage(lowResW);
         medResImageView.setImage(medResG);
         highResImageView.setImage(highResG);
-        
+
         break;
       case MEDIUM:
         lowResImageView.setImage(lowResG);
@@ -193,14 +186,14 @@ public class MenuController {
     }
     client.updateResolution(s);
   }
-  
+
   /**
    * Creates all the menu items and defines their functionality.
    *
    * @return The node containing the menu which will be returned to the game main window.
    */
   public Node createMainMenu() {
-    
+
     try {
       this.font =
           Font.loadFont(
@@ -210,13 +203,13 @@ public class MenuController {
     }
     StackPane root = new StackPane();
     root.setPrefSize(1920, 1080);
-    
+
     ImageView bg = new ImageView("sprites/default/backgrounds/default.png");
-    
+
     bg.fitWidthProperty().bind(this.primaryStage.widthProperty());
     root.getChildren().add(bg);
     StackPane.setAlignment(bg, Pos.CENTER);
-    
+
     logo = new ImageView("ui/MIPS-B.png");
     logo.preserveRatioProperty();
     StackPane.setAlignment(logo, Pos.TOP_CENTER);
@@ -224,7 +217,7 @@ public class MenuController {
     logo.setPreserveRatio(true);
     root.getChildren().add(logo);
     logo.setVisible(true);
-    
+
     startGameBtn = new Button();
     StackPane.setAlignment(startGameBtn, Pos.CENTER);
     StackPane.setMargin(startGameBtn, new Insets(160, 0, 0, 0));
@@ -239,7 +232,7 @@ public class MenuController {
           audioController.playSound(Sounds.click);
           client.startSinglePlayerGame();
         });
-    
+
     this.singlePlayerBtn = new Button();
     Image singleplayerImg = new Image("ui/Single-Player.png");
     singlePlayerImageView = new ImageView(singleplayerImg);
@@ -252,10 +245,10 @@ public class MenuController {
           itemsOnScreen.add(startGameBtn);
           startGameBtn.setVisible(true);
         });
-    
+
     root.getChildren().add(this.singlePlayerBtn);
     this.singlePlayerBtn.setVisible(true);
-    
+
     this.multiplayerBtn = new Button();
     Image multiplayerImg = new Image("ui/Multiplayer.png");
     multiplayerImageView = new ImageView(multiplayerImg);
@@ -270,7 +263,7 @@ public class MenuController {
         });
     root.getChildren().add(this.multiplayerBtn);
     this.multiplayerBtn.setVisible(true);
-    
+
     lowRes = new Button();
     lowRes.setStyle("-fx-background-color: transparent;");
     root.getChildren().add(lowRes);
@@ -286,7 +279,7 @@ public class MenuController {
           audioController.playSound(Sounds.click);
           updateView(ScreenResolution.LOW);
         });
-    
+
     medRes = new Button();
     medRes.setStyle("-fx-background-color: transparent;");
     root.getChildren().add(medRes);
@@ -302,7 +295,7 @@ public class MenuController {
           audioController.playSound(Sounds.click);
           updateView(ScreenResolution.MEDIUM);
         });
-    
+
     highRes = new Button();
     highRes.setStyle("-fx-background-color: transparent;");
     root.getChildren().add(highRes);
@@ -318,22 +311,22 @@ public class MenuController {
           audioController.playSound(Sounds.click);
           updateView(ScreenResolution.HIGH);
         });
-    
+
     resolutionOptions = new VBox(20, lowRes, medRes, highRes);
     resolutionOptions.setAlignment(Pos.CENTER_RIGHT);
     StackPane.setAlignment(resolutionOptions, Pos.CENTER_RIGHT);
     StackPane.setMargin(resolutionOptions, new Insets(100, 20, 0, 0));
     root.getChildren().add(resolutionOptions);
-    
+
     resolutionOptions.setVisible(false);
-    
+
     gameModeOptions = new VBox(10, singlePlayerBtn, multiplayerBtn);
     gameModeOptions.setAlignment(Pos.CENTER);
     StackPane.setAlignment(gameModeOptions, Pos.CENTER);
     StackPane.setMargin(gameModeOptions, new Insets(100, 0, 0, 0));
     root.getChildren().add(gameModeOptions);
     gameModeOptions.setVisible(false);
-    
+
     playBtn = new Button();
     StackPane.setAlignment(playBtn, Pos.CENTER);
     StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
@@ -351,24 +344,24 @@ public class MenuController {
           showItemsOnScreen();
         });
     root.getChildren().add(playBtn);
-    
+
     ToggleGroup renderingModeGroup = new ToggleGroup();
     RadioButton standardScalingBtn = new RadioButton("standard");
-    initialiseRenderingButtons(standardScalingBtn, 0, 0, root, renderingModeGroup,
-        RenderingMode.STANDARD_SCALING);
+    initialiseRenderingButtons(
+        standardScalingBtn, 0, 0, root, renderingModeGroup, RenderingMode.STANDARD_SCALING);
     RadioButton noScalingBtn = new RadioButton("no scaling");
-    initialiseRenderingButtons(noScalingBtn, 0, 60, root, renderingModeGroup,
-        RenderingMode.NO_SCALING);
+    initialiseRenderingButtons(
+        noScalingBtn, 0, 60, root, renderingModeGroup, RenderingMode.NO_SCALING);
     RadioButton integerScalingBtn = new RadioButton("integer");
-    initialiseRenderingButtons(integerScalingBtn, 0, 120, root, renderingModeGroup,
-        RenderingMode.INTEGER_SCALING);
+    initialiseRenderingButtons(
+        integerScalingBtn, 0, 120, root, renderingModeGroup, RenderingMode.INTEGER_SCALING);
     RadioButton smoothScalingBtn = new RadioButton("smooth");
-    initialiseRenderingButtons(smoothScalingBtn, 0, 180, root, renderingModeGroup,
-        RenderingMode.SMOOTH_SCALING);
-    
+    initialiseRenderingButtons(
+        smoothScalingBtn, 0, 180, root, renderingModeGroup, RenderingMode.SMOOTH_SCALING);
+
     standardScalingBtn.setSelected(true);
     client.setRenderingMode(RenderingMode.STANDARD_SCALING);
-    
+
     musicBtn = new Button();
     StackPane.setAlignment(musicBtn, Pos.CENTER_LEFT);
     StackPane.setMargin(musicBtn, new Insets(0, 0, 25, 0));
@@ -392,7 +385,7 @@ public class MenuController {
             audioController.setMusicVolume(0.5);
           }
         });
-    
+
     soundFxBtn = new Button();
     StackPane.setAlignment(soundFxBtn, Pos.CENTER_LEFT);
     StackPane.setMargin(soundFxBtn, new Insets(150, 0, 0, 0));
@@ -418,7 +411,7 @@ public class MenuController {
             audioController.setSoundVolume(0.5);
           }
         });
-    
+
     volumeImg = new ImageView(new Image("ui/Volume.png"));
     StackPane.setAlignment(volumeImg, Pos.CENTER_LEFT);
     StackPane.setMargin(volumeImg, new Insets(400, 0, 0, 100));
@@ -426,7 +419,7 @@ public class MenuController {
     volumeImg.setPreserveRatio(true);
     root.getChildren().add(volumeImg);
     volumeImg.setFitWidth(250);
-    
+
     incrVolumeBtn = new Button();
     StackPane.setAlignment(incrVolumeBtn, Pos.CENTER_LEFT);
     StackPane.setMargin(incrVolumeBtn, new Insets(530, 0, 0, 250));
@@ -442,7 +435,7 @@ public class MenuController {
           audioController.playSound(Sounds.click);
           audioController.increaseVolume();
         });
-    
+
     decrVolumeBtn = new Button();
     StackPane.setAlignment(decrVolumeBtn, Pos.CENTER_LEFT);
     StackPane.setMargin(decrVolumeBtn, new Insets(530, 0, 0, 150));
@@ -458,7 +451,7 @@ public class MenuController {
           audioController.playSound(Sounds.click);
           audioController.decreaseVolume();
         });
-    
+
     creditsBtn = new Button();
     StackPane.setAlignment(creditsBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(creditsBtn, new Insets(0, 0, 50, 0));
@@ -468,7 +461,7 @@ public class MenuController {
     creditsView = new ImageView(creditsImg);
     creditsBtn.setGraphic(creditsView);
     creditsBtn.setVisible(false);
-    
+
     joinGameBtn = new Button();
     joinGameBtn.setPickOnBounds(true);
     joinGameBtn.setStyle("-fx-background-color: transparent;");
@@ -481,7 +474,7 @@ public class MenuController {
         event -> {
           client.joinMultiplayerLobby();
         });
-    
+
     createGameBtn = new Button();
     createGameBtn.setPickOnBounds(true);
     Image createGameImg = new Image("ui/create-game.png");
@@ -500,14 +493,14 @@ public class MenuController {
           startMGameBtn.setVisible(true);
           client.createMultiplayerLobby();
         });
-    
+
     multiplayerOptions = new VBox(10, createGameBtn, joinGameBtn);
     multiplayerOptions.setAlignment(Pos.CENTER);
     StackPane.setAlignment(multiplayerOptions, Pos.CENTER);
     StackPane.setMargin(multiplayerOptions, new Insets(100, 0, 0, 0));
     root.getChildren().add(multiplayerOptions);
     multiplayerOptions.setVisible(false);
-    
+
     createLobbyBtn = new Button();
     StackPane.setAlignment(createGameBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(createGameBtn, new Insets(0, 0, 300, 0));
@@ -517,25 +510,25 @@ public class MenuController {
     createLobbyBtn.setGraphic(createLobbyView);
     createLobbyBtn.setVisible(false);
     root.getChildren().add(createLobbyBtn);
-    
+
     lobbyStatusLbl = new Label("Searching for players");
     lobbyStatusLbl.setTextFill(Color.WHITE);
     lobbyStatusLbl.setFont(this.font);
-    
+
     loadingDots = new Label(" .");
     loadingDots.setTextFill(Color.WHITE);
     loadingDots.setFont(this.font);
-    
+
     playersInLobby = new Label("Players in lobby: 0");
     playersInLobby.setTextFill(Color.WHITE);
     playersInLobby.setFont(this.font);
-    
+
     searchingForMutiplayers = new VBox(5, lobbyStatusLbl, loadingDots, playersInLobby);
     searchingForMutiplayers.setAlignment(Pos.CENTER);
     StackPane.setAlignment(searchingForMutiplayers, Pos.CENTER);
     root.getChildren().add(searchingForMutiplayers);
     searchingForMutiplayers.setVisible(false);
-    
+
     Timeline timeline =
         new Timeline(
             new KeyFrame(
@@ -547,7 +540,7 @@ public class MenuController {
             new KeyFrame(Duration.millis(1000)));
     timeline.setCycleCount(Timeline.INDEFINITE);
     timeline.play();
-    
+
     nameEntry = new TextField();
     Font nameEntryFont = Font.font("Verdana");
     try {
@@ -564,12 +557,12 @@ public class MenuController {
             + "-fx-background-color: transparent;");
     nameEntry.setFont(nameEntryFont);
     nameEntry.setAlignment(Pos.CENTER);
-    
+
     Line clear = new Line(0, 100, 600, 100);
     clear.setStroke(Color.WHITE);
     VBox nameAndLine = new VBox(nameEntry, clear);
     nameAndLine.setAlignment(Pos.CENTER);
-    
+
     nameEntryBtn = new Button();
     nameEntryBtn.setStyle("-fx-background-color: transparent;");
     Image continueImg = new Image("ui/continue.png");
@@ -583,7 +576,7 @@ public class MenuController {
           itemsOnScreen.add(multiplayerOptions);
           showItemsOnScreen();
         });
-    
+
     nameEntryOptions = new VBox(30, nameAndLine, nameEntryBtn);
     nameEntryOptions.setAlignment(Pos.CENTER);
     StackPane.setAlignment(nameEntryOptions, Pos.CENTER);
@@ -591,7 +584,7 @@ public class MenuController {
     nameEntryOptions.setPrefWidth(300);
     nameEntryOptions.setVisible(false);
     root.getChildren().add(nameEntryOptions);
-    
+
     quitBtn = new Button();
     StackPane.setAlignment(quitBtn, Pos.TOP_RIGHT);
     StackPane.setMargin(quitBtn, new Insets(50, 50, 0, 0));
@@ -605,10 +598,10 @@ public class MenuController {
           audioController.playSound(Sounds.click);
           System.exit(0);
         });
-    
+
     GaussianBlur gaussianBlur = new GaussianBlur();
     gaussianBlur.setRadius(11);
-    
+
     settingsBtn = new Button();
     settingsBtn.setStyle("-fx-background-color: transparent;");
     StackPane.setAlignment(settingsBtn, Pos.TOP_LEFT);
@@ -638,7 +631,7 @@ public class MenuController {
             noScalingBtn.setVisible(true);
             integerScalingBtn.setVisible(true);
             smoothScalingBtn.setVisible(true);
-            
+
           } else {
             musicBtn.setVisible(false);
             soundFxBtn.setVisible(false);
@@ -659,13 +652,13 @@ public class MenuController {
             }
           }
         });
-    
+
     root.getChildren().add(settingsBtn);
-    
+
     startMGameBtn = new Button();
     StackPane.setAlignment(startMGameBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(startMGameBtn, new Insets(0, 0, 200, 0));
-    
+
     startingM = new ImageView(startImg);
     startMGameBtn.setGraphic(startingM);
     startMGameBtn.setStyle("-fx-background-color: transparent;");
@@ -675,9 +668,8 @@ public class MenuController {
         e -> {
           audioController.playSound(Sounds.click);
           client.startMultiplayerGame();
-          
         });
-    
+
     backBtn = new Button();
     StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(backBtn, new Insets(0, 0, 100, 0));
@@ -688,7 +680,7 @@ public class MenuController {
     backBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
-          
+
           if (!backTree.isEmpty()) {
             for (Node item : itemsOnScreen) {
               item.setVisible(false);
@@ -705,13 +697,13 @@ public class MenuController {
             }
           }
         });
-    
+
     backBtn.setVisible(false);
     root.getChildren().add(backBtn);
-    
+
     backTree.empty();
     itemsOnScreen.add(playBtn);
-    
+
     imageViews =
         Arrays.asList(
             volumeImg,
@@ -736,31 +728,31 @@ public class MenuController {
             settingsView,
             backImageView,
             startingM);
-    
+
     for (int i = 0; i < imageViews.size(); i++) {
       originalViewWidths.add(imageViews.get(i).getBoundsInLocal().getWidth());
       minimumViewWidths.add(originalViewWidths.get(i) * 0.4);
     }
-    
+
     return root;
   }
-  
+
   /**
    * @param newVal the new screen width.
    * @param oldVal the old screen width.
-   * @author Adam Kona
-   * Updates the current size of all the images in the menu whilst preserving their aspect ratio.
-   * The percentage change in the screen width is calculated and the size of the images is changed along with it as
-   * long as this does not fall below 40% the original image size and does not rise above the original image size.
+   * @author Adam Kona Updates the current size of all the images in the menu whilst preserving
+   *     their aspect ratio. The percentage change in the screen width is calculated and the size of
+   *     the images is changed along with it as long as this does not fall below 40% the original
+   *     image size and does not rise above the original image size.
    */
   public void scaleImages(double newVal, double oldVal) {
-    
+
     for (int i = 0; i < imageViews.size(); i++) {
       ImageView currentView = imageViews.get(i);
       double currentWidth = currentView.getBoundsInLocal().getWidth();
       currentView.setPreserveRatio(true);
       currentView.setSmooth(true);
-      
+
       double proposedWidth = Math.floor(currentWidth * (newVal / oldVal));
       if (proposedWidth > originalViewWidths.get(i)) {
         currentView.setFitWidth(originalViewWidths.get(i));
@@ -771,9 +763,9 @@ public class MenuController {
       }
     }
   }
-  
-  public void initialiseRenderingButtons(RadioButton rBtn, int xMargin, int yMargin, StackPane root,
-                                         ToggleGroup g, RenderingMode rm) {
+
+  public void initialiseRenderingButtons(
+      RadioButton rBtn, int xMargin, int yMargin, StackPane root, ToggleGroup g, RenderingMode rm) {
     rBtn.setVisible(false);
     StackPane.setAlignment(rBtn, Pos.CENTER);
     StackPane.setMargin(rBtn, new Insets(yMargin, xMargin, 0, xMargin));

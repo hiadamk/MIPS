@@ -11,7 +11,7 @@ import utils.enums.Direction;
  * @author Lewis Ackroyd
  */
 public class MipsManRouteFinder implements RouteFinder {
-  
+
   @Override
   public Direction getRoute(Point myLocation, Point targetLocation) {
     // TODO Auto-generated method stub

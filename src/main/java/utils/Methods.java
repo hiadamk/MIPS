@@ -7,13 +7,13 @@ import objects.Entity;
 import utils.enums.Direction;
 
 public class Methods {
-  
+
   public static void updateImages(Entity[] entities, ResourceLoader r) {
     for (Entity e : entities) {
       e.updateImages(r);
     }
   }
-  
+
   /**
    * checks whether an entity is allowed to move in a certain direction
    *
@@ -27,7 +27,7 @@ public class Methods {
     Point prevLoc = e.getLocation().getCopy();
     Direction prevDir = e.getDirection();
     boolean isValid = true;
-    
+
     e.setDirection(d);
     e.move();
     Point faceLoc = e.getFaceLocation();
@@ -36,32 +36,32 @@ public class Methods {
     if (xpart >= 0.1 || ypart >= 0.1) {
       isValid = false;
     }
-    
+
     isValid = isValid && !m.isWall(faceLoc);
-    
+
     e.setLocation(prevLoc);
     e.setDirection(prevDir);
     return isValid;
   }
-  
+
   public static boolean validiateDirection(Direction d, Entity e, Point p, Map m) {
     boolean isValid = true;
     Point gridPoint = Mapping.getGridCoord(p);
     gridPoint.increaseX(0);
     gridPoint.increaseY(0);
-    
+
     Point movedPoint = produceMovement(d, gridPoint, 1);
     double xpart = abs((gridPoint.getX() % 1) - 0.5);
     double ypart = abs((gridPoint.getY() % 1) - 0.5);
     if (xpart >= 0.1 || ypart >= 0.1) {
       isValid = false;
     }
-    
+
     isValid = isValid && !m.isWall(movedPoint);
-    
+
     return isValid;
   }
-  
+
   public static Point produceMovement(Direction direction, Point p, double offset) {
     Point loc = p.getCopy();
     if (direction != null) {
@@ -82,11 +82,11 @@ public class Methods {
     }
     return loc;
   }
-  
+
   public static boolean centreOfSquare(Entity e) {
     return centreOfSquare(e.getLocation());
   }
-  
+
   public static boolean centreOfSquare(Point p) {
     Point newLoc = new Point(p.getX(), p.getY());
     double xpart = mod(newLoc.getX(), 1);
@@ -94,12 +94,12 @@ public class Methods {
     if (ypart >= 0.60 || ypart <= 0.40 || xpart >= 0.60 || xpart <= 0.40) return false;
     return true;
   }
-  
+
   /**
    * true modulo instead of %
    *
    * @param dividend dividend
-   * @param divisor  divisor
+   * @param divisor divisor
    * @return dividend mod divisor
    * @author Alex Banks
    */
