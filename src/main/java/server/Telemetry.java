@@ -1,14 +1,11 @@
 package server;
 
 import ai.AILoopControl;
-
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import objects.Entity;
 import objects.Pellet;
 import utils.GameLoop;
@@ -86,7 +83,6 @@ public class Telemetry implements Telemeters {
         }
       }
     }
-    // TODO add points for pellet collision
     
     // separate loop for checking collision after iteration
     
@@ -129,7 +125,14 @@ public class Telemetry implements Telemeters {
       //System.out.println("~Ghoul" + ghoul.getClientId() + " captured Mipsman" + pacman.getClientId());
     }
   }
-  
+
+  /**
+   * Static method to detect if the pacMan entity will eat a pellet
+   *
+   * @param agents The entities
+   * @param pellets The pellets
+   * @author Matthew Jones
+   */
   private static void pelletCollision(Entity[] agents, HashMap<String, Pellet> pellets) {
     for (Entity agent : agents) {
       if (!agent.isPacman()) {
@@ -145,7 +148,12 @@ public class Telemetry implements Telemeters {
       }
     }
   }
-  
+
+  /**
+   * Initialises the game agents/entities and AI to control them
+   *
+   * @author Matthew Jones
+   */
   private void initialise() {
     agents = new Entity[AGENT_COUNT];
     agents[0] = new Entity(false, 0, new Point(1.5, 1.5, map));
@@ -157,20 +165,18 @@ public class Telemetry implements Telemeters {
       agents[(new Random()).nextInt(AGENT_COUNT)].setPacMan(true);
     }
 
-//    System.out.println(Arrays.toString(agents));
-//    int aiCount = AGENT_COUNT - playerCount;
-//    if (aiCount < 0) {
-//      aiCount = 0;
-//    }
-//    int[] aiControlled = new int[aiCount];
-//    int highestId = AGENT_COUNT - 1;
-//    for (int i = 0; i < aiCount; i++) {
-//      aiControlled[i] = highestId;
-//      highestId--;
-//    }
-//    aiRunning = false;
-//    ai = new AILoopControl(agents, aiControlled, map, inputs);
-    
+    int aiCount = AGENT_COUNT - playerCount;
+    if (aiCount > 0) {
+      int[] aiControlled = new int[aiCount];
+      int highestId = AGENT_COUNT - 1;
+      for (int i = 0; i < aiCount; i++) {
+        aiControlled[i] = highestId;
+        highestId--;
+      }
+      aiRunning = false;
+      ai = new AILoopControl(agents, aiControlled, map, inputs);
+    }
+
     pellets = new HashMap<String, Pellet>();
     for (int i = 0; i < map.getMaxX(); i++) {
       for (int j = 0; j < map.getMaxY(); j++) {
@@ -216,7 +222,12 @@ public class Telemetry implements Telemeters {
       ai.start();
     }
   }
-  
+
+  /**
+   * Method to deal with the inputs provided in the inputs queue
+   *
+   * @author Matthew Jones
+   */
   private void processInputs() {
     while (!inputs.isEmpty()) {
       Input input = inputs.poll();
