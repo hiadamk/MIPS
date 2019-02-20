@@ -210,7 +210,7 @@ public class Telemetry implements Telemeters {
           oldTime = now;
           processInputs();
           processPhysics(agents, map, resourceLoader, pellets);
-          updateClients(agents);
+//          updateClients(agents);
         }
       }
     }.start();
