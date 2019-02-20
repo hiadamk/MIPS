@@ -4,6 +4,8 @@ import static java.lang.Math.abs;
 
 /**
  * encapsulates point in 2d space on a map if given map, will ensure modularity
+ *
+ * @author Alex Banks, Matthew Jones
  */
 public class Point {
   
@@ -81,12 +83,17 @@ public class Point {
     x = (int) x + 0.5;
     mod();
   }
-  
+
+  /**
+   * Puts the point in the centre of its map square
+   *
+   * @return the updated point
+   */
   public Point centralise() {
     x = (int) x + 0.5;
     y = (int) y + 0.5;
     mod();
-    return this;
+    return this; //Does this method really need to return anything?
   }
   
   public boolean inRange(Point p) {
@@ -98,13 +105,22 @@ public class Point {
     return "[Point] x = " + x + ", y = " + y + ", maxX = " + MAX_X + ", maxY = " + MAX_Y
         + ", mapped = " + mapped;
   }
-  
+
+  /**
+   * Calculates the (Euclidean) distance from this point to the point given
+   *
+   * @param to The point to calculate distance to
+   * @return the Euclidean distance between the two points
+   */
   public double distance(Point to) {
     double aSquared = Math.pow(this.x - to.getX(), 2);
     double bSquared = Math.pow(this.y - to.getY(), 2);
     return Math.sqrt(aSquared + bSquared);
   }
-  
+
+  /**
+   * ensures that the points stay within the bounds of the game map
+   */
   private void mod() {
     if (mapped) {
       if (MAX_Y <= 0 && MAX_X <= 0) {

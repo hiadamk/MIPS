@@ -1,14 +1,12 @@
 package main;
 
 import audio.AudioController;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -278,7 +276,12 @@ public class Client extends Application {
     }.start();
 //        telemetry.startAI();
   }
-  
+
+  /**
+   * Process the players input given in via the keyboard
+   *
+   * @Author Matthew Jones
+   */
   private void processInput() {
     Direction input = keyController.getActiveKey();
     Direction current = agents[id].getDirection();
@@ -290,19 +293,19 @@ public class Client extends Application {
       return;
     }
     switch (input) {
-      case UP: // Add code here
+      case UP:
         informServer(new Input(this.id, Direction.UP));
         agents[id].setDirection(input);
         break;
-      case DOWN: // Add code here
+      case DOWN:
         informServer(new Input(this.id, Direction.DOWN));
         agents[id].setDirection(input);
         break;
-      case LEFT: // Add code here
+      case LEFT:
         informServer(new Input(this.id, Direction.LEFT));
         agents[id].setDirection(input);
         break;
-      case RIGHT: // Add code here
+      case RIGHT:
         informServer(new Input(this.id, Direction.RIGHT));
         agents[id].setDirection(input);
         break;
