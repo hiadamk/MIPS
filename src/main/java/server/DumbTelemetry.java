@@ -11,7 +11,6 @@ import utils.enums.Direction;
 
 import java.util.HashMap;
 import java.util.Queue;
-import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 
 public class DumbTelemetry implements Telemeters {
@@ -152,7 +151,13 @@ public class DumbTelemetry implements Telemeters {
     public void setMipID(int ID){
         this.agents[ID].setPacMan(true);
     }
-
+    
+    //Not needed as the only input received is from server and not from client.
+    @Override
+    public void addInput(Input in) {
+    
+    }
+    
     public Map getMap() {
         return map;
     }
