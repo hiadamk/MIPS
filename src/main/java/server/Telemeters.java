@@ -2,6 +2,7 @@ package server;
 
 import objects.Entity;
 import objects.Pellet;
+import utils.Input;
 import utils.Map;
 
 import java.util.HashMap;
@@ -17,5 +18,7 @@ public interface Telemeters {
     HashMap<String, Pellet> getPellets();
 
     void setMipID(int ID);
+    
+    void addInput(Input in);
     
 }

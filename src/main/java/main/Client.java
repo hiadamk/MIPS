@@ -290,7 +290,13 @@ public class Client extends Application {
             incomingQueue.add(input);
         } else {
             System.out.println("TRIED TO SEND MY KEY MOVEMENT");
-            keypressQueue.add(input);
+            if (getId() == 0) {
+                this.telemetry.addInput(input);
+            } else {
+                keypressQueue.add(input);
+            }
+            
+            
             
         }
     }
