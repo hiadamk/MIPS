@@ -207,7 +207,7 @@ public class Renderer {
       }
     }
 
-    renderHUD(entityArr);
+//    renderHUD(entityArr);
     showFPS(now);
 
   }

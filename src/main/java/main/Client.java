@@ -274,7 +274,7 @@ public class Client extends Application {
                 renderer.render(map, agents, now, pellets);
             }
         }.start();
-        telemetry.startAI();
+//        telemetry.startAI();
     }
     
     private void processInput() {

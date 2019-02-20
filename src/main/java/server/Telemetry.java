@@ -19,7 +19,7 @@ import utils.enums.Direction;
 
 public class Telemetry implements Telemeters {
 
-  private static final int AGENT_COUNT = 5;
+  private static final int AGENT_COUNT = 2;
   private BlockingQueue<Input> inputs;
   private BlockingQueue<String> outputs;
   private Entity[] agents;
@@ -148,26 +148,26 @@ public class Telemetry implements Telemeters {
     agents = new Entity[AGENT_COUNT];
     agents[0] = new Entity(false, 0, new Point(1.5, 1.5, map));
     agents[1] = new Entity(false, 1, new Point(1.5, 18.5, map));
-    agents[2] = new Entity(false, 2, new Point(9.5, 15.5, map));
-    agents[3] = new Entity(false, 3, new Point(11.5, 1.5, map));
-    agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
+//    agents[2] = new Entity(false, 2, new Point(9.5, 15.5, map));
+//    agents[3] = new Entity(false, 3, new Point(11.5, 1.5, map));
+//    agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
     if (singlePlayer) {
       agents[(new Random()).nextInt(AGENT_COUNT)].setPacMan(true);
     }
 
-    System.out.println(Arrays.toString(agents));
-    int aiCount = AGENT_COUNT - playerCount;
-    if (aiCount < 0) {
-      aiCount = 0;
-    }
-    int[] aiControlled = new int[aiCount];
-    int highestId = AGENT_COUNT - 1;
-    for (int i = 0; i < aiCount; i++) {
-      aiControlled[i] = highestId;
-      highestId--;
-    }
-    aiRunning = false;
-    ai = new AILoopControl(agents, aiControlled, map, inputs);
+//    System.out.println(Arrays.toString(agents));
+//    int aiCount = AGENT_COUNT - playerCount;
+//    if (aiCount < 0) {
+//      aiCount = 0;
+//    }
+//    int[] aiControlled = new int[aiCount];
+//    int highestId = AGENT_COUNT - 1;
+//    for (int i = 0; i < aiCount; i++) {
+//      aiControlled[i] = highestId;
+//      highestId--;
+//    }
+//    aiRunning = false;
+//    ai = new AILoopControl(agents, aiControlled, map, inputs);
 
     pellets = new HashMap<String, Pellet>();
     for (int i = 0; i < map.getMaxX(); i++) {

@@ -27,7 +27,7 @@ public class ServerLobby {
         this.playerCount = 0;
         this.playerIPs = new ArrayList<>();
         acceptConnections.start();
-        this.MIPID = (new Random()).nextInt(5);
+        this.MIPID = (new Random()).nextInt(2);
     }
     
     
