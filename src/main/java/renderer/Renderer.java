@@ -425,6 +425,7 @@ public class Renderer {
   }
 
   public void setResolution(int x, int y, RenderingMode mode) {
+    System.out.println("renderer:" + x + " " + y + " " + mode.toString());
     r.setResolution(x, y, mode);
     xResolution = x;
     yResolution = y;

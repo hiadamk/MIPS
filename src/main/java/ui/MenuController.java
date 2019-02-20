@@ -2,6 +2,13 @@ package ui;
 
 import audio.AudioController;
 import audio.Sounds;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Stack;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
@@ -9,7 +16,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,15 +30,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.Client;
+import utils.enums.RenderingMode;
 import utils.enums.ScreenResolution;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
 
 /**
  * @author Adam Kona Class which handles the creation and functionality of components in the main
@@ -337,6 +339,23 @@ public class MenuController {
         });
     root.getChildren().add(playBtn);
 
+    ToggleGroup renderingModeGroup = new ToggleGroup();
+    RadioButton standardScalingBtn = new RadioButton("standard");
+    initialiseRenderingButtons(standardScalingBtn, 0, 0, root, renderingModeGroup,
+        RenderingMode.STANDARD_SCALING);
+    RadioButton noScalingBtn = new RadioButton("no scaling");
+    initialiseRenderingButtons(noScalingBtn, 0, 60, root, renderingModeGroup,
+        RenderingMode.NO_SCALING);
+    RadioButton integerScalingBtn = new RadioButton("integer");
+    initialiseRenderingButtons(integerScalingBtn, 0, 120, root, renderingModeGroup,
+        RenderingMode.INTEGER_SCALING);
+    RadioButton smoothScalingBtn = new RadioButton("smooth");
+    initialiseRenderingButtons(smoothScalingBtn, 0, 180, root, renderingModeGroup,
+        RenderingMode.SMOOTH_SCALING);
+
+    standardScalingBtn.setSelected(true);
+    client.setRenderingMode(RenderingMode.STANDARD_SCALING);
+
     musicBtn = new Button();
     StackPane.setAlignment(musicBtn, Pos.CENTER_LEFT);
     StackPane.setMargin(musicBtn, new Insets(0, 0, 25, 0));
@@ -602,6 +621,10 @@ public class MenuController {
             bg.setEffect(gaussianBlur);
             hideItemsOnScreen();
             backBtn.setVisible(false);
+            standardScalingBtn.setVisible(true);
+            noScalingBtn.setVisible(true);
+            integerScalingBtn.setVisible(true);
+            smoothScalingBtn.setVisible(true);
 
           } else {
             musicBtn.setVisible(false);
@@ -612,6 +635,10 @@ public class MenuController {
             volumeImg.setVisible(false);
             incrVolumeBtn.setVisible(false);
             decrVolumeBtn.setVisible(false);
+            standardScalingBtn.setVisible(false);
+            noScalingBtn.setVisible(false);
+            integerScalingBtn.setVisible(false);
+            smoothScalingBtn.setVisible(false);
             bg.setEffect(null);
             showItemsOnScreen();
             if (!isHome) {
@@ -722,5 +749,15 @@ public class MenuController {
         currentView.setFitWidth(Math.floor(currentWidth * (newVal / oldVal)));
       }
     }
+  }
+
+  public void initialiseRenderingButtons(RadioButton rBtn, int xMargin, int yMargin, StackPane root,
+      ToggleGroup g, RenderingMode rm) {
+    rBtn.setVisible(false);
+    StackPane.setAlignment(rBtn, Pos.CENTER);
+    StackPane.setMargin(rBtn, new Insets(yMargin, xMargin, 0, xMargin));
+    root.getChildren().add(rBtn);
+    rBtn.setOnAction(event -> client.setRenderingMode(rm));
+    rBtn.setToggleGroup(g);
   }
 }

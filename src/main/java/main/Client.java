@@ -1,6 +1,12 @@
 package main;
 
 import audio.AudioController;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -12,7 +18,12 @@ import javafx.stage.Stage;
 import objects.Entity;
 import objects.Pellet;
 import renderer.Renderer;
-import server.*;
+import server.ClientLobbySession;
+import server.DumbTelemetry;
+import server.ServerGameplayHandler;
+import server.ServerLobby;
+import server.Telemeters;
+import server.Telemetry;
 import ui.MenuController;
 import utils.Input;
 import utils.Map;
@@ -21,14 +32,6 @@ import utils.ResourceLoader;
 import utils.enums.Direction;
 import utils.enums.RenderingMode;
 import utils.enums.ScreenResolution;
-
-import java.awt.*;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class Client extends Application {
     
@@ -45,6 +48,8 @@ public class Client extends Application {
     private Renderer renderer;
     private int xRes = 1920;
     private int yRes = 1080;
+  private ScreenResolution screenRes = ScreenResolution.LOW;
+  private RenderingMode renderingMode = RenderingMode.STANDARD_SCALING;
     private ResourceLoader resourceLoader;
     private Entity[] agents;
     private Queue<Input> inputs;
@@ -58,7 +63,9 @@ public class Client extends Application {
     private BlockingQueue<Input> incomingQueue; //only used in singleplayer
     private HashMap<String, Pellet> pellets;
     private int MIPID;
-    
+  private Canvas canvas = new Canvas();
+
+
     public int getId() {
         return id;
     }
@@ -75,12 +82,20 @@ public class Client extends Application {
     public void setPlayerNames(String[] names) {
         this.playerNames = names;
     }
+
+  public void setScreenRes(ScreenResolution s) {
+    this.screenRes = s;
+  }
+
+  public void setRenderingMode(RenderingMode rm) {
+    this.renderingMode = rm;
+  }
     
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();
-        xRes = screenRes.width;
-        yRes = screenRes.height;
+//        Dimension screenRes = Toolkit.getDefaultToolkit().getScreenSize();
+//        xRes = screenRes.width;
+//        yRes = screenRes.height;
         
         int id = 0; // This will be changed if main joins a lobby, telemetry will give it new id
         audioController = new AudioController();
@@ -91,7 +106,7 @@ public class Client extends Application {
         MenuController menuController = new MenuController(audioController, primaryStage, this);
         StackPane root = (StackPane) menuController.createMainMenu();
         Scene scene = new Scene(root, xRes, yRes);
-        final Canvas canvas = new Canvas(xRes, yRes);
+      canvas = new Canvas(xRes, yRes);
         Group gameRoot = new Group();
         gameRoot.getChildren().add(canvas);
         this.gameScene = new Scene(gameRoot);
@@ -106,7 +121,7 @@ public class Client extends Application {
                         });
         
         primaryStage.show();
-        updateResolution(ScreenResolution.LOW);
+      updateResolution(this.screenRes);
     }
     
     public void startSinglePlayerGame() {
@@ -192,6 +207,7 @@ public class Client extends Application {
     }
     
     public void updateResolution(ScreenResolution s) {
+      this.screenRes = s;
         switch (s) {
             case LOW:
                 primaryStage.setWidth(1366);
@@ -212,10 +228,15 @@ public class Client extends Application {
                 yRes = 1440;
                 break;
         }
-        renderer.setResolution(xRes, yRes, RenderingMode.INTEGER_SCALING);
+
+      System.out.println(xRes + " " + yRes);
+      canvas.setWidth(xRes);
+      canvas.setHeight(yRes);
+      renderer.setResolution(xRes, yRes, this.renderingMode);
     }
     
     public void setName(String n) {
+      updateResolution(this.screenRes);
         if (n.matches(".*[a-zA-Z]+.*")) {
             this.name = n;
         } else {
@@ -228,6 +249,7 @@ public class Client extends Application {
     }
     
     private void startGame() {
+      updateResolution(this.screenRes);
         // inputs = new Queue<Input>();
         
         // agents = new Entity[1];
