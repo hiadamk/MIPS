@@ -124,8 +124,7 @@ public class Telemetry implements Telemeters {
       pacman.updateImages(resourceLoader);
       ghoul.updateImages(resourceLoader);
 
-      System.out.println(
-          "~Ghoul" + ghoul.getClientId() + " captured Mipsman" + pacman.getClientId());
+      //System.out.println("~Ghoul" + ghoul.getClientId() + " captured Mipsman" + pacman.getClientId());
     }
   }
 

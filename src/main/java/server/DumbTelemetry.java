@@ -119,9 +119,8 @@ public class DumbTelemetry implements Telemeters {
             pacman.setDirection(Direction.UP);
             pacman.updateImages(resourceLoader);
             ghoul.updateImages(resourceLoader);
-            
-            System.out.println(
-                    "ghoul " + ghoul.getClientId() + " collided with mipsman " + pacman.getClientId());
+
+          //System.out.println("ghoul " + ghoul.getClientId() + " collided with mipsman " + pacman.getClientId());
         }
     }
     
@@ -190,7 +189,7 @@ public class DumbTelemetry implements Telemeters {
             public void handle() {
               processInputs();
               processPhysics(agents, map, resourceLoader, pellets);
-              System.out.println("Game loop2");
+              //System.out.println("Game loop2");
             }
         }.start();
     }
