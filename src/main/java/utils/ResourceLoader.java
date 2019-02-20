@@ -153,6 +153,7 @@ public class ResourceLoader {
    * @param mode tells ResourceLoader how to scale sprites
    */
   public void setResolution(int x, int y, RenderingMode mode) {
+    init();
     double mapToScreenRatio = 0.7;
 
     // find dimensions of rendered map we want based on mapToScreenRatio
@@ -169,12 +170,12 @@ public class ResourceLoader {
     // choose the smallest ratio to make sure map fits on screen
     double ratio = Math.min(targetX / (double) currentX, (double) targetY / currentY);
     System.out.println(ratio);
-
+    System.out.println("rl:" + x + " " + y + " " + mode.toString());
     boolean smoothEdges = false;
 
     switch (mode) {
       case NO_SCALING:
-        init();
+
         return;
       case INTEGER_SCALING: {
         System.out.println("ratio before:" + ratio);
