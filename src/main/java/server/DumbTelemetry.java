@@ -207,7 +207,7 @@ public class DumbTelemetry implements Telemeters {
       int id = Integer.parseInt(ls[0]);
       Double x = Double.valueOf(ls[1]);
       Double y = Double.valueOf(ls[2]);
-      agents[id].setLocation(new Point(x, y));
+      agents[id].setLocation(new Point(x, y, map));
     }
   }
 
