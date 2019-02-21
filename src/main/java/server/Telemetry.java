@@ -216,7 +216,7 @@ public class Telemetry implements Telemeters {
     startAI();
 
     final long DELAY = (long) Math.pow(10, 7);
-    final long positionDELAY = (long) Math.pow(10, 7);
+    final long positionDELAY = (long) Math.pow(10, 8);
 
     new GameLoop(DELAY) {
       @Override
