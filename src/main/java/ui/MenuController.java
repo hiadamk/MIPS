@@ -19,7 +19,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -105,19 +104,19 @@ public class MenuController {
 
   private TextField nameEntry;
   private Button nameEntryBtn;
-  private ImageView nameEntryImg;
 
   private VBox multiplayerOptions;
   private VBox gameModeOptions;
   private VBox resolutionOptions;
   private VBox nameEntryOptions;
   private VBox searchingForMutiplayers;
-  private VBox joinedLobby;
   private Font font;
 
   private List<ImageView> imageViews;
   private List<Double> originalViewWidths;
   private List<Double> minimumViewWidths;
+
+  private ButtonGenerator buttonGenerator;
 
   private boolean isHome = true;
 
@@ -132,6 +131,7 @@ public class MenuController {
     this.client = client;
     originalViewWidths = new ArrayList<>();
     minimumViewWidths = new ArrayList<>();
+    this.buttonGenerator = new ButtonGenerator();
   }
 
   /**
@@ -221,26 +221,18 @@ public class MenuController {
     root.getChildren().add(logo);
     logo.setVisible(true);
 
-    startGameBtn = new Button();
+    starting = new ImageView("ui/start.png");
+    startGameBtn = buttonGenerator.generate(false, root, starting);
     StackPane.setAlignment(startGameBtn, Pos.CENTER);
     StackPane.setMargin(startGameBtn, new Insets(160, 0, 0, 0));
-    Image startImg = new Image("ui/start.png");
-    starting = new ImageView(startImg);
-    startGameBtn.setGraphic(starting);
-    startGameBtn.setStyle("-fx-background-color: transparent;");
-    root.getChildren().add(startGameBtn);
-    startGameBtn.setVisible(false);
     startGameBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
           client.startSinglePlayerGame();
         });
 
-    this.singlePlayerBtn = new Button();
-    Image singleplayerImg = new Image("ui/Single-Player.png");
-    singlePlayerImageView = new ImageView(singleplayerImg);
-    this.singlePlayerBtn.setGraphic(singlePlayerImageView);
-    this.singlePlayerBtn.setStyle("-fx-background-color: transparent;");
+    singlePlayerImageView = new ImageView("ui/Single-Player.png");
+    this.singlePlayerBtn = buttonGenerator.generate(true, root, singlePlayerImageView);
     this.singlePlayerBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
@@ -249,14 +241,8 @@ public class MenuController {
           startGameBtn.setVisible(true);
         });
 
-    root.getChildren().add(this.singlePlayerBtn);
-    this.singlePlayerBtn.setVisible(true);
-
-    this.multiplayerBtn = new Button();
-    Image multiplayerImg = new Image("ui/Multiplayer.png");
-    multiplayerImageView = new ImageView(multiplayerImg);
-    this.multiplayerBtn.setGraphic(multiplayerImageView);
-    this.multiplayerBtn.setStyle("-fx-background-color: transparent;");
+    multiplayerImageView = new ImageView("ui/Multiplayer.png");
+    this.multiplayerBtn = buttonGenerator.generate(true, root, multiplayerImageView);
     this.multiplayerBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
@@ -264,51 +250,34 @@ public class MenuController {
           itemsOnScreen.add(nameEntryOptions);
           showItemsOnScreen();
         });
-    root.getChildren().add(this.multiplayerBtn);
-    this.multiplayerBtn.setVisible(true);
 
-    lowRes = new Button();
-    lowRes.setStyle("-fx-background-color: transparent;");
-    root.getChildren().add(lowRes);
     lowResW = new Image("ui/1366x768-W.png");
     lowResG = new Image("ui/1366x768-G.png");
     lowResImageView = new ImageView(lowResG);
-    lowResImageView.setPreserveRatio(true);
+    lowRes = buttonGenerator.generate(true, root, lowResImageView);
     lowResImageView.setFitWidth(350);
-    lowRes.setGraphic(lowResImageView);
-    lowRes.setVisible(true);
     lowRes.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
           updateView(ScreenResolution.LOW);
         });
 
-    medRes = new Button();
-    medRes.setStyle("-fx-background-color: transparent;");
-    root.getChildren().add(medRes);
     medResW = new Image("ui/1920x1080-W.png");
     medResG = new Image("ui/1920x1080-G.png");
     medResImageView = new ImageView(medResG);
-    medResImageView.setPreserveRatio(true);
     medResImageView.setFitWidth(350);
-    medRes.setGraphic(medResImageView);
-    medRes.setVisible(true);
+    medRes = buttonGenerator.generate(true, root, medResImageView);
     medRes.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
           updateView(ScreenResolution.MEDIUM);
         });
 
-    highRes = new Button();
-    highRes.setStyle("-fx-background-color: transparent;");
-    root.getChildren().add(highRes);
     highResW = new Image("ui/2650x1440-W.png");
     highResG = new Image("ui/2650x1440-G.png");
     highResImageView = new ImageView(highResG);
-    highResImageView.setPreserveRatio(true);
+    highRes = buttonGenerator.generate(true, root, highResImageView);
     highResImageView.setFitWidth(350);
-    highRes.setGraphic(highResImageView);
-    highRes.setVisible(true);
     highRes.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
@@ -330,13 +299,10 @@ public class MenuController {
     root.getChildren().add(gameModeOptions);
     gameModeOptions.setVisible(false);
 
-    playBtn = new Button();
+    playView = new ImageView("ui/play.png");
+    playBtn = buttonGenerator.generate(true, root, playView);
     StackPane.setAlignment(playBtn, Pos.CENTER);
     StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
-    Image playImg = new Image("ui/play.png");
-    playView = new ImageView(playImg);
-    playBtn.setGraphic(playView);
-    playBtn.setStyle("-fx-background-color: transparent;");
     playBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
@@ -346,7 +312,6 @@ public class MenuController {
           itemsOnScreen.add(gameModeOptions);
           showItemsOnScreen();
         });
-    root.getChildren().add(playBtn);
 
     ToggleGroup renderingModeGroup = new ToggleGroup();
     RadioButton standardScalingBtn = new RadioButton("standard");
@@ -365,16 +330,12 @@ public class MenuController {
     standardScalingBtn.setSelected(true);
     client.setRenderingMode(RenderingMode.STANDARD_SCALING);
 
-    musicBtn = new Button();
-    StackPane.setAlignment(musicBtn, Pos.CENTER_LEFT);
-    StackPane.setMargin(musicBtn, new Insets(0, 0, 25, 0));
-    musicBtn.setStyle("-fx-background-color: transparent;");
-    root.getChildren().add(musicBtn);
     Image musicOn = new Image("ui/Music-On.png");
     Image musicOff = new Image("ui/Music-Off.png");
     musicOnView = new ImageView(musicOn);
-    musicBtn.setGraphic(musicOnView);
-    musicBtn.setVisible(false);
+    musicBtn = buttonGenerator.generate(false, root, musicOnView);
+    StackPane.setAlignment(musicBtn, Pos.CENTER_LEFT);
+    StackPane.setMargin(musicBtn, new Insets(0, 0, 25, 0));
     musicBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
@@ -389,18 +350,13 @@ public class MenuController {
           }
         });
 
-    soundFxBtn = new Button();
-    StackPane.setAlignment(soundFxBtn, Pos.CENTER_LEFT);
-    StackPane.setMargin(soundFxBtn, new Insets(150, 0, 0, 0));
-    soundFxBtn.setStyle("-fx-background-color: transparent;");
-    root.getChildren().add(soundFxBtn);
     Image soundFXOn = new Image("ui/SoundFX-On.png");
     Image soundFXOff = new Image("ui/SoundFX-Off.png");
     fxView = new ImageView(soundFXOn);
+    soundFxBtn = buttonGenerator.generate(false, root, fxView);
+    StackPane.setAlignment(soundFxBtn, Pos.CENTER_LEFT);
+    StackPane.setMargin(soundFxBtn, new Insets(150, 0, 0, 0));
     fxView.setFitWidth(500);
-    fxView.setPreserveRatio(true);
-    soundFxBtn.setGraphic(fxView);
-    soundFxBtn.setVisible(false);
     soundFxBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
@@ -415,7 +371,7 @@ public class MenuController {
           }
         });
 
-    volumeImg = new ImageView(new Image("ui/Volume.png"));
+    volumeImg = new ImageView("ui/Volume.png");
     StackPane.setAlignment(volumeImg, Pos.CENTER_LEFT);
     StackPane.setMargin(volumeImg, new Insets(400, 0, 0, 100));
     volumeImg.setVisible(false);
@@ -423,56 +379,36 @@ public class MenuController {
     root.getChildren().add(volumeImg);
     volumeImg.setFitWidth(250);
 
-    incrVolumeBtn = new Button();
+    incrView = new ImageView(new Image("ui/increaseVolume.png"));
+    incrVolumeBtn = buttonGenerator.generate(false, root, incrView);
     StackPane.setAlignment(incrVolumeBtn, Pos.CENTER_LEFT);
     StackPane.setMargin(incrVolumeBtn, new Insets(530, 0, 0, 250));
-    incrVolumeBtn.setStyle("-fx-background-color: transparent;");
-    root.getChildren().add(incrVolumeBtn);
-    incrView = new ImageView(new Image("ui/increaseVolume.png"));
-    incrView.setPreserveRatio(true);
     incrView.setFitWidth(50);
-    incrVolumeBtn.setGraphic(incrView);
-    incrVolumeBtn.setVisible(false);
     incrVolumeBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
           audioController.increaseVolume();
         });
 
-    decrVolumeBtn = new Button();
+    decrView = new ImageView("ui/decreaseVolume.png");
+    decrVolumeBtn = buttonGenerator.generate(false, root, decrView);
     StackPane.setAlignment(decrVolumeBtn, Pos.CENTER_LEFT);
     StackPane.setMargin(decrVolumeBtn, new Insets(530, 0, 0, 150));
-    decrVolumeBtn.setStyle("-fx-background-color: transparent;");
-    root.getChildren().add(decrVolumeBtn);
-    decrView = new ImageView(new Image("ui/decreaseVolume.png"));
-    decrView.setPreserveRatio(true);
     decrView.setFitWidth(50);
-    decrVolumeBtn.setGraphic(decrView);
-    decrVolumeBtn.setVisible(false);
     decrVolumeBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
           audioController.decreaseVolume();
         });
 
-    creditsBtn = new Button();
+    creditsView = new ImageView("ui/Credits.png");
+    creditsBtn = buttonGenerator.generate(false, root, creditsView);
     StackPane.setAlignment(creditsBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(creditsBtn, new Insets(0, 0, 50, 0));
-    creditsBtn.setStyle("-fx-background-color: transparent;");
-    root.getChildren().add(creditsBtn);
-    Image creditsImg = new Image("ui/Credits.png");
-    creditsView = new ImageView(creditsImg);
-    creditsBtn.setGraphic(creditsView);
-    creditsBtn.setVisible(false);
 
-    joinGameBtn = new Button();
+    joinGameView = new ImageView("ui/join-game.png");
+    joinGameBtn = buttonGenerator.generate(true, root, joinGameView);
     joinGameBtn.setPickOnBounds(true);
-    joinGameBtn.setStyle("-fx-background-color: transparent;");
-    root.getChildren().add(joinGameBtn);
-    Image joinGameImg = new Image("ui/join-game.png");
-    joinGameView = new ImageView(joinGameImg);
-    joinGameBtn.setGraphic(joinGameView);
-    joinGameBtn.setVisible(true);
     joinGameBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
@@ -484,14 +420,9 @@ public class MenuController {
 
         });
 
-    createGameBtn = new Button();
+    createGameView = new ImageView("ui/create-game.png");
+    createGameBtn = buttonGenerator.generate(true, root, createGameView);
     createGameBtn.setPickOnBounds(true);
-    Image createGameImg = new Image("ui/create-game.png");
-    createGameBtn.setStyle("-fx-background-color: transparent;");
-    createGameView = new ImageView(createGameImg);
-    createGameBtn.setGraphic(createGameView);
-    createGameBtn.setVisible(true);
-    root.getChildren().add(createGameBtn);
     createGameBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
@@ -572,11 +503,8 @@ public class MenuController {
     VBox nameAndLine = new VBox(nameEntry, clear);
     nameAndLine.setAlignment(Pos.CENTER);
 
-    nameEntryBtn = new Button();
-    nameEntryBtn.setStyle("-fx-background-color: transparent;");
-    Image continueImg = new Image("ui/continue.png");
-    continueView = new ImageView(continueImg);
-    nameEntryBtn.setGraphic(continueView);
+    continueView = new ImageView("ui/continue.png");
+    nameEntryBtn = buttonGenerator.generate(true, root, continueView);
     nameEntryBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
@@ -595,33 +523,22 @@ public class MenuController {
     nameEntryOptions.setVisible(false);
     root.getChildren().add(nameEntryOptions);
 
-    quitBtn = new Button();
+    quitView = new ImageView("ui/quit.png");
+    quitBtn = buttonGenerator.generate(true, root, quitView);
     StackPane.setAlignment(quitBtn, Pos.TOP_RIGHT);
     StackPane.setMargin(quitBtn, new Insets(50, 50, 0, 0));
-    quitBtn.setStyle("-fx-background-color: transparent;");
-    root.getChildren().add(quitBtn);
-    Image quitImg = new Image("ui/quit.png");
-    quitView = new ImageView(quitImg);
-    quitBtn.setGraphic(quitView);
     quitBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
           System.exit(0);
         });
 
-    GaussianBlur gaussianBlur = new GaussianBlur();
-    gaussianBlur.setRadius(11);
-
-    settingsBtn = new Button();
-    settingsBtn.setStyle("-fx-background-color: transparent;");
+    settingsView = new ImageView("ui/settings.png");
+    settingsBtn = buttonGenerator.generate(true, root, settingsView);
     StackPane.setAlignment(settingsBtn, Pos.TOP_LEFT);
     StackPane.setMargin(settingsBtn, new Insets(50, 0, 0, 50));
-    Image settingsImg = new Image("ui/settings.png");
-    settingsView = new ImageView(settingsImg);
     settingsView.setFitHeight(50);
     settingsView.setFitWidth(50);
-    settingsView.setPreserveRatio(true);
-    settingsBtn.setGraphic(settingsView);
     settingsBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
@@ -634,7 +551,6 @@ public class MenuController {
             viewSettings = true;
             incrVolumeBtn.setVisible(true);
             decrVolumeBtn.setVisible(true);
-            bg.setEffect(gaussianBlur);
             hideItemsOnScreen();
             backBtn.setVisible(false);
             standardScalingBtn.setVisible(true);
@@ -655,7 +571,6 @@ public class MenuController {
             noScalingBtn.setVisible(false);
             integerScalingBtn.setVisible(false);
             smoothScalingBtn.setVisible(false);
-            bg.setEffect(null);
             showItemsOnScreen();
             if (!isHome) {
               backBtn.setVisible(true);
@@ -663,30 +578,20 @@ public class MenuController {
           }
         });
 
-    root.getChildren().add(settingsBtn);
-
-    startMGameBtn = new Button();
+    startingM = new ImageView("ui/start.png");
+    startMGameBtn = buttonGenerator.generate(false, root, startingM);
     StackPane.setAlignment(startMGameBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(startMGameBtn, new Insets(0, 0, 200, 0));
-
-    startingM = new ImageView(startImg);
-    startMGameBtn.setGraphic(startingM);
-    startMGameBtn.setStyle("-fx-background-color: transparent;");
-    root.getChildren().add(startMGameBtn);
-    startMGameBtn.setVisible(false);
     startMGameBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
           client.startMultiplayerGame();
         });
 
-    backBtn = new Button();
+    backImageView = new ImageView("ui/back.png");
+    backBtn = buttonGenerator.generate(false, root, backImageView);
     StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(backBtn, new Insets(0, 0, 100, 0));
-    Image backImg = new Image("ui/back.png");
-    backImageView = new ImageView(backImg);
-    backBtn.setGraphic(backImageView);
-    backBtn.setStyle("-fx-background-color: transparent;");
     backBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
@@ -707,9 +612,6 @@ public class MenuController {
             }
           }
         });
-
-    backBtn.setVisible(false);
-    root.getChildren().add(backBtn);
 
     backTree.empty();
     itemsOnScreen.add(playBtn);
