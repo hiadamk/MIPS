@@ -216,11 +216,21 @@ public class Telemetry implements Telemeters {
     startAI();
 
     final long DELAY = (long) Math.pow(10, 7);
+    final long positionDELAY = (long) Math.pow(10, 7);
+
     new GameLoop(DELAY) {
       @Override
       public void handle() {
         processInputs();
+
         processPhysics(agents, map, resourceLoader, pellets);
+      }
+    }.start();
+
+    new GameLoop(positionDELAY) {
+      @Override
+      public void handle() {
+        updateClients(agents);
       }
     }.start();
   }
