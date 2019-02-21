@@ -112,6 +112,7 @@ public class MenuController {
   private VBox resolutionOptions;
   private VBox nameEntryOptions;
   private VBox searchingForMutiplayers;
+  private VBox joinedLobby;
   private Font font;
 
   private List<ImageView> imageViews;
@@ -472,7 +473,10 @@ public class MenuController {
     joinGameBtn.setVisible(true);
     joinGameBtn.setOnAction(
         event -> {
+          moveItemsToBackTree();
           client.joinMultiplayerLobby();
+          lobbyStatusLbl.setText("Lobby joined, waiting for game to start");
+          itemsOnScreen.add(multiplayerOptions);
         });
 
     createGameBtn = new Button();
