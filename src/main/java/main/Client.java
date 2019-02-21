@@ -166,16 +166,6 @@ public class Client extends Application {
       this.telemetry.setMipID(MIPID);
       System.out.println("MIP ID: " + MIPID);
       // waits for game to start
-      while (!clientLobbySession.isGameStarted()) {
-        try {
-          Thread.sleep(250);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-      }
-      this.primaryStage.setScene(gameScene);
-      gameScene.setOnKeyPressed(keyController);
-      startGame();
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -197,9 +187,9 @@ public class Client extends Application {
       this.telemetry.setMipID(MIPID);
       System.out.println("MIP ID: " + MIPID);
       map = resourceLoader.getMap();
-      gameScene.setOnKeyPressed(keyController);
-      startGame();
     }
+    gameScene.setOnKeyPressed(keyController);
+    startGame();
   }
 
   public void setMap(Map m) {
@@ -250,14 +240,6 @@ public class Client extends Application {
 
   private void startGame() {
     updateResolution(this.screenRes);
-    // inputs = new Queue<Input>();
-
-    // agents = new Entity[1];
-    // agents[0] = new Entity(true, 0, new Double(0.5, 0.5));
-    // agents[1] = new Entity(false, 1, new Double(0.5, 1.5));
-    // agents[2] = new Entity(false, 2, new Double(0.5, 1.5));
-    // agents[3] = new Entity(false, 3, new Double(0.5, 1.5));
-    // agents[4] = new Entity(false, 4, new Double(0.5, 1.5));
     if (telemetry != null) {
       //            telemetry.setMipID(this.MIPID);
       agents = telemetry.getAgents();
@@ -331,8 +313,4 @@ public class Client extends Application {
     }
     // TODO add options in future for client to quit a game
   }
-
-  //    private void render() {
-  //        renderer.render(map, agents);
-  //    }
 }
