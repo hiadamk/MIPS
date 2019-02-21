@@ -8,6 +8,12 @@ import utils.Renderable;
 import utils.ResourceLoader;
 import utils.enums.Direction;
 
+/**
+ * Encapsulation of agent on map Represents both MIPS and Ghouls, as they are interchangeable. Can
+ * be user or AI controlled
+ *
+ * @see Renderable
+ */
 public class Entity implements Renderable {
 
   // animation variables
@@ -25,6 +31,13 @@ public class Entity implements Renderable {
   private long timeSinceLastFrame = 0;
   private int currentFrame = 0;
 
+  /**
+   * Constructor
+   *
+   * @param pacMan true if Entity should be MIPS upon creation
+   * @param clientId id of client (user or AI) controlling this entity
+   * @param location starting position of entity
+   */
   public Entity(Boolean pacMan, int clientId, Point location) {
     this.pacMan = pacMan;
     this.clientId = clientId;
@@ -35,22 +48,48 @@ public class Entity implements Renderable {
     // updateImages();
   }
 
+  /**
+   * @return RouteFinder for this instance, null if user controlled
+   * @author Lewis Ackroyd
+   */
   public RouteFinder getRouteFinder() {
     return routeFinder;
   }
 
+  /**
+   * @param routeFinder routeFinder for this instance
+   * @author Lewis Ackroyd
+   */
   public void setRouteFinder(RouteFinder routeFinder) {
     this.routeFinder = routeFinder;
   }
 
+  /**
+   * @return current location
+   * @author Matty Jones, Alex Banks
+   */
   public Point getLocation() {
     return location;
   }
 
+  /**
+   * @param location new location
+   * @author Matty Jones, Alex Banks
+   */
   public void setLocation(Point location) {
     this.location = location;
   }
 
+  /**
+   * return where center location would be if agent moved in certain motion. Uses util.Point to
+   * ensure modularity (wraping around map)
+   *
+   * @param offset distance to move
+   * @param d direction to move, if unspecified then uses current direction
+   * @return util.Point of new location
+   * @author Alex Banks, Matty Jones
+   * @see Point
+   */
   public Point getMoveInDirection(double offset, Direction... d) {
     Point loc = this.location.getCopy();
     Direction direction = d.length > 0 ? d[0] : this.direction;
@@ -73,22 +112,47 @@ public class Entity implements Renderable {
     return loc;
   }
 
+  /**
+   * sets current location to internal moveInDirection method with current velocity.
+   *
+   * @author Alex Banks, Matty Jones
+   * @see #getMoveInDirection(double, Direction...)
+   */
   public void move() {
     this.location = getMoveInDirection(this.velocity);
   }
 
+  /**
+   * FaceLocation is the point in the center of the entity's face, the external face pointing
+   * forwards when traveling. Calculated as the point 0.5 (half agent width) offset from the center
+   * in the direction of travel. Crucial to collision detection
+   *
+   * @return FaceLocation
+   * @author Alex Banks
+   */
   public Point getFaceLocation() {
     return getMoveInDirection(0.5);
   }
 
+  /**
+   * @return current location fixed to a 0.5 offset grid
+   */
   public Point getLastGridCoord() {
     return lastGridCoord;
   }
 
+  /**
+   * @param position location fixed to a 0.5 offset grid
+   */
   public void setLastGridCoord(Point position) {
     this.lastGridCoord = position;
   }
 
+  /**
+   * @return arraylist
+   * @author Tim Cheung
+   * @see Renderable
+   */
   @Override
   public ArrayList<Image> getImage() {
     if (direction != null) {
@@ -97,18 +161,31 @@ public class Entity implements Renderable {
     return currentImage == null ? images.get(0) : currentImage;
   }
 
+  /**
+   * @return velocity
+   */
   public double getVelocity() {
     return velocity;
   }
 
+  /**
+   * @param velocity new velocity
+   */
   public void setVelocity(double velocity) {
     this.velocity = velocity;
   }
 
+  /** @return direction */
   public Direction getDirection() {
     return direction;
   }
 
+  /**
+   * set direction and automatically updates entity image for rendering
+   *
+   * @author Tim Cheung, Matty Jones, Alex Banks
+   * @param direction direction to change to, can be same as previous, can be null
+   */
   public void setDirection(Direction direction) {
     if (this.direction != direction) {
       this.direction = direction;
@@ -118,22 +195,51 @@ public class Entity implements Renderable {
     }
   }
 
+  /**
+   * @author Tim Cheung
+   * @return current score
+   */
   public int getScore() {
     return score;
   }
 
+  /**
+   * @author Tim Cheung
+   * @param score new score
+   */
   public void setScore(int score) {
     this.score = score;
   }
 
+  /**
+   * increase score dependent on i
+   *
+   * @param i if empty: increase by 1, otherwise: increase by i[0]. Will ignore rest of array
+   * @author Tim Cheung
+   */
+  public void incrementScore(int... i) {
+    if (i.length > 0) {
+      score = score + i[0];
+    } else {
+      score++;
+    }
+  }
+
+  /**
+   * no set clientID, called in constructor and immutable
+   *
+   * @return clientID
+   */
   public int getClientId() {
     return clientId;
   }
 
+  /** @return true if MIPS */
   public Boolean isPacman() {
     return pacMan;
   }
 
+  /** @param pac if true then now MIPS, if false then Ghoul */
   public void setPacMan(Boolean pac) {
     this.currentFrame = 0;
     this.pacMan = pac;
@@ -173,30 +279,42 @@ public class Entity implements Renderable {
     return outStr;
   }
 
-  public void incrementScore(int... i) {
-    if (i.length > 0) {
-      score = score + i[0];
-    } else {
-      score++;
-    }
-  }
-
+  /**
+   *
+   * @return time since last frame
+   */
   public long getTimeSinceLastFrame() {
     return timeSinceLastFrame;
   }
 
+  /**
+   *
+   * @param n time since last frame
+   */
   public void setTimeSinceLastFrame(long n) {
     this.timeSinceLastFrame = n;
   }
 
+  /**
+   *
+   * @return animation speed
+   */
   public int getAnimationSpeed() {
     return animationSpeed;
   }
 
+  /**
+   *
+   * @return current frame
+   */
   public int getCurrentFrame() {
     return currentFrame;
   }
 
+  /**
+   * update image to next animation step
+   * @author Tim Cheung
+   */
   public void nextFrame() {
     if (getImage().size() == 1) {
       currentFrame = 0;
