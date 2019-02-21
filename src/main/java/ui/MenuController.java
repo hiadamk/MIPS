@@ -35,7 +35,7 @@ import utils.enums.ScreenResolution;
 
 /**
  * @author Adam Kona Class which handles the creation and functionality of components in the main
- *     menu.
+ * menu.
  */
 public class MenuController {
 
@@ -145,7 +145,7 @@ public class MenuController {
 
   /**
    * @author Adam Kona Hides the items currently on the screen and moves them onto the stack which
-   *     will store which components were previously showing
+   * will store which components were previously showing
    */
   private void moveItemsToBackTree() {
     hideItemsOnScreen();
@@ -154,7 +154,9 @@ public class MenuController {
     itemsOnScreen.clear();
   }
 
-  /** @author Adam Kona Shows items on the screen which have been previously set to hidden. */
+  /**
+   * @author Adam Kona Shows items on the screen which have been previously set to hidden.
+   */
   private void showItemsOnScreen() {
     for (Node item : itemsOnScreen) {
       item.setVisible(true);
@@ -164,7 +166,7 @@ public class MenuController {
   /**
    * @param s The screen resolution we want to update the game to.
    * @author Adam Kona Handles the changing of images corresponding to the different resolutions
-   *     available in the game.
+   * available in the game.
    */
   private void updateView(ScreenResolution s) {
     switch (s) {
@@ -473,10 +475,13 @@ public class MenuController {
     joinGameBtn.setVisible(true);
     joinGameBtn.setOnAction(
         event -> {
+          audioController.playSound(Sounds.click);
           moveItemsToBackTree();
+          lobbyStatusLbl.setText("Waiting for game to start");
+          itemsOnScreen.add(searchingForMutiplayers);
+          showItemsOnScreen();
           client.joinMultiplayerLobby();
-          lobbyStatusLbl.setText("Lobby joined, waiting for game to start");
-          itemsOnScreen.add(multiplayerOptions);
+
         });
 
     createGameBtn = new Button();
@@ -493,8 +498,7 @@ public class MenuController {
           moveItemsToBackTree();
           itemsOnScreen.add(searchingForMutiplayers);
           itemsOnScreen.add(startMGameBtn);
-          searchingForMutiplayers.setVisible(true);
-          startMGameBtn.setVisible(true);
+          showItemsOnScreen();
           client.createMultiplayerLobby();
         });
 
@@ -539,7 +543,8 @@ public class MenuController {
                 Duration.ZERO,
                 event -> {
                   String statusText = loadingDots.getText();
-                  loadingDots.setText((" . . .".equals(statusText)) ? " ." : statusText + " .");
+                  loadingDots
+                      .setText((" . . .".equals(statusText)) ? " ." : statusText + " .");
                 }),
             new KeyFrame(Duration.millis(1000)));
     timeline.setCycleCount(Timeline.INDEFINITE);
@@ -576,6 +581,7 @@ public class MenuController {
         event -> {
           audioController.playSound(Sounds.click);
           moveItemsToBackTree();
+          hideItemsOnScreen();
           this.client.setName(nameEntry.getText());
           itemsOnScreen.add(multiplayerOptions);
           showItemsOnScreen();
@@ -745,9 +751,9 @@ public class MenuController {
    * @param newVal the new screen width.
    * @param oldVal the old screen width.
    * @author Adam Kona Updates the current size of all the images in the menu whilst preserving
-   *     their aspect ratio. The percentage change in the screen width is calculated and the size of
-   *     the images is changed along with it as long as this does not fall below 40% the original
-   *     image size and does not rise above the original image size.
+   * their aspect ratio. The percentage change in the screen width is calculated and the size of the
+   * images is changed along with it as long as this does not fall below 40% the original image size
+   * and does not rise above the original image size.
    */
   public void scaleImages(double newVal, double oldVal) {
 
