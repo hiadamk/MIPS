@@ -165,8 +165,8 @@ public class DumbTelemetry implements Telemeters {
   }
 
   private void startGame() {
-    final long DELAY = (long) Math.pow(10, 8);
-    new GameLoop(10) {
+    final long DELAY = (long) Math.pow(10, 7);
+    new GameLoop(DELAY) {
       @Override
       public void handle() {
         processInputs();
