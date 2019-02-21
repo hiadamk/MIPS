@@ -15,6 +15,12 @@ public class Point {
   private double x;
   private double y;
 
+  /**
+   * Basic constructor, will not ensure modularity.
+   *
+   * @param x x coord
+   * @param y y coord
+   */
   public Point(double x, double y) {
     this.x = x;
     this.y = y;
@@ -23,6 +29,13 @@ public class Point {
     this.mapped = false;
   }
 
+  /**
+   * Will ensure modularity.
+   *
+   * @param x x coord
+   * @param y y coord
+   * @param map map that point is on. MAX_X and MAX_Y extracted for modularity.
+   */
   public Point(double x, double y, Map map) {
     this.x = x;
     this.y = y;
@@ -32,16 +45,33 @@ public class Point {
     mod();
   }
 
+  /**
+   * Will ensure modularity if max_x and max_y are both greater than 0
+   *
+   * @param x x coord
+   * @param y y coord
+   * @param max_x MAX_X for modularity
+   * @param max_y MAX_Y for modularity
+   */
   public Point(double x, double y, int max_x, int max_y) {
     this.x = x;
     this.y = y;
     this.MAX_X = max_x;
     this.MAX_Y = max_y;
-    this.mapped = MAX_X > 0 && MAX_Y > 0 ? true : false;
+    this.mapped = MAX_X > 0 && MAX_Y > 0;
 
     mod();
   }
 
+  /**
+   * CopyCat constructor that will duplicate an instance exactly
+   *
+   * @param x x coord
+   * @param y y coord
+   * @param max_x max_x
+   * @param max_y max_y
+   * @param mapped mapped
+   */
   public Point(double x, double y, int max_x, int max_y, boolean mapped) {
     this.x = x;
     this.y = y;
@@ -50,10 +80,19 @@ public class Point {
     this.mapped = mapped;
   }
 
+  /**
+   * @see #getCopy()
+   * @deprecated
+   */
   public static Point copyOf(Point p) {
     return new Point(p.x, p.y, p.MAX_X, p.MAX_Y, p.mapped);
   }
 
+  /**
+   * can be mutated without affecting original copy
+   *
+   * @return new instance which is exact duplicate.
+   */
   public Point getCopy() {
     return new Point(this.x, this.y, this.MAX_X, this.MAX_Y, this.mapped);
   }
@@ -66,18 +105,37 @@ public class Point {
     return y;
   }
 
+  /**
+   * sets new location, check modularity.
+   *
+   * @param x x coord
+   * @param y y coord
+   * @see #mod()
+   */
   public void setLocation(double x, double y) {
     this.x = x;
     this.y = y;
     mod();
   }
 
+  /**
+   * increases x, locks y to int+0.5, checks modularity.
+   *
+   * @param offset amount to increase x by, can be negative
+   * @see #mod()
+   */
   public void increaseX(double offset) {
     x += offset;
     y = (int) y + 0.5;
     mod();
   }
 
+  /**
+   * increase y, locks x to int+0.5, checks modularity.
+   *
+   * @param offset amount to increase y by, can be negative
+   * @see #mod()
+   */
   public void increaseY(double offset) {
     y += offset;
     x = (int) x + 0.5;
@@ -85,17 +143,26 @@ public class Point {
   }
 
   /**
-   * Puts the point in the centre of its map square
+   * Puts the point in the centre of its map square, checks modularity.
    *
+   * @see #mod()
    * @return the updated point
    */
   public Point centralise() {
     x = (int) x + 0.5;
     y = (int) y + 0.5;
     mod();
-    return this; // Does this method really need to return anything?
+    return this;
+    /* Does this method really need to return anything? - Yes, so you can set other locations to this.centralise, can be refactored tho */
   }
 
+  /**
+   * check if two points are close to each other - used in collision detection
+   *
+   * @param p point to check against
+   * @return true if within 0.5 in x and y direction
+   * @author Alex Banks
+   */
   public boolean inRange(Point p) {
     Point temp = new Point(this.x - p.getX(), this.y - p.getY(), this.MAX_X, this.MAX_Y);
     return (abs(temp.getX()) <= 0.5 && abs(temp.getY()) <= 0.5);
@@ -127,7 +194,10 @@ public class Point {
   }
 
   /**
-   * ensures that the points stay within the bounds of the game map
+   * ensures that the points stay within the bounds of the game map. Only runs if point is mapped
+   * and modularisable
+   *
+   * @author Alex Banks
    */
   private void mod() {
     if (mapped) {
