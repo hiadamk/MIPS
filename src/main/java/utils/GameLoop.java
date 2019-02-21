@@ -18,7 +18,7 @@ public abstract class GameLoop extends Thread {
         this.handle();
       }
       try {
-        Thread.sleep(10);
+        Thread.sleep(2);
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
