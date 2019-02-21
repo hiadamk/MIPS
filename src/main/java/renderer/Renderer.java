@@ -199,7 +199,7 @@ public class Renderer {
       }
     }
 
-    //    renderHUD(entityArr);
+    renderHUD(entityArr);
     showFPS(now);
   }
 
@@ -368,7 +368,7 @@ public class Renderer {
     ArrayList<Point2D.Double> scoreCoord =
         new ArrayList<>(Arrays.asList(topLeft, topRight, botLeft, botRight));
 
-    Entity[] otherPlayers = new Entity[4];
+    Entity[] otherPlayers = new Entity[entities.length - 1];
     Entity self = null;
     int playerCounter = 0;
     for (Entity e : entities) {
