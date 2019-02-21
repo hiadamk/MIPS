@@ -80,6 +80,7 @@ public class Entity implements Renderable {
     this.location = location;
   }
 
+  //TODO convert all usages to Methods
   /**
    * return where center location would be if agent moved in certain motion. Uses util.Point to
    * ensure modularity (wraping around map)

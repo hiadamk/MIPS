@@ -87,6 +87,7 @@ public class Methods {
     return centreOfSquare(e.getLocation());
   }
 
+  //TODO convert to point method
   public static boolean centreOfSquare(Point p) {
     Point newLoc = new Point(p.getX(), p.getY());
     double xpart = mod(newLoc.getX(), 1);
