@@ -25,23 +25,10 @@ public class Methods {
    */
   public static boolean validiateDirection(Direction d, Entity e, Map m) {
     Point prevLoc = e.getLocation().getCopy();
-    Direction prevDir = e.getDirection();
-    boolean isValid = true;
-
-    e.setDirection(d);
-    e.move();
-    Point faceLoc = e.getFaceLocation();
     double xpart = abs((prevLoc.getX() % 1) - 0.5);
     double ypart = abs((prevLoc.getY() % 1) - 0.5);
-    if (xpart >= 0.1 || ypart >= 0.1) {
-      isValid = false;
-    }
-
-    isValid = isValid && !m.isWall(faceLoc);
-
-    e.setLocation(prevLoc);
-    e.setDirection(prevDir);
-    return isValid;
+    Point nextLoc = e.getMoveInDirection(1, d);
+    return !(xpart >= 0.1 || ypart >= 0.1 || m.isWall(nextLoc));
   }
 
   public static boolean validiateDirection(Direction d, Entity e, Point p, Map m) {
