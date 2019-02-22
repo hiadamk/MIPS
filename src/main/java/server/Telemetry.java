@@ -266,8 +266,17 @@ public class Telemetry implements Telemeters {
     outputs.add(NetworkUtility.makeEntitiyMovementPacket(input, location));
   }
 
+  private int getMipID(){
+    for(Entity e:agents){
+      if (e.isPacman()){
+        return e.getClientId();
+      }
+    }
+    return 0;
+  }
+
   private void updateClients(Entity[] agents) {
-    outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents));
+    outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents)+Integer.toString(getMipID()));
   }
 
   public Entity[] getAgents() {
