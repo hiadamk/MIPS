@@ -202,8 +202,11 @@ public class DumbTelemetry implements Telemeters {
   // without the starting POSx code
   private void setEntityPositions(String s) {
     String[] positions = s.split("\\|");
-    for (String position : positions) {
-      String[] ls = position.split(":");
+    int mipID = Integer.parseInt(positions[positions.length-1]);
+    agents[mipID].setPacMan(true);
+//    agents[positions[Integer.papositions.length-1]]
+    for (int i = 0; i < positions.length-1; i++) {
+      String[] ls = positions[i].split(":");
       int id = Integer.parseInt(ls[0]);
       int direction = Integer.parseInt(ls[1]);
       Double x = Double.valueOf(ls[2]);
