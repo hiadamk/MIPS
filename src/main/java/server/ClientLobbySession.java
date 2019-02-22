@@ -66,7 +66,6 @@ public class ClientLobbySession {
               gameStarted = true;
               handler = new ClientGameplayHandler(serverIP, keypressQueue, clientIn);
               client.setPlayerNames(playerNames);
-              client.startMultiplayerGame();
             }
 
             in.close();

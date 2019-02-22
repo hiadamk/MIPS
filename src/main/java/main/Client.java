@@ -166,10 +166,21 @@ public class Client extends Application {
       this.telemetry.setMipID(MIPID);
       System.out.println("MIP ID: " + MIPID);
       // waits for game to start
+      while (!clientLobbySession.isGameStarted()) {
+        try {
+          Thread.sleep(250);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+      this.primaryStage.setScene(gameScene);
+      gameScene.setOnKeyPressed(keyController);
+      startGame();
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
+
 
   public void startMultiplayerGame() {
 
@@ -188,6 +199,7 @@ public class Client extends Application {
       System.out.println("MIP ID: " + MIPID);
       map = resourceLoader.getMap();
     }
+    this.primaryStage.setScene(gameScene);
     gameScene.setOnKeyPressed(keyController);
     startGame();
   }
@@ -297,11 +309,12 @@ public class Client extends Application {
       incomingQueue.add(input);
     } else {
       System.out.println("TRIED TO SEND MY KEY MOVEMENT");
-      if (getId() == 0) {
-        this.telemetry.addInput(input);
-      } else {
-        keypressQueue.add(input);
-      }
+//      if (getId() == 0) {
+//        this.telemetry.addInput(input);
+//      } else {
+//        keypressQueue.add(input);
+      keypressQueue.add(input);
+//      }
     }
   }
 
