@@ -232,7 +232,7 @@ public class Telemetry implements Telemeters {
       public void handle() {
         updateClients(agents);
       }
-    }.start();
+    }; //.start();
   }
 
   public void startAI() {

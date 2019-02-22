@@ -205,9 +205,11 @@ public class DumbTelemetry implements Telemeters {
     for (String position : positions) {
       String[] ls = position.split(":");
       int id = Integer.parseInt(ls[0]);
-      Double x = Double.valueOf(ls[1]);
-      Double y = Double.valueOf(ls[2]);
+      int direction = Integer.parseInt(ls[1]);
+      Double x = Double.valueOf(ls[2]);
+      Double y = Double.valueOf(ls[3]);
       agents[id].setLocation(new Point(x, y, map));
+      agents[id].setDirection(Direction.fromInt(direction));
     }
   }
 
