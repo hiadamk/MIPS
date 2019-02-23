@@ -99,6 +99,9 @@ public class Telemetry implements Telemeters {
       }
     }
     pelletCollision(agents, pellets);
+    for (Pellet p : pellets.values()) {
+      p.incrementRespawn();
+    }
   }
 
   /**

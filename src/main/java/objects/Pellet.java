@@ -16,7 +16,10 @@ public class Pellet implements Renderable {
 
   private Point location;
   private ArrayList<Image> currentImage;
-  private boolean active; // Weather or not the item is visible and able to be interacted with
+  private final int RESPAWNTIME = 5000;
+  private boolean active; // Weather or not the item is visible and able to be interacted with\
+  private int respawnCount;
+
   public Pellet(double x, double y) {
     this.location = new Point(x, y);
     active = true;
@@ -50,6 +53,9 @@ public class Pellet implements Renderable {
 
   public void setActive(boolean active) {
     this.active = active;
+    if (!active) {
+      respawnCount = 0;
+    }
   }
 
   public void updateImages(ResourceLoader r) {
@@ -60,5 +66,14 @@ public class Pellet implements Renderable {
   public String toString() {
     String a = active ? "active" : "not active";
     return "x = " + location.getX() + " y= " + location.getY() + " active = " + a;
+  }
+
+  public void incrementRespawn() {
+    if (!active) {
+      respawnCount++;
+    }
+    if (respawnCount == RESPAWNTIME) {
+      this.active = true;
+    }
   }
 }
