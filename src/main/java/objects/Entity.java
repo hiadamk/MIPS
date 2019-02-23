@@ -30,6 +30,8 @@ public class Entity implements Renderable {
   private Point lastGridCoord;
   private long timeSinceLastFrame = 0;
   private int currentFrame = 0;
+  private static final double PACSPEED = 0.08;
+  private static final double GHOSTSPEED = 0.06;
 
   /**
    * Constructor
@@ -43,7 +45,7 @@ public class Entity implements Renderable {
     this.clientId = clientId;
     this.location = location;
     this.score = 0;
-    this.velocity = pacMan ? 0.08 : 0.06;
+    resetVelocity();
     this.direction = Direction.UP;
     // updateImages();
   }
@@ -244,7 +246,7 @@ public class Entity implements Renderable {
   public void setPacMan(Boolean pac) {
     this.currentFrame = 0;
     this.pacMan = pac;
-    this.velocity = pacMan ? 0.08 : 0.06;
+    resetVelocity();
   }
 
   public void updateImages(ResourceLoader resourceLoader) {
@@ -327,5 +329,9 @@ public class Entity implements Renderable {
         currentFrame++;
       }
     }
+  }
+
+  public void resetVelocity() {
+    this.velocity = pacMan ? PACSPEED : GHOSTSPEED;
   }
 }
