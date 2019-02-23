@@ -327,8 +327,9 @@ public class MenuController {
     initialiseRenderingButtons(
         smoothScalingBtn, 0, 180, root, renderingModeGroup, RenderingMode.SMOOTH_SCALING);
 
-    standardScalingBtn.setSelected(true);
-    client.setRenderingMode(RenderingMode.STANDARD_SCALING);
+    //default rendering settings
+    smoothScalingBtn.setSelected(true);
+    client.setRenderingMode(RenderingMode.SMOOTH_SCALING);
 
     Image musicOn = new Image("ui/Music-On.png");
     Image musicOff = new Image("ui/Music-Off.png");
