@@ -236,12 +236,12 @@ public class Entity implements Renderable {
   }
 
   /** @return true if MIPS */
-  public Boolean isPacman() {
+  public synchronized Boolean isPacman() {
     return pacMan;
   }
 
   /** @param pac if true then now MIPS, if false then Ghoul */
-  public void setPacMan(Boolean pac) {
+  public synchronized void setPacMan(Boolean pac) {
     this.currentFrame = 0;
     this.pacMan = pac;
     this.velocity = pacMan ? 0.08 : 0.06;

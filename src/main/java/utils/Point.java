@@ -9,6 +9,7 @@ import static java.lang.Math.abs;
  */
 public class Point {
 
+  private static final double EQUALITY_THRESHOLD = 0.01;
   private final int MAX_X;
   private final int MAX_Y;
   private final boolean mapped;
@@ -214,6 +215,27 @@ public class Point {
       }
       x = x % MAX_X;
       y = y % MAX_Y;
+    }
+  }
+
+  public String shortString() {
+    return "(" + x + ", " + y + ")";
+  }
+
+  @Override
+  public boolean equals(Object p) {
+    if (p instanceof Point) {
+      return super.equals(p);
+    }
+    else {
+      Point p2 = (Point)p;
+      if (Math.abs(p2.x - this.x) > EQUALITY_THRESHOLD) {
+        return false;
+      }
+      if (Math.abs(p2.y - this.y) > EQUALITY_THRESHOLD) {
+        return false;
+      }
+      return true;
     }
   }
 }

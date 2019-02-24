@@ -31,6 +31,16 @@ public class AILoopControl extends Thread {
   private boolean runAILoop;
   private int mipsmanID;
 
+
+  /**Initialises the object prior to the AI loop being executed.
+   * @param gameAgents The complete set of all entities that are controlled (by AI or players) in the game.
+   * @param controlIds The set of main Ids that the AI will control.
+   * @param map The map the game is being played on.
+   * @param directionsOut The {@link BlockingQueue}<{@link Input}> That processes all agent direction instructions.
+   * @throws IllegalArgumentException gameAgent array contains duplicate main IDs.
+   * @throws IllegalStateException Cannot have more than one mipsman.
+   * @throws IllegalStateException The control ID does not match an agent main ID.
+   * @author Lewis Ackroyd*/
   public AILoopControl(
       Entity[] gameAgents, int[] controlIds, Map map, BlockingQueue<Input> directionsOut) {
     validateAgents(gameAgents);
@@ -49,6 +59,11 @@ public class AILoopControl extends Thread {
     assignControlEntities(controlIds);
   }
 
+  /**Checks that the entities given to the AI all have unique IDs and that only one is mipsman.
+   * @param gameAgents The complete set of all entities that are controlled (by AI or players) in the game.
+   * @throws IllegalArgumentException gameAgent array contains duplicate main IDs.
+   * @throws IllegalStateException Cannot have more than one mipsman.
+   * @author Lewis Ackroyd*/
   private void validateAgents(Entity[] gameAgents)
       throws IllegalArgumentException, IllegalStateException {
     HashSet<Integer> ids = new HashSet<Integer>();
@@ -68,7 +83,9 @@ public class AILoopControl extends Thread {
     }
   }
 
-  private void generateRouteFinders() throws IllegalStateException {
+  /**Initialises the {@link RouteFinder}s for every game agent, regardless of whether it is AI controlled or not.
+  * @author Lewis Ackroyd*/
+  private void generateRouteFinders() {
     for (int i = 0; i < gameAgents.length; i++) {
       RouteFinder routeFinder;
       switch (i) {
@@ -104,7 +121,11 @@ public class AILoopControl extends Thread {
     }
   }
 
-  private void assignControlEntities(int[] controlIds) {
+  /**Assigns the reference for the entities controlled by the AI.
+   * @param controlIds The IDs of all agents to be controlled by the AI.
+   * @throws IllegalStateException The control ID does not match an agent main ID.
+   * @author Lewis Ackroyd*/
+  private void assignControlEntities(int[] controlIds) throws IllegalStateException {
     for (int i = 0; i < controlIds.length; i++) {
       boolean agentNotFound = true;
       for (Entity ent : gameAgents) {
@@ -120,6 +141,7 @@ public class AILoopControl extends Thread {
     }
   }
 
+  /**Corrects the {@link RouteFinder}s after a collision between mipsman and a ghoul.*/
   private synchronized void correctMipsmanRouteFinder() {
     Entity mipsman = null;
     Entity mipsmanRoute = null;
@@ -142,14 +164,21 @@ public class AILoopControl extends Thread {
   @Override
   public void run() {
     System.out.println("Starting AI loop...");
+    for (Point p : junctions) {
+      System.out.println("j " + p.shortString());
+    }
 
     while (runAILoop && controlAgents.length > 0) {
       for (Entity ent : controlAgents) {
         Point currentLocation = ent.getLocation().getCopy();
         Point currentGridLocation = Mapping.getGridCoord(currentLocation);
         if (Methods.centreOfSquare(currentLocation)) {
+          System.out.println(currentGridLocation.shortString());
+          if (junctions.contains(currentGridLocation)) {
+            System.err.println("HIT");
+          }
           if (ent.getDirection() == null
-              || !Methods.validiateDirection(ent.getDirection(), ent, currentLocation, map)) {
+              || !Methods.validiateDirection(ent.getDirection(), ent, currentLocation, map)||junctions.contains(currentGridLocation)) {
             if (atPreviousCoordinate(ent, currentGridLocation)) {
               Point nearestJunction = Mapping.findNearestJunction(currentLocation, map, junctions);
 
@@ -162,6 +191,7 @@ public class AILoopControl extends Thread {
                         .getRoute(currentLocation, gameAgents[mipsmanID].getLocation());
               }
               dir = confirmOrReplaceDirection(ent, currentLocation, dir);
+              //TODO
               directionsOut.add(new Input(ent.getClientId(), dir));
             } else {
               ent.setLastGridCoord(currentGridLocation);
@@ -175,6 +205,7 @@ public class AILoopControl extends Thread {
               new RandomRouteFinder()
                   .getRoute(currentLocation, gameAgents[mipsmanID].getLocation());
           dir = confirmOrReplaceDirection(ent, currentLocation, dir);
+          // TODO
           directionsOut.add(new Input(ent.getClientId(), dir));
         }
       }

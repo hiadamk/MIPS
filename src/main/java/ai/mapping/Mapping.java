@@ -1,6 +1,5 @@
 package ai.mapping;
 
-import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.HashSet;
 import utils.Map;
@@ -9,8 +8,7 @@ import utils.enums.Direction;
 
 /**
  * Methods to facilitate the abstraction of the game {@link Map}, allowing it to be represented as a
- * graph and also to perform conversions between {@link Point}/{@link Point2D.Double} types and move
- * validation.
+ * graph and also to perform move validation.
  *
  * @author Lewis Ackroyd
  */
@@ -142,12 +140,6 @@ public abstract class Mapping {
   }
 
   public static Direction directionBetweenPoints(Point start, Point target) {
-    Point2D.Double s = new Point2D.Double(start.getX(), start.getY());
-    Point2D.Double t = new Point2D.Double(target.getX(), target.getY());
-    return directionBetweenPoints(s, t);
-  }
-
-  public static Direction directionBetweenPoints(Point2D start, Point2D target) {
     if (start.getX() == target.getX()) {
       if (start.getY() > target.getY()) {
         return Direction.UP;
@@ -162,14 +154,15 @@ public abstract class Mapping {
   }
 
   public static Point findNearestJunction(Point position, Map map, HashSet<Point> junctions) {
-    double vertical = costVertical(position, map, junctions);
-    double horizontal = costHorizontal(position, map, junctions);
-    Point output;
+    Point output = new Point(Math.floor(position.getX()), Math.floor(position.getY()));
+    double vertical = costVertical(output, map, junctions);
+    double horizontal = costHorizontal(output, map, junctions);
     if (Math.abs(vertical) < Math.abs(horizontal)) {
-      output = new Point(position.getX(), position.getY() + vertical);
+      output.setLocation(output.getX(), output.getY() + vertical);
     } else {
-      output = new Point(position.getX() + horizontal, position.getY());
+      output = new Point(output.getX() + horizontal, output.getY());
     }
+
     if (map.withinBounds(output)) {
       return output;
     }
