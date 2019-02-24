@@ -25,6 +25,21 @@ public abstract class Telemeters {
 
   public abstract void addInput(Input in);
 
+  HashMap<String, Pellet> initialisePellets(Map m, ResourceLoader r) {
+    HashMap<String, Pellet> pellets = new HashMap<>();
+    for (int i = 0; i < m.getMaxX(); i++) {
+      for (int j = 0; j < m.getMaxY(); j++) {
+        Point point = new Point(i + 0.5, j + 0.5);
+        if (!m.isWall(point)) {
+          Pellet pellet = new Pellet(point);
+          pellet.updateImages(r);
+          pellets.put(i + "," + j, pellet);
+        }
+      }
+    }
+    return pellets;
+  }
+
   /**
    * Static method for updating game state increments positions if valid, increments points, and
    * detects and treats entity collisions

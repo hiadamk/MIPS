@@ -46,17 +46,7 @@ public class DumbTelemetry extends Telemeters {
     //        agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
     //        agents[(new Random()).nextInt(AGENT_COUNT)].setMipsman(true);
 
-    pellets = new HashMap<String, Pellet>();
-    for (int i = 0; i < map.getMaxX(); i++) {
-      for (int j = 0; j < map.getMaxY(); j++) {
-        Point point = new Point(i + 0.5, j + 0.5);
-        if (!map.isWall(point)) {
-          Pellet pellet = new Pellet(point);
-          pellet.updateImages(resourceLoader);
-          pellets.put(i + "," + j, pellet);
-        }
-      }
-    }
+    pellets = initialisePellets(map, resourceLoader);
   }
 
   @Override
