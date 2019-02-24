@@ -23,25 +23,25 @@ public class Entity implements Renderable {
   private Direction direction;
   private int score;
   private int clientId;
-  private Boolean pacMan;
+  private Boolean mipsman;
   private ArrayList<ArrayList<Image>> images;
   private ArrayList<Image> currentImage;
   private RouteFinder routeFinder;
   private Point lastGridCoord;
   private long timeSinceLastFrame = 0;
   private int currentFrame = 0;
-  private static final double PACSPEED = 0.08;
-  private static final double GHOSTSPEED = 0.06;
+  private static final double MIPS_SPEED = 0.08;
+  private static final double GHOUL_SPEED = 0.06;
 
   /**
    * Constructor
    *
-   * @param pacMan true if Entity should be MIPS upon creation
+   * @param mipsman true if Entity should be MIPS upon creation
    * @param clientId id of client (user or AI) controlling this entity
    * @param location starting position of entity
    */
-  public Entity(Boolean pacMan, int clientId, Point location) {
-    this.pacMan = pacMan;
+  public Entity(Boolean mipsman, int clientId, Point location) {
+    this.mipsman = mipsman;
     this.clientId = clientId;
     this.location = location;
     this.score = 0;
@@ -238,21 +238,23 @@ public class Entity implements Renderable {
   }
 
   /** @return true if MIPS */
-  public Boolean isPacman() {
-    return pacMan;
+  public Boolean isMipsman() {
+    return mipsman;
   }
 
-  /** @param pac if true then now MIPS, if false then Ghoul */
-  public void setPacMan(Boolean pac) {
+  /**
+   * @param mips if true then now MIPS, if false then Ghoul
+   */
+  public void setMipsman(Boolean mips) {
     this.currentFrame = 0;
-    this.pacMan = pac;
+    this.mipsman = mips;
     resetVelocity();
   }
 
   public void updateImages(ResourceLoader resourceLoader) {
     currentFrame = 0;
     images =
-        pacMan
+        mipsman
             ? resourceLoader.getPlayableMip(clientId)
             : resourceLoader.getPlayableGhoul(clientId);
   }
@@ -260,7 +262,7 @@ public class Entity implements Renderable {
   @Override
   public String toString() {
     String outStr = "";
-    if (this.pacMan) {
+    if (this.mipsman) {
       outStr += "mip" + clientId;
     } else {
       outStr += "ghoul" + clientId;
@@ -270,7 +272,7 @@ public class Entity implements Renderable {
 
   public String toStringExpanded() {
     String outStr = "";
-    if (this.pacMan) {
+    if (this.mipsman) {
       outStr += "mip" + clientId;
     } else {
       outStr += "ghoul" + clientId;
@@ -332,6 +334,6 @@ public class Entity implements Renderable {
   }
 
   public void resetVelocity() {
-    this.velocity = pacMan ? PACSPEED : GHOSTSPEED;
+    this.velocity = mipsman ? MIPS_SPEED : GHOUL_SPEED;
   }
 }

@@ -89,11 +89,11 @@ public class Telemetry implements Telemeters {
     for (int i = 0; i < AGENT_COUNT; i++) {
       for (int j = (i + 1); j < AGENT_COUNT; j++) {
 
-        if (agents[i].isPacman() && !agents[j].isPacman()) {
+        if (agents[i].isMipsman() && !agents[j].isMipsman()) {
           detectEntityCollision(agents[i], agents[j], resourceLoader);
         }
 
-        if (agents[j].isPacman() && !agents[i].isPacman()) {
+        if (agents[j].isMipsman() && !agents[i].isMipsman()) {
           detectEntityCollision(agents[j], agents[i], resourceLoader);
         }
       }
@@ -105,33 +105,33 @@ public class Telemetry implements Telemeters {
   }
 
   /**
-   * Static method for 'swapping' a pacman and ghoul if they occupy the same area.
+   * Static method for 'swapping' a mipsman and ghoul if they occupy the same area.
    *
-   * @param pacman Entity currently acting as pacman
+   * @param mipsman Entity currently acting as mipsman
    * @param ghoul Entity currently running as ghoul
    * @author Alex Banks, Matthew Jones
    */
   private static void detectEntityCollision(
-      Entity pacman, Entity ghoul, ResourceLoader resourceLoader) {
-    Point pacmanCenter = pacman.getLocation();
+      Entity mipsman, Entity ghoul, ResourceLoader resourceLoader) {
+    Point mipsmanCenter = mipsman.getLocation();
     Point ghoulFace = ghoul.getFaceLocation();
 
-    if (pacmanCenter.inRange(ghoulFace)) {
+    if (mipsmanCenter.inRange(ghoulFace)) {
 
-      pacman.setPacMan(false);
-      ghoul.setPacMan(true);
-      pacman.setLocation(resourceLoader.getMap().getRandomSpawnPoint());
-      pacman.setDirection(Direction.UP);
-      pacman.updateImages(resourceLoader);
+      mipsman.setMipsman(false);
+      ghoul.setMipsman(true);
+      mipsman.setLocation(resourceLoader.getMap().getRandomSpawnPoint());
+      mipsman.setDirection(Direction.UP);
+      mipsman.updateImages(resourceLoader);
       ghoul.updateImages(resourceLoader);
 
       // System.out.println("~Ghoul" + ghoul.getClientId() + " captured Mipsman" +
-      // pacman.getClientId());
+      // mipsman.getClientId());
     }
   }
 
   /**
-   * Static method to detect if the pacMan entity will eat a pellet
+   * Static method to detect if the mipsman entity will eat a pellet
    *
    * @param agents The entities
    * @param pellets The pellets
@@ -139,7 +139,7 @@ public class Telemetry implements Telemeters {
    */
   private static void pelletCollision(Entity[] agents, HashMap<String, Pellet> pellets) {
     for (Entity agent : agents) {
-      if (!agent.isPacman()) {
+      if (!agent.isMipsman()) {
         continue;
       }
       Point p = agent.getFaceLocation();
@@ -171,7 +171,7 @@ public class Telemetry implements Telemeters {
     //agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
     Methods.updateImages(agents, resourceLoader);
     if (singlePlayer) {
-      agents[(new Random()).nextInt(AGENT_COUNT)].setPacMan(true);
+      agents[(new Random()).nextInt(AGENT_COUNT)].setMipsman(true);
     }
 
     int aiCount = AGENT_COUNT - playerCount;
@@ -200,7 +200,7 @@ public class Telemetry implements Telemeters {
   }
 
   public void setMipID(int ID) {
-    this.agents[ID].setPacMan(true);
+    this.agents[ID].setMipsman(true);
   }
 
   public Map getMap() {
@@ -271,7 +271,7 @@ public class Telemetry implements Telemeters {
 
   private int getMipID(){
     for(Entity e:agents){
-      if (e.isPacman()){
+      if (e.isMipsman()) {
         return e.getClientId();
       }
     }

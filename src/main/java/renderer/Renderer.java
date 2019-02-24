@@ -212,7 +212,7 @@ public class Renderer {
 
     // TODO refactor the way the render knows the client is MIPSman
     for (Entity e : entities) {
-      if (e.isPacman() && e.getClientId() == clientID) {
+      if (e.isMipsman() && e.getClientId() == clientID) {
         clientMipsman = true;
         break;
       }
@@ -367,11 +367,11 @@ public class Renderer {
     gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
 
     // render marker for entity
-    if (e.getClientId() != clientID && !e.isPacman()) {
+    if (e.getClientId() != clientID && !e.isMipsman()) {
       return;
     }
 
-    Image marker = (e.isPacman()) ? r.getMipMarker() : r.getMClientMarker();
+    Image marker = (e.isMipsman()) ? r.getMipMarker() : r.getMClientMarker();
     Point2D.Double coord =
         getIsoCoord(x, y, marker.getHeight() + currentSprite.getHeight(), marker.getWidth());
 

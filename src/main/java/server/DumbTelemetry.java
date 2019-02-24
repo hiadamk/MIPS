@@ -67,11 +67,11 @@ public class DumbTelemetry implements Telemeters {
     for (int i = 0; i < AGENT_COUNT; i++) {
       for (int j = (i + 1); j < AGENT_COUNT; j++) {
 
-        if (agents[i].isPacman() && !agents[j].isPacman()) {
+        if (agents[i].isMipsman() && !agents[j].isMipsman()) {
           detectEntityCollision(agents[i], agents[j], resourceLoader);
         }
 
-        if (agents[j].isPacman() && !agents[i].isPacman()) {
+        if (agents[j].isMipsman() && !agents[i].isMipsman()) {
           detectEntityCollision(agents[j], agents[i], resourceLoader);
         }
       }
@@ -81,7 +81,7 @@ public class DumbTelemetry implements Telemeters {
 
   private static void pelletCollision(Entity[] agents, HashMap<String, Pellet> pellets) {
     for (Entity agent : agents) {
-      if (!agent.isPacman()) {
+      if (!agent.isMipsman()) {
         continue;
       }
       Point p = agent.getFaceLocation();
@@ -96,28 +96,28 @@ public class DumbTelemetry implements Telemeters {
   }
 
   /**
-   * Static method for 'swapping' a pacman and ghoul if they occupy the same area.
+   * Static method for 'swapping' a mipsman and ghoul if they occupy the same area.
    *
-   * @param pacman Entity currently acting as pacman
+   * @param mipsman Entity currently acting as mipsman
    * @param ghoul Entity currently running as ghoul
    * @author Alex Banks, Matthew Jones
    */
   private static void detectEntityCollision(
-      Entity pacman, Entity ghoul, ResourceLoader resourceLoader) {
-    Point pacmanCenter = pacman.getLocation();
+      Entity mipsman, Entity ghoul, ResourceLoader resourceLoader) {
+    Point mipsmanCenter = mipsman.getLocation();
     Point ghoulFace = ghoul.getFaceLocation();
 
-    if (pacmanCenter.inRange(ghoulFace)) {
+    if (mipsmanCenter.inRange(ghoulFace)) {
 
-      pacman.setPacMan(false);
-      ghoul.setPacMan(true);
-      pacman.setLocation(resourceLoader.getMap().getRandomSpawnPoint());
-      pacman.setDirection(Direction.UP);
-      pacman.updateImages(resourceLoader);
+      mipsman.setMipsman(false);
+      ghoul.setMipsman(true);
+      mipsman.setLocation(resourceLoader.getMap().getRandomSpawnPoint());
+      mipsman.setDirection(Direction.UP);
+      mipsman.updateImages(resourceLoader);
       ghoul.updateImages(resourceLoader);
 
       // System.out.println("ghoul " + ghoul.getClientId() + " collided with mipsman " +
-      // pacman.getClientId());
+      // mipsman.getClientId());
     }
   }
 
@@ -132,7 +132,7 @@ public class DumbTelemetry implements Telemeters {
     //        agents[2] = new Entity(false, 2, new Point(1.5, 16.5, map));
     //        agents[3] = new Entity(false, 3, new Point(11.5, 2.5, map));
     //        agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
-    //        agents[(new Random()).nextInt(AGENT_COUNT)].setPacMan(true);
+    //        agents[(new Random()).nextInt(AGENT_COUNT)].setMipsman(true);
 
     pellets = new HashMap<String, Pellet>();
     for (int i = 0; i < map.getMaxX(); i++) {
@@ -148,7 +148,7 @@ public class DumbTelemetry implements Telemeters {
   }
 
   public void setMipID(int ID) {
-    this.agents[ID].setPacMan(true);
+    this.agents[ID].setMipsman(true);
   }
 
   // Not needed as the only input received is from server and not from client.
@@ -203,7 +203,7 @@ public class DumbTelemetry implements Telemeters {
   private void setEntityPositions(String s) {
     String[] positions = s.split("\\|");
     int mipID = Integer.parseInt(positions[positions.length-1]);
-    agents[mipID].setPacMan(true);
+    agents[mipID].setMipsman(true);
 //    agents[positions[Integer.papositions.length-1]]
     for (int i = 0; i < positions.length-1; i++) {
       String[] ls = positions[i].split(":");

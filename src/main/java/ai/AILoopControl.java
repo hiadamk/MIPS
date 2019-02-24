@@ -60,9 +60,9 @@ public class AILoopControl extends Thread {
 
     boolean mipsmanFound = false;
     for (Entity ent : gameAgents) {
-      if (ent.isPacman() && mipsmanFound) {
+      if (ent.isMipsman() && mipsmanFound) {
         throw new IllegalStateException("Cannot have more than one mipsman.");
-      } else if (ent.isPacman()) {
+      } else if (ent.isMipsman()) {
         mipsmanFound = true;
       }
     }
@@ -124,7 +124,7 @@ public class AILoopControl extends Thread {
     Entity mipsman = null;
     Entity mipsmanRoute = null;
     for (Entity ent : gameAgents) {
-      if (ent.isPacman()) {
+      if (ent.isMipsman()) {
         mipsman = ent;
         mipsmanID = ent.getClientId();
       }
