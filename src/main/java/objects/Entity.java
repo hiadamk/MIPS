@@ -96,22 +96,9 @@ public class Entity implements Renderable {
   public Point getMoveInDirection(double offset, Direction... d) {
     Point loc = this.location.getCopy();
     Direction direction = d.length > 0 ? d[0] : this.direction;
-    if (direction != null) {
-      switch (direction) {
-        case UP:
-          loc.increaseY(-offset);
-          break;
-        case DOWN:
-          loc.increaseY(offset);
-          break;
-        case LEFT:
-          loc.increaseX(-offset);
-          break;
-        case RIGHT:
-          loc.increaseX(offset);
-          break;
-      }
-    }
+
+    loc.moveInDirection(offset, direction);
+
     return loc;
   }
 

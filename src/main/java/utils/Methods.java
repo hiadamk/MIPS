@@ -33,11 +33,10 @@ public class Methods {
 
   public static boolean validiateDirection(Direction d, Entity e, Point p, Map m) {
     boolean isValid = true;
-    Point gridPoint = Mapping.getGridCoord(p);
-    gridPoint.increaseX(0);
-    gridPoint.increaseY(0);
+    Point gridPoint = Mapping.getGridCoord(p).centralise();
 
-    Point movedPoint = produceMovement(d, gridPoint, 1);
+    Point movedPoint = gridPoint.getCopy().moveInDirection(1, d);
+
     double xpart = abs((gridPoint.getX() % 1) - 0.5);
     double ypart = abs((gridPoint.getY() % 1) - 0.5);
     if (xpart >= 0.1 || ypart >= 0.1) {
@@ -49,25 +48,12 @@ public class Methods {
     return isValid;
   }
 
+  /**
+   * @see Point#moveInDirection(double, Direction)
+   * @deprecated
+   */
   public static Point produceMovement(Direction direction, Point p, double offset) {
-    Point loc = p.getCopy();
-    if (direction != null) {
-      switch (direction) {
-        case UP:
-          loc.increaseY(-offset);
-          break;
-        case DOWN:
-          loc.increaseY(offset);
-          break;
-        case LEFT:
-          loc.increaseX(-offset);
-          break;
-        case RIGHT:
-          loc.increaseX(offset);
-          break;
-      }
-    }
-    return loc;
+    return null;
   }
 
   public static boolean centreOfSquare(Entity e) {

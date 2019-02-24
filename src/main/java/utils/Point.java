@@ -2,6 +2,8 @@ package utils;
 
 import static java.lang.Math.abs;
 
+import utils.enums.Direction;
+
 /**
  * encapsulates point in 2d space on a map if given map, will ensure modularity
  *
@@ -30,7 +32,7 @@ public class Point {
   }
 
   /**
-   * Will ensure modularity.
+   * Will ensure modularity if map is not zero.
    *
    * @param x x coord
    * @param y y coord
@@ -124,7 +126,7 @@ public class Point {
    * @param offset amount to increase x by, can be negative
    * @see #mod()
    */
-  public void increaseX(double offset) {
+  private void increaseX(double offset) {
     x += offset;
     y = (int) y + 0.5;
     mod();
@@ -136,7 +138,7 @@ public class Point {
    * @param offset amount to increase y by, can be negative
    * @see #mod()
    */
-  public void increaseY(double offset) {
+  private void increaseY(double offset) {
     y += offset;
     x = (int) x + 0.5;
     mod();
@@ -153,7 +155,36 @@ public class Point {
     y = (int) y + 0.5;
     mod();
     return this;
-    /* Does this method really need to return anything? - Yes, so you can set other locations to this.centralise, can be refactored tho */
+  }
+
+  /**
+   * produce movement amalgamated into one algorithm to reduce duplicate code
+   *
+   * @param offset distance to move
+   * @param direction direction to move in
+   * @author Alex Banks
+   */
+  public Point moveInDirection(double offset, Direction direction) {
+
+    if (direction == null) {
+      return this;
+    }
+
+    switch (direction) {
+      case UP:
+        increaseY(-offset);
+        break;
+      case DOWN:
+        increaseY(offset);
+        break;
+      case LEFT:
+        increaseX(-offset);
+        break;
+      case RIGHT:
+        increaseX(offset);
+        break;
+    }
+    return this;
   }
 
   /**
@@ -169,16 +200,16 @@ public class Point {
   }
 
   public String toString() {
-    return "[Point] x = "
+    return "[Point] ("
         + x
-        + ", y = "
+        + ","
         + y
-        + ", maxX = "
+        + "), max = ("
         + MAX_X
-        + ", maxY = "
+        + ","
         + MAX_Y
-        + ", mapped = "
-        + mapped;
+        + "), "
+        + (mapped ? "mapped" : "unmapped");
   }
 
   /**
@@ -202,8 +233,10 @@ public class Point {
   private void mod() {
     if (mapped) {
       if (MAX_Y <= 0 && MAX_X <= 0) {
-        //            System.err.println("Mapped Point has no MaxX or MaxY");
-        //            System.out.println(toString());
+        System.err.println("You're using a method that could cause Point to go off the map,");
+        System.err.println("but haven't constructed with enough information to stop this.");
+        System.err.println("Please consider using a different constructor.");
+        System.err.println(this.toString());
         return;
       }
       while (this.x < 0) {
