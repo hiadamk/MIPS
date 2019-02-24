@@ -22,8 +22,8 @@ import server.ClientLobbySession;
 import server.DumbTelemetry;
 import server.ServerGameplayHandler;
 import server.ServerLobby;
-import server.Telemeters;
 import server.Telemetry;
+import server.HostTelemetry;
 import ui.MenuController;
 import utils.Input;
 import utils.Map;
@@ -40,8 +40,8 @@ public class Client extends Application {
   private String name;
   private String[] playerNames;
   private KeyController keyController;
-  //  private Telemetry telemetry;
-  private Telemeters telemetry;
+  //  private HostTelemetry telemetry;
+  private Telemetry telemetry;
   private AudioController audioController;
   private Scene gameScene;
   private Stage primaryStage;
@@ -130,7 +130,7 @@ public class Client extends Application {
     map = resourceLoader.getMap();
 
     incomingQueue = new LinkedBlockingQueue<>();
-    this.telemetry = new Telemetry(map, incomingQueue, resourceLoader);
+    this.telemetry = new HostTelemetry(map, incomingQueue, resourceLoader);
     this.primaryStage.setScene(gameScene);
     this.id = 0;
 
@@ -193,7 +193,7 @@ public class Client extends Application {
       System.out.println("PLAYER COUNT IS: " + playerCount);
       map = resourceLoader.getMap();
       this.telemetry =
-          new Telemetry(this.map, playerCount, inputQueue, outputQueue, this.resourceLoader);
+          new HostTelemetry(this.map, playerCount, inputQueue, outputQueue, this.resourceLoader);
       this.telemetry.setMipID(MIPID);
       System.out.println("MIP ID: " + MIPID);
       map = resourceLoader.getMap();

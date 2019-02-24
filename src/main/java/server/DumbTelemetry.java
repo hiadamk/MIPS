@@ -12,7 +12,7 @@ import utils.Point;
 import utils.ResourceLoader;
 import utils.enums.Direction;
 
-public class DumbTelemetry extends Telemeters {
+public class DumbTelemetry extends Telemetry {
 
   private BlockingQueue<String> inputs;
   private Entity[] agents;
@@ -81,7 +81,7 @@ public class DumbTelemetry extends Telemeters {
 
   private void processInputs() {
     while (!inputs.isEmpty()) {
-      System.out.println("Dumb Telemetry received: " + inputs.peek());
+      System.out.println("Dumb HostTelemetry received: " + inputs.peek());
       System.out.println(inputs.peek().substring(0, 4));
       String input = inputs.poll();
 
