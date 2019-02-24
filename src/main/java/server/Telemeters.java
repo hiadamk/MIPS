@@ -11,7 +11,7 @@ import utils.enums.Direction;
 
 public abstract class Telemeters {
 
-  static final int AGENT_COUNT = 2;
+  static final int AGENT_COUNT = 5;
 
   public abstract Entity[] getAgents();
 

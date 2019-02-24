@@ -11,9 +11,12 @@ import utils.enums.Direction;
  */
 public class Point {
 
+
+  private final double CENTER_TOLERANCE = 0.1;
+
   private final int MAX_X;
   private final int MAX_Y;
-  private final boolean mapped;
+  private final boolean MAPPED;
   private double x;
   private double y;
 
@@ -28,7 +31,7 @@ public class Point {
     this.y = y;
     this.MAX_Y = 0;
     this.MAX_X = 0;
-    this.mapped = false;
+    this.MAPPED = false;
   }
 
   /**
@@ -43,7 +46,7 @@ public class Point {
     this.y = y;
     this.MAX_X = map.getMaxX();
     this.MAX_Y = map.getMaxY();
-    this.mapped = true;
+    this.MAPPED = true;
     mod();
   }
 
@@ -60,7 +63,7 @@ public class Point {
     this.y = y;
     this.MAX_X = max_x;
     this.MAX_Y = max_y;
-    this.mapped = MAX_X > 0 && MAX_Y > 0;
+    this.MAPPED = MAX_X > 0 && MAX_Y > 0;
 
     mod();
   }
@@ -79,7 +82,7 @@ public class Point {
     this.y = y;
     this.MAX_X = max_x;
     this.MAX_Y = max_y;
-    this.mapped = mapped;
+    this.MAPPED = mapped;
   }
 
   /**
@@ -87,7 +90,7 @@ public class Point {
    * @deprecated
    */
   public static Point copyOf(Point p) {
-    return new Point(p.x, p.y, p.MAX_X, p.MAX_Y, p.mapped);
+    return new Point(p.x, p.y, p.MAX_X, p.MAX_Y, p.MAPPED);
   }
 
   /**
@@ -96,7 +99,7 @@ public class Point {
    * @return new instance which is exact duplicate.
    */
   public Point getCopy() {
-    return new Point(this.x, this.y, this.MAX_X, this.MAX_Y, this.mapped);
+    return new Point(this.x, this.y, this.MAX_X, this.MAX_Y, this.MAPPED);
   }
 
   public double getX() {
@@ -209,7 +212,7 @@ public class Point {
         + ","
         + MAX_Y
         + "), "
-        + (mapped ? "mapped" : "unmapped");
+        + (MAPPED ? "mapped" : "unmapped");
   }
 
   /**
@@ -231,7 +234,7 @@ public class Point {
    * @author Alex Banks
    */
   private void mod() {
-    if (mapped) {
+    if (MAPPED) {
       if (MAX_Y <= 0 && MAX_X <= 0) {
         System.err.println("You're using a method that could cause Point to go off the map,");
         System.err.println("but haven't constructed with enough information to stop this.");
@@ -248,5 +251,14 @@ public class Point {
       x = x % MAX_X;
       y = y % MAX_Y;
     }
+  }
+
+  /**
+   * @return true if point is within central hitbox
+   */
+  public boolean isCentered() {
+    double x = abs((this.getX() % 1) - 0.5);
+    double y = abs((this.getY() % 1) - 0.5);
+    return !(x >= CENTER_TOLERANCE || y >= CENTER_TOLERANCE);
   }
 }

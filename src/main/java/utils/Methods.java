@@ -15,13 +15,8 @@ public class Methods {
   }
 
   /**
-   * checks whether an entity is allowed to move in a certain direction
-   *
-   * @param d Direction to move in
-   * @param e Entity to be checked
-   * @param m Map the entity is moving on
-   * @return true if the move is valid
-   * @author Alex Banks, Matty Jones
+   * @deprecated
+   * @see #validateDirection(Direction, Point, Map)
    */
   public static boolean validiateDirection(Direction d, Entity e, Map m) {
     Point prevLoc = e.getLocation().getCopy();
@@ -31,6 +26,10 @@ public class Methods {
     return !(xpart >= 0.1 || ypart >= 0.1 || m.isWall(nextLoc));
   }
 
+  /**
+   * @see #validateDirection(Direction, Point, Map)
+   * @deprecated
+   */
   public static boolean validiateDirection(Direction d, Entity e, Point p, Map m) {
     boolean isValid = true;
     Point gridPoint = Mapping.getGridCoord(p).centralise();
@@ -49,18 +48,41 @@ public class Methods {
   }
 
   /**
-   * @see Point#moveInDirection(double, Direction)
+   * checks whether a movement in a certain direction is valid
+   *
+   * @param d Direction to move in
+   * @param p Point to move from
+   * @param m Map the point is located on
+   * @return true if the move is valid
+   * @author Alex Banks, Matty Jones
+   */
+  public static boolean validateDirection(Direction d, Point p, Map m) {
+
+    Point gridPoint = Mapping.getGridCoord(p).centralise();
+    Point movedPoint = gridPoint.getCopy().moveInDirection(1, d);
+    return !m.isWall(movedPoint) && p.isCentered();
+  }
+
+  /**
    * @deprecated
+   * @see Point#moveInDirection(double, Direction)
    */
   public static Point produceMovement(Direction direction, Point p, double offset) {
     return null;
   }
 
+  /**
+   * @see Point#isCentered()
+   * @deprecated
+   */
   public static boolean centreOfSquare(Entity e) {
     return centreOfSquare(e.getLocation());
   }
 
-  // TODO convert to point method
+  /**
+   * @see Point#isCentered()
+   * @deprecated
+   */
   public static boolean centreOfSquare(Point p) {
     Point newLoc = new Point(p.getX(), p.getY());
     double xpart = mod(newLoc.getX(), 1);

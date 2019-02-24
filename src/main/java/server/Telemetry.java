@@ -56,8 +56,6 @@ public class Telemetry extends Telemeters {
     startGame();
   }
 
-
-
   public HashMap<String, Pellet> getPellets() {
     return pellets;
   }
@@ -71,9 +69,9 @@ public class Telemetry extends Telemeters {
     agents = new Entity[AGENT_COUNT];
     agents[0] = new Entity(false, 0, new Point(1.5, 1.5, map));
     agents[1] = new Entity(false, 1, new Point(1.5, 18.5, map));
-    //agents[2] = new Entity(false, 2, new Point(9.5, 15.5, map));
-    //agents[3] = new Entity(false, 3, new Point(11.5, 1.5, map));
-    //agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
+    agents[2] = new Entity(false, 2, new Point(9.5, 15.5, map));
+    agents[3] = new Entity(false, 3, new Point(11.5, 1.5, map));
+    agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
     Methods.updateImages(agents, resourceLoader);
     if (singlePlayer) {
       agents[(new Random()).nextInt(AGENT_COUNT)].setMipsman(true);
@@ -141,7 +139,7 @@ public class Telemetry extends Telemeters {
       public void handle() {
         updateClients(agents);
       }
-    }; //.start();
+    }; // .start();
   }
 
   public void startAI() {
@@ -160,7 +158,7 @@ public class Telemetry extends Telemeters {
       Input input = inputs.poll();
       int id = input.getClientID();
       Direction d = input.getMove();
-      if (Methods.validiateDirection(d, agents[id], map)) {
+      if (Methods.validateDirection(d, agents[id].getLocation(), map)) {
         agents[id].setDirection(d);
         if (!singlePlayer) {
           // this is currently what's set to update on other clients' systems. they'll get valid
@@ -175,8 +173,8 @@ public class Telemetry extends Telemeters {
     outputs.add(NetworkUtility.makeEntitiyMovementPacket(input, location));
   }
 
-  private int getMipID(){
-    for(Entity e:agents){
+  private int getMipID() {
+    for (Entity e : agents) {
       if (e.isMipsman()) {
         return e.getClientId();
       }
@@ -185,7 +183,7 @@ public class Telemetry extends Telemeters {
   }
 
   private void updateClients(Entity[] agents) {
-    outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents)+Integer.toString(getMipID()));
+    outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents) + Integer.toString(getMipID()));
   }
 
   public Entity[] getAgents() {

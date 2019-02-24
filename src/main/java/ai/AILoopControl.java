@@ -147,7 +147,7 @@ public class AILoopControl extends Thread {
       for (Entity ent : controlAgents) {
         Point currentLocation = ent.getLocation().getCopy();
         Point currentGridLocation = Mapping.getGridCoord(currentLocation);
-        if (Methods.centreOfSquare(currentLocation)) {
+        if (currentLocation.isCentered()) {
           if (ent.getDirection() == null
               || !Methods.validiateDirection(ent.getDirection(), ent, currentLocation, map)) {
             if (atPreviousCoordinate(ent, currentGridLocation)) {

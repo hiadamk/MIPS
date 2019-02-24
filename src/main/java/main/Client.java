@@ -113,11 +113,11 @@ public class Client extends Application {
     renderer = new Renderer(gc, xRes, yRes, resourceLoader);
     primaryStage.setScene(scene);
     primaryStage
-            .widthProperty()
-            .addListener(
-                    (obs, oldVal, newVal) -> {
-                      menuController.scaleImages((double) newVal, (double) oldVal);
-                    });
+        .widthProperty()
+        .addListener(
+            (obs, oldVal, newVal) -> {
+              menuController.scaleImages((double) newVal, (double) oldVal);
+            });
 
     primaryStage.show();
     updateResolution(this.screenRes);
@@ -193,7 +193,7 @@ public class Client extends Application {
       System.out.println("PLAYER COUNT IS: " + playerCount);
       map = resourceLoader.getMap();
       this.telemetry =
-              new Telemetry(this.map, playerCount, inputQueue, outputQueue, this.resourceLoader);
+          new Telemetry(this.map, playerCount, inputQueue, outputQueue, this.resourceLoader);
       this.telemetry.setMipID(MIPID);
       System.out.println("MIP ID: " + MIPID);
       map = resourceLoader.getMap();
@@ -279,7 +279,7 @@ public class Client extends Application {
       return;
     }
     //    System.out.println(input.toString() + "     " + current + " ID: " + id);
-    if (!Methods.validiateDirection(input, agents[id], map)) {
+    if (!Methods.validateDirection(input, agents[id].getLocation(), map)) {
       return;
     }
     switch (input) {
