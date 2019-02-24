@@ -12,6 +12,7 @@ import utils.enums.Direction;
 public class Point {
 
   private final double CENTER_TOLERANCE = 0.1;
+  private final double CENTER = 0.5;
 
   private final int MAX_X;
   private final int MAX_Y;
@@ -123,26 +124,26 @@ public class Point {
   }
 
   /**
-   * increases x, locks y to int+0.5, checks modularity.
+   * increases x, locks y to int+CENTER, checks modularity.
    *
    * @param offset amount to increase x by, can be negative
    * @see #mod()
    */
   private void increaseX(double offset) {
     x += offset;
-    y = (int) y + 0.5;
+    y = (int) y + CENTER;
     mod();
   }
 
   /**
-   * increase y, locks x to int+0.5, checks modularity.
+   * increase y, locks x to int+CENTER, checks modularity.
    *
    * @param offset amount to increase y by, can be negative
    * @see #mod()
    */
   private void increaseY(double offset) {
     y += offset;
-    x = (int) x + 0.5;
+    x = (int) x + CENTER;
     mod();
   }
 
@@ -154,8 +155,8 @@ public class Point {
    * @return the updated point
    */
   public Point centralise() {
-    x = (int) x + 0.5;
-    y = (int) y + 0.5;
+    x = (int) x + CENTER;
+    y = (int) y + CENTER;
     mod();
     return this;
   }
@@ -269,8 +270,8 @@ public class Point {
    * @return true if point is within central hitbox
    */
   public boolean isCentered() {
-    double x = abs((this.getX() % 1) - 0.5);
-    double y = abs((this.getY() % 1) - 0.5);
+    double x = abs((this.getX() % 1) - CENTER);
+    double y = abs((this.getY() % 1) - CENTER);
     return !(x >= CENTER_TOLERANCE || y >= CENTER_TOLERANCE);
   }
 }
