@@ -137,6 +137,10 @@ public abstract class Mapping {
     return edgeMap;
   }
 
+  /**
+   * @see Point#getGridCoord()
+   * @deprecated
+   */
   public static Point getGridCoord(Point position) {
     return new Point((int) Math.floor(position.getX()), (int) Math.floor(position.getY()));
   }

@@ -11,7 +11,6 @@ import utils.enums.Direction;
  */
 public class Point {
 
-
   private final double CENTER_TOLERANCE = 0.1;
 
   private final int MAX_X;
@@ -150,6 +149,7 @@ public class Point {
   /**
    * Puts the point in the centre of its map square, checks modularity.
    *
+   * @author Alex Banks
    * @see #mod()
    * @return the updated point
    */
@@ -158,6 +158,17 @@ public class Point {
     y = (int) y + 0.5;
     mod();
     return this;
+  }
+
+  /**
+   * @return copy of point with coordinate floored
+   * @author Alex Banks
+   */
+  public Point getGridCoord() {
+    Point p = this.getCopy();
+    p.x = (int) x;
+    p.x = (int) y;
+    return p;
   }
 
   /**
@@ -254,6 +265,7 @@ public class Point {
   }
 
   /**
+   * @author Alex Banks
    * @return true if point is within central hitbox
    */
   public boolean isCentered() {
