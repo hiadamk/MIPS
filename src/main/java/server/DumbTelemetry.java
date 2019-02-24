@@ -38,8 +38,6 @@ public class DumbTelemetry implements Telemeters {
    * Static method for updating game state increments positions if valid, increments points, and
    * detects and treats entity collisions
    *
-   * <p>TODO: increment points functionality
-   *
    * @param agents array of entities in current state
    * @author Alex Banks, Matthew Jones
    * @see this#detectEntityCollision(Entity, Entity, ResourceLoader)
@@ -60,8 +58,6 @@ public class DumbTelemetry implements Telemeters {
         }
       }
     }
-    // TODO add points for pellet collision
-
     // separate loop for checking collision after iteration
 
     for (int i = 0; i < AGENT_COUNT; i++) {
@@ -87,7 +83,7 @@ public class DumbTelemetry implements Telemeters {
       Point p = agent.getFaceLocation();
       int x = (int) p.getX();
       int y = (int) p.getY();
-      Pellet pellet = pellets.get(Integer.toString(x) + y);
+      Pellet pellet = pellets.get(x + "," + y);
       if (pellet != null && pellet.isActive()) {
         pellet.setActive(false);
         agent.incrementScore();
@@ -141,7 +137,7 @@ public class DumbTelemetry implements Telemeters {
         if (!map.isWall(point)) {
           Pellet pellet = new Pellet(point);
           pellet.updateImages(resourceLoader);
-          pellets.put(Integer.toString(i) + j, pellet);
+          pellets.put(i + "," + j, pellet);
         }
       }
     }

@@ -157,7 +157,7 @@ public class Renderer {
       y = (int) coord.getY();
 
       // render consumable objects on top
-      Pellet currentPellet = pellets.get(Integer.toString(x) + y);
+      Pellet currentPellet = pellets.get(x + "," + y);
       if (currentPellet != null && currentPellet.isActive()) {
 
         //TODO use better way of finding if client is mipsman
