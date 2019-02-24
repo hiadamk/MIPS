@@ -222,7 +222,7 @@ public class MenuController {
     logo.setVisible(true);
 
     starting = new ImageView("ui/start.png");
-    startGameBtn = buttonGenerator.generate(false, root, starting);
+    startGameBtn = buttonGenerator.generate(false, root, "Start", UIColours.GREEN, 45);
     StackPane.setAlignment(startGameBtn, Pos.CENTER);
     StackPane.setMargin(startGameBtn, new Insets(160, 0, 0, 0));
     startGameBtn.setOnAction(
@@ -232,7 +232,8 @@ public class MenuController {
         });
 
     singlePlayerImageView = new ImageView("ui/Single-Player.png");
-    this.singlePlayerBtn = buttonGenerator.generate(true, root, singlePlayerImageView);
+    this.singlePlayerBtn = buttonGenerator
+        .generate(true, root, "Singleplayer", UIColours.WHITE, 45);
     this.singlePlayerBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
@@ -242,7 +243,7 @@ public class MenuController {
         });
 
     multiplayerImageView = new ImageView("ui/Multiplayer.png");
-    this.multiplayerBtn = buttonGenerator.generate(true, root, multiplayerImageView);
+    this.multiplayerBtn = buttonGenerator.generate(true, root, "Multiplayer", UIColours.WHITE, 45);
     this.multiplayerBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
@@ -299,10 +300,20 @@ public class MenuController {
     root.getChildren().add(gameModeOptions);
     gameModeOptions.setVisible(false);
 
+    playBtn = buttonGenerator.generate(true, root, "Play", UIColours.GREEN, 35);
+//    root.getChildren().add(playBtn);
+    playBtn.setText("Play");
     playView = new ImageView("ui/play.png");
-    playBtn = buttonGenerator.generate(true, root, playView);
+//    playBtn.setGraphic(playView);
     StackPane.setAlignment(playBtn, Pos.CENTER);
     StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
+//    playBtn.setStyle("-jfx-button-type: FLAT;\n"
+//        + "     -fx-background-color: transparent;\n"
+//        + "     -fx-text-fill: #199d6e;" + "-fx-font-size: 40;");
+
+//    playBtn = buttonGenerator.generate(true, root, playView);
+//    StackPane.setAlignment(playBtn, Pos.CENTER);
+//    StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
     playBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
@@ -408,7 +419,7 @@ public class MenuController {
     StackPane.setMargin(creditsBtn, new Insets(0, 0, 50, 0));
 
     joinGameView = new ImageView("ui/join-game.png");
-    joinGameBtn = buttonGenerator.generate(true, root, joinGameView);
+    joinGameBtn = buttonGenerator.generate(true, root, "Join a game", UIColours.WHITE, 40);
     joinGameBtn.setPickOnBounds(true);
     joinGameBtn.setOnAction(
         event -> {
@@ -422,7 +433,7 @@ public class MenuController {
         });
 
     createGameView = new ImageView("ui/create-game.png");
-    createGameBtn = buttonGenerator.generate(true, root, createGameView);
+    createGameBtn = buttonGenerator.generate(true, root, "Create game", UIColours.WHITE, 40);
     createGameBtn.setPickOnBounds(true);
     createGameBtn.setOnAction(
         event -> {
@@ -441,15 +452,16 @@ public class MenuController {
     root.getChildren().add(multiplayerOptions);
     multiplayerOptions.setVisible(false);
 
-    createLobbyBtn = new Button();
+    createLobbyBtn = buttonGenerator
+        .generate(false, root, "Create lobby", UIColours.GREEN.WHITE, 40);
     StackPane.setAlignment(createGameBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(createGameBtn, new Insets(0, 0, 300, 0));
-    createLobbyBtn.setStyle("-fx-background-color: transparent;");
+//    createLobbyBtn.setStyle("-fx-background-color: transparent;");
     Image createLobbyImg = new Image("ui/Create-Lobby.png");
     createLobbyView = new ImageView(createLobbyImg);
-    createLobbyBtn.setGraphic(createLobbyView);
-    createLobbyBtn.setVisible(false);
-    root.getChildren().add(createLobbyBtn);
+//    createLobbyBtn.setGraphic(createLobbyView);
+//    createLobbyBtn.setVisible(false);
+//    root.getChildren().add(createLobbyBtn);
 
     lobbyStatusLbl = new Label("Searching for players");
     lobbyStatusLbl.setTextFill(Color.WHITE);
@@ -505,7 +517,7 @@ public class MenuController {
     nameAndLine.setAlignment(Pos.CENTER);
 
     continueView = new ImageView("ui/continue.png");
-    nameEntryBtn = buttonGenerator.generate(true, root, continueView);
+    nameEntryBtn = buttonGenerator.generate(true, root, "Continue", UIColours.GREEN.GREEN, 40);
     nameEntryBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
@@ -525,7 +537,7 @@ public class MenuController {
     root.getChildren().add(nameEntryOptions);
 
     quitView = new ImageView("ui/quit.png");
-    quitBtn = buttonGenerator.generate(true, root, quitView);
+    quitBtn = buttonGenerator.generate(true, root, "quit", UIColours.QUIT_RED, 30);
     StackPane.setAlignment(quitBtn, Pos.TOP_RIGHT);
     StackPane.setMargin(quitBtn, new Insets(50, 50, 0, 0));
     quitBtn.setOnAction(
@@ -580,7 +592,7 @@ public class MenuController {
         });
 
     startingM = new ImageView("ui/start.png");
-    startMGameBtn = buttonGenerator.generate(false, root, startingM);
+    startMGameBtn = buttonGenerator.generate(false, root, "Start", UIColours.GREEN, 40);
     StackPane.setAlignment(startMGameBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(startMGameBtn, new Insets(0, 0, 200, 0));
     startMGameBtn.setOnAction(
@@ -590,7 +602,7 @@ public class MenuController {
         });
 
     backImageView = new ImageView("ui/back.png");
-    backBtn = buttonGenerator.generate(false, root, backImageView);
+    backBtn = buttonGenerator.generate(false, root, "back", UIColours.RED, 30);
     StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(backBtn, new Insets(0, 0, 100, 0));
     backBtn.setOnAction(
