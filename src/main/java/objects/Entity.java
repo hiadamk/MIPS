@@ -82,7 +82,7 @@ public class Entity implements Renderable {
     this.location = location;
   }
 
-  //TODO convert all usages to Methods
+
   /**
    * return where center location would be if agent moved in certain motion. Uses util.Point to
    * ensure modularity (wraping around map)
@@ -91,15 +91,13 @@ public class Entity implements Renderable {
    * @param d direction to move, if unspecified then uses current direction
    * @return util.Point of new location
    * @author Alex Banks, Matty Jones
-   * @see Point
+   * @see Point#moveInDirection(double, Direction)
    */
   public Point getMoveInDirection(double offset, Direction... d) {
     Point loc = this.location.getCopy();
     Direction direction = d.length > 0 ? d[0] : this.direction;
 
-    loc.moveInDirection(offset, direction);
-
-    return loc;
+    return loc.moveInDirection(offset, direction);
   }
 
   /**
@@ -151,16 +149,12 @@ public class Entity implements Renderable {
     return currentImage == null ? images.get(0) : currentImage;
   }
 
-  /**
-   * @return velocity
-   */
+  /** @return velocity */
   public double getVelocity() {
     return velocity;
   }
 
-  /**
-   * @param velocity new velocity
-   */
+  /** @param velocity new velocity */
   public void setVelocity(double velocity) {
     this.velocity = velocity;
   }
@@ -229,9 +223,7 @@ public class Entity implements Renderable {
     return mipsman;
   }
 
-  /**
-   * @param mips if true then now MIPS, if false then Ghoul
-   */
+  /** @param mips if true then now MIPS, if false then Ghoul */
   public void setMipsman(Boolean mips) {
     this.currentFrame = 0;
     this.mipsman = mips;
@@ -271,40 +263,29 @@ public class Entity implements Renderable {
     return outStr;
   }
 
-  /**
-   *
-   * @return time since last frame
-   */
+  /** @return time since last frame */
   public long getTimeSinceLastFrame() {
     return timeSinceLastFrame;
   }
 
-  /**
-   *
-   * @param n time since last frame
-   */
+  /** @param n time since last frame */
   public void setTimeSinceLastFrame(long n) {
     this.timeSinceLastFrame = n;
   }
 
-  /**
-   *
-   * @return animation speed
-   */
+  /** @return animation speed */
   public int getAnimationSpeed() {
     return animationSpeed;
   }
 
-  /**
-   *
-   * @return current frame
-   */
+  /** @return current frame */
   public int getCurrentFrame() {
     return currentFrame;
   }
 
   /**
    * update image to next animation step
+   *
    * @author Tim Cheung
    */
   public void nextFrame() {

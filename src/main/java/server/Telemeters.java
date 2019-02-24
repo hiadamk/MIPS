@@ -13,17 +13,17 @@ public abstract class Telemeters {
 
   static final int AGENT_COUNT = 2;
 
-  abstract public Entity[] getAgents();
+  public abstract Entity[] getAgents();
 
-  abstract public Map getMap();
+  public abstract Map getMap();
 
   abstract void startAI();
 
-  abstract public HashMap<String, Pellet> getPellets();
+  public abstract HashMap<String, Pellet> getPellets();
 
-  abstract public void setMipID(int ID);
+  public abstract void setMipID(int ID);
 
-  abstract public void addInput(Input in);
+  public abstract void addInput(Input in);
 
   /**
    * Static method for updating game state increments positions if valid, increments points, and
@@ -64,6 +64,7 @@ public abstract class Telemeters {
         }
       }
     }
+
     pelletCollision(agents, pellets);
     for (Pellet p : pellets.values()) {
       p.incrementRespawn();
