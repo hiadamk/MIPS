@@ -161,7 +161,7 @@ public abstract class Telemetry {
       if (!agent.isMipsman()) {
         continue;
       }
-      Point p = agent.getFaceLocation();
+      Point p = agent.getLocation();
       int x = (int) p.getX();
       int y = (int) p.getY();
       Pellet pellet = pellets.get(x + "," + y);
