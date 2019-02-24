@@ -1,4 +1,4 @@
-package server;
+package server.telemeters;
 
 import ai.AILoopControl;
 import java.util.Queue;
@@ -6,6 +6,7 @@ import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import objects.Entity;
+import server.NetworkUtility;
 import utils.GameLoop;
 import utils.Input;
 import utils.Map;
@@ -22,7 +23,6 @@ public class HostTelemetry extends Telemetry {
   private boolean singlePlayer;
   private AILoopControl ai;
   private boolean aiRunning;
-  private ResourceLoader resourceLoader;
 
   public HostTelemetry(
       Map map,
@@ -80,11 +80,7 @@ public class HostTelemetry extends Telemetry {
       ai = new AILoopControl(agents, aiControlled, map, inputs);
     }
 
-    initialisePellets(resourceLoader);
-  }
-
-  public Entity getEntity(int id) {
-    return agents[id];
+    initialisePellets();
   }
 
   public void addInput(Input in) {
@@ -157,6 +153,4 @@ public class HostTelemetry extends Telemetry {
   private void updateClients(Entity[] agents) {
     outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents) + Integer.toString(getMipID()));
   }
-
-
 }

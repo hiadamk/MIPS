@@ -1,8 +1,9 @@
-package server;
+package server.telemeters;
 
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import objects.Entity;
+import server.NetworkUtility;
 import utils.GameLoop;
 import utils.Input;
 import utils.Map;
@@ -15,7 +16,6 @@ public class DumbTelemetry extends Telemetry {
   private BlockingQueue<String> inputs;
   private Entity[] agents;
   private Queue<Input> clientQueue;
-  private ResourceLoader resourceLoader;
 
   // dumb telemetry is like telemetry but it relies on information from the server to set it's
   // entites
@@ -38,16 +38,12 @@ public class DumbTelemetry extends Telemetry {
     //        agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
     //        agents[(new Random()).nextInt(AGENT_COUNT)].setMipsman(true);
 
-    initialisePellets(resourceLoader);
+    initialisePellets();
   }
 
   // Not needed as the only input received is from server and not from client.
   public void addInput(Input in) {
     System.err.println("DumbTelemetry receiving inputs");
-  }
-
-  public Entity getEntity(int id) {
-    return agents[id];
   }
 
   void startGame() {
@@ -120,6 +116,4 @@ public class DumbTelemetry extends Telemetry {
     // shouldn't actually be called from client if this object exists
     System.err.println("DumbTelemetry startAI");
   }
-
-
 }

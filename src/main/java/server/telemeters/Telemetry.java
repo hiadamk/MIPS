@@ -1,4 +1,4 @@
-package server;
+package server.telemeters;
 
 import java.util.HashMap;
 import objects.Entity;
@@ -18,8 +18,9 @@ public abstract class Telemetry {
   Map map;
   Entity[] agents;
   HashMap<String, Pellet> pellets;
+  ResourceLoader resourceLoader;
 
-  //abstract methods
+  // abstract methods
 
   abstract void startAI();
 
@@ -29,7 +30,7 @@ public abstract class Telemetry {
 
   abstract void processInputs();
 
-  //basic get/set methods
+  // basic get/set methods
 
   public Entity[] getAgents() {
     return agents;
@@ -47,23 +48,23 @@ public abstract class Telemetry {
     this.agents[ID].setMipsman(true);
   }
 
-  //constructor methods
+  // constructor methods
 
-  void initialisePellets(ResourceLoader r) {
+  void initialisePellets() {
     pellets = new HashMap<>();
     for (int i = 0; i < map.getMaxX(); i++) {
       for (int j = 0; j < map.getMaxY(); j++) {
         Point point = new Point(i + 0.5, j + 0.5);
         if (!map.isWall(point)) {
           Pellet pellet = new Pellet(point);
-          pellet.updateImages(r);
+          pellet.updateImages(resourceLoader);
           pellets.put(i + "," + j, pellet);
         }
       }
     }
   }
 
-  //physics engine
+  // physics engine
 
   /**
    * Static method for updating game state increments positions if valid, increments points, and
