@@ -1,10 +1,8 @@
 package server;
 
-import java.util.HashMap;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import objects.Entity;
-import objects.Pellet;
 import utils.GameLoop;
 import utils.Input;
 import utils.Map;
@@ -16,8 +14,6 @@ public class DumbTelemetry extends Telemetry {
 
   private BlockingQueue<String> inputs;
   private Entity[] agents;
-  private Map map;
-  private HashMap<String, Pellet> pellets;
   private Queue<Input> clientQueue;
   private ResourceLoader resourceLoader;
 
@@ -33,10 +29,6 @@ public class DumbTelemetry extends Telemetry {
     startGame();
   }
 
-  public HashMap<String, Pellet> getPellets() {
-    return pellets;
-  }
-
   private void initialise() {
     agents = new Entity[AGENT_COUNT];
     agents[0] = new Entity(false, 0, new Point(1.5, 2.5, map));
@@ -46,29 +38,19 @@ public class DumbTelemetry extends Telemetry {
     //        agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
     //        agents[(new Random()).nextInt(AGENT_COUNT)].setMipsman(true);
 
-    pellets = initialisePellets(map, resourceLoader);
-  }
-
-  @Override
-  public void setMipID(int ID) {
-    this.agents[ID].setMipsman(true);
+    initialisePellets(resourceLoader);
   }
 
   // Not needed as the only input received is from server and not from client.
-  @Override
   public void addInput(Input in) {
-  }
-
-
-  public Map getMap() {
-    return map;
+    System.err.println("DumbTelemetry receiving inputs");
   }
 
   public Entity getEntity(int id) {
     return agents[id];
   }
 
-  private void startGame() {
+  void startGame() {
     final long DELAY = (long) Math.pow(10, 7);
     new GameLoop(DELAY) {
       @Override
@@ -79,7 +61,7 @@ public class DumbTelemetry extends Telemetry {
     }.start();
   }
 
-  private void processInputs() {
+  void processInputs() {
     while (!inputs.isEmpty()) {
       System.out.println("Dumb HostTelemetry received: " + inputs.peek());
       System.out.println(inputs.peek().substring(0, 4));
@@ -106,10 +88,10 @@ public class DumbTelemetry extends Telemetry {
   // without the starting POSx code
   private void setEntityPositions(String s) {
     String[] positions = s.split("\\|");
-    int mipID = Integer.parseInt(positions[positions.length-1]);
+    int mipID = Integer.parseInt(positions[positions.length - 1]);
     agents[mipID].setMipsman(true);
-//    agents[positions[Integer.papositions.length-1]]
-    for (int i = 0; i < positions.length-1; i++) {
+    //    agents[positions[Integer.papositions.length-1]]
+    for (int i = 0; i < positions.length - 1; i++) {
       String[] ls = positions[i].split(":");
       int id = Integer.parseInt(ls[0]);
       int direction = Integer.parseInt(ls[1]);
@@ -136,9 +118,8 @@ public class DumbTelemetry extends Telemetry {
   public void startAI() {
     // haha trick this does nothing.
     // shouldn't actually be called from client if this object exists
+    System.err.println("DumbTelemetry startAI");
   }
 
-  public Entity[] getAgents() {
-    return agents;
-  }
+
 }

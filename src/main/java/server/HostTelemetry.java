@@ -1,13 +1,11 @@
 package server;
 
 import ai.AILoopControl;
-import java.util.HashMap;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import objects.Entity;
-import objects.Pellet;
 import utils.GameLoop;
 import utils.Input;
 import utils.Map;
@@ -21,10 +19,7 @@ public class HostTelemetry extends Telemetry {
   private final int playerCount;
   private BlockingQueue<Input> inputs;
   private BlockingQueue<String> outputs;
-  private Entity[] agents;
   private boolean singlePlayer;
-  private Map map;
-  private HashMap<String, Pellet> pellets;
   private AILoopControl ai;
   private boolean aiRunning;
   private ResourceLoader resourceLoader;
@@ -56,10 +51,6 @@ public class HostTelemetry extends Telemetry {
     startGame();
   }
 
-  public HashMap<String, Pellet> getPellets() {
-    return pellets;
-  }
-
   /**
    * Initialises the game agents/entities and AI to control them
    *
@@ -89,16 +80,7 @@ public class HostTelemetry extends Telemetry {
       ai = new AILoopControl(agents, aiControlled, map, inputs);
     }
 
-    pellets = initialisePellets(map, resourceLoader);
-  }
-
-  @Override
-  public void setMipID(int ID) {
-    this.agents[ID].setMipsman(true);
-  }
-
-  public Map getMap() {
-    return map;
+    initialisePellets(resourceLoader);
   }
 
   public Entity getEntity(int id) {
@@ -109,7 +91,7 @@ public class HostTelemetry extends Telemetry {
     inputs.add(in);
   }
 
-  private void startGame() {
+  void startGame() {
     startAI();
 
     final long DELAY = (long) Math.pow(10, 7);
@@ -143,7 +125,7 @@ public class HostTelemetry extends Telemetry {
    *
    * @author Matthew Jones
    */
-  private void processInputs() {
+  void processInputs() {
     while (!inputs.isEmpty()) {
       Input input = inputs.poll();
       int id = input.getClientID();
@@ -176,7 +158,5 @@ public class HostTelemetry extends Telemetry {
     outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents) + Integer.toString(getMipID()));
   }
 
-  public Entity[] getAgents() {
-    return agents;
-  }
+
 }

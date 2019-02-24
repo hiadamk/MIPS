@@ -9,36 +9,61 @@ import utils.Point;
 import utils.ResourceLoader;
 import utils.enums.Direction;
 
+/**
+ * Parent class for DumbTelemetry and HostTelemetry
+ */
 public abstract class Telemetry {
 
   static final int AGENT_COUNT = 5;
+  Map map;
+  Entity[] agents;
+  HashMap<String, Pellet> pellets;
 
-  public abstract Entity[] getAgents();
-
-  public abstract Map getMap();
+  //abstract methods
 
   abstract void startAI();
 
-  public abstract HashMap<String, Pellet> getPellets();
-
-  public abstract void setMipID(int ID);
-
   public abstract void addInput(Input in);
 
-  HashMap<String, Pellet> initialisePellets(Map m, ResourceLoader r) {
-    HashMap<String, Pellet> pellets = new HashMap<>();
-    for (int i = 0; i < m.getMaxX(); i++) {
-      for (int j = 0; j < m.getMaxY(); j++) {
+  abstract void startGame();
+
+  abstract void processInputs();
+
+  //basic get/set methods
+
+  public Entity[] getAgents() {
+    return agents;
+  }
+
+  public Map getMap() {
+    return map;
+  }
+
+  public HashMap<String, Pellet> getPellets() {
+    return pellets;
+  }
+
+  public void setMipID(int ID) {
+    this.agents[ID].setMipsman(true);
+  }
+
+  //constructor methods
+
+  void initialisePellets(ResourceLoader r) {
+    pellets = new HashMap<>();
+    for (int i = 0; i < map.getMaxX(); i++) {
+      for (int j = 0; j < map.getMaxY(); j++) {
         Point point = new Point(i + 0.5, j + 0.5);
-        if (!m.isWall(point)) {
+        if (!map.isWall(point)) {
           Pellet pellet = new Pellet(point);
           pellet.updateImages(r);
           pellets.put(i + "," + j, pellet);
         }
       }
     }
-    return pellets;
   }
+
+  //physics engine
 
   /**
    * Static method for updating game state increments positions if valid, increments points, and
