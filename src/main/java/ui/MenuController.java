@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
+import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
@@ -139,6 +140,13 @@ public class MenuController {
    */
   private void hideItemsOnScreen() {
     for (Node item : itemsOnScreen) {
+      FadeTransition ft = new FadeTransition(Duration.millis(1000), item);
+      ft.setFromValue(1.0);
+      ft.setToValue(0);
+      ft.play();
+//      item.setVisible(false);
+    }
+    for (Node item : itemsOnScreen) {
       item.setVisible(false);
     }
   }
@@ -158,6 +166,13 @@ public class MenuController {
    * @author Adam Kona Shows items on the screen which have been previously set to hidden.
    */
   private void showItemsOnScreen() {
+    for (Node item : itemsOnScreen) {
+//      item.setVisible(true);
+      FadeTransition ft = new FadeTransition(Duration.millis(1000), item);
+      ft.setFromValue(0);
+      ft.setToValue(1.0);
+      ft.play();
+    }
     for (Node item : itemsOnScreen) {
       item.setVisible(true);
     }
@@ -239,7 +254,7 @@ public class MenuController {
           audioController.playSound(Sounds.click);
           moveItemsToBackTree();
           itemsOnScreen.add(startGameBtn);
-          startGameBtn.setVisible(true);
+          showItemsOnScreen();
         });
 
     multiplayerImageView = new ImageView("ui/Multiplayer.png");
@@ -301,19 +316,10 @@ public class MenuController {
     gameModeOptions.setVisible(false);
 
     playBtn = buttonGenerator.generate(true, root, "Play", UIColours.GREEN, 35);
-//    root.getChildren().add(playBtn);
     playBtn.setText("Play");
     playView = new ImageView("ui/play.png");
-//    playBtn.setGraphic(playView);
     StackPane.setAlignment(playBtn, Pos.CENTER);
     StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
-//    playBtn.setStyle("-jfx-button-type: FLAT;\n"
-//        + "     -fx-background-color: transparent;\n"
-//        + "     -fx-text-fill: #199d6e;" + "-fx-font-size: 40;");
-
-//    playBtn = buttonGenerator.generate(true, root, playView);
-//    StackPane.setAlignment(playBtn, Pos.CENTER);
-//    StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
     playBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
@@ -456,12 +462,8 @@ public class MenuController {
         .generate(false, root, "Create lobby", UIColours.GREEN.WHITE, 40);
     StackPane.setAlignment(createGameBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(createGameBtn, new Insets(0, 0, 300, 0));
-//    createLobbyBtn.setStyle("-fx-background-color: transparent;");
     Image createLobbyImg = new Image("ui/Create-Lobby.png");
     createLobbyView = new ImageView(createLobbyImg);
-//    createLobbyBtn.setGraphic(createLobbyView);
-//    createLobbyBtn.setVisible(false);
-//    root.getChildren().add(createLobbyBtn);
 
     lobbyStatusLbl = new Label("Searching for players");
     lobbyStatusLbl.setTextFill(Color.WHITE);
@@ -610,15 +612,13 @@ public class MenuController {
           audioController.playSound(Sounds.click);
 
           if (!backTree.isEmpty()) {
-            for (Node item : itemsOnScreen) {
-              item.setVisible(false);
-            }
+            hideItemsOnScreen();
             itemsOnScreen.clear();
             ArrayList<Node> toShow = backTree.pop();
             for (Node item : toShow) {
-              item.setVisible(true);
               itemsOnScreen.add(item);
             }
+            showItemsOnScreen();
             if (backTree.isEmpty()) {
               backBtn.setVisible(false);
               isHome = true;
