@@ -12,9 +12,8 @@ import utils.Point;
 import utils.ResourceLoader;
 import utils.enums.Direction;
 
-public class DumbTelemetry implements Telemeters {
+public class DumbTelemetry extends Telemeters {
 
-  private static final int AGENT_COUNT = 2;
   private BlockingQueue<String> inputs;
   private Entity[] agents;
   private Map map;
@@ -32,89 +31,6 @@ public class DumbTelemetry implements Telemeters {
     inputs = (BlockingQueue<String>) inputQueue;
     initialise();
     startGame();
-  }
-
-  /**
-   * Static method for updating game state increments positions if valid, increments points, and
-   * detects and treats entity collisions
-   *
-   * @param agents array of entities in current state
-   * @author Alex Banks, Matthew Jones
-   * @see this#detectEntityCollision(Entity, Entity, ResourceLoader)
-   */
-  public static void processPhysics(
-      Entity[] agents, Map m, ResourceLoader resourceLoader, HashMap<String, Pellet> pellets) {
-
-    for (int i = 0; i < AGENT_COUNT; i++) {
-      if (agents[i].getDirection() != null) {
-        Point prevLocation = agents[i].getLocation();
-        agents[i].move();
-        Point faceLocation = agents[i].getFaceLocation();
-
-        if (m.isWall(faceLocation)) {
-          System.out.println("~Player" + i + " drove into a wall");
-          agents[i].setLocation(prevLocation.centralise());
-          agents[i].setDirection(null);
-        }
-      }
-    }
-    // separate loop for checking collision after iteration
-
-    for (int i = 0; i < AGENT_COUNT; i++) {
-      for (int j = (i + 1); j < AGENT_COUNT; j++) {
-
-        if (agents[i].isMipsman() && !agents[j].isMipsman()) {
-          detectEntityCollision(agents[i], agents[j], resourceLoader);
-        }
-
-        if (agents[j].isMipsman() && !agents[i].isMipsman()) {
-          detectEntityCollision(agents[j], agents[i], resourceLoader);
-        }
-      }
-    }
-    pelletCollision(agents, pellets);
-  }
-
-  private static void pelletCollision(Entity[] agents, HashMap<String, Pellet> pellets) {
-    for (Entity agent : agents) {
-      if (!agent.isMipsman()) {
-        continue;
-      }
-      Point p = agent.getFaceLocation();
-      int x = (int) p.getX();
-      int y = (int) p.getY();
-      Pellet pellet = pellets.get(x + "," + y);
-      if (pellet != null && pellet.isActive()) {
-        pellet.setActive(false);
-        agent.incrementScore();
-      }
-    }
-  }
-
-  /**
-   * Static method for 'swapping' a mipsman and ghoul if they occupy the same area.
-   *
-   * @param mipsman Entity currently acting as mipsman
-   * @param ghoul Entity currently running as ghoul
-   * @author Alex Banks, Matthew Jones
-   */
-  private static void detectEntityCollision(
-      Entity mipsman, Entity ghoul, ResourceLoader resourceLoader) {
-    Point mipsmanCenter = mipsman.getLocation();
-    Point ghoulFace = ghoul.getFaceLocation();
-
-    if (mipsmanCenter.inRange(ghoulFace)) {
-
-      mipsman.setMipsman(false);
-      ghoul.setMipsman(true);
-      mipsman.setLocation(resourceLoader.getMap().getRandomSpawnPoint());
-      mipsman.setDirection(Direction.UP);
-      mipsman.updateImages(resourceLoader);
-      ghoul.updateImages(resourceLoader);
-
-      // System.out.println("ghoul " + ghoul.getClientId() + " collided with mipsman " +
-      // mipsman.getClientId());
-    }
   }
 
   public HashMap<String, Pellet> getPellets() {
@@ -143,6 +59,7 @@ public class DumbTelemetry implements Telemeters {
     }
   }
 
+  @Override
   public void setMipID(int ID) {
     this.agents[ID].setMipsman(true);
   }
@@ -151,6 +68,7 @@ public class DumbTelemetry implements Telemeters {
   @Override
   public void addInput(Input in) {
   }
+
 
   public Map getMap() {
     return map;
