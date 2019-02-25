@@ -45,6 +45,21 @@ public enum Direction {
     return null;
   }
 
+  public Direction getInverse() {
+    switch (this) {
+      case UP:
+        return DOWN;
+      case DOWN:
+        return UP;
+      case LEFT:
+        return RIGHT;
+      case RIGHT:
+        return LEFT;
+      default:
+        return null;
+    }
+  }
+
   public int toInt() {
     return id;
   }
