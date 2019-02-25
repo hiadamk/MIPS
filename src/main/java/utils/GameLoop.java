@@ -10,20 +10,10 @@ public abstract class GameLoop extends Thread {
 
   @Override
   public void run() {
-    long time = System.currentTimeMillis();
     long currentSleepTime = 0;
     long currentTime = System.nanoTime();
     long newTime = System.nanoTime();
     while (true) {
-//      if (System.currentTimeMillis() - time > gameSpeed) {
-//        time = System.currentTimeMillis();
-//        this.handle();
-//      }
-//      try {
-//        Thread.sleep(2);
-//      } catch (InterruptedException e) {
-//        e.printStackTrace();
-//      }
 
       this.handle();
       while (currentSleepTime < gameSpeed) {

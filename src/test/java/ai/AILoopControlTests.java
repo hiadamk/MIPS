@@ -1,6 +1,8 @@
 package ai;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ai.routefinding.RouteFinder;
 import ai.routefinding.routefinders.MipsManRouteFinder;
@@ -124,9 +126,9 @@ class AILoopControlTests {
 		RouteFinder secondAgent = ALL_AGENTS[1].getRouteFinder();
 		assertTrue(firstAgent.getClass()==MipsManRouteFinder.class);
 		assertTrue(secondAgent.getClass()!=MipsManRouteFinder.class);
-		
-		ALL_AGENTS[0].setPacMan(false);
-		ALL_AGENTS[1].setPacMan(true);
+
+		ALL_AGENTS[0].setMipsman(false);
+		ALL_AGENTS[1].setMipsman(true);
 		
 		try {
 			Thread.sleep(500);
@@ -137,9 +139,9 @@ class AILoopControlTests {
 		
 		assertTrue(firstAgent.getClass()==MipsManRouteFinder.class);
 		assertTrue(secondAgent.getClass()!=MipsManRouteFinder.class);
-		
-		ALL_AGENTS[1].setPacMan(false);
-		ALL_AGENTS[0].setPacMan(true);
+
+		ALL_AGENTS[1].setMipsman(false);
+		ALL_AGENTS[0].setMipsman(true);
 		try {
 			Thread.sleep(500);
 		}

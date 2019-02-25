@@ -135,9 +135,6 @@ public abstract class Mapping {
     return edgeMap;
   }
 
-  public static Point getGridCoord(Point position) {
-    return new Point((int) Math.floor(position.getX()), (int) Math.floor(position.getY()));
-  }
 
   public static Direction directionBetweenPoints(Point start, Point target) {
     if (start.getX() == target.getX()) {
@@ -163,7 +160,7 @@ public abstract class Mapping {
       output = new Point(output.getX() + horizontal, output.getY());
     }
 
-    if (map.withinBounds(output)) {
+    if (withinBounds(map.getMaxX(), map.getMaxY(), output)) {
       return output;
     }
     return position;
@@ -174,17 +171,17 @@ public abstract class Mapping {
     Point down = new Point(position.getX(), position.getY());
     boolean upWall = false;
     boolean downWall = false;
-    while ((map.withinBounds(up) && !map.isWall(up))
-        || (map.withinBounds(down) && !map.isWall(down))) {
+    while ((withinBounds(map.getMaxX(), map.getMaxY(), up) && !map.isWall(up))
+        || (withinBounds(map.getMaxX(), map.getMaxY(), down) && !map.isWall(down))) {
       if (!map.isWall(up) && !upWall) {
-        if (junctions.contains(Mapping.getGridCoord(up))) {
+        if (junctions.contains(up.getGridCoord())) {
           return up.getY() - position.getY();
         }
       } else {
         upWall = true;
       }
       if (!map.isWall(down) && !downWall) {
-        if (junctions.contains(Mapping.getGridCoord(down))) {
+        if (junctions.contains(down.getGridCoord())) {
           return down.getY() - position.getY();
         }
       } else {
@@ -201,17 +198,17 @@ public abstract class Mapping {
     Point right = new Point(position.getX(), position.getY());
     boolean leftWall = false;
     boolean rightWall = false;
-    while ((map.withinBounds(left) && !map.isWall(left))
-        || (map.withinBounds(right) && !map.isWall(right))) {
+    while ((withinBounds(map.getMaxX(), map.getMaxY(), left) && !map.isWall(left))
+        || (withinBounds(map.getMaxX(), map.getMaxY(), right) && !map.isWall(right))) {
       if (!map.isWall(left) && !leftWall) {
-        if (junctions.contains(Mapping.getGridCoord(left))) {
+        if (junctions.contains(left.getGridCoord())) {
           return left.getY() - position.getY();
         }
       } else {
         leftWall = true;
       }
       if (!map.isWall(right) && !rightWall) {
-        if (junctions.contains(Mapping.getGridCoord(right))) {
+        if (junctions.contains(right.getGridCoord())) {
           return right.getY() - position.getY();
         }
       } else {
@@ -221,5 +218,11 @@ public abstract class Mapping {
       right.setLocation(right.getX() + 1, right.getY());
     }
     return Double.MAX_VALUE;
+  }
+
+  private static boolean withinBounds(int maxX, int maxY, Point point) {
+    boolean x = point.getX() >= 0 && point.getX() < maxX;
+    boolean y = point.getY() >= 0 && point.getY() < maxY;
+    return x && y;
   }
 }

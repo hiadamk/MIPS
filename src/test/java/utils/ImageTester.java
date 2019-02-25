@@ -32,11 +32,11 @@ public class ImageTester extends Application {
     Renderer r = new Renderer(gc, xRes, yRes, resourceLoader);
 
     Entity mip = new Entity(true, 1, new Point(1, 1));
-    mip.setPacMan(true);
+    mip.setMipsman(true);
 
     Entity ghoul = new Entity(false, 4, new Point(1.5, 5.8));
     System.out.println(ghoul.getLocation().toString());
-    ghoul.setPacMan(false);
+    ghoul.setMipsman(false);
     // ghoul.setDirection(Direction.RIGHT);
 
     Entity[] entities = new Entity[]{ghoul};

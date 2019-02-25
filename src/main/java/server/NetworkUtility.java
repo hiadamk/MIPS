@@ -163,6 +163,8 @@ public class NetworkUtility {
       s +=
           i
               + ":"
+              + agents[i].getDirection().toInt()
+              + ":"
               + coordFormat.format(agents[i].getLocation().getX())
               + ":"
               + coordFormat.format(agents[i].getLocation().getY())

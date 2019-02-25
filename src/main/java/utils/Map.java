@@ -37,12 +37,12 @@ public class Map {
    * @return Array of Point2D.Double spawnPoint.
    * @see this#Map(int[][])
    */
-  private ArrayList<utils.Point> loadSpawnPoints() {
-    ArrayList<utils.Point> spawnPoints = new ArrayList<>();
+  private ArrayList<Point> loadSpawnPoints() {
+    ArrayList<Point> spawnPoints = new ArrayList<>();
     for (int i = 0; i < MAX_X; i++) {
       for (int j = 0; j < MAX_Y; j++) {
         if (MAP[i][j] != MapElement.WALL.toInt()) { // SPAWNPOINT.toInt()
-          spawnPoints.add(new utils.Point(i + 0.5, j + 0.5, MAX_X, MAX_Y, true));
+          spawnPoints.add(new Point(i, j, this).centralise());
         }
       }
     }
@@ -57,23 +57,16 @@ public class Map {
     return MAX_Y;
   }
 
-  public boolean withinBounds(Point point) {
-    boolean x = point.getX() >= 0 && point.getX() < MAX_X;
-    boolean y = point.getY() >= 0 && point.getY() < MAX_Y;
-    return x && y;
-  }
-
   /**
-   * calculates if point is out of bounds modular arithmetic for map looping
+   * calculates if point is out of bounds
    *
-   * @param point location to be checked
+   * @param point location to be checked, assumed to be in range
    * @return true if wall, false otherwise
    */
   public boolean isWall(Point point) {
-    if (withinBounds(point)) {
-      return MAP[(int) point.getX()][(int) point.getY()] == MapElement.WALL.toInt();
-    }
-    return false;
+    Point p = new Point(point.getX(), point.getY(),
+        this); //TODO remove line once all points use mod
+    return MAP[(int) p.getX()][(int) p.getY()] == MapElement.WALL.toInt();
   }
 
   /**

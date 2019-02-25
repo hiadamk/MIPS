@@ -23,27 +23,29 @@ public class Entity implements Renderable {
   private Direction direction;
   private int score;
   private int clientId;
-  private Boolean pacMan;
+  private Boolean mipsman;
   private ArrayList<ArrayList<Image>> images;
   private ArrayList<Image> currentImage;
   private RouteFinder routeFinder;
   private Point lastGridCoord;
   private long timeSinceLastFrame = 0;
   private int currentFrame = 0;
+  private static final double MIPS_SPEED = 0.08;
+  private static final double GHOUL_SPEED = 0.06;
 
   /**
    * Constructor
    *
-   * @param pacMan true if Entity should be MIPS upon creation
+   * @param mipsman true if Entity should be MIPS upon creation
    * @param clientId id of client (user or AI) controlling this entity
    * @param location starting position of entity
    */
-  public Entity(Boolean pacMan, int clientId, Point location) {
-    this.pacMan = pacMan;
+  public Entity(Boolean mipsman, int clientId, Point location) {
+    this.mipsman = mipsman;
     this.clientId = clientId;
     this.location = location;
     this.score = 0;
-    this.velocity = pacMan ? 0.08 : 0.06;
+    resetVelocity();
     this.direction = Direction.UP;
     // updateImages();
   }
@@ -80,7 +82,7 @@ public class Entity implements Renderable {
     this.location = location;
   }
 
-  //TODO convert all usages to Methods
+
   /**
    * return where center location would be if agent moved in certain motion. Uses util.Point to
    * ensure modularity (wraping around map)
@@ -89,28 +91,13 @@ public class Entity implements Renderable {
    * @param d direction to move, if unspecified then uses current direction
    * @return util.Point of new location
    * @author Alex Banks, Matty Jones
-   * @see Point
+   * @see Point#moveInDirection(double, Direction)
    */
   public Point getMoveInDirection(double offset, Direction... d) {
     Point loc = this.location.getCopy();
     Direction direction = d.length > 0 ? d[0] : this.direction;
-    if (direction != null) {
-      switch (direction) {
-        case UP:
-          loc.increaseY(-offset);
-          break;
-        case DOWN:
-          loc.increaseY(offset);
-          break;
-        case LEFT:
-          loc.increaseX(-offset);
-          break;
-        case RIGHT:
-          loc.increaseX(offset);
-          break;
-      }
-    }
-    return loc;
+
+    return loc.moveInDirection(offset, direction);
   }
 
   /**
@@ -162,16 +149,12 @@ public class Entity implements Renderable {
     return currentImage == null ? images.get(0) : currentImage;
   }
 
-  /**
-   * @return velocity
-   */
+  /** @return velocity */
   public double getVelocity() {
     return velocity;
   }
 
-  /**
-   * @param velocity new velocity
-   */
+  /** @param velocity new velocity */
   public void setVelocity(double velocity) {
     this.velocity = velocity;
   }
@@ -236,21 +219,21 @@ public class Entity implements Renderable {
   }
 
   /** @return true if MIPS */
-  public synchronized Boolean isPacman() {
-    return pacMan;
+  public Boolean isMipsman() {
+    return mipsman;
   }
 
-  /** @param pac if true then now MIPS, if false then Ghoul */
-  public synchronized void setPacMan(Boolean pac) {
+  /** @param mips if true then now MIPS, if false then Ghoul */
+  public void setMipsman(Boolean mips) {
     this.currentFrame = 0;
-    this.pacMan = pac;
-    this.velocity = pacMan ? 0.08 : 0.06;
+    this.mipsman = mips;
+    resetVelocity();
   }
 
   public void updateImages(ResourceLoader resourceLoader) {
     currentFrame = 0;
     images =
-        pacMan
+        mipsman
             ? resourceLoader.getPlayableMip(clientId)
             : resourceLoader.getPlayableGhoul(clientId);
   }
@@ -258,7 +241,7 @@ public class Entity implements Renderable {
   @Override
   public String toString() {
     String outStr = "";
-    if (this.pacMan) {
+    if (this.mipsman) {
       outStr += "mip" + clientId;
     } else {
       outStr += "ghoul" + clientId;
@@ -268,7 +251,7 @@ public class Entity implements Renderable {
 
   public String toStringExpanded() {
     String outStr = "";
-    if (this.pacMan) {
+    if (this.mipsman) {
       outStr += "mip" + clientId;
     } else {
       outStr += "ghoul" + clientId;
@@ -280,40 +263,29 @@ public class Entity implements Renderable {
     return outStr;
   }
 
-  /**
-   *
-   * @return time since last frame
-   */
+  /** @return time since last frame */
   public long getTimeSinceLastFrame() {
     return timeSinceLastFrame;
   }
 
-  /**
-   *
-   * @param n time since last frame
-   */
+  /** @param n time since last frame */
   public void setTimeSinceLastFrame(long n) {
     this.timeSinceLastFrame = n;
   }
 
-  /**
-   *
-   * @return animation speed
-   */
+  /** @return animation speed */
   public int getAnimationSpeed() {
     return animationSpeed;
   }
 
-  /**
-   *
-   * @return current frame
-   */
+  /** @return current frame */
   public int getCurrentFrame() {
     return currentFrame;
   }
 
   /**
    * update image to next animation step
+   *
    * @author Tim Cheung
    */
   public void nextFrame() {
@@ -327,5 +299,9 @@ public class Entity implements Renderable {
         currentFrame++;
       }
     }
+  }
+
+  public void resetVelocity() {
+    this.velocity = mipsman ? MIPS_SPEED : GHOUL_SPEED;
   }
 }

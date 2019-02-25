@@ -75,9 +75,9 @@ public class AILoopControl extends Thread {
 
     boolean mipsmanFound = false;
     for (Entity ent : gameAgents) {
-      if (ent.isPacman() && mipsmanFound) {
+      if (ent.isMipsman() && mipsmanFound) {
         throw new IllegalStateException("Cannot have more than one mipsman.");
-      } else if (ent.isPacman()) {
+      } else if (ent.isMipsman()) {
         mipsmanFound = true;
       }
     }
@@ -146,7 +146,7 @@ public class AILoopControl extends Thread {
     Entity mipsman = null;
     Entity mipsmanRoute = null;
     for (Entity ent : gameAgents) {
-      if (ent.isPacman()) {
+      if (ent.isMipsman()) {
         mipsman = ent;
         mipsmanID = ent.getClientId();
       }
@@ -165,20 +165,20 @@ public class AILoopControl extends Thread {
   public void run() {
     System.out.println("Starting AI loop...");
     for (Point p : junctions) {
-      System.out.println("j " + p.shortString());
+      System.out.println("j " + p.toString());
     }
 
     while (runAILoop && controlAgents.length > 0) {
       for (Entity ent : controlAgents) {
         Point currentLocation = ent.getLocation().getCopy();
-        Point currentGridLocation = Mapping.getGridCoord(currentLocation);
-        if (Methods.centreOfSquare(currentLocation)) {
-          System.out.println(currentGridLocation.shortString());
+        Point currentGridLocation = currentLocation.getGridCoord();
+        if (currentLocation.isCentered()) {
+          System.out.println(currentGridLocation.toString());
           if (junctions.contains(currentGridLocation)) {
             System.err.println("HIT");
           }
           if (ent.getDirection() == null
-              || !Methods.validiateDirection(ent.getDirection(), ent, currentLocation, map)||junctions.contains(currentGridLocation)) {
+              || !Methods.validateDirection(ent.getDirection(), currentLocation, map)||junctions.contains(currentGridLocation)) {
             if (atPreviousCoordinate(ent, currentGridLocation)) {
               Point nearestJunction = Mapping.findNearestJunction(currentLocation, map, junctions);
 
@@ -200,7 +200,7 @@ public class AILoopControl extends Thread {
               }
             }
           }
-        } else if (!Methods.validiateDirection(ent.getDirection(), ent, currentLocation, map)) {
+        } else if (!Methods.validateDirection(ent.getDirection(), currentLocation, map)) {
           Direction dir =
               new RandomRouteFinder()
                   .getRoute(currentLocation, gameAgents[mipsmanID].getLocation());
@@ -235,7 +235,7 @@ public class AILoopControl extends Thread {
 
   private Direction confirmOrReplaceDirection(Entity ent, Point currentLocation, Direction dir) {
     boolean[] dirs = {false, false, false, false};
-    while (!Methods.validiateDirection(dir, ent, currentLocation, map)) {
+    while (!Methods.validateDirection(dir, currentLocation, map)) {
       dir = new RandomRouteFinder().getRoute(currentLocation, gameAgents[mipsmanID].getLocation());
       dirs[dir.toInt()] = true;
       boolean allTried = true;
@@ -254,7 +254,7 @@ public class AILoopControl extends Thread {
         return null;
       }
     }
-    if (!Methods.validiateDirection(dir, ent, currentLocation, map)) {
+    if (!Methods.validateDirection(dir, currentLocation, map)) {
       throw new IllegalStateException("ERROR");
     }
     return dir;

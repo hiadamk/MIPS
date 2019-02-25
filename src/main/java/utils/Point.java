@@ -2,6 +2,8 @@ package utils;
 
 import static java.lang.Math.abs;
 
+import utils.enums.Direction;
+
 /**
  * encapsulates point in 2d space on a map if given map, will ensure modularity
  *
@@ -9,10 +11,11 @@ import static java.lang.Math.abs;
  */
 public class Point {
 
-  private static final double EQUALITY_THRESHOLD = 0.01;
+  private final double CENTER_TOLERANCE = 0.1;
+  private final double CENTER = 0.5;
   private final int MAX_X;
   private final int MAX_Y;
-  private final boolean mapped;
+  private final boolean MAPPED;
   private double x;
   private double y;
 
@@ -27,11 +30,11 @@ public class Point {
     this.y = y;
     this.MAX_Y = 0;
     this.MAX_X = 0;
-    this.mapped = false;
+    this.MAPPED = false;
   }
 
   /**
-   * Will ensure modularity.
+   * Will ensure modularity if map is not zero.
    *
    * @param x x coord
    * @param y y coord
@@ -42,7 +45,7 @@ public class Point {
     this.y = y;
     this.MAX_X = map.getMaxX();
     this.MAX_Y = map.getMaxY();
-    this.mapped = true;
+    this.MAPPED = true;
     mod();
   }
 
@@ -59,7 +62,7 @@ public class Point {
     this.y = y;
     this.MAX_X = max_x;
     this.MAX_Y = max_y;
-    this.mapped = MAX_X > 0 && MAX_Y > 0;
+    this.MAPPED = MAX_X > 0 && MAX_Y > 0;
 
     mod();
   }
@@ -78,7 +81,7 @@ public class Point {
     this.y = y;
     this.MAX_X = max_x;
     this.MAX_Y = max_y;
-    this.mapped = mapped;
+    this.MAPPED = mapped;
   }
 
   /**
@@ -86,7 +89,7 @@ public class Point {
    * @deprecated
    */
   public static Point copyOf(Point p) {
-    return new Point(p.x, p.y, p.MAX_X, p.MAX_Y, p.mapped);
+    return new Point(p.x, p.y, p.MAX_X, p.MAX_Y, p.MAPPED);
   }
 
   /**
@@ -95,7 +98,7 @@ public class Point {
    * @return new instance which is exact duplicate.
    */
   public Point getCopy() {
-    return new Point(this.x, this.y, this.MAX_X, this.MAX_Y, this.mapped);
+    return new Point(this.x, this.y, this.MAX_X, this.MAX_Y, this.MAPPED);
   }
 
   public double getX() {
@@ -120,41 +123,82 @@ public class Point {
   }
 
   /**
-   * increases x, locks y to int+0.5, checks modularity.
+   * increases x, locks y to int+CENTER, checks modularity.
    *
    * @param offset amount to increase x by, can be negative
    * @see #mod()
    */
-  public void increaseX(double offset) {
+  private void increaseX(double offset) {
     x += offset;
-    y = (int) y + 0.5;
+    y = (int) y + CENTER;
     mod();
   }
 
   /**
-   * increase y, locks x to int+0.5, checks modularity.
+   * increase y, locks x to int+CENTER, checks modularity.
    *
    * @param offset amount to increase y by, can be negative
    * @see #mod()
    */
-  public void increaseY(double offset) {
+  private void increaseY(double offset) {
     y += offset;
-    x = (int) x + 0.5;
+    x = (int) x + CENTER;
     mod();
   }
 
   /**
    * Puts the point in the centre of its map square, checks modularity.
    *
+   * @author Alex Banks
    * @see #mod()
    * @return the updated point
    */
   public Point centralise() {
-    x = (int) x + 0.5;
-    y = (int) y + 0.5;
+    x = (int) x + CENTER;
+    y = (int) y + CENTER;
     mod();
     return this;
-    /* Does this method really need to return anything? - Yes, so you can set other locations to this.centralise, can be refactored tho */
+  }
+
+  /**
+   * @return copy of point with coordinate floored
+   * @author Alex Banks
+   */
+  public Point getGridCoord() {
+    Point p = this.getCopy();
+    p.x = (int) x;
+    p.x = (int) y;
+    return p;
+  }
+
+  /**
+   * produce movement amalgamated into one algorithm to reduce duplicate code
+   *
+   * @param offset distance to move
+   * @param direction direction to move in
+   * @author Alex Banks
+   */
+  public Point moveInDirection(double offset, Direction direction) {
+
+    if (direction == null) {
+      return this;
+    }
+
+    switch (direction) {
+      case UP:
+        increaseY(-offset);
+        break;
+      case DOWN:
+        increaseY(offset);
+        break;
+      case LEFT:
+        increaseX(-offset);
+        break;
+      case RIGHT:
+        increaseX(offset);
+        break;
+    }
+    return this;
   }
 
   /**
@@ -170,16 +214,16 @@ public class Point {
   }
 
   public String toString() {
-    return "[Point] x = "
+    return "[Point] ("
         + x
-        + ", y = "
+        + ","
         + y
-        + ", maxX = "
+        + "), max = ("
         + MAX_X
-        + ", maxY = "
+        + ","
         + MAX_Y
-        + ", mapped = "
-        + mapped;
+        + "), "
+        + (MAPPED ? "mapped" : "unmapped");
   }
 
   /**
@@ -201,10 +245,12 @@ public class Point {
    * @author Alex Banks
    */
   private void mod() {
-    if (mapped) {
+    if (MAPPED) {
       if (MAX_Y <= 0 && MAX_X <= 0) {
-        //            System.err.println("Mapped Point has no MaxX or MaxY");
-        //            System.out.println(toString());
+        System.err.println("You're using a method that could cause Point to go off the map,");
+        System.err.println("but haven't constructed with enough information to stop this.");
+        System.err.println("Please consider using a different constructor.");
+        System.err.println(this.toString());
         return;
       }
       while (this.x < 0) {
@@ -218,24 +264,14 @@ public class Point {
     }
   }
 
-  public String shortString() {
-    return "(" + x + ", " + y + ")";
-  }
 
-  @Override
-  public boolean equals(Object p) {
-    if (p instanceof Point) {
-      return super.equals(p);
-    }
-    else {
-      Point p2 = (Point)p;
-      if (Math.abs(p2.x - this.x) > EQUALITY_THRESHOLD) {
-        return false;
-      }
-      if (Math.abs(p2.y - this.y) > EQUALITY_THRESHOLD) {
-        return false;
-      }
-      return true;
-    }
+  /**
+   * @author Alex Banks
+   * @return true if point is within central hitbox
+   */
+  public boolean isCentered() {
+    double x = abs((this.getX() % 1) - CENTER);
+    double y = abs((this.getY() % 1) - CENTER);
+    return !(x >= CENTER_TOLERANCE || y >= CENTER_TOLERANCE);
   }
 }

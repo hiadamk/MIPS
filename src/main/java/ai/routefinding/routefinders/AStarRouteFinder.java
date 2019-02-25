@@ -44,8 +44,8 @@ public class AStarRouteFinder implements RouteFinder {
   //     */
   @Override
   public Direction getRoute(Point myLocPointDouble, Point targetLocPointDouble) {
-    Point myLocation = Mapping.getGridCoord(myLocPointDouble);
-    Point targetLocation = Mapping.getGridCoord(targetLocPointDouble);
+    Point myLocation = myLocPointDouble.getGridCoord();
+    Point targetLocation = targetLocPointDouble.getGridCoord();
     if (!junctions.contains(myLocation)) {
       Point nearestJunct = Mapping.findNearestJunction(myLocPointDouble, map, junctions);
       return Mapping.directionBetweenPoints(myLocPointDouble, nearestJunct);
@@ -55,7 +55,7 @@ public class AStarRouteFinder implements RouteFinder {
       targetJunction = targetLocation;
     } else {
       targetJunction =
-          Mapping.getGridCoord(Mapping.findNearestJunction(targetLocPointDouble, map, junctions));
+          Mapping.findNearestJunction(targetLocPointDouble, map, junctions).getGridCoord();
     }
     HashMap<Point, AStarData> visited = new HashMap<Point, AStarData>();
     HashMap<Point, AStarData> unVisited = new HashMap<Point, AStarData>();
