@@ -4,6 +4,7 @@ import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
 import utils.Settings;
 import utils.enums.Direction;
+import utils.enums.InputKey;
 
 /**
  * Handles the key input from the keyboard
@@ -12,9 +13,9 @@ import utils.enums.Direction;
  */
 public class KeyController implements EventHandler<KeyEvent> {
 
-  private Direction mapping;
+  private InputKey mapping;
   private Direction activeKey;
-
+  private boolean useItem;
   public KeyController() {
     mapping = null;
     activeKey = null;
@@ -31,14 +32,26 @@ public class KeyController implements EventHandler<KeyEvent> {
       mapping = null;
       return;
     }
-    if (e.getCode() == Settings.getKey(Direction.UP)) {
+    if (e.getCode() == Settings.getKey(InputKey.UP)) {
       activeKey = Direction.UP;
-    } else if (e.getCode() == Settings.getKey(Direction.DOWN)) {
+    } else if (e.getCode() == Settings.getKey(InputKey.DOWN)) {
       activeKey = Direction.DOWN;
-    } else if (e.getCode() == Settings.getKey(Direction.LEFT)) {
+    } else if (e.getCode() == Settings.getKey(InputKey.LEFT)) {
       activeKey = Direction.LEFT;
-    } else if (e.getCode() == Settings.getKey(Direction.RIGHT)) {
+    } else if (e.getCode() == Settings.getKey(InputKey.RIGHT)) {
       activeKey = Direction.RIGHT;
+    } else if (e.getCode() == Settings.getKey(InputKey.USE)) {
+      useItem = true;
     }
   }
+
+  public boolean UseItem() {
+    if (useItem) {
+      useItem = false;
+      return true;
+    }
+    return false;
+  }
+
+
 }

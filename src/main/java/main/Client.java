@@ -274,6 +274,9 @@ public class Client extends Application {
    * Process the players input given in via the keyboard @Author Matthew Jones
    */
   private void processInput() {
+    if (keyController.UseItem()) {
+      // TODO tell the server that the player wants to use their item
+    }
     Direction input = keyController.getActiveKey();
     Direction current = agents[id].getDirection();
     if (input == null || input == current) {
