@@ -1,7 +1,7 @@
 package utils;
 
 import javafx.scene.input.KeyCode;
-import utils.enums.Direction;
+import utils.enums.InputKey;
 
 public class Settings {
 
@@ -9,34 +9,39 @@ public class Settings {
   private static KeyCode down = KeyCode.DOWN;
   private static KeyCode left = KeyCode.LEFT;
   private static KeyCode right = KeyCode.RIGHT;
+  private static KeyCode useItem = KeyCode.SPACE;
 
-  public static KeyCode getKey(Direction c) {
-    switch (c) {
+  public static KeyCode getKey(InputKey key) {
+    switch (key) {
       case UP:
         return up;
       case DOWN:
         return down;
       case LEFT:
         return left;
-      default:
+      case RIGHT:
         return right;
+      default:
+        return useItem;
     }
   }
 
-  public static void setKey(Direction c, KeyCode key) {
-    switch (c) {
+  public static void setKey(InputKey key, KeyCode keyCode) {
+    switch (key) {
       case UP:
-        up = key;
+        up = keyCode;
         break;
       case DOWN:
-        down = key;
+        down = keyCode;
         break;
       case LEFT:
-        left = key;
+        left = keyCode;
         break;
       case RIGHT:
-        right = key;
+        right = keyCode;
         break;
+      default:
+        useItem = keyCode;
     }
     System.err.println("Invalid key to be bound");
   }

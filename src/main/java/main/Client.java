@@ -19,11 +19,11 @@ import objects.Entity;
 import objects.Pellet;
 import renderer.Renderer;
 import server.ClientLobbySession;
-import server.telemeters.DumbTelemetry;
 import server.ServerGameplayHandler;
 import server.ServerLobby;
-import server.telemeters.Telemetry;
+import server.telemeters.DumbTelemetry;
 import server.telemeters.HostTelemetry;
+import server.telemeters.Telemetry;
 import ui.MenuController;
 import utils.Input;
 import utils.Map;
@@ -104,6 +104,7 @@ public class Client extends Application {
     //        audioController.playMusic(Sounds.intro);
     MenuController menuController = new MenuController(audioController, primaryStage, this);
     StackPane root = (StackPane) menuController.createMainMenu();
+    root.getStylesheets().add(getClass().getResource("/ui/stylesheet.css").toExternalForm());
     Scene scene = new Scene(root, xRes, yRes);
     canvas = new Canvas(xRes, yRes);
     Group gameRoot = new Group();
@@ -273,6 +274,9 @@ public class Client extends Application {
    * Process the players input given in via the keyboard @Author Matthew Jones
    */
   private void processInput() {
+    if (keyController.UseItem()) {
+      // TODO tell the server that the player wants to use their item
+    }
     Direction input = keyController.getActiveKey();
     Direction current = agents[id].getDirection();
     if (input == null || input == current) {
