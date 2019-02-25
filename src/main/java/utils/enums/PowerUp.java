@@ -44,7 +44,6 @@ public enum PowerUp {
   public void use(Entity user, ArrayList<PowerUp> activePowerUps) {
     switch (this) {
       case WEB:
-
         break;
       case SPEED:
         user.setVelocity(user.getVelocity() * 1.2);

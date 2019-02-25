@@ -2,11 +2,13 @@ package objects;
 
 import ai.routefinding.RouteFinder;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import javafx.scene.image.Image;
 import utils.Point;
 import utils.Renderable;
 import utils.ResourceLoader;
 import utils.enums.Direction;
+import utils.enums.PowerUp;
 
 /**
  * Encapsulation of agent on map Represents both MIPS and Ghouls, as they are interchangeable. Can
@@ -28,6 +30,7 @@ public class Entity implements Renderable {
   private ArrayList<Image> currentImage;
   private RouteFinder routeFinder;
   private Point lastGridCoord;
+  private LinkedList<PowerUp> items;
   private long timeSinceLastFrame = 0;
   private int currentFrame = 0;
   private static final double MIPS_SPEED = 0.08;
@@ -47,6 +50,7 @@ public class Entity implements Renderable {
     this.score = 0;
     resetVelocity();
     this.direction = Direction.UP;
+    this.items = new LinkedList<PowerUp>();
     // updateImages();
   }
 
@@ -58,6 +62,11 @@ public class Entity implements Renderable {
     return routeFinder;
   }
 
+  public void giveItem(PowerUp powerUp) {
+    if (items.size() <= 2) {
+      items.add(powerUp);
+    }
+  }
   /**
    * @param routeFinder routeFinder for this instance
    * @author Lewis Ackroyd
