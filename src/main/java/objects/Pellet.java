@@ -14,11 +14,12 @@ import utils.enums.Direction;
  */
 public class Pellet implements Renderable {
 
-  private Point location;
-  private ArrayList<Image> currentImage;
-  private final int RESPAWNTIME = 5000;
-  private boolean active; // Weather or not the item is visible and able to be interacted with\
-  private int respawnCount;
+  protected Point location;
+  protected ArrayList<Image> currentImage;
+  protected int respawntime = 5000;
+  protected boolean active; // Weather or not the item is visible and able to be interacted with\
+  protected int value = 1;
+  private int respawnCount = 0;
 
   public Pellet(double x, double y) {
     this.location = new Point(x, y);
@@ -29,6 +30,7 @@ public class Pellet implements Renderable {
     this.location = p;
     active = true;
   }
+
 
   public Point getLocation() {
     return location;
@@ -62,6 +64,13 @@ public class Pellet implements Renderable {
     currentImage = r.getPellet();
   }
 
+  public void interact(Entity entity) {
+    if (!active) {
+      return;
+    }
+    entity.incrementScore(this.value);
+    setActive(false);
+  }
   @Override
   public String toString() {
     String a = active ? "active" : "not active";
@@ -72,7 +81,7 @@ public class Pellet implements Renderable {
     if (!active) {
       respawnCount++;
     }
-    if (respawnCount == RESPAWNTIME) {
+    if (respawnCount == respawntime) {
       this.active = true;
     }
   }
