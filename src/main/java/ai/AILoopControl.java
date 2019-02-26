@@ -1,11 +1,13 @@
 package ai;
 
+import ai.mapping.JunctionSet;
 import ai.mapping.Mapping;
 import ai.routefinding.RouteFinder;
 import ai.routefinding.routefinders.MipsManRouteFinder;
 import ai.routefinding.routefinders.RandomRouteFinder;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import objects.Entity;
 import utils.Input;
@@ -21,9 +23,11 @@ import utils.enums.Direction;
  */
 public class AILoopControl extends Thread {
 
+  private static final boolean DEBUG = false;
+
   private static final long SLEEP_TIME = 1;
   private final Entity[] controlAgents;
-  private final HashSet<Point> junctions;
+  private final JunctionSet junctions;
   private final HashMap<Point, HashSet<Point>> edges;
   private final BlockingQueue<Input> directionsOut;
   private final Map map;
@@ -164,7 +168,9 @@ public class AILoopControl extends Thread {
   @Override
   public void run() {
     System.out.println("Starting AI loop...");
-    for (Point p : junctions) {
+    Iterator<Point> iterator = junctions.iterator();
+    while (iterator.hasNext()&&DEBUG) {
+      Point p = iterator.next();
       System.out.println("j " + p.toString());
     }
 
@@ -173,7 +179,9 @@ public class AILoopControl extends Thread {
         Point currentLocation = ent.getLocation().getCopy();
         Point currentGridLocation = currentLocation.getGridCoord();
         if (currentLocation.isCentered()) {
-          System.out.println(currentGridLocation.toString());
+          if (DEBUG) {
+            System.out.println(currentGridLocation.toString());
+          }
           if (junctions.contains(currentGridLocation)) {
             System.err.println("HIT");
           }
@@ -247,10 +255,12 @@ public class AILoopControl extends Thread {
       }
 
       if (allTried) {
-        System.err.println("ALL DIRECTIONS TRIED");
-        System.err.println(ent.getClientId());
-        System.err.println(currentLocation);
-        System.err.println(ent.getLocation());
+        if (DEBUG) {
+          System.err.println("ALL DIRECTIONS TRIED");
+          System.err.println(ent.getClientId());
+          System.err.println(currentLocation);
+          System.err.println(ent.getLocation());
+        }
         return null;
       }
     }

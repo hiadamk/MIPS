@@ -1,5 +1,6 @@
 package ai.routefinding.routefinders;
 
+import ai.mapping.JunctionSet;
 import ai.mapping.Mapping;
 import ai.routefinding.AStarData;
 import ai.routefinding.RouteFinder;
@@ -16,14 +17,14 @@ import utils.enums.Direction;
  */
 public class AStarRouteFinder implements RouteFinder {
 
-  private final HashSet<Point> junctions;
+  private final JunctionSet junctions;
   private final HashMap<Point, HashSet<Point>> edges;
   private final Map map;
 
   /**
    * Creates an instance of this routeFinder.
    */
-  public AStarRouteFinder(HashSet<Point> junctions, HashMap<Point, HashSet<Point>> edges, Map map) {
+  public AStarRouteFinder(JunctionSet junctions, HashMap<Point, HashSet<Point>> edges, Map map) {
     this.junctions = junctions;
     this.edges = edges;
     this.map = map;
