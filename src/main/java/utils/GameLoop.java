@@ -3,9 +3,11 @@ package utils;
 public abstract class GameLoop extends Thread {
 
   long gameSpeed;
+  private boolean running;
 
   public GameLoop(long gameSpeed) {
     this.gameSpeed = gameSpeed;
+    running = true;
   }
 
   @Override
@@ -13,7 +15,7 @@ public abstract class GameLoop extends Thread {
     long currentSleepTime = 0;
     long currentTime = System.nanoTime();
     long newTime = System.nanoTime();
-    while (true) {
+    while (running) {
 
       this.handle();
       while (currentSleepTime < gameSpeed) {
@@ -32,5 +34,8 @@ public abstract class GameLoop extends Thread {
     }
   }
 
+  public void close(){
+    running = false;
+  }
   public abstract void handle();
 }

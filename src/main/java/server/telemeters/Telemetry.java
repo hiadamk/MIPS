@@ -31,6 +31,8 @@ public abstract class Telemetry {
 
   abstract void processInputs();
 
+  public abstract void stopGame();
+
   // basic get/set methods
 
   public Entity[] getAgents() {

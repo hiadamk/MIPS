@@ -183,10 +183,8 @@ public class ServerLobby {
 
   /** Stops the game for clients. */
   public void gameStop() {
-    if (gameStarted) {
-      outputQueue.add(NetworkUtility.STOP_CODE);
-      // TODO close server side objects and stuff
-    }
+    s.close();
+
   }
 
   public int getPlayerCount() {
