@@ -24,6 +24,11 @@ public class PowerUpBox extends Pellet {
     this.value = 0;
   }
 
+  /**
+   * Gets a random PowerUp
+   *
+   * @return the PowerUp
+   */
   public PowerUp getPowerUp() {
     Random r = new Random();
     int i = r.nextInt(powerUps.length - 1);

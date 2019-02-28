@@ -77,6 +77,9 @@ public class Pellet implements Renderable {
     return "x = " + location.getX() + " y= " + location.getY() + " active = " + a;
   }
 
+  /**
+   * Called every physics update to increment the counter for respawn
+   */
   public void incrementRespawn() {
     if (!active) {
       respawnCount++;
