@@ -23,6 +23,7 @@ public class HostTelemetry extends Telemetry {
   private boolean singlePlayer;
   private AILoopControl ai;
   private boolean aiRunning;
+  private GameLoop inputProcessor;
 
   public HostTelemetry(
       Map map,
@@ -89,14 +90,15 @@ public class HostTelemetry extends Telemetry {
     final long DELAY = (long) Math.pow(10, 7);
     final long positionDELAY = (long) Math.pow(10, 8);
 
-    new GameLoop(DELAY) {
+    inputProcessor = new GameLoop(DELAY) {
       @Override
       public void handle() {
         processInputs();
 
         processPhysics(agents, map, resourceLoader, pellets);
       }
-    }.start();
+    };
+    inputProcessor.start();
 
     new GameLoop(positionDELAY) {
       @Override
@@ -144,6 +146,13 @@ public class HostTelemetry extends Telemetry {
       }
     }
     return 0;
+  }
+
+
+  @Override
+  public void stopGame() {
+    outputs.add(NetworkUtility.STOP_CODE);
+    inputProcessor.close();
   }
 
   private void updateClients(Entity[] agents) {

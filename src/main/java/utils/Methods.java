@@ -57,9 +57,7 @@ public class Methods {
    * @author Alex Banks, Matty Jones
    */
   public static boolean validateDirection(Direction d, Point p, Map m) {
-
-    Point gridPoint = Mapping.getGridCoord(p).centralise();
-    Point movedPoint = gridPoint.getCopy().moveInDirection(1, d);
+    Point movedPoint = p.getCopy().moveInDirection(1, d);
     return !m.isWall(movedPoint) && p.isCentered();
   }
 
@@ -94,6 +92,7 @@ public class Methods {
   /**
    * true modulo instead of %
    *
+   * @deprecated only used in depreciated methods so can be yeet
    * @param dividend dividend
    * @param divisor divisor
    * @return dividend mod divisor

@@ -28,6 +28,7 @@ public class ClientGameplayHandler {
   private ArrayList<InetAddress> serverIP;
 
   private int counter = 0;
+  private boolean running = true;
 
   // clientIn gets recievedStrings
   public ClientGameplayHandler(
@@ -60,7 +61,7 @@ public class ClientGameplayHandler {
         new Thread() {
           public void run() {
             Input key;
-            while (!isInterrupted()) {
+            while (!isInterrupted() && running) {
               try {
                 key = keypressQueue.take();
                 // sends inputs as strings, which are converted back by ServerGameplay handler
@@ -79,7 +80,7 @@ public class ClientGameplayHandler {
     this.incomingPacketManager =
         new Thread() {
           public void run() {
-            while (!isInterrupted()) {
+            while (!isInterrupted() && running) {
               try {
                 if (incomingQueue.isEmpty()) {
                   continue;
@@ -95,10 +96,7 @@ public class ClientGameplayHandler {
                   System.out.println("Got instruction from server");
                 } else if (data.startsWith(NetworkUtility.STOP_CODE)) {
                   clientIn.add(data);
-                  receiver.shutdown();
-                  sender.shutdown();
-                  outgoingPacketManager.interrupt();
-                  incomingPacketManager.interrupt();
+                  close();
                 } else {
                   throw new Exception();
                 }
@@ -111,4 +109,10 @@ public class ClientGameplayHandler {
           }
         };
   }
+  private void close(){
+    receiver.shutdown();
+    sender.shutdown();
+    running = false;
+  }
+
 }

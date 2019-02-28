@@ -8,12 +8,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-
 import javax.imageio.ImageIO;
-
 import utils.enums.MapElement;
 import utils.enums.RenderingMode;
 
@@ -482,7 +479,6 @@ public class ResourceLoader {
         if (newPaletteRow == oldPaletteRow) {
             return sprite;
         }
-        System.out.println("black:" + sprite.getRGB(3, 20));
         for (int i = 0; i < palette.getWidth(); i++) {
             // iterate through every pixel of sprite
             for (int x = 0; x < sprite.getWidth(); x++) {

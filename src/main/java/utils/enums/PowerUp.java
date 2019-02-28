@@ -19,6 +19,12 @@ public enum PowerUp {
   private int counter;
   private Point location;
 
+  private Boolean onMap;
+
+  public Boolean getOnMap() {
+    return onMap;
+  }
+
   PowerUp(int effectTime) {
     EFFECTTIME = effectTime;
     location = null;
@@ -44,7 +50,9 @@ public enum PowerUp {
   public void use(Entity user, ArrayList<PowerUp> activePowerUps) {
     switch (this) {
       case WEB:
-
+        this.onMap = true;
+        location = user.getMoveInDirection(0.5, user.getDirection().getInverse());
+        activePowerUps.add(this);
         break;
       case SPEED:
         user.setVelocity(user.getVelocity() * 1.2);

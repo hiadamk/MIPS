@@ -16,6 +16,7 @@ public class DumbTelemetry extends Telemetry {
   private BlockingQueue<String> inputs;
   private Entity[] agents;
   private Queue<Input> clientQueue;
+  private GameLoop inputProcessor;
 
   // dumb telemetry is like telemetry but it relies on information from the server to set it's
   // entites
@@ -41,13 +42,14 @@ public class DumbTelemetry extends Telemetry {
 
   void startGame() {
     final long DELAY = (long) Math.pow(10, 7);
-    new GameLoop(DELAY) {
+    inputProcessor = new GameLoop(DELAY) {
       @Override
       public void handle() {
         processInputs();
         processPhysics(agents, map, resourceLoader, pellets);
       }
-    }.start();
+    };
+    inputProcessor.start();
   }
 
   void processInputs() {
@@ -64,13 +66,22 @@ public class DumbTelemetry extends Telemetry {
           setEntityPositions(input.substring(4));
           break;
         case NetworkUtility.STOP_CODE:
+          stopGame();
           break;
-        // TODO - add code for game end procedures down the game on the server end
         default:
           throw new IllegalArgumentException();
       }
     }
   }
+
+  @Override
+  public void stopGame() {
+    inputProcessor.close();
+    //TODO render stop screen. I imagine somehow the message the game has stopped must be recieved by the client
+    // but currently, telemetry is what gets the signal, so DumbTelemetry must somehow communicate to the client
+    // that the game is over.
+  }
+
 
   // takes a packet string as defined in
   // NetworkUtility.makeEntitiesPositionPacket(Entity[])

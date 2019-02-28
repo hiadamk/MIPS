@@ -319,13 +319,11 @@ public class Client extends Application {
   // communicates to slients
   private void stopMultiplayerGame() {
     if (isHost) {
+      telemetry.stopGame();
       server.gameStop();
-      // add some stuff that stops rendering the game?
+      //TODO render the end of game screen
     }
     // TODO add options in future for client to quit a game
   }
 
-  //    private void render() {
-  //        renderer.render(map, agents);
-  //    }
 }

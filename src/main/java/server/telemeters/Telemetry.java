@@ -31,6 +31,8 @@ public abstract class Telemetry {
 
   abstract void processInputs();
 
+  public abstract void stopGame();
+
   // basic get/set methods
 
   public Entity[] getAgents() {
@@ -165,9 +167,8 @@ public abstract class Telemetry {
       int x = (int) p.getX();
       int y = (int) p.getY();
       Pellet pellet = pellets.get(x + "," + y);
-      if (pellet != null && pellet.isActive()) {
-        pellet.setActive(false);
-        agent.incrementScore();
+      if (pellet != null) {
+        pellet.interact(agent);
       }
     }
   }
