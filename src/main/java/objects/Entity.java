@@ -197,7 +197,7 @@ public class Entity implements Renderable {
   }
 
   /**
-   * @author Tim Cheung
+   * @author Matthew Jones
    * @return current score
    */
   public int getScore() {
@@ -205,7 +205,7 @@ public class Entity implements Renderable {
   }
 
   /**
-   * @author Tim Cheung
+   * @author Matthew Jones
    * @param score new score
    */
   public void setScore(int score) {
@@ -216,7 +216,7 @@ public class Entity implements Renderable {
    * increase score dependent on i
    *
    * @param i if empty: increase by 1, otherwise: increase by i[0]. Will ignore rest of array
-   * @author Tim Cheung
+   * @author Matthew Jones
    */
   public void incrementScore(int... i) {
     if (i.length > 0) {
