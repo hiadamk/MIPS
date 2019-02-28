@@ -52,6 +52,8 @@ public enum PowerUp {
       case WEB:
         this.onMap = true;
         location = user.getMoveInDirection(0.5, user.getDirection().getInverse());
+        activePowerUps.add(this);
+        break;
       case SPEED:
         user.setVelocity(user.getVelocity() * 1.2);
         activePowerUps.add(this);

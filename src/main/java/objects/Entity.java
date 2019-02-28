@@ -62,6 +62,14 @@ public class Entity implements Renderable {
     return routeFinder;
   }
 
+  public LinkedList<PowerUp> getItems() {
+    return items;
+  }
+
+  public PowerUp getFirstItem() {
+    return items.pop();
+  }
+
   public void giveItem(PowerUp powerUp) {
     if (items.size() <= 2) {
       items.add(powerUp);
