@@ -95,7 +95,7 @@ public class HostTelemetry extends Telemetry {
       public void handle() {
         processInputs();
 
-        processPhysics(agents, map, resourceLoader, pellets);
+        processPhysics(agents, map, resourceLoader, pellets, activePowerUps);
       }
     };
     inputProcessor.start();

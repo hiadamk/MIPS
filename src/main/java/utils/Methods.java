@@ -89,6 +89,16 @@ public class Methods {
     return true;
   }
 
+  public static int findWinner(Entity[] agents) {
+    int winner = 0;
+    int maxScore = 0;
+    for (Entity e : agents) {
+      if (e.getScore() > maxScore) {
+        winner = e.getClientId();
+      }
+    }
+    return winner;
+  }
   /**
    * true modulo instead of %
    *

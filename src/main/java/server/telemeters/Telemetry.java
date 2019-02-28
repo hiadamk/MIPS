@@ -1,5 +1,6 @@
 package server.telemeters;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import objects.Entity;
 import objects.Pellet;
@@ -9,6 +10,7 @@ import utils.Methods;
 import utils.Point;
 import utils.ResourceLoader;
 import utils.enums.Direction;
+import utils.enums.PowerUp;
 
 /**
  * Parent class for DumbTelemetry and HostTelemetry
@@ -16,11 +18,13 @@ import utils.enums.Direction;
 public abstract class Telemetry {
 
   static final int AGENT_COUNT = 5;
+  static final int GAME_TIME = 30 * 100; //Number of seconds *100
+  static int gameTimer = 0;
   Map map;
   Entity[] agents;
   HashMap<String, Pellet> pellets;
   ResourceLoader resourceLoader;
-
+  ArrayList<PowerUp> activePowerUps = new ArrayList<>();
   // abstract methods
 
   abstract void startAI();
@@ -88,7 +92,8 @@ public abstract class Telemetry {
    * @see this#detectEntityCollision(Entity, Entity, ResourceLoader)
    */
   static void processPhysics(
-      Entity[] agents, Map m, ResourceLoader resourceLoader, HashMap<String, Pellet> pellets) {
+      Entity[] agents, Map m, ResourceLoader resourceLoader, HashMap<String, Pellet> pellets,
+      ArrayList<PowerUp> activePowerUps) {
 
     for (int i = 0; i < AGENT_COUNT; i++) {
       if (agents[i].getDirection() != null) {
@@ -122,6 +127,27 @@ public abstract class Telemetry {
     pelletCollision(agents, pellets);
     for (Pellet p : pellets.values()) {
       p.incrementRespawn();
+    }
+    for (PowerUp p : activePowerUps) {
+      if (p.incrementTime()) {
+        activePowerUps.remove(p);
+      }
+    }
+    gameTimer++;
+    if (gameTimer == GAME_TIME) {
+      System.out.println("GAME HAS ENDED ITS OVER");
+      System.out.println("GAME HAS ENDED ITS OVER");
+      System.out.println("GAME HAS ENDED ITS OVER");
+      System.out.println("GAME HAS ENDED ITS OVER");
+      System.out.println("GAME HAS ENDED ITS OVER");
+      System.out.println("GAME HAS ENDED ITS OVER");
+      System.out.println("GAME HAS ENDED ITS OVER");
+      System.out.println("GAME HAS ENDED ITS OVER");
+      int winner = Methods.findWinner(agents);
+      System.out.println("Player " + winner + " won the game");
+      System.out.println("Player " + winner + " won the game");
+      System.out.println("Player " + winner + " won the game");
+      System.out.println("Player " + winner + " won the game");
     }
   }
 
