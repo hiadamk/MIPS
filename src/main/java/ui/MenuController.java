@@ -2,6 +2,9 @@ package ui;
 
 import audio.AudioController;
 import audio.Sounds;
+import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXTabPane;
+import com.jfoenix.controls.JFXToggleButton;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,7 +20,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SingleSelectionModel;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -176,6 +182,24 @@ public class MenuController {
     for (Node item : itemsOnScreen) {
       item.setVisible(true);
     }
+  }
+
+  private void alignComboText(JFXComboBox comboBox) {
+    comboBox.setCellFactory(lv -> new ListCell<String>() {
+
+      @Override
+      protected void updateItem(String item, boolean empty) {
+        super.updateItem(item, empty);
+
+        setStyle("-fx-alignment: center");
+
+        if (item != null && !empty) {
+          setText(item);
+        } else {
+          setText(null);
+        }
+      }
+    });
   }
 
   /**
@@ -397,27 +421,7 @@ public class MenuController {
     root.getChildren().add(volumeImg);
     volumeImg.setFitWidth(250);
 
-    incrView = new ImageView(new Image("ui/increaseVolume.png"));
-    incrVolumeBtn = buttonGenerator.generate(false, root, incrView);
-    StackPane.setAlignment(incrVolumeBtn, Pos.CENTER_LEFT);
-    StackPane.setMargin(incrVolumeBtn, new Insets(530, 0, 0, 250));
-    incrView.setFitWidth(50);
-    incrVolumeBtn.setOnAction(
-        event -> {
-          audioController.playSound(Sounds.click);
-          audioController.increaseVolume();
-        });
 
-    decrView = new ImageView("ui/decreaseVolume.png");
-    decrVolumeBtn = buttonGenerator.generate(false, root, decrView);
-    StackPane.setAlignment(decrVolumeBtn, Pos.CENTER_LEFT);
-    StackPane.setMargin(decrVolumeBtn, new Insets(530, 0, 0, 150));
-    decrView.setFitWidth(50);
-    decrVolumeBtn.setOnAction(
-        event -> {
-          audioController.playSound(Sounds.click);
-          audioController.decreaseVolume();
-        });
 
     creditsView = new ImageView("ui/Credits.png");
     creditsBtn = buttonGenerator.generate(false, root, creditsView);
@@ -548,6 +552,140 @@ public class MenuController {
           System.exit(0);
         });
 
+    //Creating the settings tab pane
+    JFXTabPane settingsTabs = new JFXTabPane();
+    settingsTabs.getStyleClass().add("floating");
+    settingsTabs.setMaxWidth(850);
+    settingsTabs.setMaxHeight(600);
+    settingsTabs.setVisible(false);
+
+    //Creating the sound tab
+    Tab soundTab = new Tab();
+    soundTab.setText("Sound");
+
+    StackPane soundTabLayout = new StackPane();
+
+    Label musicLbl = new Label("Music:");
+    musicLbl.setStyle(" -fx-font-size: 18pt ;");
+    JFXToggleButton musicToggle = new JFXToggleButton();
+
+    StackPane.setAlignment(musicLbl, Pos.TOP_CENTER);
+    StackPane.setMargin(musicLbl, new Insets(150, 200, 0, 0));
+
+    StackPane.setAlignment(musicToggle, Pos.TOP_CENTER);
+    StackPane.setMargin(musicToggle, new Insets(128, 0, 0, 200));
+
+    Label soundFXLbl = new Label("SoundFX:");
+    soundFXLbl.setStyle(" -fx-font-size: 18pt ;");
+    JFXToggleButton soundFXToggle = new JFXToggleButton();
+
+    StackPane.setAlignment(soundFXLbl, Pos.CENTER);
+    StackPane.setMargin(soundFXLbl, new Insets(0, 200, 0, 0));
+
+    StackPane.setAlignment(soundFXToggle, Pos.CENTER);
+    StackPane.setMargin(soundFXToggle, new Insets(0, 0, 0, 200));
+
+    Label volumeLbl = new Label("Volume:");
+    volumeLbl.setStyle(" -fx-font-size: 18pt ;");
+
+    incrView = new ImageView(new Image("ui/increaseVolume.png"));
+    incrVolumeBtn = buttonGenerator.generate(true, soundTabLayout, incrView);
+    incrView.setFitWidth(50);
+    incrVolumeBtn.setOnAction(
+        event -> {
+          audioController.playSound(Sounds.click);
+          audioController.increaseVolume();
+        });
+
+    decrView = new ImageView("ui/decreaseVolume.png");
+    decrVolumeBtn = buttonGenerator.generate(true, soundTabLayout, decrView);
+    decrView.setFitWidth(50);
+    decrVolumeBtn.setOnAction(
+        event -> {
+          audioController.playSound(Sounds.click);
+          audioController.decreaseVolume();
+        });
+
+    StackPane.setAlignment(volumeLbl, Pos.BOTTOM_CENTER);
+    StackPane.setMargin(volumeLbl, new Insets(0, 200, 150, 0));
+
+    StackPane.setAlignment(decrVolumeBtn, Pos.BOTTOM_CENTER);
+    StackPane.setMargin(decrVolumeBtn, new Insets(0, 0, 165, 200));
+
+    StackPane.setAlignment(incrVolumeBtn, Pos.BOTTOM_CENTER);
+    StackPane.setMargin(incrVolumeBtn, new Insets(0, 0, 160, 400));
+
+    soundTabLayout.getChildren()
+        .addAll(musicLbl, musicToggle, soundFXLbl, soundFXToggle, volumeLbl);
+    soundTab.setContent(soundTabLayout);
+
+    //Creates the tab for graphics
+    Tab graphicsTab = new Tab();
+    graphicsTab.setText("Graphics");
+    StackPane graphicsTabLayout = new StackPane();
+
+    //Adding resolution label and combo box
+    Label resolutionLbl = new Label("Resolution: ");
+    resolutionLbl.setStyle(" -fx-font-size: 14pt ;");
+
+    JFXComboBox<String> resolutionCombo = new JFXComboBox<>();
+    resolutionCombo.getItems().add("1366x768");
+    resolutionCombo.getItems().add("1920x1080");
+    resolutionCombo.getItems().add("2560x1440");
+    resolutionCombo.setEditable(false);
+    resolutionCombo.setPromptText("Select a resolution");
+
+    // Provide our own ListCells for the ComboBox
+    alignComboText(resolutionCombo);
+
+    StackPane.setAlignment(resolutionLbl, Pos.CENTER);
+    StackPane.setAlignment(resolutionCombo, Pos.CENTER);
+
+    StackPane.setMargin(resolutionLbl, new Insets(0, 300, 200, 0));
+    StackPane.setMargin(resolutionCombo, new Insets(0, 0, 200, 300));
+
+    //Adding resolution label and combo box
+    Label scalingLbl = new Label("Resolution Scaling: ");
+    scalingLbl.setStyle(" -fx-font-size: 14pt ;");
+
+    JFXComboBox<String> scalingCombo = new JFXComboBox<>();
+    scalingCombo.getItems().add("None");
+    scalingCombo.getItems().add("Standard");
+    scalingCombo.getItems().add("Smooth");
+    scalingCombo.getItems().add("Smooth");
+    scalingCombo.setEditable(false);
+    scalingCombo.setPromptText("Select a resolution");
+
+    // Provide our own ListCells for the ComboBox
+    alignComboText(scalingCombo);
+
+    StackPane.setAlignment(scalingLbl, Pos.CENTER);
+    StackPane.setAlignment(scalingCombo, Pos.CENTER);
+
+    StackPane.setMargin(scalingLbl, new Insets(200, 400, 200, 0));
+    StackPane.setMargin(scalingCombo, new Insets(200, 0, 200, 300));
+
+    graphicsTabLayout.getChildren()
+        .addAll(resolutionLbl, resolutionCombo, scalingLbl, scalingCombo);
+    graphicsTab.setContent(graphicsTabLayout);
+
+    //Creates the tab for graphics
+    Tab controlsTab = new Tab();
+    controlsTab.setText("Controls");
+
+    //Adds the tabs to the tab pane
+    settingsTabs.getTabs().addAll(soundTab, graphicsTab, controlsTab);
+
+    //Calculates the width of the tabs
+    double tabWidth = settingsTabs.getMaxWidth() / settingsTabs.getTabs().size();
+    settingsTabs.setTabMinWidth(tabWidth - 5);
+    settingsTabs.setTabMaxWidth(tabWidth - 5);
+
+    SingleSelectionModel<Tab> selectionModel = settingsTabs.getSelectionModel();
+    selectionModel.select(0);
+
+    root.getChildren().addAll(settingsTabs);
+
     settingsView = new ImageView("ui/settings.png");
     settingsBtn = buttonGenerator.generate(true, root, settingsView);
     StackPane.setAlignment(settingsBtn, Pos.TOP_LEFT);
@@ -558,34 +696,40 @@ public class MenuController {
         event -> {
           audioController.playSound(Sounds.click);
           if (!viewSettings) {
-            musicBtn.setVisible(true);
-            soundFxBtn.setVisible(true);
-            creditsBtn.setVisible(true);
-            volumeImg.setVisible(true);
-            resolutionOptions.setVisible(true);
+//            musicBtn.setVisible(true);
+//            soundFxBtn.setVisible(true);
+//            creditsBtn.setVisible(true);
+//            volumeImg.setVisible(true);
+//            resolutionOptions.setVisible(true);
             viewSettings = true;
-            incrVolumeBtn.setVisible(true);
-            decrVolumeBtn.setVisible(true);
+//            incrVolumeBtn.setVisible(true);
+//            decrVolumeBtn.setVisible(true);
+            logo.setVisible(false);
+            quitBtn.setVisible(false);
             hideItemsOnScreen();
             backBtn.setVisible(false);
-            standardScalingBtn.setVisible(true);
-            noScalingBtn.setVisible(true);
-            integerScalingBtn.setVisible(true);
-            smoothScalingBtn.setVisible(true);
+//            standardScalingBtn.setVisible(true);
+//            noScalingBtn.setVisible(true);
+//            integerScalingBtn.setVisible(true);
+//            smoothScalingBtn.setVisible(true);
+            settingsTabs.setVisible(true);
 
           } else {
-            musicBtn.setVisible(false);
-            soundFxBtn.setVisible(false);
+//            musicBtn.setVisible(false);
+//            soundFxBtn.setVisible(false);
             viewSettings = false;
-            creditsBtn.setVisible(false);
-            resolutionOptions.setVisible(false);
-            volumeImg.setVisible(false);
-            incrVolumeBtn.setVisible(false);
-            decrVolumeBtn.setVisible(false);
-            standardScalingBtn.setVisible(false);
-            noScalingBtn.setVisible(false);
-            integerScalingBtn.setVisible(false);
-            smoothScalingBtn.setVisible(false);
+            logo.setVisible(true);
+            quitBtn.setVisible(true);
+//            creditsBtn.setVisible(false);
+//            resolutionOptions.setVisible(false);
+//            volumeImg.setVisible(false);
+//            incrVolumeBtn.setVisible(false);
+//            decrVolumeBtn.setVisible(false);
+//            standardScalingBtn.setVisible(false);
+//            noScalingBtn.setVisible(false);
+//            integerScalingBtn.setVisible(false);
+//            smoothScalingBtn.setVisible(false);
+            settingsTabs.setVisible(false);
             showItemsOnScreen();
             if (!isHome) {
               backBtn.setVisible(true);
