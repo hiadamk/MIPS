@@ -22,6 +22,7 @@ public class ServerGameplayHandler {
   private ArrayList<InetAddress> ipStore;
 
   private int playerCount;
+  private boolean running = true;
 
   public ServerGameplayHandler(
       ArrayList<InetAddress> ips,
@@ -36,7 +37,6 @@ public class ServerGameplayHandler {
     this.playerCount = numPlayers;
     initialisePacketManagers();
 
-    // outgoingQueue.add("POS"); //why
     this.ipStore = ips;
     this.sender = new PacketSender(NetworkUtility.CLIENT_DGRAM_PORT, this.outgoingQueue, ipStore);
     this.receiver = new PacketReceiver(NetworkUtility.SERVER_DGRAM_PORT, this.incomingQueue);
@@ -53,7 +53,7 @@ public class ServerGameplayHandler {
     this.incomingPacketManager =
         new Thread() {
           public void run() {
-            while (!isInterrupted()) {
+            while (!isInterrupted() && running) {
               if (incomingQueue.isEmpty()) {
                 continue;
               }
@@ -69,4 +69,12 @@ public class ServerGameplayHandler {
           }
         };
   }
+
+  public void close(){
+    receiver.shutdown();
+    sender.shutdown();
+    running = false; //shuts down incoming packet manager
+  }
 }
+
+
