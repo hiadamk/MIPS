@@ -178,7 +178,7 @@ public abstract class Mapping {
     return edgeMap;
   }
 
-    public static HashMap<Point, HashSet<Point>> getEdges(Map map, JunctionSet junctions) {
+  public static HashMap<Point, HashSet<Point>> getEdges(Map map, JunctionSet junctions) {
         HashMap<Point, HashSet<Point>> edgeMap = new HashMap<Point, HashSet<Point>>();
         // generates links for every junction
         Iterator<Point> iterator = junctions.iterator();
@@ -232,8 +232,7 @@ public abstract class Mapping {
             edgeMap.put(p, edgeSet);
         }
         return edgeMap;
-    }
-
+  }
 
   public static Direction directionBetweenPoints(Point start, Point target) {
     if (start.getX() == target.getX()) {

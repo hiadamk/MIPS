@@ -11,6 +11,7 @@ import utils.enums.Direction;
  */
 public class Point {
 
+  private final double EQUALITY_TOLERANCE = 0.001;
   private final double CENTER_TOLERANCE = 0.1;
   private final double CENTER = 0.5;
   private final int MAX_X;
@@ -167,7 +168,7 @@ public class Point {
   public Point getGridCoord() {
     Point p = this.getCopy();
     p.x = (int) x;
-    p.x = (int) y;
+    p.y = (int) y;
     return p;
   }
 
@@ -273,5 +274,19 @@ public class Point {
     double x = abs((this.getX() % 1) - CENTER);
     double y = abs((this.getY() % 1) - CENTER);
     return !(x >= CENTER_TOLERANCE || y >= CENTER_TOLERANCE);
+  }
+
+  /**
+   * @author Lewis Ackroyd
+   * @param object The object being tested for equality.
+   * @return If the {@link Object} cannot be cast to a {@link Point} then false. Otherwise if both x and y of both this and the given {@link Point} are within {@link #EQUALITY_TOLERANCE} of each other.
+   * */
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof Point)) {
+      return false;
+    }
+    Point point = (Point) object;
+    return (abs(this.x-point.x)<EQUALITY_TOLERANCE&&abs(this.y-point.y)<EQUALITY_TOLERANCE);
   }
 }
