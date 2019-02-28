@@ -131,7 +131,7 @@ public class Client extends Application {
     map = resourceLoader.getMap();
 
     incomingQueue = new LinkedBlockingQueue<>();
-    this.telemetry = new HostTelemetry(map, incomingQueue, resourceLoader);
+	  this.telemetry = new HostTelemetry(map, incomingQueue, resourceLoader, this);
     this.primaryStage.setScene(gameScene);
     this.id = 0;
 
@@ -163,7 +163,7 @@ public class Client extends Application {
     try {
 
       clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this, name);
-      this.telemetry = new DumbTelemetry(map, clientIn, resourceLoader);
+	    this.telemetry = new DumbTelemetry(map, clientIn, resourceLoader, this);
       this.telemetry.setMipID(MIPID);
       System.out.println("MIP ID: " + MIPID);
       // waits for game to start
@@ -194,7 +194,8 @@ public class Client extends Application {
       System.out.println("PLAYER COUNT IS: " + playerCount);
       map = resourceLoader.getMap();
       this.telemetry =
-          new HostTelemetry(this.map, playerCount, inputQueue, outputQueue, this.resourceLoader);
+		      new HostTelemetry(this.map, playerCount, inputQueue, outputQueue, this.resourceLoader,
+				      this);
       this.telemetry.setMipID(MIPID);
       System.out.println("MIP ID: " + MIPID);
       map = resourceLoader.getMap();
@@ -326,4 +327,7 @@ public class Client extends Application {
     // TODO add options in future for client to quit a game
   }
 
+	public void collisionDetected(Entity newMipsman) {
+		renderer.renderCollisionAnimation(newMipsman);
+	}
 }

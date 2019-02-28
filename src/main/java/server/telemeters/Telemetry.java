@@ -1,6 +1,7 @@
 package server.telemeters;
 
 import java.util.HashMap;
+import main.Client;
 import objects.Entity;
 import objects.Pellet;
 import utils.Input;
@@ -20,6 +21,11 @@ public abstract class Telemetry {
   Entity[] agents;
   HashMap<String, Pellet> pellets;
   ResourceLoader resourceLoader;
+  static Client client;
+
+  Telemetry(Client client) {
+    this.client = client;
+  }
 
   // abstract methods
 
@@ -138,7 +144,7 @@ public abstract class Telemetry {
     Point ghoulFace = ghoul.getFaceLocation();
 
     if (mipsmanCenter.inRange(ghoulFace)) {
-
+      client.collisionDetected(ghoul);
       mipsman.setMipsman(false);
       ghoul.setMipsman(true);
       mipsman.setLocation(resourceLoader.getMap().getRandomSpawnPoint());

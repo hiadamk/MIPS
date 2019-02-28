@@ -5,6 +5,7 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import main.Client;
 import objects.Entity;
 import server.NetworkUtility;
 import utils.GameLoop;
@@ -25,12 +26,9 @@ public class HostTelemetry extends Telemetry {
   private boolean aiRunning;
   private GameLoop inputProcessor;
 
-  public HostTelemetry(
-      Map map,
-      int playerCount,
-      Queue<Input> inputQueue,
-      Queue<String> outputQueue,
-      ResourceLoader resourceLoader) {
+  public HostTelemetry(Map map, int playerCount, Queue<Input> inputQueue, Queue<String> outputQueue,
+      ResourceLoader resourceLoader, Client client) {
+    super(client);
     this.map = map;
     inputs = (BlockingQueue<Input>) inputQueue;
     outputs = (BlockingQueue<String>) outputQueue;
@@ -41,7 +39,9 @@ public class HostTelemetry extends Telemetry {
     startGame();
   }
 
-  public HostTelemetry(Map map, Queue<Input> clientQueue, ResourceLoader resourceLoader) {
+  public HostTelemetry(Map map, Queue<Input> clientQueue, ResourceLoader resourceLoader,
+      Client client) {
+    super(client);
     this.map = map;
     inputs = (BlockingQueue<Input>) clientQueue;
     outputs = new LinkedBlockingQueue<>();
