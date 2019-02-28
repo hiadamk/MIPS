@@ -58,20 +58,6 @@ public class Map {
   }
 
   /**
-   * @see Point#Point(double, double, Map)
-   * @see Point#Point(double, double, int, int)
-   * @see Point#getCopy()
-   * @deprecated
-   */
-  public boolean withinBounds(Point point) {
-    boolean x = point.getX() >= 0 && point.getX() < MAX_X;
-    boolean y = point.getY() >= 0 && point.getY() < MAX_Y;
-
-    //System.err.println("Deprecated, use Point that mods automatically");
-    return x && y;
-  }
-
-  /**
    * calculates if point is out of bounds
    *
    * @param point location to be checked, assumed to be in range

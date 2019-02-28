@@ -1,5 +1,6 @@
 package ai.routefinding.routefinders;
 
+import ai.mapping.JunctionSet;
 import ai.mapping.Mapping;
 import ai.routefinding.AStarData;
 import ai.routefinding.RouteFinder;
@@ -16,14 +17,14 @@ import utils.enums.Direction;
  */
 public class AStarRouteFinder implements RouteFinder {
 
-  private final HashSet<Point> junctions;
+  private final JunctionSet junctions;
   private final HashMap<Point, HashSet<Point>> edges;
   private final Map map;
 
   /**
    * Creates an instance of this routeFinder.
    */
-  public AStarRouteFinder(HashSet<Point> junctions, HashMap<Point, HashSet<Point>> edges, Map map) {
+  public AStarRouteFinder(JunctionSet junctions, HashMap<Point, HashSet<Point>> edges, Map map) {
     this.junctions = junctions;
     this.edges = edges;
     this.map = map;
@@ -44,8 +45,8 @@ public class AStarRouteFinder implements RouteFinder {
   //     */
   @Override
   public Direction getRoute(Point myLocPointDouble, Point targetLocPointDouble) {
-    Point myLocation = Mapping.getGridCoord(myLocPointDouble);
-    Point targetLocation = Mapping.getGridCoord(targetLocPointDouble);
+    Point myLocation = myLocPointDouble.getGridCoord();
+    Point targetLocation = targetLocPointDouble.getGridCoord();
     if (!junctions.contains(myLocation)) {
       Point nearestJunct = Mapping.findNearestJunction(myLocPointDouble, map, junctions);
       return Mapping.directionBetweenPoints(myLocPointDouble, nearestJunct);
@@ -55,7 +56,7 @@ public class AStarRouteFinder implements RouteFinder {
       targetJunction = targetLocation;
     } else {
       targetJunction =
-          Mapping.getGridCoord(Mapping.findNearestJunction(targetLocPointDouble, map, junctions));
+          Mapping.findNearestJunction(targetLocPointDouble, map, junctions).getGridCoord();
     }
     HashMap<Point, AStarData> visited = new HashMap<Point, AStarData>();
     HashMap<Point, AStarData> unVisited = new HashMap<Point, AStarData>();

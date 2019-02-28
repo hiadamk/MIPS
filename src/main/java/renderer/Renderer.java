@@ -15,11 +15,13 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Pair;
 import objects.Entity;
 import objects.Pellet;
 import utils.Map;
 import utils.Point;
 import utils.ResourceLoader;
+import utils.UpDownIterator;
 import utils.enums.MapElement;
 import utils.enums.RenderingMode;
 
@@ -219,6 +221,36 @@ public class Renderer {
     }
     return clientMipsman;
   }
+
+  public void renderCollisionAnimation(Entity newMipsMan){
+    Image currentSprite = newMipsMan.getImage().get(newMipsMan.getCurrentFrame());
+    final double renderAnimationTime = 0.75 * Math.pow(10,9);
+    double startTime = System.nanoTime();
+    final int frames = 22;
+    double frameTime = renderAnimationTime/frames;
+    int currentFrame = 0;
+    while(System.nanoTime()-startTime < renderAnimationTime){
+      gc.setFill(Color.BLACK);
+      gc.fillRect(0,0,xResolution,yResolution);
+      gc.setTextAlign(TextAlignment.CENTER);
+
+      double x = newMipsMan.getLocation().getX() - 0.5;
+      double y = newMipsMan.getLocation().getY() - 0.5;
+      Point2D.Double rendCoord =
+              getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
+      gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
+      gc.fillText("MIPS CAPTURED",xResolution/2,yResolution*0.7);
+
+      try {
+        Thread.sleep(3);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
+
+
+  }
+
 
   /**
    * @param now current time in nanoseconds

@@ -1,8 +1,5 @@
 package utils;
 
-import static java.lang.Math.abs;
-
-import ai.mapping.Mapping;
 import objects.Entity;
 import utils.enums.Direction;
 
@@ -14,38 +11,6 @@ public class Methods {
     }
   }
 
-  /**
-   * @deprecated
-   * @see #validateDirection(Direction, Point, Map)
-   */
-  public static boolean validiateDirection(Direction d, Entity e, Map m) {
-    Point prevLoc = e.getLocation().getCopy();
-    double xpart = abs((prevLoc.getX() % 1) - 0.5);
-    double ypart = abs((prevLoc.getY() % 1) - 0.5);
-    Point nextLoc = e.getMoveInDirection(1, d);
-    return !(xpart >= 0.1 || ypart >= 0.1 || m.isWall(nextLoc));
-  }
-
-  /**
-   * @see #validateDirection(Direction, Point, Map)
-   * @deprecated
-   */
-  public static boolean validiateDirection(Direction d, Entity e, Point p, Map m) {
-    boolean isValid = true;
-    Point gridPoint = Mapping.getGridCoord(p).centralise();
-
-    Point movedPoint = gridPoint.getCopy().moveInDirection(1, d);
-
-    double xpart = abs((gridPoint.getX() % 1) - 0.5);
-    double ypart = abs((gridPoint.getY() % 1) - 0.5);
-    if (xpart >= 0.1 || ypart >= 0.1) {
-      isValid = false;
-    }
-
-    isValid = isValid && !m.isWall(movedPoint);
-
-    return isValid;
-  }
 
   /**
    * checks whether a movement in a certain direction is valid
@@ -89,6 +54,16 @@ public class Methods {
     return true;
   }
 
+  public static int findWinner(Entity[] agents) {
+    int winner = 0;
+    int maxScore = 0;
+    for (Entity e : agents) {
+      if (e.getScore() > maxScore) {
+        winner = e.getClientId();
+      }
+    }
+    return winner;
+  }
   /**
    * true modulo instead of %
    *
