@@ -24,7 +24,11 @@ public abstract class Telemetry {
   static Client client;
 
   Telemetry(Client client) {
+    this.map = getMap();
     this.client = client;
+    this.resourceLoader = client.getResourceLoader();
+    this.agents = client.getAgents();
+
   }
 
   // abstract methods

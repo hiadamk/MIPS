@@ -131,7 +131,7 @@ public class Client extends Application {
     map = resourceLoader.getMap();
 
     incomingQueue = new LinkedBlockingQueue<>();
-	  this.telemetry = new HostTelemetry(map, incomingQueue, resourceLoader, this);
+    this.telemetry = new HostTelemetry(incomingQueue, this);
     this.primaryStage.setScene(gameScene);
     this.id = 0;
 
@@ -163,7 +163,7 @@ public class Client extends Application {
     try {
 
       clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this, name);
-	    this.telemetry = new DumbTelemetry(map, clientIn, resourceLoader, this);
+      this.telemetry = new DumbTelemetry(clientIn, this);
       this.telemetry.setMipID(MIPID);
       System.out.println("MIP ID: " + MIPID);
       // waits for game to start
@@ -193,15 +193,14 @@ public class Client extends Application {
       int playerCount = server.getPlayerCount();
       System.out.println("PLAYER COUNT IS: " + playerCount);
       map = resourceLoader.getMap();
-      this.telemetry =
-		      new HostTelemetry(this.map, playerCount, inputQueue, outputQueue, this.resourceLoader,
-				      this);
+      this.telemetry = new HostTelemetry(playerCount, inputQueue, outputQueue, this);
       this.telemetry.setMipID(MIPID);
       System.out.println("MIP ID: " + MIPID);
       map = resourceLoader.getMap();
       gameScene.setOnKeyPressed(keyController);
       startGame();
     }
+
   }
 
   public void setMap(Map m) {
@@ -330,4 +329,12 @@ public class Client extends Application {
 	public void collisionDetected(Entity newMipsman) {
 		renderer.renderCollisionAnimation(newMipsman);
 	}
+
+  public ResourceLoader getResourceLoader() {
+    return this.resourceLoader;
+  }
+
+  public Entity[] getAgents() {
+    return this.agents;
+  }
 }

@@ -10,10 +10,8 @@ import objects.Entity;
 import server.NetworkUtility;
 import utils.GameLoop;
 import utils.Input;
-import utils.Map;
 import utils.Methods;
 import utils.Point;
-import utils.ResourceLoader;
 import utils.enums.Direction;
 
 public class HostTelemetry extends Telemetry {
@@ -26,28 +24,29 @@ public class HostTelemetry extends Telemetry {
   private boolean aiRunning;
   private GameLoop inputProcessor;
 
-  public HostTelemetry(Map map, int playerCount, Queue<Input> inputQueue, Queue<String> outputQueue,
-      ResourceLoader resourceLoader, Client client) {
+  /**
+   * MultiPlayer Constructor
+   */
+  public HostTelemetry(int playerCount, Queue<Input> inputQueue, Queue<String> outputQueue,
+      Client client) {
     super(client);
-    this.map = map;
     inputs = (BlockingQueue<Input>) inputQueue;
     outputs = (BlockingQueue<String>) outputQueue;
     this.playerCount = playerCount;
-    this.resourceLoader = resourceLoader;
     this.singlePlayer = false;
     initialise();
     startGame();
   }
 
-  public HostTelemetry(Map map, Queue<Input> clientQueue, ResourceLoader resourceLoader,
-      Client client) {
+  /**
+   * Single Player Constructor
+   */
+  public HostTelemetry(Queue<Input> clientQueue, Client client) {
     super(client);
-    this.map = map;
     inputs = (BlockingQueue<Input>) clientQueue;
     outputs = new LinkedBlockingQueue<>();
     this.playerCount = 1;
     singlePlayer = true;
-    this.resourceLoader = resourceLoader;
     initialise();
     startGame();
   }
