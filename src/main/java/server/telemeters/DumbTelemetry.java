@@ -27,7 +27,7 @@ public class DumbTelemetry extends Telemetry {
     this.resourceLoader = resourceLoader;
     inputs = (BlockingQueue<String>) inputQueue;
     initialise();
-    startGame();
+//    startGame();
   }
 
   private void initialise() {
@@ -40,7 +40,7 @@ public class DumbTelemetry extends Telemetry {
     System.err.println("DumbTelemetry receiving inputs");
   }
 
-  void startGame() {
+  public void startGame() {
     final long DELAY = (long) Math.pow(10, 7);
     inputProcessor = new GameLoop(DELAY) {
       @Override
