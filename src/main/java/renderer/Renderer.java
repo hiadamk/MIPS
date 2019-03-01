@@ -15,13 +15,11 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import javafx.util.Pair;
 import objects.Entity;
 import objects.Pellet;
 import utils.Map;
 import utils.Point;
 import utils.ResourceLoader;
-import utils.UpDownIterator;
 import utils.enums.MapElement;
 import utils.enums.RenderingMode;
 
@@ -230,7 +228,7 @@ public class Renderer {
     double frameTime = renderAnimationTime/frames;
     int currentFrame = 0;
     while(System.nanoTime()-startTime < renderAnimationTime){
-      gc.setFill(Color.BLACK);
+      gc.setFill(new Color(0, 0, 0, 115));
       gc.fillRect(0,0,xResolution,yResolution);
       gc.setTextAlign(TextAlignment.CENTER);
 
