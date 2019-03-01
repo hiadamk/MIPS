@@ -600,6 +600,7 @@ public class MenuController {
     leftToggle.setUserData(InputKey.LEFT);
     rightToggle.setUserData(InputKey.RIGHT);
     downToggle.setUserData(InputKey.DOWN);
+    useToggle.setUserData(InputKey.USE);
 
     upToggle.setToggleGroup(toggleGroup);
     leftToggle.setToggleGroup(toggleGroup);
