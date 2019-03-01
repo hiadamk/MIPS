@@ -31,11 +31,12 @@ public abstract class Telemetry {
 
   public abstract void addInput(Input in);
 
-  abstract void startGame();
+  public abstract void startGame();
 
   abstract void processInputs();
 
   public abstract void stopGame();
+
 
   // basic get/set methods
 
