@@ -176,7 +176,7 @@ public class Client extends Application {
       }
       this.primaryStage.setScene(gameScene);
       gameScene.setOnKeyPressed(keyController);
-      startGame();
+//      startGame();
 
     } catch (IOException e) {
       e.printStackTrace();
