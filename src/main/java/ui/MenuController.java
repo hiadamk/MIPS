@@ -3,6 +3,7 @@ package ui;
 import audio.AudioController;
 import audio.Sounds;
 import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXToggleButton;
 import java.io.File;
@@ -15,6 +16,8 @@ import java.util.Stack;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -431,35 +434,44 @@ public class MenuController {
     Label volumeLbl = new Label("Volume:");
     volumeLbl.setStyle(" -fx-font-size: 16pt ;");
 
+    JFXSlider volumeSlider = new JFXSlider(0, 1, 0.5);
+
+    volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
+      public void changed(ObservableValue<? extends Number> ov,
+          Number old_val, Number new_val) {
+        audioController.setSoundVolume(new_val.doubleValue());
+        audioController.setMusicVolume(new_val.doubleValue());
+      }
+    });
+    volumeSlider.setMaxWidth(200);
+    volumeSlider.setMaxWidth(200);
+    StackPane.setAlignment(volumeSlider, Pos.BOTTOM_CENTER);
+    StackPane.setMargin(volumeSlider, new Insets(0, 0, 155, 220));
+
+
     incrView = new ImageView(new Image("ui/increaseVolume.png"));
-    incrVolumeBtn = buttonGenerator.generate(true, soundTabLayout, incrView);
-    incrView.setFitWidth(50);
-    incrVolumeBtn.setOnAction(
-        event -> {
-          audioController.playSound(Sounds.click);
-          audioController.increaseVolume();
-        });
+//    incrVolumeBtn = buttonGenerator.generate(true, soundTabLayout, incrView);
+//    incrView.setFitWidth(50);
+//    incrVolumeBtn.setOnAction(
+//        event -> {
+//          audioController.playSound(Sounds.click);
+//          audioController.increaseVolume();
+//        });
 
     decrView = new ImageView("ui/decreaseVolume.png");
-    decrVolumeBtn = buttonGenerator.generate(true, soundTabLayout, decrView);
-    decrView.setFitWidth(50);
-    decrVolumeBtn.setOnAction(
-        event -> {
-          audioController.playSound(Sounds.click);
-          audioController.decreaseVolume();
-        });
+//    decrVolumeBtn = buttonGenerator.generate(true, soundTabLayout, decrView);
+//    decrView.setFitWidth(50);
+//    decrVolumeBtn.setOnAction(
+//        event -> {
+//          audioController.playSound(Sounds.click);
+//          audioController.decreaseVolume();
+//        });
 
     StackPane.setAlignment(volumeLbl, Pos.BOTTOM_CENTER);
     StackPane.setMargin(volumeLbl, new Insets(0, 200, 150, 0));
 
-    StackPane.setAlignment(decrVolumeBtn, Pos.BOTTOM_CENTER);
-    StackPane.setMargin(decrVolumeBtn, new Insets(0, 0, 165, 200));
-
-    StackPane.setAlignment(incrVolumeBtn, Pos.BOTTOM_CENTER);
-    StackPane.setMargin(incrVolumeBtn, new Insets(0, 0, 160, 400));
-
     soundTabLayout.getChildren()
-        .addAll(musicLbl, musicToggle, soundFXLbl, soundFXToggle, volumeLbl);
+        .addAll(musicLbl, musicToggle, soundFXLbl, soundFXToggle, volumeLbl, volumeSlider);
     soundTab.setContent(soundTabLayout);
 
     //Creates the tab for graphics
@@ -632,7 +644,7 @@ public class MenuController {
     imageViews =
         Arrays.asList(
             logo,
-            settingsView
+            settingsView, decrView, incrView
         );
 
     for (int i = 0; i < imageViews.size(); i++) {

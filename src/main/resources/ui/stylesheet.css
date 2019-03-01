@@ -283,6 +283,17 @@
   -fx-background-color: transparent;
 }
 
+.jfx-slider .slider-value {
+  -fx-fill: transparent;
+  -fx-stroke: transparent;
+  -fx-background-color: transparent;
+}
+
+.jfx-slider .animated-thumb,
+.jfx-slider .animated-thumb:min {
+  -fx-background-color: transparent;
+}
+
 /*.jfx-combo-box:selected{*/
 /*-fx-background-color: red;*/
 /*}*/
