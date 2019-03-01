@@ -41,6 +41,7 @@ public class DumbTelemetry extends Telemetry {
   }
 
   public void startGame() {
+    System.out.println("Started dumb telemetry");
     final long DELAY = (long) Math.pow(10, 7);
     inputProcessor = new GameLoop(DELAY) {
       @Override
@@ -106,11 +107,15 @@ public class DumbTelemetry extends Telemetry {
   // NetworkUtility.makeEntityMovementPacket(Input, Point)
   // without the starting POSx code
   private void setEntityMovement(String s) {
+    System.out.println("String to handle: " + s);
     String[] ls = s.split("\\|");
     Input input = Input.fromString(ls[0]);
     int id = input.getClientID();
     double x = Double.valueOf(ls[1]);
     double y = Double.valueOf(ls[2]);
+    System.out.println("X: " + x);
+    System.out.println("Y: " + y);
+    System.out.println("ID: " + id);
     agents[id].setLocation(new Point(x, y));
     agents[id].setDirection(input.getMove());
   }

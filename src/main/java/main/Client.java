@@ -248,6 +248,7 @@ public class Client extends Application {
 
   public void setMIP(int id) {
     this.MIPID = id;
+    this.telemetry.setMipID(id);
   }
 
   private void startGame() {
