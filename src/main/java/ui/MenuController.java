@@ -27,8 +27,10 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -37,6 +39,9 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.Client;
+import utils.KeyRemapping;
+import utils.Settings;
+import utils.enums.InputKey;
 import utils.enums.RenderingMode;
 import utils.enums.ScreenResolution;
 
@@ -64,15 +69,9 @@ public class MenuController {
   private Button quitBtn;
   private Button createGameBtn;
   private Button joinGameBtn;
-  private Button createLobbyBtn;
-  private Button incrVolumeBtn;
-  private Button decrVolumeBtn;
   private Button startMGameBtn;
 
-
   private ImageView logo;
-  private ImageView incrView;
-  private ImageView decrView;
   private ImageView creditsView;
   private ImageView settingsView;
 
@@ -93,6 +92,26 @@ public class MenuController {
   private List<Double> originalViewWidths;
   private List<Double> minimumViewWidths;
 
+  private final String defaultToggleText = "Click to remap";
+  private final String remapToggleText = "Click to save changes";
+  private ArrayList<ToggleButton> keyToggleList = new ArrayList<>();
+  private Label keyToggleStatus;
+
+  private final String remapReady = "Press a key";
+  private final String remapComplete = "Key remapped";
+  private final String remapCancelled = "Remap cancelled";
+  private KeyRemapping keyRemapper;
+  private boolean remappingActive = false;
+  private InputKey toRemap = null;
+  private KeyCode proposedChange = null;
+
+  private Label upLbl;
+  private Label leftLbl;
+  private Label rightLbl;
+  private Label downLbl;
+  private Label useLbl;
+
+
   private ButtonGenerator buttonGenerator;
 
   private boolean isHome = true;
@@ -109,6 +128,8 @@ public class MenuController {
     originalViewWidths = new ArrayList<>();
     minimumViewWidths = new ArrayList<>();
     this.buttonGenerator = new ButtonGenerator();
+    this.keyRemapper = new KeyRemapping();
+
   }
 
   /**
@@ -292,12 +313,6 @@ public class MenuController {
     StackPane.setMargin(multiplayerOptions, new Insets(100, 0, 0, 0));
     root.getChildren().add(multiplayerOptions);
     multiplayerOptions.setVisible(false);
-
-    createLobbyBtn = buttonGenerator
-        .generate(false, root, "Create lobby", UIColours.GREEN.WHITE, 40);
-    StackPane.setAlignment(createGameBtn, Pos.BOTTOM_CENTER);
-    StackPane.setMargin(createGameBtn, new Insets(0, 0, 300, 0));
-    Image createLobbyImg = new Image("ui/Create-Lobby.png");
 
     lobbyStatusLbl = new Label("Searching for players");
     lobbyStatusLbl.setTextFill(Color.WHITE);
@@ -540,9 +555,66 @@ public class MenuController {
         .addAll(resolutionLbl, resolutionCombo, scalingLbl, scalingCombo);
     graphicsTab.setContent(graphicsTabLayout);
 
-    //Creates the tab for graphics
+    //Creates the tab for controls
     Tab controlsTab = new Tab();
     controlsTab.setText("Controls");
+
+    StackPane controlsLayout = new StackPane();
+
+    upLbl = new Label("UP KEY: " + Settings.getKey(InputKey.UP).getName());
+    leftLbl = new Label("LEFT KEY: " + Settings.getKey(InputKey.LEFT).getName());
+    rightLbl = new Label("RIGHT KEY: " + Settings.getKey(InputKey.RIGHT).getName());
+    downLbl = new Label("DOWN KEY: " + Settings.getKey(InputKey.DOWN).getName());
+    useLbl = new Label("USE ITEM KEY: " + Settings.getKey(InputKey.USE).getName());
+
+    upLbl.setStyle(" -fx-font-size: 14pt ;");
+    leftLbl.setStyle(" -fx-font-size: 14pt ;");
+    rightLbl.setStyle(" -fx-font-size: 14pt ;");
+    downLbl.setStyle(" -fx-font-size: 14pt ;");
+    useLbl.setStyle(" -fx-font-size: 14pt ;");
+
+    VBox keyLbls = new VBox(45, upLbl, leftLbl, rightLbl, downLbl, useLbl);
+    keyLbls.setAlignment(Pos.CENTER);
+
+    StackPane.setAlignment(keyLbls, Pos.CENTER);
+    StackPane.setMargin(keyLbls, new Insets(0, 200, 75, 0));
+
+    keyToggleStatus = new Label("");
+    keyToggleStatus.setStyle(" -fx-font-size: 12pt ; -fx-text-fill: white");
+    StackPane.setAlignment(keyToggleStatus, Pos.BOTTOM_CENTER);
+
+    ToggleButton upToggle = new ToggleButton(defaultToggleText);
+    ToggleButton leftToggle = new ToggleButton(defaultToggleText);
+    ToggleButton rightToggle = new ToggleButton(defaultToggleText);
+    ToggleButton downToggle = new ToggleButton(defaultToggleText);
+    ToggleButton useToggle = new ToggleButton(defaultToggleText);
+    keyToggleList.add(leftToggle);
+    keyToggleList.add(rightToggle);
+    keyToggleList.add(upToggle);
+    keyToggleList.add(downToggle);
+    keyToggleList.add(useToggle);
+    initialiseToggleActions();
+    ToggleGroup toggleGroup = new ToggleGroup();
+
+    upToggle.setUserData(InputKey.UP);
+    leftToggle.setUserData(InputKey.LEFT);
+    rightToggle.setUserData(InputKey.RIGHT);
+    downToggle.setUserData(InputKey.DOWN);
+
+    upToggle.setToggleGroup(toggleGroup);
+    leftToggle.setToggleGroup(toggleGroup);
+    rightToggle.setToggleGroup(toggleGroup);
+    downToggle.setToggleGroup(toggleGroup);
+    useToggle.setToggleGroup(toggleGroup);
+
+    VBox keyToggles = new VBox(45, upToggle, leftToggle, rightToggle, downToggle, useToggle);
+    keyToggles.setAlignment(Pos.CENTER);
+
+    StackPane.setAlignment(keyToggles, Pos.CENTER);
+    StackPane.setMargin(keyToggles, new Insets(0, 0, 75, 450));
+
+    controlsLayout.getChildren().addAll(keyLbls, keyToggles, keyToggleStatus);
+    controlsTab.setContent(controlsLayout);
 
     //Adds the tabs to the tab pane
     settingsTabs.getTabs().addAll(soundTab, graphicsTab, controlsTab);
@@ -635,6 +707,81 @@ public class MenuController {
 
     return root;
   }
+
+  private void hideInactiveToggles(ToggleButton toShow) {
+    for (ToggleButton t : keyToggleList) {
+      if (!t.equals(toShow)) {
+        t.setVisible(false);
+      }
+    }
+  }
+
+  private void resetToggles() {
+    for (ToggleButton t : keyToggleList) {
+      t.setText(defaultToggleText);
+      t.setVisible(true);
+    }
+  }
+
+
+  private void initialiseToggleActions() {
+    for (ToggleButton t : keyToggleList) {
+      t.setOnAction(event -> {
+        if (t.isSelected()) {
+          System.out.println("CURRENT CONTROLS: " + Settings.getKey(InputKey.UP));
+          t.setText(remapToggleText);
+          toRemap = (InputKey) t.getUserData();
+          hideInactiveToggles(t);
+          keyToggleStatus.setText(remapReady);
+          primaryStage.getScene().setOnKeyPressed(keyRemapper);
+          remappingActive = true;
+          new Thread(() -> {
+            while (true) {
+              if (keyRemapper.getActiveKey() == null) {
+                try {
+                  Thread.sleep(50);
+                } catch (InterruptedException e) {
+                  e.printStackTrace();
+                }
+                continue;
+              }
+
+              KeyCode newVal = keyRemapper.getActiveKey();
+              proposedChange = keyRemapper.getActiveKey();
+              System.out.println("Proposed change is: " + proposedChange.getName());
+              remappingActive = false;
+              break;
+            }
+          }).start();
+
+        } else {
+          if (keyRemapper.checkForDublicates(proposedChange) && proposedChange != null) {
+            keyToggleStatus.setText("Sorry, key already in use.");
+          } else {
+            keyToggleStatus.setText("");
+            Settings.setKey(toRemap, proposedChange);
+            keyRemapper.reset();
+          }
+          resetToggles();
+          updateToggleLabels();
+          primaryStage.getScene().setOnKeyPressed(null);
+          remappingActive = false;
+          toRemap = null;
+          proposedChange = null;
+        }
+      });
+    }
+  }
+
+  private void updateToggleLabels() {
+    System.out.println("Current UP KEY: " + Settings.getKey(InputKey.UP).getName());
+    upLbl.setText("UP KEY: " + Settings.getKey(InputKey.UP).getName());
+    leftLbl.setText("LEFT KEY: " + Settings.getKey(InputKey.LEFT).getName());
+    rightLbl.setText("RIGHT KEY: " + Settings.getKey(InputKey.RIGHT).getName());
+    downLbl.setText("DOWN KEY: " + Settings.getKey(InputKey.DOWN).getName());
+    useLbl.setText("USE ITEM KEY: " + Settings.getKey(InputKey.USE).getName());
+  }
+
 
   /**
    * @param newVal the new screen width.
