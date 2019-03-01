@@ -3,6 +3,7 @@ package ui;
 import audio.AudioController;
 import audio.Sounds;
 import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXToggleButton;
 import java.io.File;
@@ -15,19 +16,21 @@ import java.util.Stack;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -36,6 +39,9 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.Client;
+import utils.KeyRemapping;
+import utils.Settings;
+import utils.enums.InputKey;
 import utils.enums.RenderingMode;
 import utils.enums.ScreenResolution;
 
@@ -49,8 +55,6 @@ public class MenuController {
   private Client client;
 
   private boolean viewSettings = false;
-  private boolean soundFX = true;
-  private boolean music = true;
   private Stage primaryStage;
   private Stack<ArrayList<Node>> backTree = new Stack<>();
   private ArrayList<Node> itemsOnScreen = new ArrayList<>();
@@ -60,50 +64,16 @@ public class MenuController {
   private Button startGameBtn;
   private Button backBtn;
   private Button playBtn;
-  private Button musicBtn;
-  private Button soundFxBtn;
   private Button creditsBtn;
   private Button settingsBtn;
   private Button quitBtn;
   private Button createGameBtn;
   private Button joinGameBtn;
-  private Button createLobbyBtn;
-  private Button incrVolumeBtn;
-  private Button decrVolumeBtn;
   private Button startMGameBtn;
-  private Button lowRes;
-  private Button medRes;
-  private Button highRes;
 
-  private ImageView volumeImg;
-  private ImageView lowResImageView;
-  private ImageView medResImageView;
-  private ImageView highResImageView;
-  private ImageView playView;
   private ImageView logo;
-  private ImageView starting;
-  private ImageView startingM;
-  private ImageView singlePlayerImageView;
-  private ImageView multiplayerImageView;
-  private ImageView musicOnView;
-  private ImageView fxView;
-  private ImageView incrView;
-  private ImageView decrView;
   private ImageView creditsView;
-  private ImageView quitView;
-  private ImageView joinGameView;
-  private ImageView createGameView;
-  private ImageView createLobbyView;
-  private ImageView continueView;
   private ImageView settingsView;
-  private ImageView backImageView;
-
-  private Image highResW;
-  private Image highResG;
-  private Image medResW;
-  private Image medResG;
-  private Image lowResW;
-  private Image lowResG;
 
   private Label lobbyStatusLbl;
   private Label loadingDots;
@@ -114,7 +84,6 @@ public class MenuController {
 
   private VBox multiplayerOptions;
   private VBox gameModeOptions;
-  private VBox resolutionOptions;
   private VBox nameEntryOptions;
   private VBox searchingForMutiplayers;
   private Font font;
@@ -122,6 +91,26 @@ public class MenuController {
   private List<ImageView> imageViews;
   private List<Double> originalViewWidths;
   private List<Double> minimumViewWidths;
+
+  private final String defaultToggleText = "Click to remap";
+  private final String remapToggleText = "Click to save changes";
+  private ArrayList<ToggleButton> keyToggleList = new ArrayList<>();
+  private Label keyToggleStatus;
+
+  private final String remapReady = "Press a key";
+  private final String remapComplete = "Key remapped";
+  private final String remapCancelled = "Remap cancelled";
+  private KeyRemapping keyRemapper;
+  private boolean remappingActive = false;
+  private InputKey toRemap = null;
+  private KeyCode proposedChange = null;
+
+  private Label upLbl;
+  private Label leftLbl;
+  private Label rightLbl;
+  private Label downLbl;
+  private Label useLbl;
+
 
   private ButtonGenerator buttonGenerator;
 
@@ -139,6 +128,8 @@ public class MenuController {
     originalViewWidths = new ArrayList<>();
     minimumViewWidths = new ArrayList<>();
     this.buttonGenerator = new ButtonGenerator();
+    this.keyRemapper = new KeyRemapping();
+
   }
 
   /**
@@ -202,32 +193,6 @@ public class MenuController {
     });
   }
 
-  /**
-   * @param s The screen resolution we want to update the game to.
-   * @author Adam Kona Handles the changing of images corresponding to the different resolutions
-   * available in the game.
-   */
-  private void updateView(ScreenResolution s) {
-    switch (s) {
-      case LOW:
-        lowResImageView.setImage(lowResW);
-        medResImageView.setImage(medResG);
-        highResImageView.setImage(highResG);
-
-        break;
-      case MEDIUM:
-        lowResImageView.setImage(lowResG);
-        medResImageView.setImage(medResW);
-        highResImageView.setImage(highResG);
-        break;
-      case HIGH:
-        lowResImageView.setImage(lowResG);
-        medResImageView.setImage(medResG);
-        highResImageView.setImage(highResW);
-        break;
-    }
-    client.updateResolution(s);
-  }
 
   /**
    * Creates all the menu items and defines their functionality.
@@ -260,7 +225,6 @@ public class MenuController {
     root.getChildren().add(logo);
     logo.setVisible(true);
 
-    starting = new ImageView("ui/start.png");
     startGameBtn = buttonGenerator.generate(false, root, "Start", UIColours.GREEN, 45);
     StackPane.setAlignment(startGameBtn, Pos.CENTER);
     StackPane.setMargin(startGameBtn, new Insets(160, 0, 0, 0));
@@ -270,7 +234,6 @@ public class MenuController {
           client.startSinglePlayerGame();
         });
 
-    singlePlayerImageView = new ImageView("ui/Single-Player.png");
     this.singlePlayerBtn = buttonGenerator
         .generate(true, root, "Singleplayer", UIColours.WHITE, 45);
     this.singlePlayerBtn.setOnAction(
@@ -281,7 +244,6 @@ public class MenuController {
           showItemsOnScreen();
         });
 
-    multiplayerImageView = new ImageView("ui/Multiplayer.png");
     this.multiplayerBtn = buttonGenerator.generate(true, root, "Multiplayer", UIColours.WHITE, 45);
     this.multiplayerBtn.setOnAction(
         e -> {
@@ -290,47 +252,6 @@ public class MenuController {
           itemsOnScreen.add(nameEntryOptions);
           showItemsOnScreen();
         });
-
-    lowResW = new Image("ui/1366x768-W.png");
-    lowResG = new Image("ui/1366x768-G.png");
-    lowResImageView = new ImageView(lowResG);
-    lowRes = buttonGenerator.generate(true, root, lowResImageView);
-    lowResImageView.setFitWidth(350);
-    lowRes.setOnAction(
-        event -> {
-          audioController.playSound(Sounds.click);
-          updateView(ScreenResolution.LOW);
-        });
-
-    medResW = new Image("ui/1920x1080-W.png");
-    medResG = new Image("ui/1920x1080-G.png");
-    medResImageView = new ImageView(medResG);
-    medResImageView.setFitWidth(350);
-    medRes = buttonGenerator.generate(true, root, medResImageView);
-    medRes.setOnAction(
-        event -> {
-          audioController.playSound(Sounds.click);
-          updateView(ScreenResolution.MEDIUM);
-        });
-
-    highResW = new Image("ui/2650x1440-W.png");
-    highResG = new Image("ui/2650x1440-G.png");
-    highResImageView = new ImageView(highResG);
-    highRes = buttonGenerator.generate(true, root, highResImageView);
-    highResImageView.setFitWidth(350);
-    highRes.setOnAction(
-        event -> {
-          audioController.playSound(Sounds.click);
-          updateView(ScreenResolution.HIGH);
-        });
-
-    resolutionOptions = new VBox(20, lowRes, medRes, highRes);
-    resolutionOptions.setAlignment(Pos.CENTER_RIGHT);
-    StackPane.setAlignment(resolutionOptions, Pos.CENTER_RIGHT);
-    StackPane.setMargin(resolutionOptions, new Insets(100, 20, 0, 0));
-    root.getChildren().add(resolutionOptions);
-
-    resolutionOptions.setVisible(false);
 
     gameModeOptions = new VBox(10, singlePlayerBtn, multiplayerBtn);
     gameModeOptions.setAlignment(Pos.CENTER);
@@ -341,7 +262,6 @@ public class MenuController {
 
     playBtn = buttonGenerator.generate(true, root, "Play", UIColours.GREEN, 35);
     playBtn.setText("Play");
-    playView = new ImageView("ui/play.png");
     StackPane.setAlignment(playBtn, Pos.CENTER);
     StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
     playBtn.setOnAction(
@@ -354,81 +274,14 @@ public class MenuController {
           showItemsOnScreen();
         });
 
-    ToggleGroup renderingModeGroup = new ToggleGroup();
-    RadioButton standardScalingBtn = new RadioButton("standard");
-    initialiseRenderingButtons(
-        standardScalingBtn, 0, 0, root, renderingModeGroup, RenderingMode.STANDARD_SCALING);
-    RadioButton noScalingBtn = new RadioButton("no scaling");
-    initialiseRenderingButtons(
-        noScalingBtn, 0, 60, root, renderingModeGroup, RenderingMode.NO_SCALING);
-    RadioButton integerScalingBtn = new RadioButton("integer");
-    initialiseRenderingButtons(
-        integerScalingBtn, 0, 120, root, renderingModeGroup, RenderingMode.INTEGER_SCALING);
-    RadioButton smoothScalingBtn = new RadioButton("smooth");
-    initialiseRenderingButtons(
-        smoothScalingBtn, 0, 180, root, renderingModeGroup, RenderingMode.SMOOTH_SCALING);
-
-    //default rendering settings
-    smoothScalingBtn.setSelected(true);
+//    smoothScalingBtn.setSelected(true);
     client.setRenderingMode(RenderingMode.SMOOTH_SCALING);
-
-    Image musicOn = new Image("ui/Music-On.png");
-    Image musicOff = new Image("ui/Music-Off.png");
-    musicOnView = new ImageView(musicOn);
-    musicBtn = buttonGenerator.generate(false, root, musicOnView);
-    StackPane.setAlignment(musicBtn, Pos.CENTER_LEFT);
-    StackPane.setMargin(musicBtn, new Insets(0, 0, 25, 0));
-    musicBtn.setOnAction(
-        event -> {
-          audioController.playSound(Sounds.click);
-          if (music) {
-            musicBtn.setGraphic(new ImageView(musicOff));
-            music = false;
-            audioController.setMusicVolume(0);
-          } else {
-            musicBtn.setGraphic(new ImageView(musicOn));
-            music = true;
-            audioController.setMusicVolume(0.5);
-          }
-        });
-
-    Image soundFXOn = new Image("ui/SoundFX-On.png");
-    Image soundFXOff = new Image("ui/SoundFX-Off.png");
-    fxView = new ImageView(soundFXOn);
-    soundFxBtn = buttonGenerator.generate(false, root, fxView);
-    StackPane.setAlignment(soundFxBtn, Pos.CENTER_LEFT);
-    StackPane.setMargin(soundFxBtn, new Insets(150, 0, 0, 0));
-    fxView.setFitWidth(500);
-    soundFxBtn.setOnAction(
-        event -> {
-          audioController.playSound(Sounds.click);
-          if (soundFX) {
-            fxView.setImage(soundFXOff);
-            soundFX = false;
-            audioController.setSoundVolume(0);
-          } else {
-            fxView.setImage(soundFXOn);
-            soundFX = true;
-            audioController.setSoundVolume(0.5);
-          }
-        });
-
-    volumeImg = new ImageView("ui/Volume.png");
-    StackPane.setAlignment(volumeImg, Pos.CENTER_LEFT);
-    StackPane.setMargin(volumeImg, new Insets(400, 0, 0, 100));
-    volumeImg.setVisible(false);
-    volumeImg.setPreserveRatio(true);
-    root.getChildren().add(volumeImg);
-    volumeImg.setFitWidth(250);
-
-
 
     creditsView = new ImageView("ui/Credits.png");
     creditsBtn = buttonGenerator.generate(false, root, creditsView);
     StackPane.setAlignment(creditsBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(creditsBtn, new Insets(0, 0, 50, 0));
 
-    joinGameView = new ImageView("ui/join-game.png");
     joinGameBtn = buttonGenerator.generate(true, root, "Join a game", UIColours.WHITE, 40);
     joinGameBtn.setPickOnBounds(true);
     joinGameBtn.setOnAction(
@@ -442,7 +295,6 @@ public class MenuController {
 
         });
 
-    createGameView = new ImageView("ui/create-game.png");
     createGameBtn = buttonGenerator.generate(true, root, "Create game", UIColours.WHITE, 40);
     createGameBtn.setPickOnBounds(true);
     createGameBtn.setOnAction(
@@ -461,13 +313,6 @@ public class MenuController {
     StackPane.setMargin(multiplayerOptions, new Insets(100, 0, 0, 0));
     root.getChildren().add(multiplayerOptions);
     multiplayerOptions.setVisible(false);
-
-    createLobbyBtn = buttonGenerator
-        .generate(false, root, "Create lobby", UIColours.GREEN.WHITE, 40);
-    StackPane.setAlignment(createGameBtn, Pos.BOTTOM_CENTER);
-    StackPane.setMargin(createGameBtn, new Insets(0, 0, 300, 0));
-    Image createLobbyImg = new Image("ui/Create-Lobby.png");
-    createLobbyView = new ImageView(createLobbyImg);
 
     lobbyStatusLbl = new Label("Searching for players");
     lobbyStatusLbl.setTextFill(Color.WHITE);
@@ -522,8 +367,7 @@ public class MenuController {
     VBox nameAndLine = new VBox(nameEntry, clear);
     nameAndLine.setAlignment(Pos.CENTER);
 
-    continueView = new ImageView("ui/continue.png");
-    nameEntryBtn = buttonGenerator.generate(true, root, "Continue", UIColours.GREEN.GREEN, 40);
+    nameEntryBtn = buttonGenerator.generate(true, root, "Continue", UIColours.GREEN, 40);
     nameEntryBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
@@ -542,7 +386,6 @@ public class MenuController {
     nameEntryOptions.setVisible(false);
     root.getChildren().add(nameEntryOptions);
 
-    quitView = new ImageView("ui/quit.png");
     quitBtn = buttonGenerator.generate(true, root, "quit", UIColours.QUIT_RED, 30);
     StackPane.setAlignment(quitBtn, Pos.TOP_RIGHT);
     StackPane.setMargin(quitBtn, new Insets(50, 50, 0, 0));
@@ -566,8 +409,17 @@ public class MenuController {
     StackPane soundTabLayout = new StackPane();
 
     Label musicLbl = new Label("Music:");
-    musicLbl.setStyle(" -fx-font-size: 18pt ;");
+    musicLbl.setStyle(" -fx-font-size: 16pt ;");
     JFXToggleButton musicToggle = new JFXToggleButton();
+    musicToggle.setSelected(true);
+    musicToggle.setOnAction(event -> {
+      audioController.playSound(Sounds.click);
+      if (musicToggle.isSelected()) {
+        audioController.setMusicVolume(0.5);
+      } else {
+        audioController.setMusicVolume(0);
+      }
+    });
 
     StackPane.setAlignment(musicLbl, Pos.TOP_CENTER);
     StackPane.setMargin(musicLbl, new Insets(150, 200, 0, 0));
@@ -576,8 +428,17 @@ public class MenuController {
     StackPane.setMargin(musicToggle, new Insets(128, 0, 0, 200));
 
     Label soundFXLbl = new Label("SoundFX:");
-    soundFXLbl.setStyle(" -fx-font-size: 18pt ;");
+    soundFXLbl.setStyle(" -fx-font-size: 16pt ;");
     JFXToggleButton soundFXToggle = new JFXToggleButton();
+    soundFXToggle.setSelected(true);
+    soundFXToggle.setOnAction(event -> {
+      audioController.playSound(Sounds.click);
+      if (soundFXToggle.isSelected()) {
+        audioController.setSoundVolume(0.5);
+      } else {
+        audioController.setSoundVolume(0);
+      }
+    });
 
     StackPane.setAlignment(soundFXLbl, Pos.CENTER);
     StackPane.setMargin(soundFXLbl, new Insets(0, 200, 0, 0));
@@ -586,37 +447,27 @@ public class MenuController {
     StackPane.setMargin(soundFXToggle, new Insets(0, 0, 0, 200));
 
     Label volumeLbl = new Label("Volume:");
-    volumeLbl.setStyle(" -fx-font-size: 18pt ;");
+    volumeLbl.setStyle(" -fx-font-size: 16pt ;");
 
-    incrView = new ImageView(new Image("ui/increaseVolume.png"));
-    incrVolumeBtn = buttonGenerator.generate(true, soundTabLayout, incrView);
-    incrView.setFitWidth(50);
-    incrVolumeBtn.setOnAction(
-        event -> {
-          audioController.playSound(Sounds.click);
-          audioController.increaseVolume();
-        });
+    JFXSlider volumeSlider = new JFXSlider(0, 1, 0.5);
 
-    decrView = new ImageView("ui/decreaseVolume.png");
-    decrVolumeBtn = buttonGenerator.generate(true, soundTabLayout, decrView);
-    decrView.setFitWidth(50);
-    decrVolumeBtn.setOnAction(
-        event -> {
-          audioController.playSound(Sounds.click);
-          audioController.decreaseVolume();
-        });
+    volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
+      public void changed(ObservableValue<? extends Number> ov,
+          Number old_val, Number new_val) {
+        audioController.setSoundVolume(new_val.doubleValue());
+        audioController.setMusicVolume(new_val.doubleValue());
+      }
+    });
+    volumeSlider.setMaxWidth(200);
+    volumeSlider.setMaxWidth(200);
+    StackPane.setAlignment(volumeSlider, Pos.BOTTOM_CENTER);
+    StackPane.setMargin(volumeSlider, new Insets(0, 0, 155, 220));
 
     StackPane.setAlignment(volumeLbl, Pos.BOTTOM_CENTER);
     StackPane.setMargin(volumeLbl, new Insets(0, 200, 150, 0));
 
-    StackPane.setAlignment(decrVolumeBtn, Pos.BOTTOM_CENTER);
-    StackPane.setMargin(decrVolumeBtn, new Insets(0, 0, 165, 200));
-
-    StackPane.setAlignment(incrVolumeBtn, Pos.BOTTOM_CENTER);
-    StackPane.setMargin(incrVolumeBtn, new Insets(0, 0, 160, 400));
-
     soundTabLayout.getChildren()
-        .addAll(musicLbl, musicToggle, soundFXLbl, soundFXToggle, volumeLbl);
+        .addAll(musicLbl, musicToggle, soundFXLbl, soundFXToggle, volumeLbl, volumeSlider);
     soundTab.setContent(soundTabLayout);
 
     //Creates the tab for graphics
@@ -633,7 +484,24 @@ public class MenuController {
     resolutionCombo.getItems().add("1920x1080");
     resolutionCombo.getItems().add("2560x1440");
     resolutionCombo.setEditable(false);
-    resolutionCombo.setPromptText("Select a resolution");
+    resolutionCombo.setPromptText("Select a resolution...");
+    resolutionCombo.setOnAction(event -> {
+      System.out.println(resolutionCombo.getValue());
+      audioController.playSound(Sounds.click);
+      switch (resolutionCombo.getValue()) {
+        case "1366x768":
+          client.updateResolution(ScreenResolution.LOW);
+          break;
+        case "1920x1080":
+          client.updateResolution(ScreenResolution.MEDIUM);
+          break;
+        case "2560x1440":
+          client.updateResolution(ScreenResolution.HIGH);
+          break;
+        default:
+          System.out.println("FAILED");
+      }
+    });
 
     // Provide our own ListCells for the ComboBox
     alignComboText(resolutionCombo);
@@ -651,10 +519,28 @@ public class MenuController {
     JFXComboBox<String> scalingCombo = new JFXComboBox<>();
     scalingCombo.getItems().add("None");
     scalingCombo.getItems().add("Standard");
-    scalingCombo.getItems().add("Smooth");
+    scalingCombo.getItems().add("Integer");
     scalingCombo.getItems().add("Smooth");
     scalingCombo.setEditable(false);
-    scalingCombo.setPromptText("Select a resolution");
+    scalingCombo.setPromptText("Select a scaling method...");
+    scalingCombo.setOnAction(event -> {
+      switch (scalingCombo.getValue()) {
+        case "None":
+          client.setRenderingMode(RenderingMode.NO_SCALING);
+          break;
+        case "Standard":
+          client.setRenderingMode(RenderingMode.STANDARD_SCALING);
+          break;
+        case "Smooth":
+          client.setRenderingMode(RenderingMode.SMOOTH_SCALING);
+          break;
+        case "Integer":
+          client.setRenderingMode(RenderingMode.INTEGER_SCALING);
+          break;
+        default:
+          System.out.println("Setting rendering mode failed.");
+      }
+    });
 
     // Provide our own ListCells for the ComboBox
     alignComboText(scalingCombo);
@@ -663,15 +549,72 @@ public class MenuController {
     StackPane.setAlignment(scalingCombo, Pos.CENTER);
 
     StackPane.setMargin(scalingLbl, new Insets(200, 400, 200, 0));
-    StackPane.setMargin(scalingCombo, new Insets(200, 0, 200, 300));
+    StackPane.setMargin(scalingCombo, new Insets(200, 0, 200, 350));
 
     graphicsTabLayout.getChildren()
         .addAll(resolutionLbl, resolutionCombo, scalingLbl, scalingCombo);
     graphicsTab.setContent(graphicsTabLayout);
 
-    //Creates the tab for graphics
+    //Creates the tab for controls
     Tab controlsTab = new Tab();
     controlsTab.setText("Controls");
+
+    StackPane controlsLayout = new StackPane();
+
+    upLbl = new Label("UP KEY: " + Settings.getKey(InputKey.UP).getName());
+    leftLbl = new Label("LEFT KEY: " + Settings.getKey(InputKey.LEFT).getName());
+    rightLbl = new Label("RIGHT KEY: " + Settings.getKey(InputKey.RIGHT).getName());
+    downLbl = new Label("DOWN KEY: " + Settings.getKey(InputKey.DOWN).getName());
+    useLbl = new Label("USE ITEM KEY: " + Settings.getKey(InputKey.USE).getName());
+
+    upLbl.setStyle(" -fx-font-size: 14pt ;");
+    leftLbl.setStyle(" -fx-font-size: 14pt ;");
+    rightLbl.setStyle(" -fx-font-size: 14pt ;");
+    downLbl.setStyle(" -fx-font-size: 14pt ;");
+    useLbl.setStyle(" -fx-font-size: 14pt ;");
+
+    VBox keyLbls = new VBox(45, upLbl, leftLbl, rightLbl, downLbl, useLbl);
+    keyLbls.setAlignment(Pos.CENTER);
+
+    StackPane.setAlignment(keyLbls, Pos.CENTER);
+    StackPane.setMargin(keyLbls, new Insets(0, 200, 75, 0));
+
+    keyToggleStatus = new Label("");
+    keyToggleStatus.setStyle(" -fx-font-size: 12pt ; -fx-text-fill: white");
+    StackPane.setAlignment(keyToggleStatus, Pos.BOTTOM_CENTER);
+
+    ToggleButton upToggle = new ToggleButton(defaultToggleText);
+    ToggleButton leftToggle = new ToggleButton(defaultToggleText);
+    ToggleButton rightToggle = new ToggleButton(defaultToggleText);
+    ToggleButton downToggle = new ToggleButton(defaultToggleText);
+    ToggleButton useToggle = new ToggleButton(defaultToggleText);
+    keyToggleList.add(leftToggle);
+    keyToggleList.add(rightToggle);
+    keyToggleList.add(upToggle);
+    keyToggleList.add(downToggle);
+    keyToggleList.add(useToggle);
+    initialiseToggleActions();
+    ToggleGroup toggleGroup = new ToggleGroup();
+
+    upToggle.setUserData(InputKey.UP);
+    leftToggle.setUserData(InputKey.LEFT);
+    rightToggle.setUserData(InputKey.RIGHT);
+    downToggle.setUserData(InputKey.DOWN);
+
+    upToggle.setToggleGroup(toggleGroup);
+    leftToggle.setToggleGroup(toggleGroup);
+    rightToggle.setToggleGroup(toggleGroup);
+    downToggle.setToggleGroup(toggleGroup);
+    useToggle.setToggleGroup(toggleGroup);
+
+    VBox keyToggles = new VBox(45, upToggle, leftToggle, rightToggle, downToggle, useToggle);
+    keyToggles.setAlignment(Pos.CENTER);
+
+    StackPane.setAlignment(keyToggles, Pos.CENTER);
+    StackPane.setMargin(keyToggles, new Insets(0, 0, 75, 450));
+
+    controlsLayout.getChildren().addAll(keyLbls, keyToggles, keyToggleStatus);
+    controlsTab.setContent(controlsLayout);
 
     //Adds the tabs to the tab pane
     settingsTabs.getTabs().addAll(soundTab, graphicsTab, controlsTab);
@@ -696,39 +639,19 @@ public class MenuController {
         event -> {
           audioController.playSound(Sounds.click);
           if (!viewSettings) {
-//            musicBtn.setVisible(true);
-//            soundFxBtn.setVisible(true);
-//            creditsBtn.setVisible(true);
-//            volumeImg.setVisible(true);
-//            resolutionOptions.setVisible(true);
             viewSettings = true;
-//            incrVolumeBtn.setVisible(true);
-//            decrVolumeBtn.setVisible(true);
+
             logo.setVisible(false);
             quitBtn.setVisible(false);
             hideItemsOnScreen();
             backBtn.setVisible(false);
-//            standardScalingBtn.setVisible(true);
-//            noScalingBtn.setVisible(true);
-//            integerScalingBtn.setVisible(true);
-//            smoothScalingBtn.setVisible(true);
             settingsTabs.setVisible(true);
 
           } else {
-//            musicBtn.setVisible(false);
-//            soundFxBtn.setVisible(false);
+
             viewSettings = false;
             logo.setVisible(true);
             quitBtn.setVisible(true);
-//            creditsBtn.setVisible(false);
-//            resolutionOptions.setVisible(false);
-//            volumeImg.setVisible(false);
-//            incrVolumeBtn.setVisible(false);
-//            decrVolumeBtn.setVisible(false);
-//            standardScalingBtn.setVisible(false);
-//            noScalingBtn.setVisible(false);
-//            integerScalingBtn.setVisible(false);
-//            smoothScalingBtn.setVisible(false);
             settingsTabs.setVisible(false);
             showItemsOnScreen();
             if (!isHome) {
@@ -737,7 +660,6 @@ public class MenuController {
           }
         });
 
-    startingM = new ImageView("ui/start.png");
     startMGameBtn = buttonGenerator.generate(false, root, "Start", UIColours.GREEN, 40);
     StackPane.setAlignment(startMGameBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(startMGameBtn, new Insets(0, 0, 200, 0));
@@ -747,7 +669,6 @@ public class MenuController {
           client.startMultiplayerGame();
         });
 
-    backImageView = new ImageView("ui/back.png");
     backBtn = buttonGenerator.generate(false, root, "back", UIColours.RED, 30);
     StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(backBtn, new Insets(0, 0, 100, 0));
@@ -775,28 +696,9 @@ public class MenuController {
 
     imageViews =
         Arrays.asList(
-            volumeImg,
-            lowResImageView,
-            medResImageView,
-            highResImageView,
-            playView,
             logo,
-            starting,
-            singlePlayerImageView,
-            multiplayerImageView,
-            musicOnView,
-            fxView,
-            incrView,
-            decrView,
-            creditsView,
-            quitView,
-            joinGameView,
-            createGameView,
-            createLobbyView,
-            continueView,
-            settingsView,
-            backImageView,
-            startingM);
+            settingsView
+        );
 
     for (int i = 0; i < imageViews.size(); i++) {
       originalViewWidths.add(imageViews.get(i).getBoundsInLocal().getWidth());
@@ -805,6 +707,81 @@ public class MenuController {
 
     return root;
   }
+
+  private void hideInactiveToggles(ToggleButton toShow) {
+    for (ToggleButton t : keyToggleList) {
+      if (!t.equals(toShow)) {
+        t.setVisible(false);
+      }
+    }
+  }
+
+  private void resetToggles() {
+    for (ToggleButton t : keyToggleList) {
+      t.setText(defaultToggleText);
+      t.setVisible(true);
+    }
+  }
+
+
+  private void initialiseToggleActions() {
+    for (ToggleButton t : keyToggleList) {
+      t.setOnAction(event -> {
+        if (t.isSelected()) {
+          System.out.println("CURRENT CONTROLS: " + Settings.getKey(InputKey.UP));
+          t.setText(remapToggleText);
+          toRemap = (InputKey) t.getUserData();
+          hideInactiveToggles(t);
+          keyToggleStatus.setText(remapReady);
+          primaryStage.getScene().setOnKeyPressed(keyRemapper);
+          remappingActive = true;
+          new Thread(() -> {
+            while (true) {
+              if (keyRemapper.getActiveKey() == null) {
+                try {
+                  Thread.sleep(50);
+                } catch (InterruptedException e) {
+                  e.printStackTrace();
+                }
+                continue;
+              }
+
+              KeyCode newVal = keyRemapper.getActiveKey();
+              proposedChange = keyRemapper.getActiveKey();
+              System.out.println("Proposed change is: " + proposedChange.getName());
+              remappingActive = false;
+              break;
+            }
+          }).start();
+
+        } else {
+          if (keyRemapper.checkForDublicates(proposedChange) && proposedChange != null) {
+            keyToggleStatus.setText("Sorry, key already in use.");
+          } else {
+            keyToggleStatus.setText("");
+            Settings.setKey(toRemap, proposedChange);
+            keyRemapper.reset();
+          }
+          resetToggles();
+          updateToggleLabels();
+          primaryStage.getScene().setOnKeyPressed(null);
+          remappingActive = false;
+          toRemap = null;
+          proposedChange = null;
+        }
+      });
+    }
+  }
+
+  private void updateToggleLabels() {
+    System.out.println("Current UP KEY: " + Settings.getKey(InputKey.UP).getName());
+    upLbl.setText("UP KEY: " + Settings.getKey(InputKey.UP).getName());
+    leftLbl.setText("LEFT KEY: " + Settings.getKey(InputKey.LEFT).getName());
+    rightLbl.setText("RIGHT KEY: " + Settings.getKey(InputKey.RIGHT).getName());
+    downLbl.setText("DOWN KEY: " + Settings.getKey(InputKey.DOWN).getName());
+    useLbl.setText("USE ITEM KEY: " + Settings.getKey(InputKey.USE).getName());
+  }
+
 
   /**
    * @param newVal the new screen width.
@@ -833,13 +810,4 @@ public class MenuController {
     }
   }
 
-  public void initialiseRenderingButtons(
-      RadioButton rBtn, int xMargin, int yMargin, StackPane root, ToggleGroup g, RenderingMode rm) {
-    rBtn.setVisible(false);
-    StackPane.setAlignment(rBtn, Pos.CENTER);
-    StackPane.setMargin(rBtn, new Insets(yMargin, xMargin, 0, xMargin));
-    root.getChildren().add(rBtn);
-    rBtn.setOnAction(event -> client.setRenderingMode(rm));
-    rBtn.setToggleGroup(g);
-  }
 }
