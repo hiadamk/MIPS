@@ -448,25 +448,6 @@ public class MenuController {
     StackPane.setAlignment(volumeSlider, Pos.BOTTOM_CENTER);
     StackPane.setMargin(volumeSlider, new Insets(0, 0, 155, 220));
 
-
-    incrView = new ImageView(new Image("ui/increaseVolume.png"));
-//    incrVolumeBtn = buttonGenerator.generate(true, soundTabLayout, incrView);
-//    incrView.setFitWidth(50);
-//    incrVolumeBtn.setOnAction(
-//        event -> {
-//          audioController.playSound(Sounds.click);
-//          audioController.increaseVolume();
-//        });
-
-    decrView = new ImageView("ui/decreaseVolume.png");
-//    decrVolumeBtn = buttonGenerator.generate(true, soundTabLayout, decrView);
-//    decrView.setFitWidth(50);
-//    decrVolumeBtn.setOnAction(
-//        event -> {
-//          audioController.playSound(Sounds.click);
-//          audioController.decreaseVolume();
-//        });
-
     StackPane.setAlignment(volumeLbl, Pos.BOTTOM_CENTER);
     StackPane.setMargin(volumeLbl, new Insets(0, 200, 150, 0));
 
@@ -644,7 +625,7 @@ public class MenuController {
     imageViews =
         Arrays.asList(
             logo,
-            settingsView, decrView, incrView
+            settingsView
         );
 
     for (int i = 0; i < imageViews.size(); i++) {
