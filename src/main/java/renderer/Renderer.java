@@ -15,13 +15,11 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import javafx.util.Pair;
 import objects.Entity;
 import objects.Pellet;
 import utils.Map;
 import utils.Point;
 import utils.ResourceLoader;
-import utils.UpDownIterator;
 import utils.enums.MapElement;
 import utils.enums.RenderingMode;
 
@@ -121,6 +119,13 @@ public class Renderer {
     //clear screen
     gc.clearRect(0, 0, xResolution, yResolution);
     renderBackground(map);
+    renderGameOnly(map, entityArr, now, pellets);
+    renderHUD(entityArr);
+    showFPS(now);
+  }
+
+  public void renderGameOnly(Map map, Entity[] entityArr, long now,
+      HashMap<String, Pellet> pellets) {
     int[][] rawMap = map.raw();
     ArrayList<Entity> entities = new ArrayList<>(Arrays.asList(entityArr));
     // sort entities to get rendering order
@@ -128,14 +133,14 @@ public class Renderer {
 
     int entityCounter = 0;
     Image currentSprite;
-    Point2D.Double rendCoord;
+    Double rendCoord;
     Point spriteCoord = new Point(java.lang.Double.MAX_VALUE, java.lang.Double.MAX_VALUE);
 
     int x;
     int y;
 
     // Render floor first (floors will never be on a higher layer than anything apart form the background
-    for (Point2D.Double coord : traversalOrder) {
+    for (Double coord : traversalOrder) {
       x = (int) coord.getX();
       y = (int) coord.getY();
 
@@ -154,7 +159,7 @@ public class Renderer {
     Image translucentPellet = r.getTranslucentPellet().get(0);
 
     // Loop through grid in diagonal traversal to render walls and entities by depth
-    for (Point2D.Double coord : traversalOrder) {
+    for (Double coord : traversalOrder) {
       x = (int) coord.getX();
       y = (int) coord.getY();
 
@@ -204,9 +209,6 @@ public class Renderer {
         }
       }
     }
-
-    renderHUD(entityArr);
-    showFPS(now);
   }
 
   private boolean isClientMipsman(ArrayList<Entity> entities) {
@@ -436,7 +438,7 @@ public class Renderer {
     ArrayList<Point2D.Double> scoreCoord =
         new ArrayList<>(Arrays.asList(topLeft, topRight, botLeft, botRight));
 
-    //calculate number of other palyers
+    //calculate number of other players
     Entity[] otherPlayers = new Entity[entities.length - 1];
     Entity self = null;
     int playerCounter = 0;
