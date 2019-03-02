@@ -2,8 +2,10 @@ package server.telemeters;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import objects.Entity;
 import objects.Pellet;
+import objects.PowerUpBox;
 import utils.Input;
 import utils.Map;
 import utils.Methods;
@@ -73,12 +75,13 @@ public abstract class Telemetry {
   }
 
   void initialisePellets() {
+    Random r = new Random();
     pellets = new HashMap<>();
     for (int i = 0; i < map.getMaxX(); i++) {
       for (int j = 0; j < map.getMaxY(); j++) {
         Point point = new Point(i + 0.5, j + 0.5);
         if (!map.isWall(point)) {
-          Pellet pellet = new Pellet(point);
+          Pellet pellet = r.nextInt(50) == 1 ? new PowerUpBox(point) : new Pellet(point);
           pellet.updateImages(resourceLoader);
           pellets.put(i + "," + j, pellet);
         }

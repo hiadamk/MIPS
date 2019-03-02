@@ -33,7 +33,7 @@ public class ResourceLoader {
 
     private ArrayList<BufferedImage> pellets;
     private ArrayList<BufferedImage> translucentPellets;
-
+    private ArrayList<BufferedImage> powerUpBox;
     private ArrayList<BufferedImage> mapTiles;
 
     private BufferedImage background;
@@ -339,12 +339,17 @@ public class ResourceLoader {
                         Arrays.asList(loadImageFile("sprites/" + theme + "/consumable/", "pellet")));
         this.translucentPellets =
                 new ArrayList<>(Arrays.asList(transparentizeSprite(this.pellets.get(0))));
+        this.powerUpBox = new ArrayList<>(
+            Arrays.asList(loadImageFile("sprites/" + theme + "/consumable/", "powerBox")));
     }
 
     public ArrayList<Image> getPellet() {
         return bufferedToJavaFxImage(this.pellets);
     }
 
+    public ArrayList<Image> getPowerBox() {
+        return bufferedToJavaFxImage(this.powerUpBox);
+    }
     public ArrayList<Image> getTranslucentPellet() {
         return bufferedToJavaFxImage(this.translucentPellets);
     }
