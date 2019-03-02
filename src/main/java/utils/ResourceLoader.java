@@ -21,7 +21,6 @@ public class ResourceLoader {
   private final int spriteWidth = 39;
   private final int spriteHeight = 36;
   private final String DEFAULT_THEME = "default";
-  private String[] themes;
   private Map map;
   private ArrayList<ArrayList<BufferedImage>> mipSprites;
   private BufferedImage mipPalette;
@@ -49,7 +48,6 @@ public class ResourceLoader {
     BASE_DIR = baseDir;
 
     this.init();
-    this.loadThemes();
   }
 
   private void init() {
@@ -64,19 +62,23 @@ public class ResourceLoader {
     this.loadPellet(DEFAULT_THEME);
   }
 
-  private void loadThemes() {
-    File[] themeFolders = new File(BASE_DIR + "sprites/").listFiles(File::isDirectory);
-    String[] _themes = new String[themeFolders.length];
-
-    for (int i = 0; i < themeFolders.length; i++) {
-      _themes[i] = themeFolders[i].getName();
-    }
-
-    this.themes = _themes;
-  }
 
   public String[] getThemes() {
-    return this.themes;
+    File[] themeFolders = new File(BASE_DIR + "sprites/").listFiles(File::isDirectory);
+    return getFileNames(themeFolders);
+  }
+
+  private String[] getValidMaps() {
+    File[] maps = new File(BASE_DIR + "maps/").listFiles(File::isFile);
+    return getFileNames(maps);
+  }
+
+  private String[] getFileNames(File[] maps) {
+    String[] mapNames = new String[maps.length];
+    for (int i = 0; i < maps.length; i++) {
+      mapNames[i] = maps[i].getName();
+    }
+    return mapNames;
   }
 
   /**
