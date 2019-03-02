@@ -73,7 +73,6 @@ public class MapGenerator {
     for (int[] bit : map) {
       System.out.println(Arrays.toString(bit));
     }
-
   }
 
   public static int[][] generateNewMap() {
@@ -83,7 +82,7 @@ public class MapGenerator {
       System.out.println("attempt " + c++);
       Random r = new Random();
       int x = 14 + r.nextInt(3) * 3;
-      int half = 7 + r.nextInt(3) * 3;
+      int half = 7 + r.nextInt(5) * 3;
       int y = half * 2 - 1;
       map = new int[x][y];
       for (int i = 0; i < x; i++) {
@@ -97,6 +96,7 @@ public class MapGenerator {
         }
       }
     }
+    smoothDiagonals(map);
     for (int i = 1; i < map.length; i++) {
       for (int j = 1; j < map[0].length / 2; j++) {
         map[i][map[0].length - j - 1] = map[i][j];
@@ -151,6 +151,55 @@ public class MapGenerator {
     return true;
   }
 
+  private static void smoothDiagonals(int[][] map) {
+    Random r = new Random();
+    for (int x = 1; x < map.length - 1; x++) {
+      for (int y = 1; y < map[0].length - 1; y++) {
+        if (map[x][y] == 0 && map[x + 1][y + 1] == 0 && map[x + 1][y] == 1 && map[x][y + 1] == 1) {
+          if (r.nextInt(1) == 0) {
+            map[x + 1][y] = 0;
+            if (!noDoubleLanes(map)) {
+              map[x + 1][y] = 1;
+              map[x][y + 1] = 0;
+              if (!noDoubleLanes(map)) {
+                map[x][y + 1] = 1;
+              }
+            }
+          } else {
+            map[x][y + 1] = 0;
+            if (!noDoubleLanes(map)) {
+              map[x][y + 1] = 1;
+              map[x + 1][y] = 0;
+              if (!noDoubleLanes(map)) {
+                map[x + 1][y] = 1;
+              }
+            }
+          }
+        } else if (map[x][y] == 0 && map[x - 1][y + 1] == 0 && map[x][y + 1] == 1
+            && map[x - 1][y] == 1) {
+          if (r.nextInt(1) == 0) {
+            map[x - 1][y] = 0;
+            if (!noDoubleLanes(map)) {
+              map[x - 1][y] = 1;
+              map[x][y + 1] = 0;
+              if (!noDoubleLanes(map)) {
+                map[x][y + 1] = 1;
+              }
+            }
+          } else {
+            map[x][y + 1] = 0;
+            if (!noDoubleLanes(map)) {
+              map[x][y + 1] = 1;
+              map[x - 1][y] = 0;
+              if (!noDoubleLanes(map)) {
+                map[x - 1][y] = 1;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
   private static boolean containsSpace(int[][] map) {
     for (int x = 0; x < map.length; x++) {
       for (int y = 0; y < map[0].length; y++) {
