@@ -83,7 +83,8 @@ public class MapGenerator {
       System.out.println("attempt " + c++);
       Random r = new Random();
       int x = 14 + r.nextInt(3) * 3;
-      int y = 14 + r.nextInt(3) * 3;
+      int half = 7 + r.nextInt(3) * 3;
+      int y = half * 2;
       map = new int[x][y];
       for (int i = 0; i < x; i++) {
         for (int j = 0; j < y; j++) {
@@ -91,9 +92,14 @@ public class MapGenerator {
         }
       }
       for (int i = 1; i < x - 3; i += 3) {
-        for (int j = 1; j < y - 3; j += 3) {
+        for (int j = 1; j < half - 2; j += 3) {
           map = apply(MapParts.getRandom(), map, i, j);
         }
+      }
+    }
+    for (int i = 1; i < map.length; i++) {
+      for (int j = 1; j < map[0].length / 2; j++) {
+        map[i][map[0].length - j - 1] = map[i][j];
       }
     }
     return map;
