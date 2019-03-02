@@ -84,7 +84,7 @@ public class MapGenerator {
       Random r = new Random();
       int x = 14 + r.nextInt(3) * 3;
       int half = 7 + r.nextInt(3) * 3;
-      int y = half * 2;
+      int y = half * 2 - 1;
       map = new int[x][y];
       for (int i = 0; i < x; i++) {
         for (int j = 0; j < y; j++) {
