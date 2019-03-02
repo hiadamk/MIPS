@@ -12,7 +12,7 @@ public class MapGenerator {
   */
 
   public static void main(String[] args) {
-    int[][] map = generateNewMap();
+
     int[][] test1 = {
         {1, 1, 1, 1, 1},
         {1, 0, 1, 1, 1},
@@ -69,9 +69,12 @@ public class MapGenerator {
     if (validateMap(test3)) {
       System.out.println("test three true");
     }
-    System.out.println("****************");
-    for (int[] bit : map) {
-      System.out.println(Arrays.toString(bit));
+    for (int c = 0; c < 10; c++) {
+      int[][] map = generateNewMap();
+      System.out.println("****************");
+      for (int[] bit : map) {
+        System.out.println(Arrays.toString(bit));
+      }
     }
   }
 
@@ -79,7 +82,7 @@ public class MapGenerator {
     int[][] map = null;
     int c = 0;
     while (!validateMap(map)) {
-      System.out.println("attempt " + c++);
+      //System.out.println("attempt " + c++);
       Random r = new Random();
       int x = 14 + r.nextInt(3) * 3;
       int half = 7 + r.nextInt(5) * 3;
