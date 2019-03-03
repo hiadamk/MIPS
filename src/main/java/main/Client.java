@@ -121,6 +121,7 @@ public class Client extends Application {
             });
 
     primaryStage.show();
+
     updateResolution(this.screenRes);
   }
 

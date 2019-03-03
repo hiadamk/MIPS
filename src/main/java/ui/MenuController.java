@@ -61,6 +61,7 @@ public class MenuController {
   private Button backBtn;
   private Button quitBtn;
   private Button startMGameBtn;
+  private Button settingsBtn;
 
   private ImageView logo;
 
@@ -123,13 +124,14 @@ public class MenuController {
    */
   private void hideItemsOnScreen() {
     for (Node item : itemsOnScreen) {
-      FadeTransition ft = new FadeTransition(Duration.millis(1000), item);
-      ft.setFromValue(1.0);
-      ft.setToValue(0);
-      ft.play();
-    }
-    for (Node item : itemsOnScreen) {
-      item.setVisible(false);
+      if (!(isHome && item.equals(settingsBtn))) {
+        FadeTransition ft = new FadeTransition(Duration.millis(1000), item);
+        ft.setFromValue(1.0);
+        ft.setToValue(0);
+        ft.play();
+        item.setVisible(false);
+      }
+
     }
   }
 
@@ -147,7 +149,7 @@ public class MenuController {
   /**
    * @author Adam Kona Shows items on the screen which have been previously set to hidden.
    */
-  private void showItemsOnScreen() {
+  public void showItemsOnScreen() {
     for (Node item : itemsOnScreen) {
       FadeTransition ft = new FadeTransition(Duration.millis(1000), item);
       ft.setFromValue(0);
@@ -214,9 +216,9 @@ public class MenuController {
     root.getChildren().add(logo);
     logo.setVisible(true);
 
-    startGameBtn = buttonGenerator.generate(false, root, "Start", UIColours.GREEN, 45);
+    startGameBtn = buttonGenerator.generate(false, root, "Start", UIColours.GREEN, 40);
     StackPane.setAlignment(startGameBtn, Pos.CENTER);
-    StackPane.setMargin(startGameBtn, new Insets(160, 0, 0, 0));
+    StackPane.setMargin(startGameBtn, new Insets(0, 0, 0, 0));
     startGameBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
@@ -224,7 +226,7 @@ public class MenuController {
         });
 
     Button singlePlayerBtn = buttonGenerator
-        .generate(true, root, "Singleplayer", UIColours.WHITE, 45);
+        .generate(true, root, "Singleplayer", UIColours.WHITE, 40);
     singlePlayerBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
@@ -234,7 +236,7 @@ public class MenuController {
         });
 
     Button multiplayerBtn = buttonGenerator
-        .generate(true, root, "Multiplayer", UIColours.WHITE, 45);
+        .generate(true, root, "Multiplayer", UIColours.WHITE, 40);
     multiplayerBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
@@ -246,7 +248,7 @@ public class MenuController {
     gameModeOptions = new VBox(10, singlePlayerBtn, multiplayerBtn);
     gameModeOptions.setAlignment(Pos.CENTER);
     StackPane.setAlignment(gameModeOptions, Pos.CENTER);
-    StackPane.setMargin(gameModeOptions, new Insets(100, 0, 0, 0));
+    StackPane.setMargin(gameModeOptions, new Insets(0, 0, 0, 0));
     root.getChildren().add(gameModeOptions);
     gameModeOptions.setVisible(false);
 
@@ -299,7 +301,7 @@ public class MenuController {
     multiplayerOptions = new VBox(10, createGameBtn, joinGameBtn);
     multiplayerOptions.setAlignment(Pos.CENTER);
     StackPane.setAlignment(multiplayerOptions, Pos.CENTER);
-    StackPane.setMargin(multiplayerOptions, new Insets(100, 0, 0, 0));
+    StackPane.setMargin(multiplayerOptions, new Insets(0, 0, 0, 0));
     root.getChildren().add(multiplayerOptions);
     multiplayerOptions.setVisible(false);
 
@@ -356,7 +358,7 @@ public class MenuController {
     VBox nameAndLine = new VBox(nameEntry, clear);
     nameAndLine.setAlignment(Pos.CENTER);
 
-    Button nameEntryBtn = buttonGenerator.generate(true, root, "Continue", UIColours.GREEN, 40);
+    Button nameEntryBtn = buttonGenerator.generate(true, root, "Continue", UIColours.GREEN, 30);
     nameEntryBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
@@ -370,7 +372,7 @@ public class MenuController {
     nameEntryOptions = new VBox(30, nameAndLine, nameEntryBtn);
     nameEntryOptions.setAlignment(Pos.CENTER);
     StackPane.setAlignment(nameEntryOptions, Pos.CENTER);
-    StackPane.setMargin(nameEntryOptions, new Insets(100, 250, 0, 250));
+    StackPane.setMargin(nameEntryOptions, new Insets(50, 250, 0, 250));
     nameEntryOptions.setPrefWidth(300);
     nameEntryOptions.setVisible(false);
     root.getChildren().add(nameEntryOptions);
@@ -617,7 +619,7 @@ public class MenuController {
     root.getChildren().addAll(settingsTabs);
 
     ImageView settingsView = new ImageView("ui/settings.png");
-    Button settingsBtn = buttonGenerator.generate(true, root, settingsView);
+    settingsBtn = buttonGenerator.generate(true, root, settingsView);
     StackPane.setAlignment(settingsBtn, Pos.TOP_LEFT);
     StackPane.setMargin(settingsBtn, new Insets(50, 0, 0, 50));
     settingsView.setFitHeight(50);
@@ -627,18 +629,14 @@ public class MenuController {
           audioController.playSound(Sounds.click);
           if (!viewSettings) {
             viewSettings = true;
-
-            logo.setVisible(false);
-            quitBtn.setVisible(false);
             hideItemsOnScreen();
+
             backBtn.setVisible(false);
             settingsTabs.setVisible(true);
+            settingsBtn.setVisible(true);
 
           } else {
-
             viewSettings = false;
-            logo.setVisible(true);
-            quitBtn.setVisible(true);
             settingsTabs.setVisible(false);
             showItemsOnScreen();
             if (!isHome) {
@@ -647,7 +645,7 @@ public class MenuController {
           }
         });
 
-    startMGameBtn = buttonGenerator.generate(false, root, "Start", UIColours.GREEN, 40);
+    startMGameBtn = buttonGenerator.generate(false, root, "Start", UIColours.GREEN, 30);
     StackPane.setAlignment(startMGameBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(startMGameBtn, new Insets(0, 0, 200, 0));
     startMGameBtn.setOnAction(
@@ -678,6 +676,9 @@ public class MenuController {
 
     backTree.empty();
     itemsOnScreen.add(playBtn);
+    itemsOnScreen.add(logo);
+    itemsOnScreen.add(quitBtn);
+    itemsOnScreen.add(settingsBtn);
 
     imageViews =
         Arrays.asList(
