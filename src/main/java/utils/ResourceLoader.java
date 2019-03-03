@@ -70,7 +70,14 @@ public class ResourceLoader {
 
   public String[] getValidMaps() {
     File[] maps = new File(BASE_DIR + "maps/").listFiles(File::isFile);
-    return getFileNames(maps);
+    String[] mapNames = getFileNames(maps);
+    ArrayList<String> validMaps = new ArrayList<>();
+    for (String map : mapNames) {
+      if (map.endsWith(".png")) {
+        validMaps.add(map.substring(0, map.length() - 4));
+      }
+    }
+    return validMaps.toArray(new String[validMaps.size()]);
   }
 
   private String[] getFileNames(File[] maps) {
