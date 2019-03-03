@@ -101,9 +101,9 @@ public class Client extends Application {
     keyController = new KeyController();
     resourceLoader = new ResourceLoader("src/main/resources/");
     this.primaryStage = primaryStage;
-//    audioController.playMusic(Sounds.intro);
-    MenuController menuController = new MenuController(audioController, primaryStage, this,
-        resourceLoader);
+	  //    audioController.playMusic(Sounds.intro);
+	  MenuController menuController =
+			  new MenuController(audioController, primaryStage, this, resourceLoader);
     StackPane root = (StackPane) menuController.createMainMenu();
     root.getStylesheets().add(getClass().getResource("/ui/stylesheet.css").toExternalForm());
     Scene scene = new Scene(root, xRes, yRes);
@@ -178,7 +178,7 @@ public class Client extends Application {
       }
       this.primaryStage.setScene(gameScene);
       gameScene.setOnKeyPressed(keyController);
-//      startGame();
+	    //      startGame();
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -203,7 +203,6 @@ public class Client extends Application {
       gameScene.setOnKeyPressed(keyController);
       startGame();
     }
-
   }
 
   public void setMap(Map m) {
@@ -264,7 +263,7 @@ public class Client extends Application {
     this.telemetry.startGame();
     Methods.updateImages(agents, resourceLoader);
 
-    //TODO the following line fixes array out of bounds - need to find out why
+	  // TODO the following line fixes array out of bounds - need to find out why
     renderer.initMapTraversal(map);
 
     this.primaryStage.setScene(gameScene);
@@ -279,9 +278,9 @@ public class Client extends Application {
     //        telemetry.startAI();
   }
 
-  /**
-   * Process the players input given in via the keyboard @Author Matthew Jones
-   */
+	/**
+	 * Process the players input given in via the keyboard @Author Matthew Jones
+	 */
   private void processInput() {
     if (keyController.UseItem()) {
       // TODO tell the server that the player wants to use their item
@@ -330,20 +329,24 @@ public class Client extends Application {
     if (isHost) {
       telemetry.stopGame();
       server.gameStop();
-      //TODO render the end of game screen
+	    // TODO render the end of game screen
     }
     // TODO add options in future for client to quit a game
   }
 
 	public void collisionDetected(Entity newMipsman) {
 		renderer.renderCollisionAnimation(newMipsman);
-	}
+  }
 
   public ResourceLoader getResourceLoader() {
     return this.resourceLoader;
   }
 
-  public Entity[] getAgents() {
-    return this.agents;
-  }
+	public Entity[] getAgents() {
+		return this.agents;
+	}
+
+	public Map getMap() {
+		return this.map;
+	}
 }
