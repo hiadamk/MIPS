@@ -72,7 +72,7 @@ public class MenuController {
   private VBox multiplayerOptions;
   private VBox gameModeOptions;
   private VBox nameEntryOptions;
-  private VBox searchingForMutiplayers;
+  private VBox searchingForMultiplayers;
   private Font font;
 
   private List<ImageView> imageViews;
@@ -127,7 +127,6 @@ public class MenuController {
       ft.setFromValue(1.0);
       ft.setToValue(0);
       ft.play();
-//      item.setVisible(false);
     }
     for (Node item : itemsOnScreen) {
       item.setVisible(false);
@@ -150,7 +149,6 @@ public class MenuController {
    */
   private void showItemsOnScreen() {
     for (Node item : itemsOnScreen) {
-//      item.setVisible(true);
       FadeTransition ft = new FadeTransition(Duration.millis(1000), item);
       ft.setFromValue(0);
       ft.setToValue(1.0);
@@ -280,7 +278,7 @@ public class MenuController {
           audioController.playSound(Sounds.click);
           moveItemsToBackTree();
           lobbyStatusLbl.setText("Waiting for game to start");
-          itemsOnScreen.add(searchingForMutiplayers);
+          itemsOnScreen.add(searchingForMultiplayers);
           showItemsOnScreen();
           client.joinMultiplayerLobby();
 
@@ -292,7 +290,7 @@ public class MenuController {
         event -> {
           audioController.playSound(Sounds.click);
           moveItemsToBackTree();
-          itemsOnScreen.add(searchingForMutiplayers);
+          itemsOnScreen.add(searchingForMultiplayers);
           itemsOnScreen.add(startMGameBtn);
           showItemsOnScreen();
           client.createMultiplayerLobby();
@@ -317,11 +315,11 @@ public class MenuController {
     playersInLobby.setTextFill(Color.WHITE);
     playersInLobby.setFont(this.font);
 
-    searchingForMutiplayers = new VBox(5, lobbyStatusLbl, loadingDots, playersInLobby);
-    searchingForMutiplayers.setAlignment(Pos.CENTER);
-    StackPane.setAlignment(searchingForMutiplayers, Pos.CENTER);
-    root.getChildren().add(searchingForMutiplayers);
-    searchingForMutiplayers.setVisible(false);
+    searchingForMultiplayers = new VBox(5, lobbyStatusLbl, loadingDots, playersInLobby);
+    searchingForMultiplayers.setAlignment(Pos.CENTER);
+    StackPane.setAlignment(searchingForMultiplayers, Pos.CENTER);
+    root.getChildren().add(searchingForMultiplayers);
+    searchingForMultiplayers.setVisible(false);
 
     Timeline timeline =
         new Timeline(
@@ -765,6 +763,9 @@ public class MenuController {
     }
   }
 
+  /**
+   * Resets the toggle labels to their default state with the current control values.
+   */
   private void updateToggleLabels() {
     System.out.println("Current UP KEY: " + Settings.getKey(InputKey.UP).getName());
     upLbl.setText("UP KEY: " + Settings.getKey(InputKey.UP).getName());
