@@ -13,7 +13,9 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import objects.Entity;
 import objects.Pellet;
@@ -121,6 +123,9 @@ public class Client extends Application {
               menuController.scaleImages((double) newVal, (double) oldVal);
             });
 
+//    primaryStage.initStyle(StageStyle.TRANSPARENT);
+    scene.setFill(Color.TRANSPARENT);
+    root.setBackground(Background.EMPTY);
     primaryStage.show();
 
     updateResolution(this.screenRes);

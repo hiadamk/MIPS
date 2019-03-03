@@ -27,6 +27,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
@@ -39,6 +40,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.Client;
 import utils.KeyRemapping;
+import utils.MapPreview;
 import utils.ResourceLoader;
 import utils.Settings;
 import utils.enums.InputKey;
@@ -101,6 +103,16 @@ public class MenuController {
   private Label downLbl;
   private Label useLbl;
 
+  private MapPreview mapPreview;
+  private ImageView mapView;
+  private int mapsIndex = 0;
+  private int numberOfMaps;
+  private ArrayList<Image> mapImages = new ArrayList<>();
+  private Button moveMapsLeftBtn;
+  private Button moveMapsRightBtn;
+  private String currentMap;
+  private String[] validMaps;
+
 
   private ButtonGenerator buttonGenerator;
 
@@ -121,7 +133,7 @@ public class MenuController {
     this.buttonGenerator = new ButtonGenerator();
     this.keyRemapper = new KeyRemapping();
     this.resourceLoader = resourceLoader;
-
+    this.mapPreview = new MapPreview(1920, 1080);
   }
 
   /**
@@ -189,6 +201,28 @@ public class MenuController {
     });
   }
 
+  private void showNextMap() {
+    mapsIndex++;
+    if (mapsIndex >= (numberOfMaps - 1)) {
+      mapsIndex = numberOfMaps - 1;
+      moveMapsRightBtn.setVisible(false);
+    }
+    moveMapsLeftBtn.setVisible(true);
+    mapView.setImage(mapImages.get(mapsIndex));
+    currentMap = validMaps[mapsIndex];
+  }
+
+  private void showPreviousMap() {
+    mapsIndex--;
+    if (mapsIndex <= 0) {
+      mapsIndex = 0;
+      moveMapsLeftBtn.setVisible(false);
+    }
+    moveMapsRightBtn.setVisible(true);
+    mapView.setImage(mapImages.get(mapsIndex));
+    currentMap = validMaps[mapsIndex];
+  }
+
 
   /**
    * Creates all the menu items and defines their functionality.
@@ -230,13 +264,31 @@ public class MenuController {
           client.startSinglePlayerGame();
         });
 
+    validMaps = resourceLoader.getValidMaps();
+    numberOfMaps = validMaps.length;
+    for (String map : validMaps) {
+      System.out.println("Getting map: " + map);
+      mapImages.add(mapPreview.getMapPreview(map));
+    }
+
+    System.out.println("Valid Maps are: " + Arrays.toString(validMaps));
     Label selectMapLbl = new Label("Select a map:");
     selectMapLbl.setStyle(" -fx-font-size: 14pt ;");
-    Button moveMapsLeftBtn = buttonGenerator.generate(true, root, "<", UIColours.WHITE, 40);
-    Button moveMapsRightBtn = buttonGenerator.generate(true, root, ">", UIColours.WHITE, 40);
-    ImageView mapPreview = new ImageView("sprites/default/backgrounds/default.png");
-    mapPreview.setPreserveRatio(true);
-    mapPreview.setFitWidth(700);
+    moveMapsLeftBtn = buttonGenerator.generate(true, root, "<", UIColours.WHITE, 40);
+    moveMapsRightBtn = buttonGenerator.generate(true, root, ">", UIColours.WHITE, 40);
+    moveMapsLeftBtn.setVisible(false);
+    if (validMaps.length <= 1) {
+      moveMapsRightBtn.setVisible(false);
+    } else {
+      moveMapsRightBtn.setVisible(true);
+    }
+    moveMapsLeftBtn.setOnAction(event -> showPreviousMap());
+    moveMapsRightBtn.setOnAction(event -> showNextMap());
+
+    mapView = new ImageView(mapImages.get(0));
+    currentMap = validMaps[0];
+    mapView.setPreserveRatio(true);
+    mapView.setFitWidth(700);
     Button generateMapBtn = buttonGenerator
         .generate(true, root, "Generate Map", UIColours.WHITE, 25);
     Button mapConfirmationBtn = buttonGenerator
@@ -245,11 +297,12 @@ public class MenuController {
       audioController.playSound(Sounds.click);
       moveItemsToBackTree();
       itemsOnScreen.add(startGameBtn);
-//          itemsOnScreen.add(startGameBtn);
+      resourceLoader.loadMap(currentMap);
+      client.setMap(resourceLoader.getMap());
       showItemsOnScreen();
     });
 
-    HBox mapSelectionBox = new HBox(30, moveMapsLeftBtn, mapPreview, moveMapsRightBtn);
+    HBox mapSelectionBox = new HBox(30, moveMapsLeftBtn, mapView, moveMapsRightBtn);
     HBox mapSelectionBtns = new HBox(20, generateMapBtn, mapConfirmationBtn);
     VBox mapSelectionView = new VBox(40, selectMapLbl, mapSelectionBox, mapSelectionBtns);
     mapSelectionBtns.setAlignment(Pos.CENTER);
@@ -731,6 +784,7 @@ public class MenuController {
 
   /**
    * Hides remapping toggles when they are no longer needed
+   *
    * @param toShow the toggle we want to keep showing
    */
   private void hideInactiveToggles(ToggleButton toShow) {
