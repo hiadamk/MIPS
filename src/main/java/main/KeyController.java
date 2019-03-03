@@ -13,11 +13,9 @@ import utils.enums.InputKey;
  */
 public class KeyController implements EventHandler<KeyEvent> {
 
-  private InputKey mapping;
   private Direction activeKey;
   private boolean useItem;
   public KeyController() {
-    mapping = null;
     activeKey = null;
   }
 
@@ -27,11 +25,6 @@ public class KeyController implements EventHandler<KeyEvent> {
 
   @Override
   public void handle(KeyEvent e) {
-    if (mapping != null) {
-      Settings.setKey(mapping, e.getCode());
-      mapping = null;
-      return;
-    }
     if (e.getCode() == Settings.getKey(InputKey.UP)) {
       activeKey = Direction.UP;
     } else if (e.getCode() == Settings.getKey(InputKey.DOWN)) {
@@ -52,6 +45,5 @@ public class KeyController implements EventHandler<KeyEvent> {
     }
     return false;
   }
-
 
 }

@@ -48,7 +48,7 @@ public class HostTelemetry extends Telemetry {
     this.playerCount = 1;
     singlePlayer = true;
     initialise();
-    startGame();
+//    startGame();
   }
 
   /**
@@ -84,7 +84,7 @@ public class HostTelemetry extends Telemetry {
     inputs.add(in);
   }
 
-  void startGame() {
+  public void startGame() {
     startAI();
 
     final long DELAY = (long) Math.pow(10, 7);
@@ -95,7 +95,7 @@ public class HostTelemetry extends Telemetry {
       public void handle() {
         processInputs();
 
-        processPhysics(agents, map, resourceLoader, pellets);
+        processPhysics(agents, map, resourceLoader, pellets, activePowerUps);
       }
     };
     inputProcessor.start();

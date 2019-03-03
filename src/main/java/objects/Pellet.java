@@ -31,6 +31,9 @@ public class Pellet implements Renderable {
     active = true;
   }
 
+  public boolean canUse(Entity e) {
+    return e.isMipsman();
+  }
 
   public Point getLocation() {
     return location;
@@ -65,7 +68,7 @@ public class Pellet implements Renderable {
   }
 
   public void interact(Entity entity) {
-    if (!active) {
+    if (!active || !canUse(entity)) {
       return;
     }
     entity.incrementScore(this.value);
@@ -77,6 +80,9 @@ public class Pellet implements Renderable {
     return "x = " + location.getX() + " y= " + location.getY() + " active = " + a;
   }
 
+  /**
+   * Called every physics update to increment the counter for respawn
+   */
   public void incrementRespawn() {
     if (!active) {
       respawnCount++;

@@ -4,9 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
+import java.util.Enumeration;
 import java.util.Queue;
 import main.Client;
 import utils.Input;
@@ -27,6 +26,32 @@ public class ClientLobbySession {
             public void run() {
               super.run();
               try {
+
+
+                System.out.println("Getting the server address");
+                MulticastSocket socket = new MulticastSocket(NetworkUtility.CLIENT_M_PORT);
+                InetAddress group = NetworkUtility.GROUP;
+                Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+                while (interfaces.hasMoreElements()) {
+                  NetworkInterface iface = interfaces.nextElement();
+                  if (iface.isLoopback() || !iface.isUp()) {
+                    continue;
+                  }
+
+                  Enumeration<InetAddress> addresses = iface.getInetAddresses();
+                  while (addresses.hasMoreElements()) {
+                    InetAddress addr = addresses.nextElement();
+                    socket.setInterface(addr);
+                    socket.joinGroup(group);
+                  }
+                }
+
+                byte[] buf = new byte[256];
+                DatagramPacket packet = new DatagramPacket(buf, buf.length);
+                socket.receive(packet);
+                System.out.printf("Server Address: " + packet.getAddress());
+                serverIP = packet.getAddress();
+
                 Socket soc = new Socket(serverIP, NetworkUtility.SERVER_DGRAM_PORT);
                 PrintWriter out = new PrintWriter(soc.getOutputStream());
                 BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
@@ -82,7 +107,7 @@ public class ClientLobbySession {
 
     this.clientIn = clientIn;
     this.keypressQueue = keypressQueue;
-    this.serverIP = NetworkUtility.getServerIP();
+//    this.serverIP = NetworkUtility.getServerIP();
     this.client = client;
     this.clientName = clientName;
     joiner.start();

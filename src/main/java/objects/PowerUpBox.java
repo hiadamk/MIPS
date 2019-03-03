@@ -24,6 +24,11 @@ public class PowerUpBox extends Pellet {
     this.value = 0;
   }
 
+  /**
+   * Gets a random PowerUp
+   *
+   * @return the PowerUp
+   */
   public PowerUp getPowerUp() {
     Random r = new Random();
     int i = r.nextInt(powerUps.length - 1);
@@ -32,8 +37,13 @@ public class PowerUpBox extends Pellet {
   }
 
   @Override
+  public boolean canUse(Entity e) {
+    return true;
+  }
+
+  @Override
   public void updateImages(ResourceLoader r) {
-    // TODO currentImage = r.getPowerUpBox();
+    currentImage = r.getPowerBox();
   }
 
   @Override

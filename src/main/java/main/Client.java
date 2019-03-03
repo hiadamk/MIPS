@@ -101,8 +101,9 @@ public class Client extends Application {
     keyController = new KeyController();
     resourceLoader = new ResourceLoader("src/main/resources/");
     this.primaryStage = primaryStage;
-    //        audioController.playMusic(Sounds.intro);
-    MenuController menuController = new MenuController(audioController, primaryStage, this);
+//    audioController.playMusic(Sounds.intro);
+    MenuController menuController = new MenuController(audioController, primaryStage, this,
+        resourceLoader);
     StackPane root = (StackPane) menuController.createMainMenu();
     root.getStylesheets().add(getClass().getResource("/ui/stylesheet.css").toExternalForm());
     Scene scene = new Scene(root, xRes, yRes);
@@ -121,6 +122,7 @@ public class Client extends Application {
             });
 
     primaryStage.show();
+
     updateResolution(this.screenRes);
   }
 
@@ -176,7 +178,8 @@ public class Client extends Application {
       }
       this.primaryStage.setScene(gameScene);
       gameScene.setOnKeyPressed(keyController);
-      startGame();
+//      startGame();
+
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -247,6 +250,7 @@ public class Client extends Application {
 
   public void setMIP(int id) {
     this.MIPID = id;
+    this.telemetry.setMipID(id);
   }
 
   private void startGame() {
@@ -257,7 +261,12 @@ public class Client extends Application {
       map = telemetry.getMap();
       pellets = telemetry.getPellets();
     }
+    this.telemetry.startGame();
     Methods.updateImages(agents, resourceLoader);
+
+    //TODO the following line fixes array out of bounds - need to find out why
+    renderer.initMapTraversal(map);
+
     this.primaryStage.setScene(gameScene);
     // AnimationTimer started once game has started
     new AnimationTimer() {
