@@ -102,7 +102,8 @@ public class Client extends Application {
     resourceLoader = new ResourceLoader("src/main/resources/");
     this.primaryStage = primaryStage;
 //    audioController.playMusic(Sounds.intro);
-    MenuController menuController = new MenuController(audioController, primaryStage, this);
+    MenuController menuController = new MenuController(audioController, primaryStage, this,
+        resourceLoader);
     StackPane root = (StackPane) menuController.createMainMenu();
     root.getStylesheets().add(getClass().getResource("/ui/stylesheet.css").toExternalForm());
     Scene scene = new Scene(root, xRes, yRes);

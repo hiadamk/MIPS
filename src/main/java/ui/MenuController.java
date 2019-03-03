@@ -29,6 +29,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -38,6 +39,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.Client;
 import utils.KeyRemapping;
+import utils.ResourceLoader;
 import utils.Settings;
 import utils.enums.InputKey;
 import utils.enums.RenderingMode;
@@ -56,6 +58,7 @@ public class MenuController {
   private Stage primaryStage;
   private Stack<ArrayList<Node>> backTree = new Stack<>();
   private ArrayList<Node> itemsOnScreen = new ArrayList<>();
+  private ResourceLoader resourceLoader;
 
   private Button startGameBtn;
   private Button backBtn;
@@ -108,7 +111,8 @@ public class MenuController {
    * @param stage The game window
    * @author Adam Kona Constructor takes in the audio controller stage and game scene
    */
-  public MenuController(AudioController audio, Stage stage, Client client) {
+  public MenuController(AudioController audio, Stage stage, Client client,
+      ResourceLoader resourceLoader) {
     this.audioController = audio;
     this.primaryStage = stage;
     this.client = client;
@@ -116,6 +120,7 @@ public class MenuController {
     minimumViewWidths = new ArrayList<>();
     this.buttonGenerator = new ButtonGenerator();
     this.keyRemapper = new KeyRemapping();
+    this.resourceLoader = resourceLoader;
 
   }
 
@@ -225,13 +230,43 @@ public class MenuController {
           client.startSinglePlayerGame();
         });
 
+    Label selectMapLbl = new Label("Select a map:");
+    selectMapLbl.setStyle(" -fx-font-size: 14pt ;");
+    Button moveMapsLeftBtn = buttonGenerator.generate(true, root, "<", UIColours.WHITE, 40);
+    Button moveMapsRightBtn = buttonGenerator.generate(true, root, ">", UIColours.WHITE, 40);
+    ImageView mapPreview = new ImageView("sprites/default/backgrounds/default.png");
+    mapPreview.setPreserveRatio(true);
+    mapPreview.setFitWidth(700);
+    Button generateMapBtn = buttonGenerator
+        .generate(true, root, "Generate Map", UIColours.WHITE, 25);
+    Button mapConfirmationBtn = buttonGenerator
+        .generate(true, root, "Continue", UIColours.GREEN, 25);
+    mapConfirmationBtn.setOnAction(event -> {
+      audioController.playSound(Sounds.click);
+      moveItemsToBackTree();
+      itemsOnScreen.add(startGameBtn);
+//          itemsOnScreen.add(startGameBtn);
+      showItemsOnScreen();
+    });
+
+    HBox mapSelectionBox = new HBox(30, moveMapsLeftBtn, mapPreview, moveMapsRightBtn);
+    HBox mapSelectionBtns = new HBox(20, generateMapBtn, mapConfirmationBtn);
+    VBox mapSelectionView = new VBox(40, selectMapLbl, mapSelectionBox, mapSelectionBtns);
+    mapSelectionBtns.setAlignment(Pos.CENTER);
+    mapSelectionBox.setAlignment(Pos.CENTER);
+    mapSelectionView.setAlignment(Pos.CENTER);
+    StackPane.setMargin(mapSelectionView, new Insets(0, 0, 150, 0));
+    mapSelectionView.setVisible(false);
+    root.getChildren().add(mapSelectionView);
+
     Button singlePlayerBtn = buttonGenerator
         .generate(true, root, "Singleplayer", UIColours.WHITE, 40);
     singlePlayerBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
           moveItemsToBackTree();
-          itemsOnScreen.add(startGameBtn);
+          itemsOnScreen.add(mapSelectionView);
+//          itemsOnScreen.add(startGameBtn);
           showItemsOnScreen();
         });
 
