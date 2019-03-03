@@ -61,19 +61,18 @@ public class Renderer {
     this.background = r.getBackground();
     this.palette = r.getBackgroundPalette();
 
-    this.init();
+    this.initMapTraversal(r.getMap());
   }
 
   /**
    * initialises map array, map traversal order, map tiles and fonts
    */
-  public void init() {
-    Map map = r.getMap();
+  public void initMapTraversal(Map map) {
 
     final int ROW = map.getMaxX();
     final int COL = map.getMaxY();
 
-    traversalOrder = new ArrayList<>();
+    this.traversalOrder = new ArrayList<>();
     //find diagonal traversal order (map depth order traversal)
     for (int line = 1; line <= (ROW + COL - 1); line++) {
       int start_col = Math.max(0, line - ROW);
@@ -498,6 +497,6 @@ public class Renderer {
     r.setResolution(x, y, mode);
     xResolution = x;
     yResolution = y;
-    this.init();
+    this.initMapTraversal(r.getMap());
   }
 }
