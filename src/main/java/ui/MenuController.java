@@ -16,8 +16,6 @@ import java.util.Stack;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -59,33 +57,22 @@ public class MenuController {
   private Stack<ArrayList<Node>> backTree = new Stack<>();
   private ArrayList<Node> itemsOnScreen = new ArrayList<>();
 
-  private Button singlePlayerBtn;
-  private Button multiplayerBtn;
   private Button startGameBtn;
   private Button backBtn;
-  private Button playBtn;
-  private Button creditsBtn;
-  private Button settingsBtn;
   private Button quitBtn;
-  private Button createGameBtn;
-  private Button joinGameBtn;
   private Button startMGameBtn;
 
   private ImageView logo;
-  private ImageView creditsView;
-  private ImageView settingsView;
 
   private Label lobbyStatusLbl;
   private Label loadingDots;
-  private Label playersInLobby;
 
   private TextField nameEntry;
-  private Button nameEntryBtn;
 
   private VBox multiplayerOptions;
   private VBox gameModeOptions;
   private VBox nameEntryOptions;
-  private VBox searchingForMutiplayers;
+  private VBox searchingForMultiplayers;
   private Font font;
 
   private List<ImageView> imageViews;
@@ -101,7 +88,6 @@ public class MenuController {
   private final String remapComplete = "Key remapped";
   private final String remapCancelled = "Remap cancelled";
   private KeyRemapping keyRemapper;
-  private boolean remappingActive = false;
   private InputKey toRemap = null;
   private KeyCode proposedChange = null;
 
@@ -141,7 +127,6 @@ public class MenuController {
       ft.setFromValue(1.0);
       ft.setToValue(0);
       ft.play();
-//      item.setVisible(false);
     }
     for (Node item : itemsOnScreen) {
       item.setVisible(false);
@@ -164,7 +149,6 @@ public class MenuController {
    */
   private void showItemsOnScreen() {
     for (Node item : itemsOnScreen) {
-//      item.setVisible(true);
       FadeTransition ft = new FadeTransition(Duration.millis(1000), item);
       ft.setFromValue(0);
       ft.setToValue(1.0);
@@ -175,6 +159,11 @@ public class MenuController {
     }
   }
 
+  /**
+   * Aligns text in the centre of combo box
+   *
+   * @param comboBox the combo box whose text needs to be aligned
+   */
   private void alignComboText(JFXComboBox comboBox) {
     comboBox.setCellFactory(lv -> new ListCell<String>() {
 
@@ -234,9 +223,9 @@ public class MenuController {
           client.startSinglePlayerGame();
         });
 
-    this.singlePlayerBtn = buttonGenerator
+    Button singlePlayerBtn = buttonGenerator
         .generate(true, root, "Singleplayer", UIColours.WHITE, 45);
-    this.singlePlayerBtn.setOnAction(
+    singlePlayerBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
           moveItemsToBackTree();
@@ -244,8 +233,9 @@ public class MenuController {
           showItemsOnScreen();
         });
 
-    this.multiplayerBtn = buttonGenerator.generate(true, root, "Multiplayer", UIColours.WHITE, 45);
-    this.multiplayerBtn.setOnAction(
+    Button multiplayerBtn = buttonGenerator
+        .generate(true, root, "Multiplayer", UIColours.WHITE, 45);
+    multiplayerBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
           moveItemsToBackTree();
@@ -260,7 +250,7 @@ public class MenuController {
     root.getChildren().add(gameModeOptions);
     gameModeOptions.setVisible(false);
 
-    playBtn = buttonGenerator.generate(true, root, "Play", UIColours.GREEN, 35);
+    Button playBtn = buttonGenerator.generate(true, root, "Play", UIColours.GREEN, 35);
     playBtn.setText("Play");
     StackPane.setAlignment(playBtn, Pos.CENTER);
     StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
@@ -274,34 +264,33 @@ public class MenuController {
           showItemsOnScreen();
         });
 
-//    smoothScalingBtn.setSelected(true);
     client.setRenderingMode(RenderingMode.SMOOTH_SCALING);
 
-    creditsView = new ImageView("ui/Credits.png");
-    creditsBtn = buttonGenerator.generate(false, root, creditsView);
+    ImageView creditsView = new ImageView("ui/Credits.png");
+    Button creditsBtn = buttonGenerator.generate(false, root, creditsView);
     StackPane.setAlignment(creditsBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(creditsBtn, new Insets(0, 0, 50, 0));
 
-    joinGameBtn = buttonGenerator.generate(true, root, "Join a game", UIColours.WHITE, 40);
+    Button joinGameBtn = buttonGenerator.generate(true, root, "Join a game", UIColours.WHITE, 40);
     joinGameBtn.setPickOnBounds(true);
     joinGameBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
           moveItemsToBackTree();
           lobbyStatusLbl.setText("Waiting for game to start");
-          itemsOnScreen.add(searchingForMutiplayers);
+          itemsOnScreen.add(searchingForMultiplayers);
           showItemsOnScreen();
           client.joinMultiplayerLobby();
 
         });
 
-    createGameBtn = buttonGenerator.generate(true, root, "Create game", UIColours.WHITE, 40);
+    Button createGameBtn = buttonGenerator.generate(true, root, "Create game", UIColours.WHITE, 40);
     createGameBtn.setPickOnBounds(true);
     createGameBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
           moveItemsToBackTree();
-          itemsOnScreen.add(searchingForMutiplayers);
+          itemsOnScreen.add(searchingForMultiplayers);
           itemsOnScreen.add(startMGameBtn);
           showItemsOnScreen();
           client.createMultiplayerLobby();
@@ -322,15 +311,15 @@ public class MenuController {
     loadingDots.setTextFill(Color.WHITE);
     loadingDots.setFont(this.font);
 
-    playersInLobby = new Label("Players in lobby: 0");
+    Label playersInLobby = new Label("Players in lobby: 0");
     playersInLobby.setTextFill(Color.WHITE);
     playersInLobby.setFont(this.font);
 
-    searchingForMutiplayers = new VBox(5, lobbyStatusLbl, loadingDots, playersInLobby);
-    searchingForMutiplayers.setAlignment(Pos.CENTER);
-    StackPane.setAlignment(searchingForMutiplayers, Pos.CENTER);
-    root.getChildren().add(searchingForMutiplayers);
-    searchingForMutiplayers.setVisible(false);
+    searchingForMultiplayers = new VBox(5, lobbyStatusLbl, loadingDots, playersInLobby);
+    searchingForMultiplayers.setAlignment(Pos.CENTER);
+    StackPane.setAlignment(searchingForMultiplayers, Pos.CENTER);
+    root.getChildren().add(searchingForMultiplayers);
+    searchingForMultiplayers.setVisible(false);
 
     Timeline timeline =
         new Timeline(
@@ -367,7 +356,7 @@ public class MenuController {
     VBox nameAndLine = new VBox(nameEntry, clear);
     nameAndLine.setAlignment(Pos.CENTER);
 
-    nameEntryBtn = buttonGenerator.generate(true, root, "Continue", UIColours.GREEN, 40);
+    Button nameEntryBtn = buttonGenerator.generate(true, root, "Continue", UIColours.GREEN, 40);
     nameEntryBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
@@ -451,12 +440,9 @@ public class MenuController {
 
     JFXSlider volumeSlider = new JFXSlider(0, 1, 0.5);
 
-    volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
-      public void changed(ObservableValue<? extends Number> ov,
-          Number old_val, Number new_val) {
-        audioController.setSoundVolume(new_val.doubleValue());
-        audioController.setMusicVolume(new_val.doubleValue());
-      }
+    volumeSlider.valueProperty().addListener((ov, old_val, new_val) -> {
+      audioController.setSoundVolume(new_val.doubleValue());
+      audioController.setMusicVolume(new_val.doubleValue());
     });
     volumeSlider.setMaxWidth(200);
     volumeSlider.setMaxWidth(200);
@@ -630,8 +616,8 @@ public class MenuController {
 
     root.getChildren().addAll(settingsTabs);
 
-    settingsView = new ImageView("ui/settings.png");
-    settingsBtn = buttonGenerator.generate(true, root, settingsView);
+    ImageView settingsView = new ImageView("ui/settings.png");
+    Button settingsBtn = buttonGenerator.generate(true, root, settingsView);
     StackPane.setAlignment(settingsBtn, Pos.TOP_LEFT);
     StackPane.setMargin(settingsBtn, new Insets(50, 0, 0, 50));
     settingsView.setFitHeight(50);
@@ -681,9 +667,7 @@ public class MenuController {
             hideItemsOnScreen();
             itemsOnScreen.clear();
             ArrayList<Node> toShow = backTree.pop();
-            for (Node item : toShow) {
-              itemsOnScreen.add(item);
-            }
+            itemsOnScreen.addAll(toShow);
             showItemsOnScreen();
             if (backTree.isEmpty()) {
               backBtn.setVisible(false);
@@ -709,6 +693,10 @@ public class MenuController {
     return root;
   }
 
+  /**
+   * Hides remapping toggles when they are no longer needed
+   * @param toShow the toggle we want to keep showing
+   */
   private void hideInactiveToggles(ToggleButton toShow) {
     for (ToggleButton t : keyToggleList) {
       if (!t.equals(toShow)) {
@@ -717,6 +705,9 @@ public class MenuController {
     }
   }
 
+  /**
+   * Shows the toggles in their original state
+   */
   private void resetToggles() {
     for (ToggleButton t : keyToggleList) {
       t.setText(defaultToggleText);
@@ -724,18 +715,18 @@ public class MenuController {
     }
   }
 
-
+  /**
+   * Initialises the behaviour for the toggle buttons
+   */
   private void initialiseToggleActions() {
     for (ToggleButton t : keyToggleList) {
       t.setOnAction(event -> {
         if (t.isSelected()) {
-          System.out.println("CURRENT CONTROLS: " + Settings.getKey(InputKey.UP));
           t.setText(remapToggleText);
           toRemap = (InputKey) t.getUserData();
           hideInactiveToggles(t);
           keyToggleStatus.setText(remapReady);
           primaryStage.getScene().setOnKeyPressed(keyRemapper);
-          remappingActive = true;
           new Thread(() -> {
             while (true) {
               if (keyRemapper.getActiveKey() == null) {
@@ -747,26 +738,24 @@ public class MenuController {
                 continue;
               }
 
-              KeyCode newVal = keyRemapper.getActiveKey();
               proposedChange = keyRemapper.getActiveKey();
-              System.out.println("Proposed change is: " + proposedChange.getName());
-              remappingActive = false;
               break;
             }
           }).start();
 
         } else {
-          if (keyRemapper.checkForDublicates(proposedChange) && proposedChange != null) {
+          if (proposedChange == null) {
+            keyToggleStatus.setText(remapCancelled);
+          } else if (keyRemapper.checkForDublicates(proposedChange) && proposedChange != null) {
             keyToggleStatus.setText("Sorry, key already in use.");
           } else {
-            keyToggleStatus.setText("");
+            keyToggleStatus.setText(remapComplete);
             Settings.setKey(toRemap, proposedChange);
             keyRemapper.reset();
           }
           resetToggles();
           updateToggleLabels();
           primaryStage.getScene().setOnKeyPressed(null);
-          remappingActive = false;
           toRemap = null;
           proposedChange = null;
         }
@@ -774,6 +763,9 @@ public class MenuController {
     }
   }
 
+  /**
+   * Resets the toggle labels to their default state with the current control values.
+   */
   private void updateToggleLabels() {
     System.out.println("Current UP KEY: " + Settings.getKey(InputKey.UP).getName());
     upLbl.setText("UP KEY: " + Settings.getKey(InputKey.UP).getName());
