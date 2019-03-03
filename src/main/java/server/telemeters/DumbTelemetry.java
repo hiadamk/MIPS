@@ -2,7 +2,6 @@ package server.telemeters;
 
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
-import objects.Entity;
 import server.NetworkUtility;
 import utils.GameLoop;
 import utils.Input;
@@ -14,7 +13,6 @@ import utils.enums.Direction;
 public class DumbTelemetry extends Telemetry {
 
   private BlockingQueue<String> inputs;
-  private Entity[] agents;
   private Queue<Input> clientQueue;
   private GameLoop inputProcessor;
 
