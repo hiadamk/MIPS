@@ -100,9 +100,11 @@ public class ResourceLoader {
       }
     }
     this.map = new Map(map_);
+    //this.map = new Map(MapGenerator.generateNewMap());
   }
 
   public Map getMap() {
+    //return new Map(MapGenerator.generateNewMap());
     return map;
   }
 

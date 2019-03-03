@@ -263,6 +263,10 @@ public class Client extends Application {
     }
     this.telemetry.startGame();
     Methods.updateImages(agents, resourceLoader);
+
+    //TODO the following line fixes array out of bounds - need to find out why
+    renderer.initMapTraversal(map);
+
     this.primaryStage.setScene(gameScene);
     // AnimationTimer started once game has started
     new AnimationTimer() {
