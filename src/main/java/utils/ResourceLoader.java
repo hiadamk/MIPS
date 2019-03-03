@@ -68,7 +68,7 @@ public class ResourceLoader {
     return getFileNames(themeFolders);
   }
 
-  private String[] getValidMaps() {
+  public String[] getValidMaps() {
     File[] maps = new File(BASE_DIR + "maps/").listFiles(File::isFile);
     return getFileNames(maps);
   }
