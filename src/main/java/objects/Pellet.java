@@ -31,6 +31,9 @@ public class Pellet implements Renderable {
     active = true;
   }
 
+  public boolean canUse(Entity e) {
+    return e.isMipsman();
+  }
 
   public Point getLocation() {
     return location;
@@ -65,7 +68,7 @@ public class Pellet implements Renderable {
   }
 
   public void interact(Entity entity) {
-    if (!active) {
+    if (!active || !canUse(entity)) {
       return;
     }
     entity.incrementScore(this.value);

@@ -194,9 +194,6 @@ public abstract class Telemetry {
    */
   private static void pelletCollision(Entity[] agents, HashMap<String, Pellet> pellets) {
     for (Entity agent : agents) {
-      if (!agent.isMipsman()) {
-        continue;
-      }
       Point p = agent.getLocation();
       int x = (int) p.getX();
       int y = (int) p.getY();

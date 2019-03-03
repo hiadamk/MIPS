@@ -37,6 +37,11 @@ public class PowerUpBox extends Pellet {
   }
 
   @Override
+  public boolean canUse(Entity e) {
+    return true;
+  }
+
+  @Override
   public void updateImages(ResourceLoader r) {
     currentImage = r.getPowerBox();
   }
