@@ -123,7 +123,6 @@ public class Client extends Application {
     primaryStage.show();
 
     updateResolution(this.screenRes);
-    menuController.showItemsOnScreen();
   }
 
   public void startSinglePlayerGame() {
