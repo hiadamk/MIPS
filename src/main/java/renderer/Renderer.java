@@ -223,30 +223,40 @@ public class Renderer {
     return clientMipsman;
   }
 
-  public void renderCollisionAnimation(Entity newMipsMan) {
+  public void renderCollisionAnimation(Entity newMipsMan, Entity[] entities, Map map) {
     Image currentSprite = newMipsMan.getImage().get(newMipsMan.getCurrentFrame());
     final double renderAnimationTime = 0.75 * Math.pow(10, 9);
     double startTime = System.nanoTime();
     final int frames = 22;
     double frameTime = renderAnimationTime / frames;
+    double timeSinceLastFrame = 0;
+    double currentTime = System.nanoTime();
     int currentFrame = 0;
     while (System.nanoTime() - startTime < renderAnimationTime) {
-      gc.setFill(Color.BLACK);
-      gc.fillRect(0, 0, xResolution, yResolution);
+      if (timeSinceLastFrame < frameTime) {
+        timeSinceLastFrame += System.nanoTime() - currentTime;
+        currentTime = System.nanoTime();
+        try {
+          Thread.sleep(3);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        continue;
+      }
+      timeSinceLastFrame = 0;
       gc.setTextAlign(TextAlignment.CENTER);
+      renderGameOnly(map, entities, 0, new HashMap<String, Pellet>());
+      gc.setFill(new Color(0, 0, 0, 0.5));
+      gc.fillRect(0, 0, xResolution, yResolution);
+
 
       double x = newMipsMan.getLocation().getX() - 0.5;
       double y = newMipsMan.getLocation().getY() - 0.5;
       Point2D.Double rendCoord =
           getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
       gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
+      gc.setFill(Color.WHITE);
       gc.fillText("MIPS CAPTURED", xResolution / 2, yResolution * 0.7);
-
-      try {
-        Thread.sleep(3);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
     }
 
 

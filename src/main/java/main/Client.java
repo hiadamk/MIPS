@@ -335,7 +335,7 @@ public class Client extends Application {
   }
 
 	public void collisionDetected(Entity newMipsman) {
-		renderer.renderCollisionAnimation(newMipsman);
+    renderer.renderCollisionAnimation(newMipsman, agents, map);
   }
 
   public ResourceLoader getResourceLoader() {
