@@ -109,6 +109,10 @@ public class ResourceLoader {
     //this.map = new Map(MapGenerator.generateNewMap());
   }
 
+  public void loadMap(Map map) {
+    this.map = map;
+  }
+
   public Map getMap() {
     //return new Map(MapGenerator.generateNewMap());
     return map;
