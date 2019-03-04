@@ -3,6 +3,7 @@ package server.telemeters;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import main.Client;
+import objects.Entity;
 import server.NetworkUtility;
 import utils.GameLoop;
 import utils.Input;
@@ -88,8 +89,12 @@ public class DumbTelemetry extends Telemetry {
   private void setEntityPositions(String s) {
     String[] positions = s.split("\\|");
     int mipID = Integer.parseInt(positions[positions.length - 1]);
-    agents[mipID].setMipsman(true);
-    //    agents[positions[Integer.papositions.length-1]]
+    for(Entity ent: agents){
+      if(ent.getClientId() == mipID){
+        ent.setMipsman(true);
+      }
+    }
+
     for (int i = 0; i < positions.length - 1; i++) {
       String[] ls = positions[i].split(":");
       int id = Integer.parseInt(ls[0]);
@@ -116,7 +121,12 @@ public class DumbTelemetry extends Telemetry {
     System.out.println("ID: " + id);
     agents[id].setLocation(new Point(x, y));
     agents[id].setDirection(input.getMove());
-    agents[Integer.parseInt(ls[3])].setMipsman(true);
+    int MIPID = Integer.parseInt(ls[3]);
+    for(Entity ent: agents){
+      if(ent.getClientId() == MIPID){
+        ent.setMipsman(true);
+      }
+    }
   }
 
   public void startAI() {

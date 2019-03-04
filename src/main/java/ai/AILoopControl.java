@@ -241,12 +241,10 @@ public class AILoopControl extends Thread {
         Point mipsManLoc = gameAgents[mipsmanID].getLocation();
         Direction direction = r.getRoute(currentLocation, mipsManLoc);
         direction = confirmOrReplaceDirection(ent.getDirection(), currentLocation, direction);
-//        ent.setDirection(direction);
         System.out.println();
         if(!(direction.toInt()==ent.getDirection().toInt())){
             counter++;
             System.out.println("Added AI direction " + direction.toString() +" " + counter);
-
             directionsOut.add(new Input(ent.getClientId(), direction));
         }
 
