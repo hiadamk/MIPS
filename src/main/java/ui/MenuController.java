@@ -40,6 +40,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.Client;
 import utils.KeyRemapping;
+import utils.Map;
+import utils.MapGenerator;
 import utils.MapPreview;
 import utils.ResourceLoader;
 import utils.Settings;
@@ -64,11 +66,8 @@ public class MenuController {
 
   private Button startGameBtn;
   private Button backBtn;
-  private Button quitBtn;
   private Button startMGameBtn;
   private Button settingsBtn;
-
-  private ImageView logo;
 
   private Label lobbyStatusLbl;
   private Label loadingDots;
@@ -82,8 +81,8 @@ public class MenuController {
   private Font font;
 
   private List<ImageView> imageViews;
-  private List<Double> originalViewWidths;
-  private List<Double> minimumViewWidths;
+  private List<Double> originalViewWidths = new ArrayList<>();
+  private List<Double> minimumViewWidths = new ArrayList<>();
 
   private final String defaultToggleText = "Click to remap";
   private final String remapToggleText = "Click to save changes";
@@ -93,7 +92,7 @@ public class MenuController {
   private final String remapReady = "Press a key";
   private final String remapComplete = "Key remapped";
   private final String remapCancelled = "Remap cancelled";
-  private KeyRemapping keyRemapper;
+  private KeyRemapping keyRemapper = new KeyRemapping();
   private InputKey toRemap = null;
   private KeyCode proposedChange = null;
 
@@ -103,18 +102,18 @@ public class MenuController {
   private Label downLbl;
   private Label useLbl;
 
-  private MapPreview mapPreview;
+  private MapPreview mapPreview = new MapPreview(1920, 1080);
   private ImageView mapView;
   private int mapsIndex = 0;
   private int numberOfMaps;
   private ArrayList<Image> mapImages = new ArrayList<>();
   private Button moveMapsLeftBtn;
   private Button moveMapsRightBtn;
-  private String currentMap;
-  private String[] validMaps;
+  private Map currentMap;
+  private ArrayList<Map> validMaps = new ArrayList<>();
 
 
-  private ButtonGenerator buttonGenerator;
+  private ButtonGenerator buttonGenerator = new ButtonGenerator();
 
   private boolean isHome = true;
 
@@ -128,12 +127,7 @@ public class MenuController {
     this.audioController = audio;
     this.primaryStage = stage;
     this.client = client;
-    originalViewWidths = new ArrayList<>();
-    minimumViewWidths = new ArrayList<>();
-    this.buttonGenerator = new ButtonGenerator();
-    this.keyRemapper = new KeyRemapping();
     this.resourceLoader = resourceLoader;
-    this.mapPreview = new MapPreview(1920, 1080);
   }
 
   /**
@@ -209,7 +203,7 @@ public class MenuController {
     }
     moveMapsLeftBtn.setVisible(true);
     mapView.setImage(mapImages.get(mapsIndex));
-    currentMap = validMaps[mapsIndex];
+    currentMap = validMaps.get(mapsIndex);
   }
 
   private void showPreviousMap() {
@@ -220,7 +214,7 @@ public class MenuController {
     }
     moveMapsRightBtn.setVisible(true);
     mapView.setImage(mapImages.get(mapsIndex));
-    currentMap = validMaps[mapsIndex];
+    currentMap = validMaps.get(mapsIndex);
   }
 
 
@@ -247,7 +241,7 @@ public class MenuController {
     root.getChildren().add(bg);
     StackPane.setAlignment(bg, Pos.CENTER);
 
-    logo = new ImageView("ui/MIPS-B.png");
+    ImageView logo = new ImageView("ui/MIPS-B.png");
     logo.preserveRatioProperty();
     StackPane.setAlignment(logo, Pos.TOP_CENTER);
     StackPane.setMargin(logo, new Insets(200, 0, 0, 0));
@@ -264,20 +258,20 @@ public class MenuController {
           client.startSinglePlayerGame();
         });
 
-    validMaps = resourceLoader.getValidMaps();
-    numberOfMaps = validMaps.length;
-    for (String map : validMaps) {
-      System.out.println("Getting map: " + map);
+    String[] knownMaps = resourceLoader.getValidMaps();
+    numberOfMaps = knownMaps.length;
+    for (String map : knownMaps) {
+      resourceLoader.loadMap(map);
+      this.validMaps.add(resourceLoader.getMap());
       mapImages.add(mapPreview.getMapPreview(map));
     }
 
-    System.out.println("Valid Maps are: " + Arrays.toString(validMaps));
     Label selectMapLbl = new Label("Select a map:");
     selectMapLbl.setStyle(" -fx-font-size: 14pt ;");
     moveMapsLeftBtn = buttonGenerator.generate(true, root, "<", UIColours.WHITE, 40);
     moveMapsRightBtn = buttonGenerator.generate(true, root, ">", UIColours.WHITE, 40);
     moveMapsLeftBtn.setVisible(false);
-    if (validMaps.length <= 1) {
+    if (knownMaps.length <= 1) {
       moveMapsRightBtn.setVisible(false);
     } else {
       moveMapsRightBtn.setVisible(true);
@@ -286,7 +280,7 @@ public class MenuController {
     moveMapsRightBtn.setOnAction(event -> showNextMap());
 
     mapView = new ImageView(mapImages.get(0));
-    currentMap = validMaps[0];
+    currentMap = validMaps.get(0);
     mapView.setPreserveRatio(true);
     mapView.setFitWidth(700);
     Button generateMapBtn = buttonGenerator
@@ -297,9 +291,24 @@ public class MenuController {
       audioController.playSound(Sounds.click);
       moveItemsToBackTree();
       itemsOnScreen.add(startGameBtn);
-      resourceLoader.loadMap(currentMap);
+      resourceLoader.setMap(currentMap);
       client.setMap(resourceLoader.getMap());
       showItemsOnScreen();
+    });
+
+    generateMapBtn.setOnAction(event -> {
+      int[][] newMap = MapGenerator.generateNewMap();
+      while (!MapGenerator.validateMap(newMap)) {
+        newMap = MapGenerator.generateNewMap();
+      }
+      Map generatedMap = new Map(newMap);
+      validMaps.add(generatedMap);
+      Image generatedPreview = mapPreview.getMapPreview(generatedMap);
+      mapImages.add(generatedPreview);
+      numberOfMaps++;
+      mapsIndex = numberOfMaps - 1;
+      mapView.setImage(mapImages.get(mapsIndex));
+      moveMapsRightBtn.setVisible(false);
     });
 
     HBox mapSelectionBox = new HBox(30, moveMapsLeftBtn, mapView, moveMapsRightBtn);
@@ -319,7 +328,6 @@ public class MenuController {
           audioController.playSound(Sounds.click);
           moveItemsToBackTree();
           itemsOnScreen.add(mapSelectionView);
-//          itemsOnScreen.add(startGameBtn);
           showItemsOnScreen();
         });
 
@@ -465,7 +473,7 @@ public class MenuController {
     nameEntryOptions.setVisible(false);
     root.getChildren().add(nameEntryOptions);
 
-    quitBtn = buttonGenerator.generate(true, root, "quit", UIColours.QUIT_RED, 30);
+    Button quitBtn = buttonGenerator.generate(true, root, "quit", UIColours.QUIT_RED, 30);
     StackPane.setAlignment(quitBtn, Pos.TOP_RIGHT);
     StackPane.setMargin(quitBtn, new Insets(50, 50, 0, 0));
     quitBtn.setOnAction(
@@ -864,7 +872,6 @@ public class MenuController {
     downLbl.setText("DOWN KEY: " + Settings.getKey(InputKey.DOWN).getName());
     useLbl.setText("USE ITEM KEY: " + Settings.getKey(InputKey.USE).getName());
   }
-
 
   /**
    * @param newVal the new screen width.
