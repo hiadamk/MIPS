@@ -132,7 +132,7 @@ public abstract class Telemetry {
         Point faceLocation = agents[i].getFaceLocation();
 
         if (m.isWall(faceLocation)) {
-          System.out.println("~Player" + i + " drove into a wall");
+	        //System.out.println("~Player" + i + " drove into a wall");
           agents[i].setLocation(prevLocation.centralise());
           agents[i].setDirection(null);
         }
@@ -193,7 +193,7 @@ public abstract class Telemetry {
     Point mipsmanCenter = mipsman.getLocation();
     Point ghoulFace = ghoul.getFaceLocation();
 
-    if (mipsmanCenter.inRange(ghoulFace)) {
+    if (mipsmanCenter.inRange(ghoulFace)) { //check temporary invincibility here
       client.collisionDetected(ghoul);
       mipsman.setMipsman(false);
       ghoul.setMipsman(true);
