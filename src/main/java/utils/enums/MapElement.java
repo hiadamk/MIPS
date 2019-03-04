@@ -38,6 +38,15 @@ public enum MapElement {
     return 0;
   }
 
+  public static int idToColour(int id) {
+    for (MapElement m : MapElement.values()) {
+      if (id == m.toInt()) {
+        return m.colour;
+      }
+    }
+    return 0;
+  }
+
   public int toInt() {
     return id;
   }
