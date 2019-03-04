@@ -38,7 +38,9 @@ public class HostTelemetry extends Telemetry {
     startGame();
   }
 
-  /** Single Player Constructor */
+  /**
+   * Single Player Constructor
+   */
   public HostTelemetry(Queue<Input> clientQueue, Client client) {
     super(client);
     inputs = (BlockingQueue<Input>) clientQueue;

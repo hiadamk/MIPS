@@ -23,7 +23,7 @@ public class DumbTelemetry extends Telemetry {
     super(client);
     inputs = (BlockingQueue<String>) inputQueue;
     initialise();
-	  //    startGame();
+    //    startGame();
   }
 
   private void initialise() {
@@ -39,14 +39,14 @@ public class DumbTelemetry extends Telemetry {
   public void startGame() {
     System.out.println("Started dumb telemetry");
     final long DELAY = (long) Math.pow(10, 7);
-	  inputProcessor =
-			  new GameLoop(DELAY) {
-				  @Override
-				  public void handle() {
-					  processInputs();
-					  processPhysics(agents, map, resourceLoader, pellets, activePowerUps);
-				  }
-			  };
+    inputProcessor =
+        new GameLoop(DELAY) {
+          @Override
+          public void handle() {
+            processInputs();
+            processPhysics(agents, map, resourceLoader, pellets, activePowerUps);
+          }
+        };
     inputProcessor.start();
   }
 
@@ -75,10 +75,10 @@ public class DumbTelemetry extends Telemetry {
   @Override
   public void stopGame() {
     inputProcessor.close();
-	  // TODO render stop screen. I imagine somehow the message the game has stopped must be recieved
-	  // by the client
-	  // but currently, telemetry is what gets the signal, so DumbTelemetry must somehow communicate
-	  // to the client
+    // TODO render stop screen. I imagine somehow the message the game has stopped must be recieved
+    // by the client
+    // but currently, telemetry is what gets the signal, so DumbTelemetry must somehow communicate
+    // to the client
     // that the game is over.
   }
 
