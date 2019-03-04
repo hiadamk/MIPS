@@ -7,7 +7,8 @@ import utils.enums.PowerUp;
 
 public class PowerUpBox extends Pellet {
 
-  private static PowerUp[] powerUps = {PowerUp.BLUESHELL, PowerUp.SPEED, PowerUp.WEB};
+	private static PowerUp[] powerUps = {PowerUp.BLUESHELL, PowerUp.SPEED, PowerUp.WEB,
+			PowerUp.INVINCIBLE};
 
   public PowerUpBox(double x, double y) {
     super(x, y);

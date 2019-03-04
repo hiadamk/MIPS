@@ -11,7 +11,7 @@ import utils.Point;
  * @author Matthew Jones
  */
 public enum PowerUp {
-  WEB(20), SPEED(200), BLUESHELL(20);
+  WEB(20), SPEED(200), BLUESHELL(20), INVINCIBLE(200);
 
   private final int EFFECTTIME;
   private Image image;
@@ -63,6 +63,11 @@ public enum PowerUp {
 
       case BLUESHELL:
 
+        break;
+      case INVINCIBLE:
+        activePowerUps.add(this);
+        this.effected = user;
+        counter = 0;
         break;
     }
   }

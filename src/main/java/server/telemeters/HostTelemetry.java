@@ -35,7 +35,7 @@ public class HostTelemetry extends Telemetry {
     this.playerCount = playerCount;
     this.singlePlayer = false;
     initialise();
-    startGame();
+//    startGame();
   }
 
   /**
