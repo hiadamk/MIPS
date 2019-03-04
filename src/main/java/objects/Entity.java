@@ -99,7 +99,6 @@ public class Entity implements Renderable {
     this.location = location;
   }
 
-
   /**
    * return where center location would be if agent moved in certain motion. Uses util.Point to
    * ensure modularity (wraping around map)
@@ -146,9 +145,7 @@ public class Entity implements Renderable {
     return lastGridCoord;
   }
 
-  /**
-   * @param position location fixed to a 0.5 offset grid
-   */
+  /** @param position location fixed to a 0.5 offset grid */
   public void setLastGridCoord(Point position) {
     this.lastGridCoord = position;
   }
