@@ -75,6 +75,7 @@ public class Entity implements Renderable {
       items.add(powerUp);
     }
   }
+
   /**
    * @param routeFinder routeFinder for this instance
    * @author Lewis Ackroyd
@@ -166,17 +167,23 @@ public class Entity implements Renderable {
     return currentImage == null ? images.get(0) : currentImage;
   }
 
-  /** @return velocity */
+  /**
+   * @return velocity
+   */
   public double getVelocity() {
     return velocity;
   }
 
-  /** @param velocity new velocity */
+  /**
+   * @param velocity new velocity
+   */
   public void setVelocity(double velocity) {
     this.velocity = velocity;
   }
 
-  /** @return direction */
+  /**
+   * @return direction
+   */
   public Direction getDirection() {
     return direction;
   }
@@ -184,8 +191,8 @@ public class Entity implements Renderable {
   /**
    * set direction and automatically updates entity image for rendering
    *
-   * @author Tim Cheung, Matty Jones, Alex Banks
    * @param direction direction to change to, can be same as previous, can be null
+   * @author Tim Cheung, Matty Jones, Alex Banks
    */
   public void setDirection(Direction direction) {
     if (this.direction != direction) {
@@ -197,16 +204,16 @@ public class Entity implements Renderable {
   }
 
   /**
-   * @author Matthew Jones
    * @return current score
+   * @author Matthew Jones
    */
   public int getScore() {
     return score;
   }
 
   /**
-   * @author Matthew Jones
    * @param score new score
+   * @author Matthew Jones
    */
   public void setScore(int score) {
     this.score = score;
@@ -235,12 +242,16 @@ public class Entity implements Renderable {
     return clientId;
   }
 
-  /** @return true if MIPS */
+  /**
+   * @return true if MIPS
+   */
   public Boolean isMipsman() {
     return mipsman;
   }
 
-  /** @param mips if true then now MIPS, if false then Ghoul */
+  /**
+   * @param mips if true then now MIPS, if false then Ghoul
+   */
   public void setMipsman(Boolean mips) {
     this.currentFrame = 0;
     this.mipsman = mips;
@@ -280,23 +291,34 @@ public class Entity implements Renderable {
     return outStr;
   }
 
-  /** @return time since last frame */
+  /**
+   * @return time since last frame
+   */
   public long getTimeSinceLastFrame() {
     return timeSinceLastFrame;
   }
 
-  /** @param n time since last frame */
+  /**
+   * @param n time since last frame
+   */
   public void setTimeSinceLastFrame(long n) {
     this.timeSinceLastFrame = n;
   }
 
-  /** @return animation speed */
+  /**
+   * @return animation speed
+   */
   public int getAnimationSpeed() {
     return animationSpeed;
   }
 
-  /** @return current frame */
+  /**
+   * @return current frame
+   */
   public int getCurrentFrame() {
+    if (this.currentFrame >= getImage().size()) {
+      this.currentFrame = 0;
+    }
     return currentFrame;
   }
 
