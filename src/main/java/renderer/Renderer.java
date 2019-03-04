@@ -15,13 +15,12 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import javafx.util.Pair;
 import objects.Entity;
 import objects.Pellet;
+import objects.PowerUpBox;
 import utils.Map;
 import utils.Point;
 import utils.ResourceLoader;
-import utils.UpDownIterator;
 import utils.enums.MapElement;
 import utils.enums.RenderingMode;
 
@@ -63,19 +62,18 @@ public class Renderer {
     this.background = r.getBackground();
     this.palette = r.getBackgroundPalette();
 
-    this.init();
+    this.initMapTraversal(r.getMap());
   }
 
   /**
    * initialises map array, map traversal order, map tiles and fonts
    */
-  public void init() {
-    Map map = r.getMap();
+  public void initMapTraversal(Map map) {
 
     final int ROW = map.getMaxX();
     final int COL = map.getMaxY();
 
-    traversalOrder = new ArrayList<>();
+    this.traversalOrder = new ArrayList<>();
     //find diagonal traversal order (map depth order traversal)
     for (int line = 1; line <= (ROW + COL - 1); line++) {
       int start_col = Math.max(0, line - ROW);
@@ -121,21 +119,28 @@ public class Renderer {
     //clear screen
     gc.clearRect(0, 0, xResolution, yResolution);
     renderBackground(map);
+    renderGameOnly(map, entityArr, now, pellets);
+    renderHUD(entityArr);
+    showFPS(now);
+  }
+
+  public void renderGameOnly(Map map, Entity[] entityArr, long now,
+      HashMap<String, Pellet> pellets) {
     int[][] rawMap = map.raw();
     ArrayList<Entity> entities = new ArrayList<>(Arrays.asList(entityArr));
     // sort entities to get rendering order
     entities.sort(Comparator.comparingDouble(o -> o.getLocation().getX() + o.getLocation().getY()));
 
     int entityCounter = 0;
-    Image currentSprite;
-    Point2D.Double rendCoord;
+    Image currentSprite = null;
+    Double rendCoord;
     Point spriteCoord = new Point(java.lang.Double.MAX_VALUE, java.lang.Double.MAX_VALUE);
 
     int x;
     int y;
 
     // Render floor first (floors will never be on a higher layer than anything apart form the background
-    for (Point2D.Double coord : traversalOrder) {
+    for (Double coord : traversalOrder) {
       x = (int) coord.getX();
       y = (int) coord.getY();
 
@@ -152,9 +157,13 @@ public class Renderer {
 
     // TODO refactor the way the translucent pellet is fetched
     Image translucentPellet = r.getTranslucentPellet().get(0);
+    // TODO refactor the way the translucent pellet is fetched
+    Image pellet = r.getPellet().get(0);
+    // TODO refactor the way the translucent pellet is fetched
+    Image powerup = r.getPowerBox().get(0);
 
     // Loop through grid in diagonal traversal to render walls and entities by depth
-    for (Point2D.Double coord : traversalOrder) {
+    for (Double coord : traversalOrder) {
       x = (int) coord.getX();
       y = (int) coord.getY();
 
@@ -163,12 +172,20 @@ public class Renderer {
       if (currentPellet != null && currentPellet.isActive()) {
 
         //TODO use better way of finding if client is mipsman
-        boolean clientMipsman = isClientMipsman(entities);
+        Entity client = getClientEntity(entities);
 
-        if (clientMipsman) {
-          currentSprite = currentPellet.getImage().get(0);
+        if (currentPellet.canUse(client)) {
+          if (currentPellet instanceof PowerUpBox) {
+            currentSprite = powerup;
+          } else {
+            currentSprite = pellet;
+          }
         } else {
-          currentSprite = translucentPellet;
+          if (currentPellet instanceof PowerUpBox) {
+            //currentSprite = powerup;
+          } else {
+            currentSprite = translucentPellet;
+          }
         }
 
         //render pellet using either translucent or opaque sprite
@@ -204,42 +221,36 @@ public class Renderer {
         }
       }
     }
-
-    renderHUD(entityArr);
-    showFPS(now);
   }
 
-  private boolean isClientMipsman(ArrayList<Entity> entities) {
-    boolean clientMipsman = false;
-
+  private Entity getClientEntity(ArrayList<Entity> entities) {
     // TODO refactor the way the render knows the client is MIPSman
     for (Entity e : entities) {
-      if (e.isMipsman() && e.getClientId() == clientID) {
-        clientMipsman = true;
-        break;
+      if (e.getClientId() == clientID) {
+        return e;
       }
     }
-    return clientMipsman;
+    return null;
   }
 
-  public void renderCollisionAnimation(Entity newMipsMan){
+  public void renderCollisionAnimation(Entity newMipsMan) {
     Image currentSprite = newMipsMan.getImage().get(newMipsMan.getCurrentFrame());
-    final double renderAnimationTime = 0.75 * Math.pow(10,9);
+    final double renderAnimationTime = 0.75 * Math.pow(10, 9);
     double startTime = System.nanoTime();
     final int frames = 22;
-    double frameTime = renderAnimationTime/frames;
+    double frameTime = renderAnimationTime / frames;
     int currentFrame = 0;
-    while(System.nanoTime()-startTime < renderAnimationTime){
+    while (System.nanoTime() - startTime < renderAnimationTime) {
       gc.setFill(Color.BLACK);
-      gc.fillRect(0,0,xResolution,yResolution);
+      gc.fillRect(0, 0, xResolution, yResolution);
       gc.setTextAlign(TextAlignment.CENTER);
 
       double x = newMipsMan.getLocation().getX() - 0.5;
       double y = newMipsMan.getLocation().getY() - 0.5;
       Point2D.Double rendCoord =
-              getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
+          getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
       gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
-      gc.fillText("MIPS CAPTURED",xResolution/2,yResolution*0.7);
+      gc.fillText("MIPS CAPTURED", xResolution / 2, yResolution * 0.7);
 
       try {
         Thread.sleep(3);
@@ -436,7 +447,7 @@ public class Renderer {
     ArrayList<Point2D.Double> scoreCoord =
         new ArrayList<>(Arrays.asList(topLeft, topRight, botLeft, botRight));
 
-    //calculate number of other palyers
+    //calculate number of other players
     Entity[] otherPlayers = new Entity[entities.length - 1];
     Entity self = null;
     int playerCounter = 0;
@@ -496,6 +507,6 @@ public class Renderer {
     r.setResolution(x, y, mode);
     xResolution = x;
     yResolution = y;
-    this.init();
+    this.initMapTraversal(r.getMap());
   }
 }

@@ -16,8 +16,6 @@ import java.util.Stack;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -29,8 +27,10 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -40,6 +40,10 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.Client;
 import utils.KeyRemapping;
+import utils.Map;
+import utils.MapGenerator;
+import utils.MapPreview;
+import utils.ResourceLoader;
 import utils.Settings;
 import utils.enums.InputKey;
 import utils.enums.RenderingMode;
@@ -58,39 +62,27 @@ public class MenuController {
   private Stage primaryStage;
   private Stack<ArrayList<Node>> backTree = new Stack<>();
   private ArrayList<Node> itemsOnScreen = new ArrayList<>();
+  private ResourceLoader resourceLoader;
 
-  private Button singlePlayerBtn;
-  private Button multiplayerBtn;
   private Button startGameBtn;
   private Button backBtn;
-  private Button playBtn;
-  private Button creditsBtn;
-  private Button settingsBtn;
-  private Button quitBtn;
-  private Button createGameBtn;
-  private Button joinGameBtn;
   private Button startMGameBtn;
-
-  private ImageView logo;
-  private ImageView creditsView;
-  private ImageView settingsView;
+  private Button settingsBtn;
 
   private Label lobbyStatusLbl;
   private Label loadingDots;
-  private Label playersInLobby;
 
   private TextField nameEntry;
-  private Button nameEntryBtn;
 
   private VBox multiplayerOptions;
   private VBox gameModeOptions;
   private VBox nameEntryOptions;
-  private VBox searchingForMutiplayers;
+  private VBox searchingForMultiplayers;
   private Font font;
 
   private List<ImageView> imageViews;
-  private List<Double> originalViewWidths;
-  private List<Double> minimumViewWidths;
+  private List<Double> originalViewWidths = new ArrayList<>();
+  private List<Double> minimumViewWidths = new ArrayList<>();
 
   private final String defaultToggleText = "Click to remap";
   private final String remapToggleText = "Click to save changes";
@@ -100,8 +92,7 @@ public class MenuController {
   private final String remapReady = "Press a key";
   private final String remapComplete = "Key remapped";
   private final String remapCancelled = "Remap cancelled";
-  private KeyRemapping keyRemapper;
-  private boolean remappingActive = false;
+  private KeyRemapping keyRemapper = new KeyRemapping();
   private InputKey toRemap = null;
   private KeyCode proposedChange = null;
 
@@ -111,8 +102,18 @@ public class MenuController {
   private Label downLbl;
   private Label useLbl;
 
+  private MapPreview mapPreview = new MapPreview(1920, 1080);
+  private ImageView mapView;
+  private int mapsIndex = 0;
+  private int numberOfMaps;
+  private ArrayList<Image> mapImages = new ArrayList<>();
+  private Button moveMapsLeftBtn;
+  private Button moveMapsRightBtn;
+  private Map currentMap;
+  private ArrayList<Map> validMaps = new ArrayList<>();
 
-  private ButtonGenerator buttonGenerator;
+
+  private ButtonGenerator buttonGenerator = new ButtonGenerator();
 
   private boolean isHome = true;
 
@@ -121,15 +122,12 @@ public class MenuController {
    * @param stage The game window
    * @author Adam Kona Constructor takes in the audio controller stage and game scene
    */
-  public MenuController(AudioController audio, Stage stage, Client client) {
+  public MenuController(AudioController audio, Stage stage, Client client,
+      ResourceLoader resourceLoader) {
     this.audioController = audio;
     this.primaryStage = stage;
     this.client = client;
-    originalViewWidths = new ArrayList<>();
-    minimumViewWidths = new ArrayList<>();
-    this.buttonGenerator = new ButtonGenerator();
-    this.keyRemapper = new KeyRemapping();
-
+    this.resourceLoader = resourceLoader;
   }
 
   /**
@@ -137,14 +135,14 @@ public class MenuController {
    */
   private void hideItemsOnScreen() {
     for (Node item : itemsOnScreen) {
-      FadeTransition ft = new FadeTransition(Duration.millis(1000), item);
-      ft.setFromValue(1.0);
-      ft.setToValue(0);
-      ft.play();
-//      item.setVisible(false);
-    }
-    for (Node item : itemsOnScreen) {
-      item.setVisible(false);
+      if (!(isHome && item.equals(settingsBtn))) {
+        FadeTransition ft = new FadeTransition(Duration.millis(1000), item);
+        ft.setFromValue(1.0);
+        ft.setToValue(0);
+        ft.play();
+        item.setVisible(false);
+      }
+
     }
   }
 
@@ -162,9 +160,8 @@ public class MenuController {
   /**
    * @author Adam Kona Shows items on the screen which have been previously set to hidden.
    */
-  private void showItemsOnScreen() {
+  public void showItemsOnScreen() {
     for (Node item : itemsOnScreen) {
-//      item.setVisible(true);
       FadeTransition ft = new FadeTransition(Duration.millis(1000), item);
       ft.setFromValue(0);
       ft.setToValue(1.0);
@@ -175,6 +172,11 @@ public class MenuController {
     }
   }
 
+  /**
+   * Aligns text in the centre of combo box
+   *
+   * @param comboBox the combo box whose text needs to be aligned
+   */
   private void alignComboText(JFXComboBox comboBox) {
     comboBox.setCellFactory(lv -> new ListCell<String>() {
 
@@ -191,6 +193,28 @@ public class MenuController {
         }
       }
     });
+  }
+
+  private void showNextMap() {
+    mapsIndex++;
+    if (mapsIndex >= (numberOfMaps - 1)) {
+      mapsIndex = numberOfMaps - 1;
+      moveMapsRightBtn.setVisible(false);
+    }
+    moveMapsLeftBtn.setVisible(true);
+    mapView.setImage(mapImages.get(mapsIndex));
+    currentMap = validMaps.get(mapsIndex);
+  }
+
+  private void showPreviousMap() {
+    mapsIndex--;
+    if (mapsIndex <= 0) {
+      mapsIndex = 0;
+      moveMapsLeftBtn.setVisible(false);
+    }
+    moveMapsRightBtn.setVisible(true);
+    mapView.setImage(mapImages.get(mapsIndex));
+    currentMap = validMaps.get(mapsIndex);
   }
 
 
@@ -217,7 +241,7 @@ public class MenuController {
     root.getChildren().add(bg);
     StackPane.setAlignment(bg, Pos.CENTER);
 
-    logo = new ImageView("ui/MIPS-B.png");
+    ImageView logo = new ImageView("ui/MIPS-B.png");
     logo.preserveRatioProperty();
     StackPane.setAlignment(logo, Pos.TOP_CENTER);
     StackPane.setMargin(logo, new Insets(200, 0, 0, 0));
@@ -225,27 +249,91 @@ public class MenuController {
     root.getChildren().add(logo);
     logo.setVisible(true);
 
-    startGameBtn = buttonGenerator.generate(false, root, "Start", UIColours.GREEN, 45);
+    startGameBtn = buttonGenerator.generate(false, root, "Start", UIColours.GREEN, 40);
     StackPane.setAlignment(startGameBtn, Pos.CENTER);
-    StackPane.setMargin(startGameBtn, new Insets(160, 0, 0, 0));
+    StackPane.setMargin(startGameBtn, new Insets(0, 0, 0, 0));
     startGameBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
           client.startSinglePlayerGame();
         });
 
-    this.singlePlayerBtn = buttonGenerator
-        .generate(true, root, "Singleplayer", UIColours.WHITE, 45);
-    this.singlePlayerBtn.setOnAction(
+    String[] knownMaps = resourceLoader.getValidMaps();
+    numberOfMaps = knownMaps.length;
+    for (String map : knownMaps) {
+      resourceLoader.loadMap(map);
+      this.validMaps.add(resourceLoader.getMap());
+      mapImages.add(mapPreview.getMapPreview(map));
+    }
+
+    Label selectMapLbl = new Label("Select a map:");
+    selectMapLbl.setStyle(" -fx-font-size: 14pt ;");
+    moveMapsLeftBtn = buttonGenerator.generate(true, root, "<", UIColours.WHITE, 40);
+    moveMapsRightBtn = buttonGenerator.generate(true, root, ">", UIColours.WHITE, 40);
+    moveMapsLeftBtn.setVisible(false);
+    if (knownMaps.length <= 1) {
+      moveMapsRightBtn.setVisible(false);
+    } else {
+      moveMapsRightBtn.setVisible(true);
+    }
+    moveMapsLeftBtn.setOnAction(event -> showPreviousMap());
+    moveMapsRightBtn.setOnAction(event -> showNextMap());
+
+    mapView = new ImageView(mapImages.get(0));
+    currentMap = validMaps.get(0);
+    mapView.setPreserveRatio(true);
+    mapView.setFitWidth(700);
+    Button generateMapBtn = buttonGenerator
+        .generate(true, root, "Generate Map", UIColours.WHITE, 25);
+    Button mapConfirmationBtn = buttonGenerator
+        .generate(true, root, "Continue", UIColours.GREEN, 25);
+    mapConfirmationBtn.setOnAction(event -> {
+      audioController.playSound(Sounds.click);
+      moveItemsToBackTree();
+      itemsOnScreen.add(startGameBtn);
+      resourceLoader.setMap(currentMap);
+      client.setMap(resourceLoader.getMap());
+      showItemsOnScreen();
+    });
+
+    generateMapBtn.setOnAction(event -> {
+      int[][] newMap = MapGenerator.generateNewMap();
+      while (!MapGenerator.validateMap(newMap)) {
+        newMap = MapGenerator.generateNewMap();
+      }
+      Map generatedMap = new Map(newMap);
+      validMaps.add(generatedMap);
+      Image generatedPreview = mapPreview.getMapPreview(generatedMap);
+      mapImages.add(generatedPreview);
+      numberOfMaps++;
+      mapsIndex = numberOfMaps - 1;
+      mapView.setImage(mapImages.get(mapsIndex));
+      moveMapsRightBtn.setVisible(false);
+    });
+
+    HBox mapSelectionBox = new HBox(30, moveMapsLeftBtn, mapView, moveMapsRightBtn);
+    HBox mapSelectionBtns = new HBox(20, generateMapBtn, mapConfirmationBtn);
+    VBox mapSelectionView = new VBox(40, selectMapLbl, mapSelectionBox, mapSelectionBtns);
+    mapSelectionBtns.setAlignment(Pos.CENTER);
+    mapSelectionBox.setAlignment(Pos.CENTER);
+    mapSelectionView.setAlignment(Pos.CENTER);
+    StackPane.setMargin(mapSelectionView, new Insets(0, 0, 150, 0));
+    mapSelectionView.setVisible(false);
+    root.getChildren().add(mapSelectionView);
+
+    Button singlePlayerBtn = buttonGenerator
+        .generate(true, root, "Singleplayer", UIColours.WHITE, 40);
+    singlePlayerBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
           moveItemsToBackTree();
-          itemsOnScreen.add(startGameBtn);
+          itemsOnScreen.add(mapSelectionView);
           showItemsOnScreen();
         });
 
-    this.multiplayerBtn = buttonGenerator.generate(true, root, "Multiplayer", UIColours.WHITE, 45);
-    this.multiplayerBtn.setOnAction(
+    Button multiplayerBtn = buttonGenerator
+        .generate(true, root, "Multiplayer", UIColours.WHITE, 40);
+    multiplayerBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
           moveItemsToBackTree();
@@ -256,11 +344,11 @@ public class MenuController {
     gameModeOptions = new VBox(10, singlePlayerBtn, multiplayerBtn);
     gameModeOptions.setAlignment(Pos.CENTER);
     StackPane.setAlignment(gameModeOptions, Pos.CENTER);
-    StackPane.setMargin(gameModeOptions, new Insets(100, 0, 0, 0));
+    StackPane.setMargin(gameModeOptions, new Insets(0, 0, 0, 0));
     root.getChildren().add(gameModeOptions);
     gameModeOptions.setVisible(false);
 
-    playBtn = buttonGenerator.generate(true, root, "Play", UIColours.GREEN, 35);
+    Button playBtn = buttonGenerator.generate(true, root, "Play", UIColours.GREEN, 35);
     playBtn.setText("Play");
     StackPane.setAlignment(playBtn, Pos.CENTER);
     StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
@@ -274,34 +362,33 @@ public class MenuController {
           showItemsOnScreen();
         });
 
-//    smoothScalingBtn.setSelected(true);
     client.setRenderingMode(RenderingMode.SMOOTH_SCALING);
 
-    creditsView = new ImageView("ui/Credits.png");
-    creditsBtn = buttonGenerator.generate(false, root, creditsView);
+    ImageView creditsView = new ImageView("ui/Credits.png");
+    Button creditsBtn = buttonGenerator.generate(false, root, creditsView);
     StackPane.setAlignment(creditsBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(creditsBtn, new Insets(0, 0, 50, 0));
 
-    joinGameBtn = buttonGenerator.generate(true, root, "Join a game", UIColours.WHITE, 40);
+    Button joinGameBtn = buttonGenerator.generate(true, root, "Join a game", UIColours.WHITE, 40);
     joinGameBtn.setPickOnBounds(true);
     joinGameBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
           moveItemsToBackTree();
           lobbyStatusLbl.setText("Waiting for game to start");
-          itemsOnScreen.add(searchingForMutiplayers);
+          itemsOnScreen.add(searchingForMultiplayers);
           showItemsOnScreen();
           client.joinMultiplayerLobby();
 
         });
 
-    createGameBtn = buttonGenerator.generate(true, root, "Create game", UIColours.WHITE, 40);
+    Button createGameBtn = buttonGenerator.generate(true, root, "Create game", UIColours.WHITE, 40);
     createGameBtn.setPickOnBounds(true);
     createGameBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
           moveItemsToBackTree();
-          itemsOnScreen.add(searchingForMutiplayers);
+          itemsOnScreen.add(searchingForMultiplayers);
           itemsOnScreen.add(startMGameBtn);
           showItemsOnScreen();
           client.createMultiplayerLobby();
@@ -310,7 +397,7 @@ public class MenuController {
     multiplayerOptions = new VBox(10, createGameBtn, joinGameBtn);
     multiplayerOptions.setAlignment(Pos.CENTER);
     StackPane.setAlignment(multiplayerOptions, Pos.CENTER);
-    StackPane.setMargin(multiplayerOptions, new Insets(100, 0, 0, 0));
+    StackPane.setMargin(multiplayerOptions, new Insets(0, 0, 0, 0));
     root.getChildren().add(multiplayerOptions);
     multiplayerOptions.setVisible(false);
 
@@ -322,15 +409,15 @@ public class MenuController {
     loadingDots.setTextFill(Color.WHITE);
     loadingDots.setFont(this.font);
 
-    playersInLobby = new Label("Players in lobby: 0");
+    Label playersInLobby = new Label("Players in lobby: 0");
     playersInLobby.setTextFill(Color.WHITE);
     playersInLobby.setFont(this.font);
 
-    searchingForMutiplayers = new VBox(5, lobbyStatusLbl, loadingDots, playersInLobby);
-    searchingForMutiplayers.setAlignment(Pos.CENTER);
-    StackPane.setAlignment(searchingForMutiplayers, Pos.CENTER);
-    root.getChildren().add(searchingForMutiplayers);
-    searchingForMutiplayers.setVisible(false);
+    searchingForMultiplayers = new VBox(5, lobbyStatusLbl, loadingDots, playersInLobby);
+    searchingForMultiplayers.setAlignment(Pos.CENTER);
+    StackPane.setAlignment(searchingForMultiplayers, Pos.CENTER);
+    root.getChildren().add(searchingForMultiplayers);
+    searchingForMultiplayers.setVisible(false);
 
     Timeline timeline =
         new Timeline(
@@ -367,7 +454,7 @@ public class MenuController {
     VBox nameAndLine = new VBox(nameEntry, clear);
     nameAndLine.setAlignment(Pos.CENTER);
 
-    nameEntryBtn = buttonGenerator.generate(true, root, "Continue", UIColours.GREEN, 40);
+    Button nameEntryBtn = buttonGenerator.generate(true, root, "Continue", UIColours.GREEN, 30);
     nameEntryBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
@@ -381,12 +468,12 @@ public class MenuController {
     nameEntryOptions = new VBox(30, nameAndLine, nameEntryBtn);
     nameEntryOptions.setAlignment(Pos.CENTER);
     StackPane.setAlignment(nameEntryOptions, Pos.CENTER);
-    StackPane.setMargin(nameEntryOptions, new Insets(100, 250, 0, 250));
+    StackPane.setMargin(nameEntryOptions, new Insets(50, 250, 0, 250));
     nameEntryOptions.setPrefWidth(300);
     nameEntryOptions.setVisible(false);
     root.getChildren().add(nameEntryOptions);
 
-    quitBtn = buttonGenerator.generate(true, root, "quit", UIColours.QUIT_RED, 30);
+    Button quitBtn = buttonGenerator.generate(true, root, "quit", UIColours.QUIT_RED, 30);
     StackPane.setAlignment(quitBtn, Pos.TOP_RIGHT);
     StackPane.setMargin(quitBtn, new Insets(50, 50, 0, 0));
     quitBtn.setOnAction(
@@ -451,12 +538,9 @@ public class MenuController {
 
     JFXSlider volumeSlider = new JFXSlider(0, 1, 0.5);
 
-    volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
-      public void changed(ObservableValue<? extends Number> ov,
-          Number old_val, Number new_val) {
-        audioController.setSoundVolume(new_val.doubleValue());
-        audioController.setMusicVolume(new_val.doubleValue());
-      }
+    volumeSlider.valueProperty().addListener((ov, old_val, new_val) -> {
+      audioController.setSoundVolume(new_val.doubleValue());
+      audioController.setMusicVolume(new_val.doubleValue());
     });
     volumeSlider.setMaxWidth(200);
     volumeSlider.setMaxWidth(200);
@@ -600,6 +684,7 @@ public class MenuController {
     leftToggle.setUserData(InputKey.LEFT);
     rightToggle.setUserData(InputKey.RIGHT);
     downToggle.setUserData(InputKey.DOWN);
+    useToggle.setUserData(InputKey.USE);
 
     upToggle.setToggleGroup(toggleGroup);
     leftToggle.setToggleGroup(toggleGroup);
@@ -629,7 +714,7 @@ public class MenuController {
 
     root.getChildren().addAll(settingsTabs);
 
-    settingsView = new ImageView("ui/settings.png");
+    ImageView settingsView = new ImageView("ui/settings.png");
     settingsBtn = buttonGenerator.generate(true, root, settingsView);
     StackPane.setAlignment(settingsBtn, Pos.TOP_LEFT);
     StackPane.setMargin(settingsBtn, new Insets(50, 0, 0, 50));
@@ -640,18 +725,14 @@ public class MenuController {
           audioController.playSound(Sounds.click);
           if (!viewSettings) {
             viewSettings = true;
-
-            logo.setVisible(false);
-            quitBtn.setVisible(false);
             hideItemsOnScreen();
+
             backBtn.setVisible(false);
             settingsTabs.setVisible(true);
+            settingsBtn.setVisible(true);
 
           } else {
-
             viewSettings = false;
-            logo.setVisible(true);
-            quitBtn.setVisible(true);
             settingsTabs.setVisible(false);
             showItemsOnScreen();
             if (!isHome) {
@@ -660,7 +741,7 @@ public class MenuController {
           }
         });
 
-    startMGameBtn = buttonGenerator.generate(false, root, "Start", UIColours.GREEN, 40);
+    startMGameBtn = buttonGenerator.generate(false, root, "Start", UIColours.GREEN, 30);
     StackPane.setAlignment(startMGameBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(startMGameBtn, new Insets(0, 0, 200, 0));
     startMGameBtn.setOnAction(
@@ -680,9 +761,7 @@ public class MenuController {
             hideItemsOnScreen();
             itemsOnScreen.clear();
             ArrayList<Node> toShow = backTree.pop();
-            for (Node item : toShow) {
-              itemsOnScreen.add(item);
-            }
+            itemsOnScreen.addAll(toShow);
             showItemsOnScreen();
             if (backTree.isEmpty()) {
               backBtn.setVisible(false);
@@ -693,6 +772,9 @@ public class MenuController {
 
     backTree.empty();
     itemsOnScreen.add(playBtn);
+    itemsOnScreen.add(logo);
+    itemsOnScreen.add(quitBtn);
+    itemsOnScreen.add(settingsBtn);
 
     imageViews =
         Arrays.asList(
@@ -708,6 +790,11 @@ public class MenuController {
     return root;
   }
 
+  /**
+   * Hides remapping toggles when they are no longer needed
+   *
+   * @param toShow the toggle we want to keep showing
+   */
   private void hideInactiveToggles(ToggleButton toShow) {
     for (ToggleButton t : keyToggleList) {
       if (!t.equals(toShow)) {
@@ -716,6 +803,9 @@ public class MenuController {
     }
   }
 
+  /**
+   * Shows the toggles in their original state
+   */
   private void resetToggles() {
     for (ToggleButton t : keyToggleList) {
       t.setText(defaultToggleText);
@@ -723,18 +813,18 @@ public class MenuController {
     }
   }
 
-
+  /**
+   * Initialises the behaviour for the toggle buttons
+   */
   private void initialiseToggleActions() {
     for (ToggleButton t : keyToggleList) {
       t.setOnAction(event -> {
         if (t.isSelected()) {
-          System.out.println("CURRENT CONTROLS: " + Settings.getKey(InputKey.UP));
           t.setText(remapToggleText);
           toRemap = (InputKey) t.getUserData();
           hideInactiveToggles(t);
           keyToggleStatus.setText(remapReady);
           primaryStage.getScene().setOnKeyPressed(keyRemapper);
-          remappingActive = true;
           new Thread(() -> {
             while (true) {
               if (keyRemapper.getActiveKey() == null) {
@@ -746,26 +836,24 @@ public class MenuController {
                 continue;
               }
 
-              KeyCode newVal = keyRemapper.getActiveKey();
               proposedChange = keyRemapper.getActiveKey();
-              System.out.println("Proposed change is: " + proposedChange.getName());
-              remappingActive = false;
               break;
             }
           }).start();
 
         } else {
-          if (keyRemapper.checkForDublicates(proposedChange) && proposedChange != null) {
+          if (proposedChange == null) {
+            keyToggleStatus.setText(remapCancelled);
+          } else if (keyRemapper.checkForDublicates(proposedChange) && proposedChange != null) {
             keyToggleStatus.setText("Sorry, key already in use.");
           } else {
-            keyToggleStatus.setText("");
+            keyToggleStatus.setText(remapComplete);
             Settings.setKey(toRemap, proposedChange);
             keyRemapper.reset();
           }
           resetToggles();
           updateToggleLabels();
           primaryStage.getScene().setOnKeyPressed(null);
-          remappingActive = false;
           toRemap = null;
           proposedChange = null;
         }
@@ -773,6 +861,9 @@ public class MenuController {
     }
   }
 
+  /**
+   * Resets the toggle labels to their default state with the current control values.
+   */
   private void updateToggleLabels() {
     System.out.println("Current UP KEY: " + Settings.getKey(InputKey.UP).getName());
     upLbl.setText("UP KEY: " + Settings.getKey(InputKey.UP).getName());
@@ -781,7 +872,6 @@ public class MenuController {
     downLbl.setText("DOWN KEY: " + Settings.getKey(InputKey.DOWN).getName());
     useLbl.setText("USE ITEM KEY: " + Settings.getKey(InputKey.USE).getName());
   }
-
 
   /**
    * @param newVal the new screen width.

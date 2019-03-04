@@ -13,7 +13,9 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import objects.Entity;
 import objects.Pellet;
@@ -102,7 +104,8 @@ public class Client extends Application {
     resourceLoader = new ResourceLoader("src/main/resources/");
     this.primaryStage = primaryStage;
 //    audioController.playMusic(Sounds.intro);
-    MenuController menuController = new MenuController(audioController, primaryStage, this);
+    MenuController menuController = new MenuController(audioController, primaryStage, this,
+        resourceLoader);
     StackPane root = (StackPane) menuController.createMainMenu();
     root.getStylesheets().add(getClass().getResource("/ui/stylesheet.css").toExternalForm());
     Scene scene = new Scene(root, xRes, yRes);
@@ -120,7 +123,11 @@ public class Client extends Application {
               menuController.scaleImages((double) newVal, (double) oldVal);
             });
 
+//    primaryStage.initStyle(StageStyle.TRANSPARENT);
+    scene.setFill(Color.TRANSPARENT);
+    root.setBackground(Background.EMPTY);
     primaryStage.show();
+
     updateResolution(this.screenRes);
   }
 
@@ -261,6 +268,10 @@ public class Client extends Application {
     }
     this.telemetry.startGame();
     Methods.updateImages(agents, resourceLoader);
+
+    //TODO the following line fixes array out of bounds - need to find out why
+    renderer.initMapTraversal(map);
+
     this.primaryStage.setScene(gameScene);
     // AnimationTimer started once game has started
     new AnimationTimer() {
