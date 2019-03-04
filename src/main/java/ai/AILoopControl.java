@@ -189,9 +189,10 @@ public class AILoopControl extends Thread {
                         }
                         System.out.println();
                     }
+                    boolean atLastCoord = atPreviousCoordinate(ent, currentGridLocation);
                     if (ent.getDirection() == null
-                            || !Methods.validateDirection(ent.getDirection(), currentLocation, map)||junctions.contains(currentGridLocation)) {
-                        if (atPreviousCoordinate(ent, currentGridLocation)) {
+                            || !Methods.validateDirection(ent.getDirection(), currentLocation, map)||(junctions.contains(currentGridLocation)&&!atLastCoord)) {
+                        if (atLastCoord) {
                             Point nearestJunction = Mapping.findNearestJunction(currentLocation, map, junctions);
 
                             Direction dir;
@@ -210,7 +211,11 @@ public class AILoopControl extends Thread {
                             directionsOut.add(new Input(ent.getClientId(), dir));
                         } else {
                             ent.setLastGridCoord(currentGridLocation);
+                            if (ent.getClientId()==1) {
+                                System.out.println("HERE");
+                            }
                             if (junctions.contains(currentGridLocation)) {
+
                                 executeRoute(ent, currentLocation);
                             }
                         }
