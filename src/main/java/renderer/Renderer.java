@@ -121,6 +121,7 @@ public class Renderer {
     renderGameOnly(map, entityArr, now, pellets);
     renderHUD(entityArr);
     showFPS(now);
+
   }
 
   public void renderGameOnly(Map map, Entity[] entityArr, long now,
@@ -199,8 +200,14 @@ public class Renderer {
       while (entityCounter < entities.size()
           && ((x + y) >= ((int) spriteCoord.getX() + (int) spriteCoord.getY()))
           && spriteCoord.getX() > x) {
-        renderEntity(entities.get(entityCounter), now - lastFrame);
-        entityCounter++;
+
+        if (now == 0) {
+          renderEntity(entities.get(entityCounter), 0);
+          entityCounter++;
+        } else {
+          renderEntity(entities.get(entityCounter), now - lastFrame);
+          entityCounter++;
+        }
 
         // point to the next entity
         if (entityCounter < entities.size()) {
@@ -249,7 +256,6 @@ public class Renderer {
       gc.setFill(new Color(0, 0, 0, 0.5));
       gc.fillRect(0, 0, xResolution, yResolution);
 
-
       double x = newMipsMan.getLocation().getX() - 0.5;
       double y = newMipsMan.getLocation().getY() - 0.5;
       Point2D.Double rendCoord =
@@ -257,8 +263,8 @@ public class Renderer {
       gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
       gc.setFill(Color.WHITE);
       gc.fillText("MIPS CAPTURED", xResolution / 2, yResolution * 0.7);
-    }
 
+    }
 
   }
 
