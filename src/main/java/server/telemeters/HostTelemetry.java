@@ -27,8 +27,8 @@ public class HostTelemetry extends Telemetry {
   /**
    * MultiPlayer Constructor
    */
-  public HostTelemetry(int playerCount, Queue<Input> inputQueue, Queue<String> outputQueue,
-      Client client) {
+  public HostTelemetry(
+      int playerCount, Queue<Input> inputQueue, Queue<String> outputQueue, Client client) {
     super(client);
     inputs = (BlockingQueue<Input>) inputQueue;
     outputs = (BlockingQueue<String>) outputQueue;
@@ -38,9 +38,7 @@ public class HostTelemetry extends Telemetry {
     startGame();
   }
 
-  /**
-   * Single Player Constructor
-   */
+  /** Single Player Constructor */
   public HostTelemetry(Queue<Input> clientQueue, Client client) {
     super(client);
     inputs = (BlockingQueue<Input>) clientQueue;
@@ -48,7 +46,7 @@ public class HostTelemetry extends Telemetry {
     this.playerCount = 1;
     singlePlayer = true;
     initialise();
-//    startGame();
+    //    startGame();
   }
 
   /**
@@ -90,14 +88,15 @@ public class HostTelemetry extends Telemetry {
     final long DELAY = (long) Math.pow(10, 7);
     final long positionDELAY = (long) Math.pow(10, 8);
 
-    inputProcessor = new GameLoop(DELAY) {
-      @Override
-      public void handle() {
-        processInputs();
+    inputProcessor =
+        new GameLoop(DELAY) {
+          @Override
+          public void handle() {
+            processInputs();
 
-        processPhysics(agents, map, resourceLoader, pellets, activePowerUps);
-      }
-    };
+            processPhysics(agents, map, resourceLoader, pellets, activePowerUps);
+          }
+        };
     inputProcessor.start();
 
     new GameLoop(positionDELAY) {
@@ -147,7 +146,6 @@ public class HostTelemetry extends Telemetry {
     }
     return 0;
   }
-
 
   @Override
   public void stopGame() {

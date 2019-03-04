@@ -2,8 +2,8 @@ package server.telemeters;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import main.Client;
 import java.util.Random;
+import main.Client;
 import objects.Entity;
 import objects.Pellet;
 import objects.PowerUpBox;
@@ -21,7 +21,7 @@ import utils.enums.PowerUp;
 public abstract class Telemetry {
 
   static final int AGENT_COUNT = 5;
-  static final int GAME_TIME = 30 * 100; //Number of seconds *100
+  static final int GAME_TIME = 30 * 100; // Number of seconds *100
   static int gameTimer = 0;
   Map map;
   Entity[] agents;
@@ -30,11 +30,10 @@ public abstract class Telemetry {
   static Client client;
 
   Telemetry(Client client) {
-	  this.map = client.getMap();
+    this.map = client.getMap();
     this.client = client;
     this.resourceLoader = client.getResourceLoader();
     this.agents = client.getAgents();
-
   }
 
   ArrayList<PowerUp> activePowerUps = new ArrayList<>();
@@ -74,11 +73,16 @@ public abstract class Telemetry {
     agents = new Entity[AGENT_COUNT];
     switch (AGENT_COUNT) {
       default:
-      case 5: agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
-      case 4: agents[3] = new Entity(false, 3, new Point(11.5, 1.5, map));
-      case 3: agents[2] = new Entity(false, 2, new Point(9.5, 15.5, map));
-      case 2: agents[1] = new Entity(false, 1, new Point(1.5, 18.5, map));
-      case 1: agents[0] = new Entity(false, 0, new Point(1.5, 1.5, map));
+      case 5:
+        agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
+      case 4:
+        agents[3] = new Entity(false, 3, new Point(11.5, 1.5, map));
+      case 3:
+        agents[2] = new Entity(false, 2, new Point(9.5, 15.5, map));
+      case 2:
+        agents[1] = new Entity(false, 1, new Point(1.5, 18.5, map));
+      case 1:
+        agents[0] = new Entity(false, 0, new Point(1.5, 1.5, map));
     }
 
     Methods.updateImages(agents, resourceLoader);
@@ -110,7 +114,10 @@ public abstract class Telemetry {
    * @see this#detectEntityCollision(Entity, Entity, ResourceLoader)
    */
   static void processPhysics(
-      Entity[] agents, Map m, ResourceLoader resourceLoader, HashMap<String, Pellet> pellets,
+      Entity[] agents,
+      Map m,
+      ResourceLoader resourceLoader,
+      HashMap<String, Pellet> pellets,
       ArrayList<PowerUp> activePowerUps) {
 
     for (int i = 0; i < AGENT_COUNT; i++) {
