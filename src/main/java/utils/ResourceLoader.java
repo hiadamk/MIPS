@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
@@ -76,6 +78,7 @@ public class ResourceLoader {
         validMaps.add(map.substring(0, map.length() - 4));
       }
     }
+    Collections.sort(validMaps, Comparator.naturalOrder());
     return validMaps.toArray(new String[validMaps.size()]);
   }
 
