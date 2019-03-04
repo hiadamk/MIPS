@@ -46,13 +46,12 @@ public class ResourceLoader {
    */
   public ResourceLoader(String baseDir) {
     BASE_DIR = baseDir;
-
+    this.loadMap(DEFAULT_THEME);
+    //this.loadMap("six_exits");
     this.init();
   }
 
   private void init() {
-    this.loadMap(DEFAULT_THEME);
-    //this.loadMap("six_exits");
     this.loadPlayableMip(DEFAULT_THEME);
     this.loadPlayableGhoul(DEFAULT_THEME);
     this.loadMapTiles(DEFAULT_THEME);
