@@ -92,6 +92,8 @@ public class DumbTelemetry extends Telemetry {
     for(Entity ent: agents){
       if(ent.getClientId() == mipID){
         ent.setMipsman(true);
+      } else {
+        ent.setMipsman(false);
       }
     }
 
@@ -125,6 +127,8 @@ public class DumbTelemetry extends Telemetry {
     for(Entity ent: agents){
       if(ent.getClientId() == MIPID){
         ent.setMipsman(true);
+      } else {
+        ent.setMipsman(false);
       }
     }
   }
