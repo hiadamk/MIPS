@@ -1,6 +1,5 @@
 package utils;
 
-import java.util.Arrays;
 import java.util.Random;
 
 public class MapGenerator {
@@ -96,8 +95,8 @@ public class MapGenerator {
     while (!validateMap(map)) {
       //System.out.println("attempt " + c++);
       Random r = new Random();
-      int x = 14 + r.nextInt(3) * 3;
-      int half = 7 + r.nextInt(5) * 3;
+      int x = 14 + r.nextInt(5) * 3;
+      int half = 7 + r.nextInt(9) * 3;
       int y = half * 2 - 1;
       map = new int[x][y];
       for (int i = 0; i < x; i++) {
@@ -110,18 +109,35 @@ public class MapGenerator {
           map = apply(MapParts.getRandom(), map, i, j);
         }
       }
+
     }
     smoothDiagonals(map);
-    for (int i = 1; i < map.length; i++) {
+    for (int i = 1; i < map.length; i++) { //Reflects the map
       for (int j = 1; j < map[0].length / 2; j++) {
         map[i][map[0].length - j - 1] = map[i][j];
       }
     }
-    System.out.println("Map made ***************************************");
+    addLoops(map);// Adds the loops round
+
+    /*System.out.println("Map made ***************************************");
     for (int[] bit : map) {
       System.out.println(Arrays.toString(bit));
     }
+    System.gc(); */
     return map;
+  }
+
+  private static void addLoops(int[][] map) {
+    int x = map.length;
+    int y = map[0].length;
+    if (map[x / 2][1] == 0 && map[x / 2][y - 2] == 0) {
+      map[x / 2][0] = 0;
+      map[x / 2][y - 1] = 0;
+    }
+    if (map[1][y / 2] == 0 && map[x - 2][y / 2] == 0) {
+      map[0][y / 2] = 0;
+      map[x - 1][y / 2] = 0;
+    }
   }
 
   public static boolean validateMap(int[][] map) {
