@@ -19,6 +19,7 @@ import utils.enums.RenderingMode;
  */
 public class MapPreview {
 
+  private final ResourceLoader resourceLoader;
   private int xRes;
   private int yRes;
 
@@ -29,6 +30,7 @@ public class MapPreview {
   public MapPreview(int x, int y) {
     this.xRes = x;
     this.yRes = y;
+    this.resourceLoader = new ResourceLoader("src/main/resources/");
   }
 
   /**
@@ -37,6 +39,19 @@ public class MapPreview {
    */
   public Image getMapPreview(String mapName) {
 
+    //create a separate instance of resource loader from the game to not overwrite its loaded themes
+
+    //load map name into resource loader
+    resourceLoader.loadMap(mapName);
+
+    return getScreenshot(resourceLoader.getMap());
+  }
+
+  public Image getMapPreview(Map map) {
+    return getScreenshot(map);
+  }
+
+  private Image getScreenshot(Map map) {
     Canvas canvas = new Canvas(xRes, yRes);
     Group screenshotGroup = new Group();
     screenshotGroup.getChildren().add(canvas);
@@ -47,12 +62,6 @@ public class MapPreview {
     hiddenWindow.setScene(previewScene);
 
     GraphicsContext gc = canvas.getGraphicsContext2D();
-
-    //create a separate instance of resource loader from the game to not overwrite its loaded themes
-    ResourceLoader resourceLoader = new ResourceLoader("src/main/resources/");
-    //load map name into resource loader
-    resourceLoader.loadMap(mapName);
-    Map map = resourceLoader.getMap();
 
     Renderer renderer = new Renderer(gc, xRes, yRes, resourceLoader);
 
@@ -71,6 +80,4 @@ public class MapPreview {
 
     return screenshot;
   }
-
-
 }
