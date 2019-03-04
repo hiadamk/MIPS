@@ -3,6 +3,7 @@ package server.telemeters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+import main.Client;
 import objects.Entity;
 import objects.Pellet;
 import objects.PowerUpBox;
@@ -20,12 +21,21 @@ import utils.enums.PowerUp;
 public abstract class Telemetry {
 
   static final int AGENT_COUNT = 5;
-  static final int GAME_TIME = 30 * 100; //Number of seconds *100
+  static final int GAME_TIME = 30 * 100; // Number of seconds *100
   static int gameTimer = 0;
   Map map;
   Entity[] agents;
   HashMap<String, Pellet> pellets;
   ResourceLoader resourceLoader;
+  static Client client;
+
+  Telemetry(Client client) {
+    this.map = client.getMap();
+    this.client = client;
+    this.resourceLoader = client.getResourceLoader();
+    this.agents = client.getAgents();
+  }
+
   ArrayList<PowerUp> activePowerUps = new ArrayList<>();
   // abstract methods
 
@@ -38,7 +48,6 @@ public abstract class Telemetry {
   abstract void processInputs();
 
   public abstract void stopGame();
-
 
   // basic get/set methods
 
@@ -105,7 +114,10 @@ public abstract class Telemetry {
    * @see this#detectEntityCollision(Entity, Entity, ResourceLoader)
    */
   static void processPhysics(
-      Entity[] agents, Map m, ResourceLoader resourceLoader, HashMap<String, Pellet> pellets,
+      Entity[] agents,
+      Map m,
+      ResourceLoader resourceLoader,
+      HashMap<String, Pellet> pellets,
       ArrayList<PowerUp> activePowerUps) {
 
     for (int i = 0; i < AGENT_COUNT; i++) {
@@ -177,7 +189,7 @@ public abstract class Telemetry {
     Point ghoulFace = ghoul.getFaceLocation();
 
     if (mipsmanCenter.inRange(ghoulFace)) {
-
+      client.collisionDetected(ghoul);
       mipsman.setMipsman(false);
       ghoul.setMipsman(true);
       mipsman.setLocation(resourceLoader.getMap().getRandomSpawnPoint());

@@ -5,9 +5,11 @@ import ai.mapping.Mapping;
 import ai.routefinding.RouteFinder;
 import ai.routefinding.routefinders.MipsManRouteFinder;
 import ai.routefinding.routefinders.RandomRouteFinder;
-
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import objects.Entity;
 import utils.Input;
@@ -172,7 +174,7 @@ public class AILoopControl extends Thread {
         Iterator<Point> iterator = junctions.iterator();
         while (iterator.hasNext()&&DEBUG) {
             Point p = iterator.next();
-            System.out.println("j " + p.toString());
+//            System.out.println("j " + p.toString());
         }
 
         while (runAILoop && controlAgents.length > 0) {
@@ -180,19 +182,20 @@ public class AILoopControl extends Thread {
                 Point currentLocation = ent.getLocation().getCopy();
                 Point currentGridLocation = currentLocation.getGridCoord();
                 if (currentLocation.isCentered()) {
-                    if (DEBUG) {
-                        System.out.println(currentGridLocation.toString());
-                        System.out.println(junctions.contains(currentGridLocation));
+                  if (DEBUG) {
+//                        System.out.println(currentGridLocation.toString());
+//                        System.out.println(junctions.contains(currentGridLocation));
                         ArrayList<Direction> dirs = getValidDirections(currentLocation, map);
                         for (Direction d : dirs) {
-                            System.out.println(d);
+//                            System.out.println(d);
                         }
-                        System.out.println();
+//                        System.out.println();
                     }
-                    boolean atLastCoord = atPreviousCoordinate(ent, currentGridLocation);
+                  boolean atLastCoord = atPreviousCoordinate(ent, currentGridLocation);
                     if (ent.getDirection() == null
-                            || !Methods.validateDirection(ent.getDirection(), currentLocation, map)||(junctions.contains(currentGridLocation)&&!atLastCoord)) {
-                        if (atLastCoord) {
+                        || !Methods.validateDirection(ent.getDirection(), currentLocation, map) || (
+                        junctions.contains(currentGridLocation) && !atLastCoord)) {
+                      if (atLastCoord) {
                             Point nearestJunction = Mapping.findNearestJunction(currentLocation, map, junctions);
 
                             Direction dir;

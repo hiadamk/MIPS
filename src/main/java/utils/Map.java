@@ -64,8 +64,8 @@ public class Map {
    * @return true if wall, false otherwise
    */
   public boolean isWall(Point point) {
-    Point p = new Point(point.getX(), point.getY(),
-        this); //TODO remove line once all points use mod
+    Point p =
+        new Point(point.getX(), point.getY(), this); // TODO remove line once all points use mod
     return MAP[(int) p.getX()][(int) p.getY()] == MapElement.WALL.toInt();
   }
 

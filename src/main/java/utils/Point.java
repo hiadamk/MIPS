@@ -86,14 +86,6 @@ public class Point {
   }
 
   /**
-   * @see #getCopy()
-   * @deprecated
-   */
-  public static Point copyOf(Point p) {
-    return new Point(p.x, p.y, p.MAX_X, p.MAX_Y, p.MAPPED);
-  }
-
-  /**
    * can be mutated without affecting original copy
    *
    * @return new instance which is exact duplicate.
@@ -248,9 +240,9 @@ public class Point {
   private void mod() {
     if (MAPPED) {
       if (MAX_Y <= 0 && MAX_X <= 0) {
-        System.err.println("You're using a method that could cause Point to go off the map,");
-        System.err.println("but haven't constructed with enough information to stop this.");
-        System.err.println("Please consider using a different constructor.");
+        System.err.println("  You're using a method that could cause Point to go off the map,");
+        System.err.println("  but haven't constructed with enough information to stop this.");
+        System.err.println("  Please consider using a different constructor.");
         System.err.println(this.toString());
         return;
       }
