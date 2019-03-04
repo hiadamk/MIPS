@@ -116,6 +116,7 @@ public class DumbTelemetry extends Telemetry {
     System.out.println("ID: " + id);
     agents[id].setLocation(new Point(x, y));
     agents[id].setDirection(input.getMove());
+    agents[Integer.parseInt(ls[3])].setMipsman(true);
   }
 
   public void startAI() {

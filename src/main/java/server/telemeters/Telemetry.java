@@ -20,7 +20,7 @@ import utils.enums.PowerUp;
  */
 public abstract class Telemetry {
 
-  static final int AGENT_COUNT = 5;
+  static final int AGENT_COUNT = 3;
   static final int GAME_TIME = 30 * 100; // Number of seconds *100
   static int gameTimer = 0;
   Map map;

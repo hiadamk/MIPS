@@ -132,7 +132,7 @@ public class NetworkUtility {
         + "|"
         + coordFormat.format(position.getX())
         + "|"
-        + coordFormat.format(position.getY());
+        + coordFormat.format(position.getY()) + "|";
   }
 
   /**

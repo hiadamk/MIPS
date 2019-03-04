@@ -136,7 +136,7 @@ public class HostTelemetry extends Telemetry {
   }
 
   private void informClients(Input input, Point location) {
-    outputs.add(NetworkUtility.makeEntitiyMovementPacket(input, location));
+    outputs.add(NetworkUtility.makeEntitiyMovementPacket(input, location) + getMipID());
   }
 
   private int getMipID() {
