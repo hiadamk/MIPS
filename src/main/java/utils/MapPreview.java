@@ -3,6 +3,7 @@ package utils;
 import java.util.HashMap;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -60,9 +61,11 @@ public class MapPreview {
     gc.fillRect(0, 0, xRes, yRes);
     renderer.renderGameOnly(map, new Entity[]{}, 0, new HashMap<>());
 
+    SnapshotParameters parameters = new SnapshotParameters();
+    parameters.setFill(Color.TRANSPARENT);
     WritableImage screenshot = new WritableImage(xRes, yRes);
 
-    canvas.snapshot(null, screenshot);
+    canvas.snapshot(parameters, screenshot);
 
     hiddenWindow.hide();
 
