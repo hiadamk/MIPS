@@ -59,7 +59,6 @@ public class HostTelemetry extends Telemetry {
   private void initialise() {
 
     initialiseEntities();
-    initialiseEntities();
 
     if (singlePlayer) {
       agents[(new Random()).nextInt(AGENT_COUNT)].setMipsman(true);

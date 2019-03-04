@@ -198,13 +198,13 @@ public class Client extends Application {
       BlockingQueue<Input> inputQueue = new LinkedBlockingQueue<Input>();
       BlockingQueue<String> outputQueue = new LinkedBlockingQueue<String>();
       ServerGameplayHandler s = server.gameStart(inputQueue, outputQueue);
-
+      map = resourceLoader.getMap();
       int playerCount = server.getPlayerCount();
       System.out.println("PLAYER COUNT IS: " + playerCount);
       this.telemetry = new HostTelemetry(playerCount, inputQueue, outputQueue, this);
       this.telemetry.setMipID(MIPID);
       System.out.println("MIP ID: " + MIPID);
-      map = resourceLoader.getMap();
+
       gameScene.setOnKeyPressed(keyController);
       startGame();
     }
