@@ -17,6 +17,8 @@ import utils.enums.Direction;
  */
 public class AStarRouteFinder implements RouteFinder {
 
+  private static final boolean COMPLETE = false;
+
   private final JunctionSet junctions;
   private final HashMap<Point, HashSet<Point>> edges;
   private final Map map;
@@ -30,21 +32,22 @@ public class AStarRouteFinder implements RouteFinder {
     this.map = map;
   }
 
-  //    /**
-  //     * Returns the direction to travel in until the next junction is reached. Requires {@link
-  //     * #setAgents(Entity[], int) setAgents()} method to have been called before use.
-  //     *
-  //     * @param pacmanID The main ID of the entity that is currently pacman.
-  //     * @param myLocation
-  //     * @param targetLocation
-  //     * @return The direction to travel in.
-  //     * @throws IllegalStateException    The gameAgents have not been set. Call {@link
-  //     *                                  #setAgents(Entity[], int) setAgents()} before calling
-  // this method.
-  //     * @throws IllegalArgumentException PacmanID must be within the range of gameAgents Array.
-  //     */
+      /**
+       * Returns the direction to travel in until the next junction is reached.
+       *
+       * @param myLocPointDouble The start point.
+       * @param targetLocPointDouble The target point.
+       * @return The direction to travel in.
+       * @throws NullPointerException One or both positions are null.
+       */
   @Override
   public Direction getRoute(Point myLocPointDouble, Point targetLocPointDouble) {
+    if (!COMPLETE) {
+      return new RandomRouteFinder().getRoute(myLocPointDouble,targetLocPointDouble);
+    }
+    if (myLocPointDouble == null || targetLocPointDouble == null) {
+      throw new NullPointerException("One or both positions are null.");
+    }
     Point myLocation = myLocPointDouble.getGridCoord();
     Point targetLocation = targetLocPointDouble.getGridCoord();
     if (!junctions.contains(myLocation)) {
