@@ -3,8 +3,7 @@ package ai;
 import ai.mapping.JunctionSet;
 import ai.mapping.Mapping;
 import ai.routefinding.RouteFinder;
-import ai.routefinding.routefinders.MipsManRouteFinder;
-import ai.routefinding.routefinders.RandomRouteFinder;
+import ai.routefinding.routefinders.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -97,18 +96,15 @@ public class AILoopControl extends Thread {
             RouteFinder routeFinder;
             switch (i) {
                 case 0: {
-                    // TODO
-                    routeFinder = new RandomRouteFinder();
+                    routeFinder = new AStarRouteFinder(junctions, edges, map);
                     break;
                 }
                 case 1: {
-                    // TODO
-                    routeFinder = new RandomRouteFinder(); // new AStarRouteFinder(junctions,edges,map);
+                    routeFinder = new NextJunctionRouteFinder();
                     break;
                 }
                 case 2: {
-                    // TODO
-                    routeFinder = new RandomRouteFinder();
+                    routeFinder = new PowerPelletPatrolRouteFinder();
                     break;
                 }
                 case 3: {
@@ -116,7 +112,7 @@ public class AILoopControl extends Thread {
                     break;
                 }
                 case 4: { // Mipsman - no players
-                    routeFinder = new RandomRouteFinder(); // new MipsManRouteFinder();
+                    routeFinder = new MipsManRouteFinder();
                     break;
                 }
                 default: {

@@ -12,9 +12,13 @@ import utils.enums.Direction;
  */
 public class MipsManRouteFinder implements RouteFinder {
 
+  private static final boolean COMPLETE = false;
+
   @Override
   public Direction getRoute(Point myLocation, Point targetLocation) {
-    // TODO Auto-generated method stub
-    return new RandomRouteFinder().getRoute(myLocation, targetLocation);
+    if (!COMPLETE) {
+      return new RandomRouteFinder().getRoute(myLocation, targetLocation);
+    }
+    return null;
   }
 }
