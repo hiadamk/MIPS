@@ -78,11 +78,16 @@ public abstract class Telemetry {
           agents[i] = new Entity(false, i, new Point(1.5, 1.5));
         }
       }
-      case 5: agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
-      case 4: agents[3] = new Entity(false, 3, new Point(11.5, 1.5, map));
-      case 3: agents[2] = new Entity(false, 2, new Point(9.5, 15.5, map));
-      case 2: agents[1] = new Entity(false, 1, new Point(1.5, 18.5, map));
-      case 1: agents[0] = new Entity(false, 0, new Point(1.5, 1.5, map));
+      case 5:
+        agents[4] = new Entity(false, 4, map.getRandomSpawnPoint());
+      case 4:
+        agents[3] = new Entity(false, 3, map.getRandomSpawnPoint());
+      case 3:
+        agents[2] = new Entity(false, 2, map.getRandomSpawnPoint());
+      case 2:
+        agents[1] = new Entity(false, 1, map.getRandomSpawnPoint());
+      case 1:
+        agents[0] = new Entity(false, 0, map.getRandomSpawnPoint());
     }
 
     Methods.updateImages(agents, resourceLoader);
