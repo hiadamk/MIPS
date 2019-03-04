@@ -188,7 +188,7 @@ public abstract class Telemetry {
     Point mipsmanCenter = mipsman.getLocation();
     Point ghoulFace = ghoul.getFaceLocation();
 
-    if (mipsmanCenter.inRange(ghoulFace)) {
+    if (mipsmanCenter.inRange(ghoulFace)) { //check temporary invincibility here
       client.collisionDetected(ghoul);
       mipsman.setMipsman(false);
       ghoul.setMipsman(true);
