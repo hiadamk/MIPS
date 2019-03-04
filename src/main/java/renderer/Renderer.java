@@ -17,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import objects.Entity;
 import objects.Pellet;
+import objects.PowerUpBox;
 import utils.Map;
 import utils.Point;
 import utils.ResourceLoader;
@@ -131,7 +132,7 @@ public class Renderer {
     entities.sort(Comparator.comparingDouble(o -> o.getLocation().getX() + o.getLocation().getY()));
 
     int entityCounter = 0;
-    Image currentSprite;
+    Image currentSprite = null;
     Double rendCoord;
     Point spriteCoord = new Point(java.lang.Double.MAX_VALUE, java.lang.Double.MAX_VALUE);
 
@@ -156,6 +157,10 @@ public class Renderer {
 
     // TODO refactor the way the translucent pellet is fetched
     Image translucentPellet = r.getTranslucentPellet().get(0);
+    // TODO refactor the way the translucent pellet is fetched
+    Image pellet = r.getPellet().get(0);
+    // TODO refactor the way the translucent pellet is fetched
+    Image powerup = r.getPowerBox().get(0);
 
     // Loop through grid in diagonal traversal to render walls and entities by depth
     for (Double coord : traversalOrder) {
@@ -167,12 +172,20 @@ public class Renderer {
       if (currentPellet != null && currentPellet.isActive()) {
 
         //TODO use better way of finding if client is mipsman
-        boolean clientMipsman = isClientMipsman(entities);
+        Entity client = getClientEntity(entities);
 
-        if (clientMipsman) {
-          currentSprite = currentPellet.getImage().get(0);
+        if (currentPellet.canUse(client)) {
+          if (currentPellet instanceof PowerUpBox) {
+            currentSprite = powerup;
+          } else {
+            currentSprite = pellet;
+          }
         } else {
-          currentSprite = translucentPellet;
+          if (currentPellet instanceof PowerUpBox) {
+            //currentSprite = powerup;
+          } else {
+            currentSprite = translucentPellet;
+          }
         }
 
         //render pellet using either translucent or opaque sprite
@@ -210,17 +223,14 @@ public class Renderer {
     }
   }
 
-  private boolean isClientMipsman(ArrayList<Entity> entities) {
-    boolean clientMipsman = false;
-
+  private Entity getClientEntity(ArrayList<Entity> entities) {
     // TODO refactor the way the render knows the client is MIPSman
     for (Entity e : entities) {
-      if (e.isMipsman() && e.getClientId() == clientID) {
-        clientMipsman = true;
-        break;
+      if (e.getClientId() == clientID) {
+        return e;
       }
     }
-    return clientMipsman;
+    return null;
   }
 
   public void renderCollisionAnimation(Entity newMipsMan) {
