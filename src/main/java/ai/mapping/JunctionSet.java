@@ -5,7 +5,7 @@ import utils.Point;
 import java.util.*;
 
 public class JunctionSet implements Iterable, Set, Collection {
-    private HashMap<Double, HashSet<Double>> points;
+    private HashMap<Integer, HashSet<Integer>> points;
     private int size;
 
     public JunctionSet(){
@@ -18,9 +18,9 @@ public class JunctionSet implements Iterable, Set, Collection {
         if (o instanceof Point) {
             Point p = (Point) o;
             Point point = p.getCopy();
-            if (points.containsKey(point.getX())) {
-                HashSet<Double> ys = points.get(point.getX());
-                return ys.contains(point.getY());
+            if (points.containsKey((int) point.getX())) {
+                HashSet<Integer> ys = points.get((int) point.getX());
+                return ys.contains((int) point.getY());
             }
         }
         return false;
@@ -31,16 +31,16 @@ public class JunctionSet implements Iterable, Set, Collection {
         if (o instanceof Point) {
             Point p = (Point) o;
             Point point = p.getCopy();
-            HashSet<Double> ys;
-            if (points.containsKey(point.getX())) {
-                ys = points.get(point.getX());
+            HashSet<Integer> ys;
+            if (points.containsKey((int) point.getX())) {
+                ys = points.get((int) point.getX());
             }
             else {
                 ys = new HashSet<>();
             }
-            if (!ys.contains(point.getY())) {
-                ys.add(point.getY());
-                points.put(point.getX(), ys);
+            if (!ys.contains((int) point.getY())) {
+                ys.add((int)point.getY());
+                points.put((int)point.getX(), ys);
                 size++;
                 return true;
             }
@@ -54,10 +54,10 @@ public class JunctionSet implements Iterable, Set, Collection {
             Point p = (Point) o;
             Point point = p.getCopy();
             if (contains(point)) {
-                HashSet<Double> ys = points.get(point.getX());
-                ys.remove(point.getY());
+                HashSet<Integer> ys = points.get((int)point.getX());
+                ys.remove((int)point.getY());
                 if (ys.size()==0) {
-                    points.remove(point.getX());
+                    points.remove((int)point.getX());
                 }
                 size--;
                 return true;
@@ -143,10 +143,10 @@ public class JunctionSet implements Iterable, Set, Collection {
     public Point[] toArray() {
         Point[] pointsArray = new Point[size];
         int index = 0;
-        for (double x : points.keySet()) {
-            HashSet<Double> ys = points.get(x);
-            for (double y : ys) {
-                pointsArray[index] = new Point(x, y);
+        for (int x : points.keySet()) {
+            HashSet<Integer> ys = points.get(x);
+            for (int y : ys) {
+                pointsArray[index] = new Point((double) x, (double) y);
                 index++;
             }
         }
@@ -172,10 +172,10 @@ public class JunctionSet implements Iterable, Set, Collection {
     @Override
     public JunctionSet clone() {
         JunctionSet outSet = new JunctionSet();
-        for (double x : points.keySet()) {
-            HashSet<Double> ys = points.get(x);
-            for (double y : ys) {
-                outSet.add(new Point(x, y));
+        for (int x : points.keySet()) {
+            HashSet<Integer> ys = points.get(x);
+            for (int y : ys) {
+                outSet.add(new Point((double) x, (double) y));
             }
         }
         return outSet;

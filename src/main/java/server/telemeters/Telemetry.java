@@ -61,9 +61,14 @@ public abstract class Telemetry {
   // constructor methods
 
   void initialiseEntities() {
+
     agents = new Entity[AGENT_COUNT];
     switch (AGENT_COUNT) {
-      default:
+      default: {
+        for (int i = AGENT_COUNT-1; i>=5; i--) {
+          agents[i] = new Entity(false, i, new Point(1.5, 1.5));
+        }
+      }
       case 5: agents[4] = new Entity(false, 4, new Point(14.5, 11.5, map));
       case 4: agents[3] = new Entity(false, 3, new Point(11.5, 1.5, map));
       case 3: agents[2] = new Entity(false, 2, new Point(9.5, 15.5, map));

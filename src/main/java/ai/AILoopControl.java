@@ -196,7 +196,6 @@ public class AILoopControl extends Thread {
                             Point nearestJunction = Mapping.findNearestJunction(currentLocation, map, junctions);
 
                             Direction dir;
-                            //TODO
                             if (!nearestJunction.equals(currentGridLocation)) {
                                 dir = Mapping.directionBetweenPoints(currentLocation, nearestJunction);
                             } else {
@@ -205,17 +204,10 @@ public class AILoopControl extends Thread {
                                                 .getRoute(currentLocation, gameAgents[mipsmanID].getLocation());
                             }
                             dir = confirmOrReplaceDirection(ent.getDirection(), currentLocation, dir);
-                            if (ent.getClientId()==1) {
-                                System.out.println("HERE1111111111111111111");
-                            }
                             directionsOut.add(new Input(ent.getClientId(), dir));
                         } else {
                             ent.setLastGridCoord(currentGridLocation);
-                            if (ent.getClientId()==1) {
-                                System.out.println("HERE");
-                            }
                             if (junctions.contains(currentGridLocation)) {
-
                                 executeRoute(ent, currentLocation);
                             }
                         }
@@ -240,13 +232,13 @@ public class AILoopControl extends Thread {
         Direction direction = r.getRoute(currentLocation, mipsManLoc);
         direction = confirmOrReplaceDirection(ent.getDirection(), currentLocation, direction);
         directionsOut.add(new Input(ent.getClientId(), direction));
-        if (ent.getClientId()==1) {
-            System.out.println("HERE");
-        }
     }
 
     private boolean atPreviousCoordinate(Entity ent, Point currentLocation) {
-        return ent.getLastGridCoord() == null || ent.getLastGridCoord().equals(currentLocation);
+        if (ent.getLastGridCoord() == null) {
+            return false;
+        }
+        return ent.getLastGridCoord().equals(currentLocation);
     }
 
     private Direction confirmOrReplaceDirection(Direction oldDirection, Point currentLocation, Direction dir) {
