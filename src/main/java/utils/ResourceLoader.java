@@ -270,6 +270,7 @@ public class ResourceLoader {
         resizeSpritesSmooth(ghoulSprite, ratio);
       }
       resizeSpritesSmooth(pellets, ratio);
+      resizeSpritesSmooth(powerUpBox, ratio);
       resizeSpritesSmooth(translucentPellets, ratio);
       resizeSpritesSmooth(mapTiles, ratio);
       mipMarker = resizeSpriteSmooth(mipMarker, ratio);
@@ -283,6 +284,7 @@ public class ResourceLoader {
         resizeSprites(ghoulSprite, ratio);
       }
       resizeSprites(pellets, ratio);
+      resizeSprites(powerUpBox, ratio);
       resizeSprites(translucentPellets, ratio);
       resizeSprites(mapTiles, ratio);
       mipMarker = resizeSprite(mipMarker, ratio);
