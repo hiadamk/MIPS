@@ -184,7 +184,7 @@ public class Client extends Application {
       }
       this.primaryStage.setScene(gameScene);
       gameScene.setOnKeyPressed(keyController);
-      //      startGame();
+      startGame();
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -201,7 +201,6 @@ public class Client extends Application {
 
       int playerCount = server.getPlayerCount();
       System.out.println("PLAYER COUNT IS: " + playerCount);
-      map = resourceLoader.getMap();
       this.telemetry = new HostTelemetry(playerCount, inputQueue, outputQueue, this);
       this.telemetry.setMipID(MIPID);
       System.out.println("MIP ID: " + MIPID);
@@ -255,13 +254,12 @@ public class Client extends Application {
 
   public void setMIP(int id) {
     this.MIPID = id;
-    this.telemetry.setMipID(id);
   }
 
   private void startGame() {
     updateResolution(this.screenRes);
     if (telemetry != null) {
-      //            telemetry.setMipID(this.MIPID);
+      telemetry.setMipID(this.MIPID);
       agents = telemetry.getAgents();
       map = telemetry.getMap();
       pellets = telemetry.getPellets();
@@ -271,7 +269,7 @@ public class Client extends Application {
 
     // TODO the following line fixes array out of bounds - need to find out why
     renderer.initMapTraversal(map);
-
+    map = resourceLoader.getMap();
     this.primaryStage.setScene(gameScene);
     // AnimationTimer started once game has started
     new AnimationTimer() {
@@ -283,7 +281,6 @@ public class Client extends Application {
         }
       }
     }.start();
-    //        telemetry.startAI();
   }
 
   /**
