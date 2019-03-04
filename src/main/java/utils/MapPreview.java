@@ -48,6 +48,7 @@ public class MapPreview {
   }
 
   public Image getMapPreview(Map map) {
+    resourceLoader.loadMap(map);
     return getScreenshot(map);
   }
 
