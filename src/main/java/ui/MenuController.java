@@ -307,8 +307,10 @@ public class MenuController {
       mapImages.add(generatedPreview);
       numberOfMaps++;
       mapsIndex = numberOfMaps - 1;
+      currentMap = validMaps.get(mapsIndex);
       mapView.setImage(mapImages.get(mapsIndex));
       moveMapsRightBtn.setVisible(false);
+      moveMapsLeftBtn.setVisible(true);
     });
 
     HBox mapSelectionBox = new HBox(30, moveMapsLeftBtn, mapView, moveMapsRightBtn);
