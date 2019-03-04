@@ -114,6 +114,10 @@ public class ResourceLoader {
     return map;
   }
 
+  public void setMap(Map m) {
+    this.map = m;
+  }
+
   private void resizeSprites(ArrayList<BufferedImage> sprites, double ratio) {
     BufferedImage temp;
 
