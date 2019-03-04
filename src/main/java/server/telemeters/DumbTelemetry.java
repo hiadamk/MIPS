@@ -2,6 +2,7 @@ package server.telemeters;
 
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
+import main.Client;
 import server.NetworkUtility;
 import utils.GameLoop;
 import utils.Input;
@@ -13,6 +14,7 @@ import utils.enums.Direction;
 public class DumbTelemetry extends Telemetry {
 
   private BlockingQueue<String> inputs;
+  private Entity[] agents;
   private Queue<Input> clientQueue;
   private GameLoop inputProcessor;
 
@@ -20,9 +22,8 @@ public class DumbTelemetry extends Telemetry {
   // entites
   // rather than using any AI.
   // it is the client's telemetry.
-  public DumbTelemetry(Map map, Queue<String> inputQueue, ResourceLoader resourceLoader) {
-    this.map = map;
-    this.resourceLoader = resourceLoader;
+  public DumbTelemetry(Queue<String> inputQueue, Client client) {
+    super(client);
     inputs = (BlockingQueue<String>) inputQueue;
     initialise();
 //    startGame();

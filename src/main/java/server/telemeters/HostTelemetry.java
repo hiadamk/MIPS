@@ -5,14 +5,13 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import main.Client;
 import objects.Entity;
 import server.NetworkUtility;
 import utils.GameLoop;
 import utils.Input;
-import utils.Map;
 import utils.Methods;
 import utils.Point;
-import utils.ResourceLoader;
 import utils.enums.Direction;
 
 public class HostTelemetry extends Telemetry {
@@ -25,29 +24,29 @@ public class HostTelemetry extends Telemetry {
   private boolean aiRunning;
   private GameLoop inputProcessor;
 
-  public HostTelemetry(
-      Map map,
-      int playerCount,
-      Queue<Input> inputQueue,
-      Queue<String> outputQueue,
-      ResourceLoader resourceLoader) {
-    this.map = map;
+  /**
+   * MultiPlayer Constructor
+   */
+  public HostTelemetry(int playerCount, Queue<Input> inputQueue, Queue<String> outputQueue,
+      Client client) {
+    super(client);
     inputs = (BlockingQueue<Input>) inputQueue;
     outputs = (BlockingQueue<String>) outputQueue;
     this.playerCount = playerCount;
-    this.resourceLoader = resourceLoader;
     this.singlePlayer = false;
     initialise();
     startGame();
   }
 
-  public HostTelemetry(Map map, Queue<Input> clientQueue, ResourceLoader resourceLoader) {
-    this.map = map;
+  /**
+   * Single Player Constructor
+   */
+  public HostTelemetry(Queue<Input> clientQueue, Client client) {
+    super(client);
     inputs = (BlockingQueue<Input>) clientQueue;
     outputs = new LinkedBlockingQueue<>();
     this.playerCount = 1;
     singlePlayer = true;
-    this.resourceLoader = resourceLoader;
     initialise();
 //    startGame();
   }
@@ -59,6 +58,7 @@ public class HostTelemetry extends Telemetry {
    */
   private void initialise() {
 
+    initialiseEntities();
     initialiseEntities();
 
     if (singlePlayer) {
@@ -156,6 +156,6 @@ public class HostTelemetry extends Telemetry {
   }
 
   private void updateClients(Entity[] agents) {
-    outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents) + Integer.toString(getMipID()));
+    outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents) + getMipID());
   }
 }

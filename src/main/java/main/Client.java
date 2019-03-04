@@ -66,6 +66,7 @@ public class Client extends Application {
   private HashMap<String, Pellet> pellets;
   private int MIPID;
   private Canvas canvas = new Canvas();
+  private boolean colliding = false;
 
   public int getId() {
     return id;
@@ -103,9 +104,9 @@ public class Client extends Application {
     keyController = new KeyController();
     resourceLoader = new ResourceLoader("src/main/resources/");
     this.primaryStage = primaryStage;
-//    audioController.playMusic(Sounds.intro);
-    MenuController menuController = new MenuController(audioController, primaryStage, this,
-        resourceLoader);
+    //    audioController.playMusic(Sounds.intro);
+    MenuController menuController =
+        new MenuController(audioController, primaryStage, this, resourceLoader);
     StackPane root = (StackPane) menuController.createMainMenu();
     root.getStylesheets().add(getClass().getResource("/ui/stylesheet.css").toExternalForm());
     Scene scene = new Scene(root, xRes, yRes);
@@ -138,7 +139,7 @@ public class Client extends Application {
     map = resourceLoader.getMap();
 
     incomingQueue = new LinkedBlockingQueue<>();
-    this.telemetry = new HostTelemetry(map, incomingQueue, resourceLoader);
+    this.telemetry = new HostTelemetry(incomingQueue, this);
     this.primaryStage.setScene(gameScene);
     this.id = 0;
 
@@ -170,7 +171,7 @@ public class Client extends Application {
     try {
 
       clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this, name);
-      this.telemetry = new DumbTelemetry(map, clientIn, resourceLoader);
+      this.telemetry = new DumbTelemetry(clientIn, this);
       this.telemetry.setMipID(MIPID);
       System.out.println("MIP ID: " + MIPID);
       // waits for game to start
@@ -183,7 +184,7 @@ public class Client extends Application {
       }
       this.primaryStage.setScene(gameScene);
       gameScene.setOnKeyPressed(keyController);
-//      startGame();
+      //      startGame();
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -201,8 +202,7 @@ public class Client extends Application {
       int playerCount = server.getPlayerCount();
       System.out.println("PLAYER COUNT IS: " + playerCount);
       map = resourceLoader.getMap();
-      this.telemetry =
-          new HostTelemetry(this.map, playerCount, inputQueue, outputQueue, this.resourceLoader);
+      this.telemetry = new HostTelemetry(playerCount, inputQueue, outputQueue, this);
       this.telemetry.setMipID(MIPID);
       System.out.println("MIP ID: " + MIPID);
       map = resourceLoader.getMap();
@@ -269,7 +269,7 @@ public class Client extends Application {
     this.telemetry.startGame();
     Methods.updateImages(agents, resourceLoader);
 
-    //TODO the following line fixes array out of bounds - need to find out why
+    // TODO the following line fixes array out of bounds - need to find out why
     renderer.initMapTraversal(map);
 
     this.primaryStage.setScene(gameScene);
@@ -277,8 +277,10 @@ public class Client extends Application {
     new AnimationTimer() {
       @Override
       public void handle(long now) {
-        processInput();
-        renderer.render(map, agents, now, pellets);
+        if (!colliding) {
+          processInput();
+          renderer.render(map, agents, now, pellets);
+        }
       }
     }.start();
     //        telemetry.startAI();
@@ -335,9 +337,26 @@ public class Client extends Application {
     if (isHost) {
       telemetry.stopGame();
       server.gameStop();
-      //TODO render the end of game screen
+      // TODO render the end of game screen
     }
     // TODO add options in future for client to quit a game
   }
 
+  public void collisionDetected(Entity newMipsman) {
+    colliding = true;
+    renderer.renderCollisionAnimation(newMipsman, agents, map);
+    colliding = false;
+  }
+
+  public ResourceLoader getResourceLoader() {
+    return this.resourceLoader;
+  }
+
+  public Entity[] getAgents() {
+    return this.agents;
+  }
+
+  public Map getMap() {
+    return this.map;
+  }
 }

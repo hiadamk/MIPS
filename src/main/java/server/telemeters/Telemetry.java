@@ -2,6 +2,7 @@ package server.telemeters;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import main.Client;
 import java.util.Random;
 import objects.Entity;
 import objects.Pellet;
@@ -26,6 +27,16 @@ public abstract class Telemetry {
   Entity[] agents;
   HashMap<String, Pellet> pellets;
   ResourceLoader resourceLoader;
+  static Client client;
+
+  Telemetry(Client client) {
+	  this.map = client.getMap();
+    this.client = client;
+    this.resourceLoader = client.getResourceLoader();
+    this.agents = client.getAgents();
+
+  }
+
   ArrayList<PowerUp> activePowerUps = new ArrayList<>();
   // abstract methods
 
@@ -38,7 +49,6 @@ public abstract class Telemetry {
   abstract void processInputs();
 
   public abstract void stopGame();
-
 
   // basic get/set methods
 
@@ -172,7 +182,7 @@ public abstract class Telemetry {
     Point ghoulFace = ghoul.getFaceLocation();
 
     if (mipsmanCenter.inRange(ghoulFace)) {
-
+      client.collisionDetected(ghoul);
       mipsman.setMipsman(false);
       ghoul.setMipsman(true);
       mipsman.setLocation(resourceLoader.getMap().getRandomSpawnPoint());
