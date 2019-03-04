@@ -182,7 +182,7 @@ public class AILoopControl extends Thread {
                 Point currentLocation = ent.getLocation().getCopy();
                 Point currentGridLocation = currentLocation.getGridCoord();
                 if (currentLocation.isCentered()) {
-                    if (true||DEBUG) {
+                  if (DEBUG) {
 //                        System.out.println(currentGridLocation.toString());
 //                        System.out.println(junctions.contains(currentGridLocation));
                         ArrayList<Direction> dirs = getValidDirections(currentLocation, map);
@@ -191,15 +191,11 @@ public class AILoopControl extends Thread {
                         }
 //                        System.out.println();
                     }
-                    if (junctions.contains(currentGridLocation)&&DEBUG) {
-                        System.err.println("HIT");
-                    }
-                    if (junctions.contains(currentGridLocation)||currentGridLocation.equals(new Point(8, 19))) {
-//                        System.out.println();
-                    }
+                  boolean atLastCoord = atPreviousCoordinate(ent, currentGridLocation);
                     if (ent.getDirection() == null
-                            || !Methods.validateDirection(ent.getDirection(), currentLocation, map)||junctions.contains(currentGridLocation)) {
-                        if (atPreviousCoordinate(ent, currentGridLocation)) {
+                        || !Methods.validateDirection(ent.getDirection(), currentLocation, map) || (
+                        junctions.contains(currentGridLocation) && !atLastCoord)) {
+                      if (atLastCoord) {
                             Point nearestJunction = Mapping.findNearestJunction(currentLocation, map, junctions);
 
                             Direction dir;
@@ -212,21 +208,22 @@ public class AILoopControl extends Thread {
                                                 .getRoute(currentLocation, gameAgents[mipsmanID].getLocation());
                             }
                             dir = confirmOrReplaceDirection(ent.getDirection(), currentLocation, dir);
+                        if (ent.getClientId() == 1) {
+                          System.out.println("HERE1111111111111111111");
+                        }
                             directionsOut.add(new Input(ent.getClientId(), dir));
                         } else {
                             ent.setLastGridCoord(currentGridLocation);
+                        if (ent.getClientId() == 1) {
+                          System.out.println("HERE");
+                        }
                             if (junctions.contains(currentGridLocation)) {
+
                                 executeRoute(ent, currentLocation);
                             }
                         }
                     }
-                }// else if (!Methods.validateDirection(ent.getDirection(), currentLocation, map)) {
-                 //   Direction dir =
-                 //           new RandomRouteFinder()
-                 //                  .getRoute(currentLocation, gameAgents[mipsmanID].getLocation());
-                 //   dir = confirmOrReplaceDirection(ent, currentLocation, dir);
-                //   directionsOut.add(new Input(ent.getClientId(), dir));
-                //}
+                }
             }
 
             correctMipsmanRouteFinder();
@@ -246,6 +243,9 @@ public class AILoopControl extends Thread {
         Direction direction = r.getRoute(currentLocation, mipsManLoc);
         direction = confirmOrReplaceDirection(ent.getDirection(), currentLocation, direction);
         directionsOut.add(new Input(ent.getClientId(), direction));
+      if (ent.getClientId() == 1) {
+        System.out.println("HERE");
+      }
     }
 
     private boolean atPreviousCoordinate(Entity ent, Point currentLocation) {
@@ -263,7 +263,6 @@ public class AILoopControl extends Thread {
             return null;
         }
         if (!Methods.validateDirection(dir, currentLocation, map)) {
-            System.err.println("DIRECTION INVALID " + dir);
             if (validDirections.size()>0) {
                 int randI = r.nextInt(validDirections.size());
                 dir = validDirections.get(randI);
