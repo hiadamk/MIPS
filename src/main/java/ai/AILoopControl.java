@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
+
+import com.sun.org.apache.xpath.internal.SourceTree;
 import objects.Entity;
 import utils.Input;
 import utils.Map;
@@ -36,6 +38,7 @@ public class AILoopControl extends Thread {
     private final Entity[] gameAgents;
     private boolean runAILoop;
     private int mipsmanID;
+    private int counter = 0;
 
 
     /**Initialises the object prior to the AI loop being executed.
@@ -203,10 +206,18 @@ public class AILoopControl extends Thread {
                                                 .getRoute(currentLocation, gameAgents[mipsmanID].getLocation());
                             }
                             dir = confirmOrReplaceDirection(ent.getDirection(), currentLocation, dir);
-                            directionsOut.add(new Input(ent.getClientId(), dir));
+                            ent.setDirection(dir);
+                            if(!(dir.toInt()==ent.getDirection().toInt())){
+                                counter++;
+                                System.out.println("Added AI direction " + dir.toString() +" " + counter);
+                                directionsOut.add(new Input(ent.getClientId(), dir));
+                            }
+
                         } else {
                             ent.setLastGridCoord(currentGridLocation);
                             if (junctions.contains(currentGridLocation)) {
+                                System.out.println("CURRENT LOCATION: " + currentLocation.toString());
+                                System.out.println("ENTITY: " + ent.toString());
                                 executeRoute(ent, currentLocation);
                             }
                         }
@@ -230,7 +241,15 @@ public class AILoopControl extends Thread {
         Point mipsManLoc = gameAgents[mipsmanID].getLocation();
         Direction direction = r.getRoute(currentLocation, mipsManLoc);
         direction = confirmOrReplaceDirection(ent.getDirection(), currentLocation, direction);
-        directionsOut.add(new Input(ent.getClientId(), direction));
+//        ent.setDirection(direction);
+        System.out.println();
+        if(!(direction.toInt()==ent.getDirection().toInt())){
+            counter++;
+            System.out.println("Added AI direction " + direction.toString() +" " + counter);
+
+            directionsOut.add(new Input(ent.getClientId(), direction));
+        }
+
     }
 
     private boolean atPreviousCoordinate(Entity ent, Point currentLocation) {
