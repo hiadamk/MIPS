@@ -127,7 +127,7 @@ public abstract class Telemetry {
         Point faceLocation = agents[i].getFaceLocation();
 
         if (m.isWall(faceLocation)) {
-          System.out.println("~Player" + i + " drove into a wall");
+	        //System.out.println("~Player" + i + " drove into a wall");
           agents[i].setLocation(prevLocation.centralise());
           agents[i].setDirection(null);
         }
