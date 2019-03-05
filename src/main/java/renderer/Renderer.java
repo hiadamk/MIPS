@@ -245,6 +245,9 @@ public class Renderer {
     java.lang.Double[] num = {1.0, 1.0, 1.1, 1.25, 1.4};
     UpDownIterator<java.lang.Double> entitySize = new UpDownIterator<>(num);
 
+    java.lang.Double[] opacity = {0.5, 0.55, 0.65, 0.7};
+    UpDownIterator<java.lang.Double> backgroundOpacity = new UpDownIterator<>(opacity);
+
     Image currentSprite = newMipsMan.getImage().get(newMipsMan.getCurrentFrame());
     final double renderAnimationTime = 0.75 * Math.pow(10, 9);
     double startTime = System.nanoTime();
@@ -266,8 +269,9 @@ public class Renderer {
       }
       timeSinceLastFrame = 0;
       gc.setTextAlign(TextAlignment.CENTER);
+      renderBackground(map);
       renderGameOnly(map, entities, 0, new HashMap<String, Pellet>());
-      gc.setFill(new Color(0, 0, 0, 0.5));
+      gc.setFill(new Color(0, 0, 0, backgroundOpacity.next()));
       gc.fillRect(0, 0, xResolution, yResolution);
 
       double x = newMipsMan.getLocation().getX() - 0.5;
