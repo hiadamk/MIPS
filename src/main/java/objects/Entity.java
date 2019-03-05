@@ -285,6 +285,7 @@ public class Entity implements Renderable {
     outStr += "\nmydir " + direction;
     outStr += "\nroutefinder " + routeFinder;
     outStr += "\nlastPos " + lastGridCoord;
+    outStr += "\nscore " + score;
     return outStr;
   }
 

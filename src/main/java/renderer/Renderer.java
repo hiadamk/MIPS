@@ -30,6 +30,7 @@ public class Renderer {
   private static final double MAP_BORDER = 10;
   private final GraphicsContext gc;
   private final long secondInNanoseconds = (long) Math.pow(10, 9);
+  private final HeadsUpDisplay hudRender;
   private ResourceLoader r;
   private int xResolution;
   private int yResolution;
@@ -46,6 +47,7 @@ public class Renderer {
   private int fps = 0;
   private int frameCounter = 0;
   private long timeSum;
+  private Entity clientEntity = null;
 
   private ArrayList<Point2D.Double> traversalOrder = new ArrayList<>();
 
@@ -62,6 +64,7 @@ public class Renderer {
     this.yResolution = _yResolution;
     this.background = r.getBackground();
     this.palette = r.getBackgroundPalette();
+    this.hudRender = new HeadsUpDisplay(gc, _xResolution, _yResolution);
 
     this.initMapTraversal(r.getMap());
   }
@@ -117,11 +120,16 @@ public class Renderer {
    * @param pellets Consumable objects
    */
   public void render(Map map, Entity[] entityArr, long now, HashMap<String, Pellet> pellets) {
+    if (clientEntity == null) {
+      this.clientEntity = getClientEntity(new ArrayList<Entity>(Arrays.asList(entityArr)));
+    }
+
     //clear screen
     gc.clearRect(0, 0, xResolution, yResolution);
     renderBackground(map);
     renderGameOnly(map, entityArr, now, pellets);
-    renderHUD(entityArr);
+    //renderHUD(entityArr);
+    hudRender.renderHUD(entityArr);
     showFPS(now);
 
   }
@@ -510,6 +518,7 @@ public class Renderer {
       gc.fillText("Player" + otherPlayers[i].getClientId(), cornerCoord.getX(), cornerCoord.getY());
     }
   }
+
 
   /**
    * @param colour sets Graphics context fill colour using an intRGB (gc.setFillColour only allows
