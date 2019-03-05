@@ -7,12 +7,9 @@
 }
 
 .jfx-tab-pane {
-  /*-fx-skin: "com.sun.javafx.scene.control.skin.TabPaneSkin";*/
-  /* -fx-tab-min-width: 4.583em;  55 */
-  /* -fx-tab-max-width: 4.583em; 55 */
-  /*-fx-background-color: transparent;*/
-  -fx-tab-min-height: 2em; /* 24 */
-  -fx-tab-max-height: 2em; /* 24 */
+
+  -fx-tab-min-height: 2em;
+  -fx-tab-max-height: 2em;
 }
 
 .tab .tab-label {
@@ -22,26 +19,14 @@
   -fx-text-fill: white;
 }
 
-/*
-.tab *.tab-label Text {
--fx-effect: dropshadow(two-pass-box , rgba(255, 255, 255, 0.4), 1, 0.0 , 0, 1);
-}*/
 .tab-content-area {
   -fx-background-color: transparent;
-  -fx-padding: 0.0em; /* 0 */
-  /* -fx-opacity: -fx-disabled-opacity;*/
+  -fx-padding: 0.0em;
 }
 
 .tab {
-  /* This is how it is done in Button, but the -1 inset caused a white line  */
-  /* to appear beneath the tab, which looks bad, so it's taken out below.    */
-  /*    -fx-background-color: -fx-shadow-highlight-color, -fx-tab-border-color, -fx-inner-border, -fx-body-color;
-  -fx-background-radius: 5 5 0 0, 5 5 0 0, 4 4 0 0, 3 3 0 0;
-  -fx-background-insets: 0 0 -1 0, 0, 1, 2;*/
   -fx-background-insets: 0;
-  /*-fx-background-radius: 5 5 0 0, 4 4 0 0, 3 3 0 0;*/
-  -fx-padding: 0; /* 1 6 1 6 */
-  /*    -fx-text-fill: -fx-text-base-color;*/
+  -fx-padding: 0;
 }
 
 .tab:top {
@@ -70,10 +55,6 @@
 }
 
 .jfx-tab:selected {
-  /*    -fx-background-color: white;*/
-  /*    -fx-background-color: -fx-tab-border-color, -fx-inner-border, -fx-body-color;
-  -fx-background-radius: 5 5 0 0, 4 4 0 0, 3 3 0 0;
-  -fx-background-insets: 0, 1 1 0 1, 2 2 0 2;*/
   -fx-background-color: transparent;
   -fx-background-insets: 0;
 }
@@ -93,14 +74,8 @@
 
 .tab-pane *.tab-header-background {
   -fx-background-color: transparent;
-  /*-fx-effect: innershadow(two-pass-box , rgba(0,0,0,0.6) , 4, 0.0 , 0 , 0);*/
 }
 
-/*.tab-pane *.tab-header-area {*/
-/* I would like to use -fx-tab-border-color here, but for some reason it */
-/* just isn't the correct color, even though it works in :top above */
-/*    -fx-background-color: -fx-tab-border-color, lightgray;*/
-/*}*/
 .tab-pane:top *.tab-header-area {
   -fx-background-insets: 0, 0 0 1 0;
   -fx-background-color: transparent;
@@ -212,13 +187,10 @@
 
 .combo-box-popup .list-view .list-cell {
   -fx-padding: 0;
-
-  /* No alternate highlighting */
   -fx-background-color: transparent;
 }
 
 .combo-box-popup .list-view .list-cell:filled:selected, .combo-box-popup .list-view .list-cell:filled:selected:hover {
-  /*-fx-background: -fx-accent;*/
   -fx-background-color: transparent;
   -fx-text-fill: white;
 }
@@ -237,21 +209,11 @@
 }
 
 .jfx-combo-box {
-  /*-fx-background-color:  PINK;*/
 }
 
 .jfx-combo-box .label {
   -fx-text-alignment: center;
 }
-
-/*.combo-box-base*/
-/*{*/
-/*-fx-skin: "com.sun.javafx.scene.control.skin.ComboBoxBaseSkin";*/
-/*-fx-background-color: transparent;*/
-/*-fx-background-radius: 0;*/
-/*-fx-background-insets: 0;*/
-/*-fx-padding: 0;*/
-/*}*/
 
 .combo-box-base:hover {
   -fx-color: PINK;
@@ -275,7 +237,6 @@
 }
 
 .jfx-combo-box {
-  /*-jfx-focus-color: transparent;*/
   -jfx-unfocus-color: silver;
 }
 
@@ -302,7 +263,3 @@
   -fx-border-color: transparent;
   -fx-effect: null;
 }
-
-/*.jfx-combo-box:selected{*/
-/*-fx-background-color: red;*/
-/*}*/

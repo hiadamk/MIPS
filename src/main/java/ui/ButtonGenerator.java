@@ -7,7 +7,7 @@ import javafx.scene.layout.Pane;
 
 public class ButtonGenerator {
 
-  public JFXButton generate(boolean visible, Pane root, String text, UIColours colour,
+  public static JFXButton generate(boolean visible, Pane root, String text, UIColours colour,
       int fontsize) {
     JFXButton result = new JFXButton();
     result.setText(text);
@@ -22,7 +22,7 @@ public class ButtonGenerator {
 
   }
 
-  public Button generate(boolean visible, Pane root, ImageView imageView) {
+  public static Button generate(boolean visible, Pane root, ImageView imageView) {
     Button result = new Button();
     result.setGraphic(imageView);
     root.getChildren().add(result);

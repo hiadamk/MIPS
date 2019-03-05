@@ -78,7 +78,6 @@ public class MenuController {
   private VBox gameModeOptions;
   private VBox nameEntryOptions;
   private VBox searchingForMultiplayers;
-  private Font font;
 
   private List<ImageView> imageViews;
   private List<Double> originalViewWidths = new ArrayList<>();
@@ -111,9 +110,6 @@ public class MenuController {
   private Button moveMapsRightBtn;
   private Map currentMap;
   private ArrayList<Map> validMaps = new ArrayList<>();
-
-
-  private ButtonGenerator buttonGenerator = new ButtonGenerator();
 
   private boolean isHome = true;
 
@@ -160,7 +156,7 @@ public class MenuController {
   /**
    * @author Adam Kona Shows items on the screen which have been previously set to hidden.
    */
-  public void showItemsOnScreen() {
+  private void showItemsOnScreen() {
     for (Node item : itemsOnScreen) {
       FadeTransition ft = new FadeTransition(Duration.millis(1000), item);
       ft.setFromValue(0);
@@ -225,13 +221,6 @@ public class MenuController {
    */
   public Node createMainMenu() {
 
-    try {
-      this.font =
-          Font.loadFont(
-              new FileInputStream(new File("src/main/resources/ui/PressStart2P.ttf")), 26);
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
     StackPane root = new StackPane();
     root.setPrefSize(1920, 1080);
 
@@ -249,7 +238,7 @@ public class MenuController {
     root.getChildren().add(logo);
     logo.setVisible(true);
 
-    startGameBtn = buttonGenerator.generate(false, root, "Start", UIColours.GREEN, 40);
+    startGameBtn = ButtonGenerator.generate(false, root, "Start", UIColours.GREEN, 40);
     StackPane.setAlignment(startGameBtn, Pos.CENTER);
     StackPane.setMargin(startGameBtn, new Insets(0, 0, 0, 0));
     startGameBtn.setOnAction(
@@ -266,10 +255,11 @@ public class MenuController {
       mapImages.add(mapPreview.getMapPreview(map));
     }
 
-    Label selectMapLbl = new Label("Select a map:");
-    selectMapLbl.setStyle(" -fx-font-size: 14pt ;");
-    moveMapsLeftBtn = buttonGenerator.generate(true, root, "<", UIColours.WHITE, 40);
-    moveMapsRightBtn = buttonGenerator.generate(true, root, ">", UIColours.WHITE, 40);
+    VBox mapSelectionView = new VBox(40);
+    Label selectMapLbl = LabelGenerator
+        .generate(true, mapSelectionView, "Select a map: ", UIColours.BLACK, 14);
+    moveMapsLeftBtn = ButtonGenerator.generate(true, root, "<", UIColours.WHITE, 40);
+    moveMapsRightBtn = ButtonGenerator.generate(true, root, ">", UIColours.WHITE, 40);
     moveMapsLeftBtn.setVisible(false);
     if (knownMaps.length <= 1) {
       moveMapsRightBtn.setVisible(false);
@@ -283,9 +273,9 @@ public class MenuController {
     currentMap = validMaps.get(0);
     mapView.setPreserveRatio(true);
     mapView.setFitWidth(700);
-    Button generateMapBtn = buttonGenerator
+    Button generateMapBtn = ButtonGenerator
         .generate(true, root, "Generate Map", UIColours.WHITE, 25);
-    Button mapConfirmationBtn = buttonGenerator
+    Button mapConfirmationBtn = ButtonGenerator
         .generate(true, root, "Continue", UIColours.GREEN, 25);
     mapConfirmationBtn.setOnAction(event -> {
       audioController.playSound(Sounds.click);
@@ -315,7 +305,7 @@ public class MenuController {
 
     HBox mapSelectionBox = new HBox(30, moveMapsLeftBtn, mapView, moveMapsRightBtn);
     HBox mapSelectionBtns = new HBox(20, generateMapBtn, mapConfirmationBtn);
-    VBox mapSelectionView = new VBox(40, selectMapLbl, mapSelectionBox, mapSelectionBtns);
+    mapSelectionView.getChildren().addAll(mapSelectionBox, mapSelectionBtns);
     mapSelectionBtns.setAlignment(Pos.CENTER);
     mapSelectionBox.setAlignment(Pos.CENTER);
     mapSelectionView.setAlignment(Pos.CENTER);
@@ -323,7 +313,7 @@ public class MenuController {
     mapSelectionView.setVisible(false);
     root.getChildren().add(mapSelectionView);
 
-    Button singlePlayerBtn = buttonGenerator
+    Button singlePlayerBtn = ButtonGenerator
         .generate(true, root, "Singleplayer", UIColours.WHITE, 40);
     singlePlayerBtn.setOnAction(
         e -> {
@@ -333,7 +323,7 @@ public class MenuController {
           showItemsOnScreen();
         });
 
-    Button multiplayerBtn = buttonGenerator
+    Button multiplayerBtn = ButtonGenerator
         .generate(true, root, "Multiplayer", UIColours.WHITE, 40);
     multiplayerBtn.setOnAction(
         e -> {
@@ -350,7 +340,7 @@ public class MenuController {
     root.getChildren().add(gameModeOptions);
     gameModeOptions.setVisible(false);
 
-    Button playBtn = buttonGenerator.generate(true, root, "Play", UIColours.GREEN, 35);
+    Button playBtn = ButtonGenerator.generate(true, root, "Play", UIColours.GREEN, 35);
     playBtn.setText("Play");
     StackPane.setAlignment(playBtn, Pos.CENTER);
     StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
@@ -367,11 +357,11 @@ public class MenuController {
     client.setRenderingMode(RenderingMode.SMOOTH_SCALING);
 
     ImageView creditsView = new ImageView("ui/Credits.png");
-    Button creditsBtn = buttonGenerator.generate(false, root, creditsView);
+    Button creditsBtn = ButtonGenerator.generate(false, root, creditsView);
     StackPane.setAlignment(creditsBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(creditsBtn, new Insets(0, 0, 50, 0));
 
-    Button joinGameBtn = buttonGenerator.generate(true, root, "Join a game", UIColours.WHITE, 40);
+    Button joinGameBtn = ButtonGenerator.generate(true, root, "Join a game", UIColours.WHITE, 40);
     joinGameBtn.setPickOnBounds(true);
     joinGameBtn.setOnAction(
         event -> {
@@ -384,7 +374,7 @@ public class MenuController {
 
         });
 
-    Button createGameBtn = buttonGenerator.generate(true, root, "Create game", UIColours.WHITE, 40);
+    Button createGameBtn = ButtonGenerator.generate(true, root, "Create game", UIColours.WHITE, 40);
     createGameBtn.setPickOnBounds(true);
     createGameBtn.setOnAction(
         event -> {
@@ -403,19 +393,14 @@ public class MenuController {
     root.getChildren().add(multiplayerOptions);
     multiplayerOptions.setVisible(false);
 
-    lobbyStatusLbl = new Label("Searching for players");
-    lobbyStatusLbl.setTextFill(Color.WHITE);
-    lobbyStatusLbl.setFont(this.font);
+    searchingForMultiplayers = new VBox(5);
 
-    loadingDots = new Label(" .");
-    loadingDots.setTextFill(Color.WHITE);
-    loadingDots.setFont(this.font);
-
-    Label playersInLobby = new Label("Players in lobby: 0");
-    playersInLobby.setTextFill(Color.WHITE);
-    playersInLobby.setFont(this.font);
-
-    searchingForMultiplayers = new VBox(5, lobbyStatusLbl, loadingDots, playersInLobby);
+    lobbyStatusLbl = LabelGenerator
+        .generate(true, searchingForMultiplayers, "Searching for players", UIColours.WHITE, 20);
+    loadingDots = LabelGenerator
+        .generate(true, searchingForMultiplayers, " .", UIColours.WHITE, 20);
+    Label playersInLobby = LabelGenerator
+        .generate(true, searchingForMultiplayers, "Players in Lobby: 0", UIColours.WHITE, 20);
     searchingForMultiplayers.setAlignment(Pos.CENTER);
     StackPane.setAlignment(searchingForMultiplayers, Pos.CENTER);
     root.getChildren().add(searchingForMultiplayers);
@@ -456,7 +441,7 @@ public class MenuController {
     VBox nameAndLine = new VBox(nameEntry, clear);
     nameAndLine.setAlignment(Pos.CENTER);
 
-    Button nameEntryBtn = buttonGenerator.generate(true, root, "Continue", UIColours.GREEN, 30);
+    Button nameEntryBtn = ButtonGenerator.generate(true, root, "Continue", UIColours.GREEN, 30);
     nameEntryBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
@@ -475,7 +460,7 @@ public class MenuController {
     nameEntryOptions.setVisible(false);
     root.getChildren().add(nameEntryOptions);
 
-    Button quitBtn = buttonGenerator.generate(true, root, "quit", UIColours.QUIT_RED, 30);
+    Button quitBtn = ButtonGenerator.generate(true, root, "quit", UIColours.QUIT_RED, 30);
     StackPane.setAlignment(quitBtn, Pos.TOP_RIGHT);
     StackPane.setMargin(quitBtn, new Insets(50, 50, 0, 0));
     quitBtn.setOnAction(
@@ -497,8 +482,7 @@ public class MenuController {
 
     StackPane soundTabLayout = new StackPane();
 
-    Label musicLbl = new Label("Music:");
-    musicLbl.setStyle(" -fx-font-size: 16pt ;");
+    Label musicLbl = LabelGenerator.generate(true, soundTabLayout, "Music:", UIColours.BLACK, 16);
     JFXToggleButton musicToggle = new JFXToggleButton();
     musicToggle.setSelected(true);
     musicToggle.setOnAction(event -> {
@@ -516,8 +500,8 @@ public class MenuController {
     StackPane.setAlignment(musicToggle, Pos.TOP_CENTER);
     StackPane.setMargin(musicToggle, new Insets(128, 0, 0, 200));
 
-    Label soundFXLbl = new Label("SoundFX:");
-    soundFXLbl.setStyle(" -fx-font-size: 16pt ;");
+    Label soundFXLbl = LabelGenerator
+        .generate(true, soundTabLayout, "SoundFX:", UIColours.BLACK, 16);
     JFXToggleButton soundFXToggle = new JFXToggleButton();
     soundFXToggle.setSelected(true);
     soundFXToggle.setOnAction(event -> {
@@ -535,8 +519,7 @@ public class MenuController {
     StackPane.setAlignment(soundFXToggle, Pos.CENTER);
     StackPane.setMargin(soundFXToggle, new Insets(0, 0, 0, 200));
 
-    Label volumeLbl = new Label("Volume:");
-    volumeLbl.setStyle(" -fx-font-size: 16pt ;");
+    Label volumeLbl = LabelGenerator.generate(true, soundTabLayout, "Volume:", UIColours.BLACK, 16);
 
     JFXSlider volumeSlider = new JFXSlider(0, 1, 0.5);
 
@@ -553,7 +536,7 @@ public class MenuController {
     StackPane.setMargin(volumeLbl, new Insets(0, 200, 150, 0));
 
     soundTabLayout.getChildren()
-        .addAll(musicLbl, musicToggle, soundFXLbl, soundFXToggle, volumeLbl, volumeSlider);
+        .addAll(musicToggle, soundFXToggle, volumeSlider);
     soundTab.setContent(soundTabLayout);
 
     //Creates the tab for graphics
@@ -562,8 +545,8 @@ public class MenuController {
     StackPane graphicsTabLayout = new StackPane();
 
     //Adding resolution label and combo box
-    Label resolutionLbl = new Label("Resolution: ");
-    resolutionLbl.setStyle(" -fx-font-size: 14pt ;");
+    Label resolutionLbl = LabelGenerator
+        .generate(true, graphicsTabLayout, "Resolution: ", UIColours.BLACK, 14);
 
     JFXComboBox<String> resolutionCombo = new JFXComboBox<>();
     resolutionCombo.getItems().add("1366x768");
@@ -599,8 +582,8 @@ public class MenuController {
     StackPane.setMargin(resolutionCombo, new Insets(0, 0, 200, 300));
 
     //Adding resolution label and combo box
-    Label scalingLbl = new Label("Resolution Scaling: ");
-    scalingLbl.setStyle(" -fx-font-size: 14pt ;");
+    Label scalingLbl = LabelGenerator
+        .generate(true, graphicsTabLayout, "Resolution Scaling: ", UIColours.BLACK, 14);
 
     JFXComboBox<String> scalingCombo = new JFXComboBox<>();
     scalingCombo.getItems().add("None");
@@ -638,7 +621,7 @@ public class MenuController {
     StackPane.setMargin(scalingCombo, new Insets(200, 0, 200, 350));
 
     graphicsTabLayout.getChildren()
-        .addAll(resolutionLbl, resolutionCombo, scalingLbl, scalingCombo);
+        .addAll(resolutionCombo, scalingCombo);
     graphicsTab.setContent(graphicsTabLayout);
 
     //Creates the tab for controls
@@ -647,19 +630,23 @@ public class MenuController {
 
     StackPane controlsLayout = new StackPane();
 
-    upLbl = new Label("UP KEY: " + Settings.getKey(InputKey.UP).getName());
-    leftLbl = new Label("LEFT KEY: " + Settings.getKey(InputKey.LEFT).getName());
-    rightLbl = new Label("RIGHT KEY: " + Settings.getKey(InputKey.RIGHT).getName());
-    downLbl = new Label("DOWN KEY: " + Settings.getKey(InputKey.DOWN).getName());
-    useLbl = new Label("USE ITEM KEY: " + Settings.getKey(InputKey.USE).getName());
+    VBox keyLbls = new VBox(45);
 
-    upLbl.setStyle(" -fx-font-size: 14pt ;");
-    leftLbl.setStyle(" -fx-font-size: 14pt ;");
-    rightLbl.setStyle(" -fx-font-size: 14pt ;");
-    downLbl.setStyle(" -fx-font-size: 14pt ;");
-    useLbl.setStyle(" -fx-font-size: 14pt ;");
-
-    VBox keyLbls = new VBox(45, upLbl, leftLbl, rightLbl, downLbl, useLbl);
+    upLbl = LabelGenerator
+        .generate(true, keyLbls, "UP KEY: " + Settings.getKey(InputKey.UP).getName(),
+            UIColours.BLACK, 14);
+    leftLbl = LabelGenerator
+        .generate(true, keyLbls, "LEFT KEY: " + Settings.getKey(InputKey.LEFT).getName(),
+            UIColours.BLACK, 14);
+    rightLbl = LabelGenerator
+        .generate(true, keyLbls, "RIGHT KEY: " + Settings.getKey(InputKey.RIGHT).getName(),
+            UIColours.BLACK, 14);
+    downLbl = LabelGenerator
+        .generate(true, keyLbls, "DOWN KEY: " + Settings.getKey(InputKey.DOWN).getName(),
+            UIColours.BLACK, 14);
+    useLbl = LabelGenerator
+        .generate(true, keyLbls, "USE KEY: " + Settings.getKey(InputKey.USE).getName(),
+            UIColours.BLACK, 14);
     keyLbls.setAlignment(Pos.CENTER);
 
     StackPane.setAlignment(keyLbls, Pos.CENTER);
@@ -717,7 +704,7 @@ public class MenuController {
     root.getChildren().addAll(settingsTabs);
 
     ImageView settingsView = new ImageView("ui/settings.png");
-    settingsBtn = buttonGenerator.generate(true, root, settingsView);
+    settingsBtn = ButtonGenerator.generate(true, root, settingsView);
     StackPane.setAlignment(settingsBtn, Pos.TOP_LEFT);
     StackPane.setMargin(settingsBtn, new Insets(50, 0, 0, 50));
     settingsView.setFitHeight(50);
@@ -743,7 +730,7 @@ public class MenuController {
           }
         });
 
-    startMGameBtn = buttonGenerator.generate(false, root, "Start", UIColours.GREEN, 30);
+    startMGameBtn = ButtonGenerator.generate(false, root, "Start", UIColours.GREEN, 30);
     StackPane.setAlignment(startMGameBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(startMGameBtn, new Insets(0, 0, 200, 0));
     startMGameBtn.setOnAction(
@@ -752,7 +739,12 @@ public class MenuController {
           client.startMultiplayerGame();
         });
 
-    backBtn = buttonGenerator.generate(false, root, "back", UIColours.RED, 30);
+    Button instructions = ButtonGenerator
+        .generate(true, root, "Instructions", UIColours.YELLOW, 30);
+    StackPane.setAlignment(instructions, Pos.BOTTOM_CENTER);
+    StackPane.setMargin(instructions, new Insets(0, 0, 100, 0));
+
+    backBtn = ButtonGenerator.generate(false, root, "back", UIColours.RED, 30);
     StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(backBtn, new Insets(0, 0, 100, 0));
     backBtn.setOnAction(
@@ -774,6 +766,7 @@ public class MenuController {
 
     backTree.empty();
     itemsOnScreen.add(playBtn);
+    itemsOnScreen.add(instructions);
     itemsOnScreen.add(logo);
     itemsOnScreen.add(quitBtn);
     itemsOnScreen.add(settingsBtn);
