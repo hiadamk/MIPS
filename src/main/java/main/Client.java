@@ -124,7 +124,6 @@ public class Client extends Application {
               menuController.scaleImages((double) newVal, (double) oldVal);
             });
 
-//    primaryStage.initStyle(StageStyle.TRANSPARENT);
     scene.setFill(Color.TRANSPARENT);
     root.setBackground(Background.EMPTY);
     primaryStage.show();

@@ -36,6 +36,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.Client;
@@ -112,6 +113,7 @@ public class MenuController {
   private ArrayList<Map> validMaps = new ArrayList<>();
 
   private boolean isHome = true;
+  private boolean isInstructions = false;
 
   /**
    * @param audio Global audio controller which is passed around the system
@@ -212,7 +214,6 @@ public class MenuController {
     mapView.setImage(mapImages.get(mapsIndex));
     currentMap = validMaps.get(mapsIndex);
   }
-
 
   /**
    * Creates all the menu items and defines their functionality.
@@ -739,10 +740,40 @@ public class MenuController {
           client.startMultiplayerGame();
         });
 
+    ImageView instructionsGif = new ImageView("ui/preview.gif");
+    instructionsGif.setPreserveRatio(true);
+    instructionsGif.setFitWidth(500);
+    instructionsGif.setVisible(false);
+    StackPane.setAlignment(instructionsGif, Pos.TOP_CENTER);
+    StackPane.setMargin(instructionsGif, new Insets(100, 0, 0, 0));
+    root.getChildren().add(instructionsGif);
+
+    Label instructionLbl = new Label("Use your keyboard mastery to capture MIPs man "
+        + "and collect as many points as possible whilst you control him. "
+        + "Beware: If you are captured by a ghoul, you will become one and have to capture"
+        + " the new MIPs man all over again. Good luck! ");
+    instructionLbl.setWrapText(true);
+    instructionLbl.setTextAlignment(TextAlignment.CENTER);
+    StackPane.setAlignment(instructionLbl, Pos.CENTER);
+    StackPane.setMargin(instructionLbl, new Insets(200, 200, 0, 200));
+    root.getChildren().add(instructionLbl);
+    instructionLbl.setVisible(false);
+
     Button instructions = ButtonGenerator
         .generate(true, root, "Instructions", UIColours.YELLOW, 30);
     StackPane.setAlignment(instructions, Pos.BOTTOM_CENTER);
     StackPane.setMargin(instructions, new Insets(0, 0, 100, 0));
+    instructions.setOnAction(event -> {
+      audioController.playSound(Sounds.click);
+      moveItemsToBackTree();
+      isInstructions = true;
+      backBtn.setVisible(true);
+      itemsOnScreen.add(instructionLbl);
+      itemsOnScreen.add(instructionsGif);
+      showItemsOnScreen();
+    });
+
+
 
     backBtn = ButtonGenerator.generate(false, root, "back", UIColours.RED, 30);
     StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);
@@ -750,6 +781,19 @@ public class MenuController {
     backBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
+          if (isInstructions) {
+            instructionLbl.setVisible(false);
+            instructionsGif.setVisible(false);
+            backBtn.setVisible(false);
+            itemsOnScreen.clear();
+            ArrayList<Node> toShow = backTree.pop();
+            itemsOnScreen.addAll(toShow);
+            showItemsOnScreen();
+            System.out.println(itemsOnScreen.toString());
+            isInstructions = false;
+
+          }
+          System.out.println(backTree.toString());
 
           if (!backTree.isEmpty()) {
             hideItemsOnScreen();
