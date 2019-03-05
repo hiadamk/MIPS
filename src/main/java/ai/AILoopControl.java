@@ -3,15 +3,17 @@ package ai;
 import ai.mapping.JunctionSet;
 import ai.mapping.Mapping;
 import ai.routefinding.RouteFinder;
-import ai.routefinding.routefinders.*;
+import ai.routefinding.routefinders.AStarRouteFinder;
+import ai.routefinding.routefinders.MipsManRouteFinder;
+import ai.routefinding.routefinders.NextJunctionRouteFinder;
+import ai.routefinding.routefinders.PowerPelletPatrolRouteFinder;
+import ai.routefinding.routefinders.RandomRouteFinder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
-
-import com.sun.org.apache.xpath.internal.SourceTree;
 import objects.Entity;
 import utils.Input;
 import utils.Map;
@@ -206,12 +208,13 @@ public class AILoopControl extends Thread {
                                                 .getRoute(currentLocation, gameAgents[mipsmanID].getLocation());
                             }
                             dir = confirmOrReplaceDirection(ent.getDirection(), currentLocation, dir);
+
+//                            if(ent.getDirection() == null ||!(dir.toInt()==ent.getDirection().toInt())){
+//                                counter++;
+//                                System.out.println("Added AI direction for ID: " + ent.getClientId() + " ," + dir.toString() +" " + counter);
+//                                directionsOut.add(new Input(ent.getClientId(), dir));
+//                            }
                             ent.setDirection(dir);
-                            if(!(dir.toInt()==ent.getDirection().toInt())){
-                                counter++;
-                                System.out.println("Added AI direction " + dir.toString() +" " + counter);
-                                directionsOut.add(new Input(ent.getClientId(), dir));
-                            }
 
                         } else {
                             ent.setLastGridCoord(currentGridLocation);
@@ -242,9 +245,14 @@ public class AILoopControl extends Thread {
         Direction direction = r.getRoute(currentLocation, mipsManLoc);
         direction = confirmOrReplaceDirection(ent.getDirection(), currentLocation, direction);
         System.out.println();
+      if (ent.getDirection() == null) {
+        return;
+      }
         if(!(direction.toInt()==ent.getDirection().toInt())){
             counter++;
-            System.out.println("Added AI direction " + direction.toString() +" " + counter);
+          System.out.println(
+              "Added AI direction for ID: " + ent.getClientId() + " ," + direction.toString() + " "
+                  + counter);
             directionsOut.add(new Input(ent.getClientId(), direction));
         }
 
