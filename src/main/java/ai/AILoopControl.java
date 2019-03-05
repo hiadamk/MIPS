@@ -204,8 +204,9 @@ public class AILoopControl extends Thread {
                                 dir = Mapping.directionBetweenPoints(currentLocation, nearestJunction);
                             } else {
                                 dir =
-                                        new RandomRouteFinder()
-                                                .getRoute(currentLocation, gameAgents[mipsmanID].getLocation());
+                                    new RandomRouteFinder()
+                                        .getRoute(currentLocation,
+                                            gameAgents[mipsmanID].getLocation());
                             }
                             dir = confirmOrReplaceDirection(ent.getDirection(), currentLocation, dir);
 
