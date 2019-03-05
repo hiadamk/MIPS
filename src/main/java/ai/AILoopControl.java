@@ -220,8 +220,8 @@ public class AILoopControl extends Thread {
                         } else {
                             ent.setLastGridCoord(currentGridLocation);
                             if (junctions.contains(currentGridLocation)) {
-                                System.out.println("CURRENT LOCATION: " + currentLocation.toString());
-                                System.out.println("ENTITY: " + ent.toString());
+//                                System.out.println("CURRENT LOCATION: " + currentLocation.toString());
+//                                System.out.println("ENTITY: " + ent.toString());
                                 executeRoute(ent, currentLocation);
                             }
                         }
@@ -251,9 +251,9 @@ public class AILoopControl extends Thread {
       }
         if(!(direction.toInt()==ent.getDirection().toInt())){
             counter++;
-          System.out.println(
-              "Added AI direction for ID: " + ent.getClientId() + " ," + direction.toString() + " "
-                  + counter);
+//          System.out.println(
+//              "Added AI direction for ID: " + ent.getClientId() + " ," + direction.toString() + " "
+//                  + counter);
             directionsOut.add(new Input(ent.getClientId(), direction));
         }
 
