@@ -21,6 +21,7 @@ import objects.PowerUpBox;
 import utils.Map;
 import utils.Point;
 import utils.ResourceLoader;
+import utils.UpDownIterator;
 import utils.enums.MapElement;
 import utils.enums.RenderingMode;
 
@@ -241,6 +242,9 @@ public class Renderer {
   }
 
   public void renderCollisionAnimation(Entity newMipsMan, Entity[] entities, Map map) {
+    java.lang.Double[] num = {1.0, 1.0, 1.1, 1.25, 1.4};
+    UpDownIterator<java.lang.Double> entitySize = new UpDownIterator<>(num);
+
     Image currentSprite = newMipsMan.getImage().get(newMipsMan.getCurrentFrame());
     final double renderAnimationTime = 0.75 * Math.pow(10, 9);
     double startTime = System.nanoTime();
@@ -268,9 +272,13 @@ public class Renderer {
 
       double x = newMipsMan.getLocation().getX() - 0.5;
       double y = newMipsMan.getLocation().getY() - 0.5;
+      java.lang.Double multiplier = entitySize.next();
       Point2D.Double rendCoord =
-          getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
-      gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
+          getIsoCoord(x, y, currentSprite.getHeight() * multiplier,
+              currentSprite.getWidth() * multiplier);
+
+      gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY(),
+          currentSprite.getWidth() * multiplier, currentSprite.getHeight() * multiplier);
       gc.setFill(Color.WHITE);
       gc.fillText("MIPS CAPTURED", xResolution / 2, yResolution * 0.7);
 
