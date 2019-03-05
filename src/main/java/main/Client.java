@@ -259,7 +259,6 @@ public class Client extends Application {
   private void startGame() {
     updateResolution(this.screenRes);
     if (telemetry != null) {
-      telemetry.setMipID(this.MIPID);
       agents = telemetry.getAgents();
       map = telemetry.getMap();
       pellets = telemetry.getPellets();
