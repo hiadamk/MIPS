@@ -142,7 +142,6 @@ public class Client extends Application {
     this.id = 0;
 
     gameScene.setOnKeyPressed(keyController);
-
     startGame();
   }
 
@@ -261,14 +260,6 @@ public class Client extends Application {
       map = telemetry.getMap();
       pellets = telemetry.getPellets();
     }
-    this.telemetry.startGame();
-    Methods.updateImages(agents, resourceLoader);
-
-    // TODO the following line fixes array out of bounds - need to find out why
-    renderer.initMapTraversal(map);
-    map = resourceLoader.getMap();
-    this.primaryStage.setScene(gameScene);
-    // AnimationTimer started once game has started
     this.inputRenderLoop = new AnimationTimer() {
       @Override
       public void handle(long now) {
@@ -278,6 +269,15 @@ public class Client extends Application {
       }
     };
     inputRenderLoop.start();
+    this.telemetry.startGame();
+    Methods.updateImages(agents, resourceLoader);
+
+    // TODO the following line fixes array out of bounds - need to find out why
+    renderer.initMapTraversal(map);
+    map = resourceLoader.getMap();
+    this.primaryStage.setScene(gameScene);
+    // AnimationTimer started once game has started
+
   }
 
   /**
