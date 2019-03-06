@@ -35,6 +35,7 @@ public class Entity implements Renderable {
   private int currentFrame = 0;
   private static final double MIPS_SPEED = 0.08;
   private static final double GHOUL_SPEED = 0.06;
+  private boolean directionSet;
 
   /**
    * Constructor
@@ -51,6 +52,7 @@ public class Entity implements Renderable {
     resetVelocity();
     this.direction = Direction.UP;
     this.items = new LinkedList<PowerUp>();
+    this.directionSet = false;
     // updateImages();
   }
 
@@ -336,6 +338,14 @@ public class Entity implements Renderable {
         currentFrame++;
       }
     }
+  }
+
+  public boolean isDirectionSet() {
+    return directionSet;
+  }
+
+  public void setDirectionSetFlag(boolean b) {
+    this.directionSet = b;
   }
 
   public void resetVelocity() {

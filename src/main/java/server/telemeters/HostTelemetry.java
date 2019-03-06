@@ -123,6 +123,7 @@ public class HostTelemetry extends Telemetry {
     while (!inputs.isEmpty()) {
       Input input = inputs.poll();
       int id = input.getClientID();
+      agents[id].setDirectionSetFlag(false);
       Direction d = input.getMove();
       if (Methods.validateDirection(d, agents[id].getLocation(), map)) {
         agents[id].setDirection(d);

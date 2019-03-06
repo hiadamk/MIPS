@@ -55,7 +55,9 @@ public class AILoopControl extends Thread {
     public AILoopControl(
             Entity[] gameAgents, int[] controlIds, Map map, BlockingQueue<Input> directionsOut) {
         validateAgents(gameAgents);
-
+        for (int i : controlIds) {
+            System.out.println("ID: " + i);
+        }
         this.setDaemon(true);
         this.runAILoop = true;
         this.gameAgents = gameAgents;
@@ -116,7 +118,7 @@ public class AILoopControl extends Thread {
                     routeFinder = new RandomRouteFinder();
                     break;
                 }
-                case 4: { // Mipsman - no players
+                case 4: {
                     routeFinder = new MipsManRouteFinder();
                     break;
                 }
@@ -210,18 +212,11 @@ public class AILoopControl extends Thread {
                             }
                             dir = confirmOrReplaceDirection(ent.getDirection(), currentLocation, dir);
 
-//                            if(ent.getDirection() == null ||!(dir.toInt()==ent.getDirection().toInt())){
-//                                counter++;
-//                                System.out.println("Added AI direction for ID: " + ent.getClientId() + " ," + dir.toString() +" " + counter);
-//                                directionsOut.add(new Input(ent.getClientId(), dir));
-//                            }
-                            ent.setDirection(dir);
+                            setDirection(dir, ent);
 
                         } else {
                             ent.setLastGridCoord(currentGridLocation);
                             if (junctions.contains(currentGridLocation)) {
-//                                System.out.println("CURRENT LOCATION: " + currentLocation.toString());
-//                                System.out.println("ENTITY: " + ent.toString());
                                 executeRoute(ent, currentLocation);
                             }
                         }
@@ -245,18 +240,20 @@ public class AILoopControl extends Thread {
         Point mipsManLoc = gameAgents[mipsmanID].getLocation();
         Direction direction = r.getRoute(currentLocation, mipsManLoc);
         direction = confirmOrReplaceDirection(ent.getDirection(), currentLocation, direction);
-        System.out.println();
-      if (ent.getDirection() == null) {
-        return;
-      }
-        if(!(direction.toInt()==ent.getDirection().toInt())){
-            counter++;
-//          System.out.println(
-//              "Added AI direction for ID: " + ent.getClientId() + " ," + direction.toString() + " "
-//                  + counter);
+        setDirection(direction, ent);
+    }
+
+    private void setDirection(Direction direction, Entity ent) {
+        if (ent.getDirection() == null) {
+            return;
+        }
+        if(direction!=ent.getDirection()&&!ent.isDirectionSet()){
+            if (DEBUG) {
+                System.out.println(counter++ + " " + direction + " " + ent.getClientId() + " " + ent.getLastGridCoord() + " " + ent.getLocation());
+            }
+            ent.setDirectionSetFlag(true);
             directionsOut.add(new Input(ent.getClientId(), direction));
         }
-
     }
 
     private boolean atPreviousCoordinate(Entity ent, Point currentLocation) {
