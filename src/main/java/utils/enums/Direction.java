@@ -24,6 +24,12 @@ public enum Direction {
     public String toString() {
       return "right";
     }
+  },
+  USE(4) {
+	  @Override
+	  public String toString() {
+		  return "USE";
+	  }
   };
   private int id;
 
@@ -41,6 +47,8 @@ public enum Direction {
         return LEFT;
       case 3:
         return RIGHT;
+      case 4:
+    	return USE;
     }
     return null;
   }

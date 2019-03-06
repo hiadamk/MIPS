@@ -123,20 +123,31 @@ public class HostTelemetry extends Telemetry {
     while (!inputs.isEmpty()) {
       Input input = inputs.poll();
       int id = input.getClientID();
-      agents[id].setDirectionSetFlag(false);
       Direction d = input.getMove();
-      if (Methods.validateDirection(d, agents[id].getLocation(), map)) {
-        agents[id].setDirection(d);
-        if (!singlePlayer) {
-          // this is currently what's set to update on other clients' systems. they'll get valid
-          // inputs
-          informClients(input, agents[id].getLocation()); // Inputs sent to the other clients
+      if (d.equals(Direction.USE)){
+    	  usePowerUp(id);
+      }
+      else {
+    	agents[id].setDirectionSetFlag(false);
+        if (Methods.validateDirection(d, agents[id].getLocation(), map)) {
+          agents[id].setDirection(d);
+          if (!singlePlayer) {
+            // this is currently what's set to update on other clients' systems. they'll get valid
+            // inputs
+            informClients(input, agents[id].getLocation()); // Inputs sent to the other clients
+          }
         }
       }
     }
   }
 
-  private void informClients(Input input, Point location) {
+ 
+  private void usePowerUp(int id) {
+	//TODO : implement
+	
+}
+
+private void informClients(Input input, Point location) {
     outputs.add(NetworkUtility.makeEntitiyMovementPacket(input, location) + getMipID());
   }
 
