@@ -131,6 +131,7 @@ public class Renderer {
 
   public void renderGameOnly(Map map, Entity[] entityArr, long now,
       HashMap<String, Pellet> pellets) {
+
     int[][] rawMap = map.raw();
     ArrayList<Entity> entities = new ArrayList<>(Arrays.asList(entityArr));
     // sort entities to get rendering order
@@ -254,13 +255,15 @@ public class Renderer {
     if (clientEntity == null) {
       this.clientEntity = getClientEntity(new ArrayList<Entity>(Arrays.asList(entityArr)));
     }
-
+    long timeElapsed = now - lastFrame;
     //clear screen
     gc.clearRect(0, 0, xResolution, yResolution);
     renderBackground(map);
     renderGameOnly(map, entityArr, now, pellets);
     hudRender.renderHUD(entityArr, 0);
-    //showFPS(now);
+    //showFPS(timeElapsed);
+
+    lastFrame = now;
 
   }
 
@@ -292,9 +295,8 @@ public class Renderer {
   /**
    * @param now current time in nanoseconds
    */
-  private void showFPS(long now) {
-    long timeElapsed = now - lastFrame;
-    lastFrame = now;
+  private void showFPS(long timeElapsed) {
+
     gc.setTextAlign(TextAlignment.CENTER);
     if (timeSum > secondInNanoseconds) {
       fps = frameCounter / (int) (timeSum / secondInNanoseconds);
