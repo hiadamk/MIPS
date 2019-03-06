@@ -325,9 +325,9 @@ public class Renderer {
     java.lang.Double[] num = {1.0, 1.0, 1.1, 1.25, 1.4};
     UpDownIterator<java.lang.Double> entitySize = new UpDownIterator<>(num);
 
-    java.lang.Double[] opacity = new java.lang.Double[10];
+    java.lang.Double[] opacity = new java.lang.Double[4];
     for (int i = 0; i < opacity.length; i++) {
-      opacity[i] = 0.5 + i * 0.02;
+      opacity[i] = 0.5 + i * 0.06;
     }
     UpDownIterator<java.lang.Double> backgroundOpacity = new UpDownIterator<>(opacity);
 
