@@ -312,9 +312,7 @@ public class Client extends Application {
   private void informServer(Input input) {
     if (singlePlayer) {
       incomingQueue.add(input);
-      System.out.println("Added input to queue");
     } else {
-      System.out.println("TRIED TO SEND MY KEY MOVEMENT");
       if (getId() == 0) {
         this.telemetry.addInput(input);
       } else {
@@ -323,7 +321,7 @@ public class Client extends Application {
     }
   }
 
-  // communicates to slients
+  // communicates to clients
   private void stopMultiplayerGame() {
     if (isHost) {
       telemetry.stopGame();
