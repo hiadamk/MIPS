@@ -154,8 +154,9 @@ public class DumbTelemetry extends Telemetry {
 	    System.out.println("ID: " + id);
 	    agents[id].setLocation(new Point(x, y));
 	    PowerUp powerup = PowerUp.fromInt(powerint);
+    //TODO nullpointer when powerup tries to calculate location, one for @alex & @matty
 
-	    powerup.use(agents[id], activePowerUps);
+    //   powerup.use(agents[id], activePowerUps);
 	  }
 
   

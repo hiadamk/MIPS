@@ -85,6 +85,7 @@ public class HostTelemetry extends Telemetry {
   }
 
   public void startGame() {
+    updateClients(agents); //set starting positions
     startAI();
 
     final long DELAY = (long) Math.pow(10, 7);
