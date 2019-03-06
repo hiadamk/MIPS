@@ -89,7 +89,7 @@ public class HostTelemetry extends Telemetry {
     startAI();
 
     final long DELAY = (long) Math.pow(10, 7);
-    final long positionDELAY = (long) Math.pow(10, 8);
+    final long positionDELAY = (long) Math.pow(10, 9)/2;
 
     inputProcessor =
         new GameLoop(DELAY) {
@@ -107,7 +107,7 @@ public class HostTelemetry extends Telemetry {
       public void handle() {
         updateClients(agents);
       }
-    }; // .start();
+    }.start();
   }
 
   public void startAI() {
