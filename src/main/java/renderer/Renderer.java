@@ -319,16 +319,21 @@ public class Renderer {
   public void renderCollisionAnimation(Entity newMipsMan, Entity[] entities, Map map,
       AnimationTimer renderingLoop,
       GameLoop inputProcessor) {
-    java.lang.Double[] num = {1.0, 1.0, 1.0, 1.0, 1.1, 1.1, 1.25, 1.25, 1.4, 1.4};
+    java.lang.Double[] num = {1.0, 1.0, 1.1, 1.25, 1.4};
     UpDownIterator<java.lang.Double> entitySize = new UpDownIterator<>(num);
 
-    java.lang.Double[] opacity = {0.5, 0.55, 0.65, 0.7};
+    java.lang.Double[] opacity = new java.lang.Double[20];
+    for (int i = 0; i < opacity.length; i++) {
+      opacity[i] = 0.5 + i * 0.01;
+    }
     UpDownIterator<java.lang.Double> backgroundOpacity = new UpDownIterator<>(opacity);
 
     Image currentSprite = newMipsMan.getImage().get(newMipsMan.getCurrentFrame());
     final double renderAnimationTime = 0.75 * Math.pow(10, 9);
     double startTime = System.nanoTime();
+    double currentTime = System.nanoTime();
     final int frames = 22;
+    final double frameTime = renderAnimationTime / frames;
     new AnimationTimer() {
       @Override
       public void handle(long now) {
@@ -337,7 +342,10 @@ public class Renderer {
           renderingLoop.start();
           inputProcessor.unpause();
         } else {
-          renderCollision(newMipsMan, entities, map, entitySize, backgroundOpacity, currentSprite);
+          if (System.nanoTime() - currentTime > frameTime) {
+            renderCollision(newMipsMan, entities, map, entitySize, backgroundOpacity,
+                currentSprite);
+          }
         }
       }
     }.start();
