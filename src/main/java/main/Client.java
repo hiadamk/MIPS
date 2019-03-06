@@ -67,6 +67,7 @@ public class Client extends Application {
   private int MIPID;
   private Canvas canvas = new Canvas();
   private boolean colliding = false;
+  private AnimationTimer inputRenderLoop;
 
   public int getId() {
     return id;
@@ -270,15 +271,15 @@ public class Client extends Application {
     map = resourceLoader.getMap();
     this.primaryStage.setScene(gameScene);
     // AnimationTimer started once game has started
-    new AnimationTimer() {
+    this.inputRenderLoop = new AnimationTimer() {
       @Override
       public void handle(long now) {
-        if (!colliding) {
-          processInput();
-          renderer.render(map, agents, now, pellets);
-        }
+        processInput();
+        renderer.render(map, agents, now, pellets);
+
       }
-    }.start();
+    };
+    inputRenderLoop.start();
   }
 
   /**
@@ -338,9 +339,10 @@ public class Client extends Application {
   }
 
   public void collisionDetected(Entity newMipsman) {
-    colliding = true;
-    renderer.renderCollisionAnimation(newMipsman, agents, map);
-    colliding = false;
+    inputRenderLoop.stop();
+    telemetry.getInputProcessor().pause();
+    renderer.renderCollisionAnimation(newMipsman, agents, map, inputRenderLoop,
+        telemetry.getInputProcessor());
   }
 
   public ResourceLoader getResourceLoader() {

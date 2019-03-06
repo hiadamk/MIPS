@@ -14,7 +14,7 @@ public class DumbTelemetry extends Telemetry {
 
   private BlockingQueue<String> inputs;
   private Queue<Input> clientQueue;
-  private GameLoop inputProcessor;
+  //private GameLoop inputProcessor;
 
   // dumb telemetry is like telemetry but it relies on information from the server to set it's
   // entites

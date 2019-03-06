@@ -68,7 +68,6 @@ public class HeadsUpDisplay {
     gc.setFill(new Color(1, 1, 1, 0.8));
     gc.setStroke(Color.BLACK);
     gc.setTextAlign(TextAlignment.RIGHT);
-    System.out.println(Arrays.toString(entities_));
     for (int i = 0; i < entities_.length; i++) {
       Entity e = entities_[i];
 

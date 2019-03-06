@@ -4,6 +4,7 @@ public abstract class GameLoop extends Thread {
 
   long gameSpeed;
   private boolean running;
+  private boolean pause;
 
   public GameLoop(long gameSpeed) {
     this.gameSpeed = gameSpeed;
@@ -16,7 +17,14 @@ public abstract class GameLoop extends Thread {
     long currentTime = System.nanoTime();
     long newTime = System.nanoTime();
     while (running) {
-
+      if (pause) {
+        try {
+          Thread.sleep(1);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        continue;
+      }
       this.handle();
       while (currentSleepTime < gameSpeed) {
         try {
@@ -34,6 +42,13 @@ public abstract class GameLoop extends Thread {
     }
   }
 
+  public void pause() {
+    pause = true;
+  }
+
+  public void unpause() {
+    pause = false;
+  }
   public void close(){
     running = false;
   }

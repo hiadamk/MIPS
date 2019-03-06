@@ -22,7 +22,7 @@ public class HostTelemetry extends Telemetry {
   private boolean singlePlayer;
   private AILoopControl ai;
   private boolean aiRunning;
-  private GameLoop inputProcessor;
+  // GameLoop inputProcessor;
 
   /**
    * MultiPlayer Constructor

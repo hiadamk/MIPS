@@ -7,6 +7,7 @@ import main.Client;
 import objects.Entity;
 import objects.Pellet;
 import objects.PowerUpBox;
+import utils.GameLoop;
 import utils.Input;
 import utils.Map;
 import utils.Methods;
@@ -28,10 +29,11 @@ public abstract class Telemetry {
   HashMap<String, Pellet> pellets;
   ResourceLoader resourceLoader;
   static Client client;
+  protected GameLoop inputProcessor;
 
   Telemetry(Client client) {
     this.map = client.getMap();
-    this.client = client;
+    Telemetry.client = client;
     this.resourceLoader = client.getResourceLoader();
     this.agents = client.getAgents();
   }
@@ -224,5 +226,9 @@ public abstract class Telemetry {
         pellet.interact(agent);
       }
     }
+  }
+
+  public GameLoop getInputProcessor() {
+    return inputProcessor;
   }
 }

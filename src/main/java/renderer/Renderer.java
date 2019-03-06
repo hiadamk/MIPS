@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -18,6 +19,7 @@ import javafx.scene.text.TextAlignment;
 import objects.Entity;
 import objects.Pellet;
 import objects.PowerUpBox;
+import utils.GameLoop;
 import utils.Map;
 import utils.Point;
 import utils.ResourceLoader;
@@ -249,7 +251,9 @@ public class Renderer {
     return null;
   }
 
-  public void renderCollisionAnimation(Entity newMipsMan, Entity[] entities, Map map) {
+  public void renderCollisionAnimation(Entity newMipsMan, Entity[] entities, Map map,
+      AnimationTimer renderingLoop,
+      GameLoop inputProcessor) {
     java.lang.Double[] num = {1.0, 1.0, 1.1, 1.25, 1.4};
     UpDownIterator<java.lang.Double> entitySize = new UpDownIterator<>(num);
 
@@ -261,42 +265,45 @@ public class Renderer {
     double startTime = System.nanoTime();
     final int frames = 22;
     double frameTime = renderAnimationTime / frames;
-    double timeSinceLastFrame = 0;
-    double currentTime = System.nanoTime();
-    int currentFrame = 0;
-    while (System.nanoTime() - startTime < renderAnimationTime) {
-      if (timeSinceLastFrame < frameTime) {
-        timeSinceLastFrame += System.nanoTime() - currentTime;
-        currentTime = System.nanoTime();
-        try {
-          Thread.sleep(3);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
+    new AnimationTimer() {
+      @Override
+      public void handle(long now) {
+        if (now - startTime > renderAnimationTime) {
+          this.stop();
+          renderingLoop.start();
+          inputProcessor.unpause();
+        } else {
+          renderCollision(newMipsMan, entities, map, entitySize, backgroundOpacity, currentSprite);
         }
-        continue;
       }
-      timeSinceLastFrame = 0;
-      gc.setTextAlign(TextAlignment.CENTER);
-      renderBackground(map);
-      renderGameOnly(map, entities, 0, new HashMap<String, Pellet>());
-      gc.setFill(new Color(0, 0, 0, backgroundOpacity.next()));
-      gc.fillRect(0, 0, xResolution, yResolution);
-
-      double x = newMipsMan.getLocation().getX() - 0.5;
-      double y = newMipsMan.getLocation().getY() - 0.5;
-      java.lang.Double multiplier = entitySize.next();
-      Point2D.Double rendCoord =
-          getIsoCoord(x, y, currentSprite.getHeight() * multiplier,
-              currentSprite.getWidth() * multiplier);
-
-      gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY(),
-          currentSprite.getWidth() * multiplier, currentSprite.getHeight() * multiplier);
-      gc.setFill(Color.WHITE);
-      gc.fillText("MIPS CAPTURED", xResolution / 2, yResolution * 0.7);
-
-    }
+    }.start();
 
   }
+
+  private void renderCollision(Entity newMipsMan, Entity[] entities, Map map,
+      UpDownIterator<java.lang.Double> entitySize,
+      UpDownIterator<java.lang.Double> backgroundOpacity,
+      Image currentSprite) {
+    gc.setTextAlign(TextAlignment.CENTER);
+    renderBackground(map);
+    renderGameOnly(map, entities, 0, new HashMap<String, Pellet>());
+    gc.setFill(new Color(0, 0, 0, backgroundOpacity.next()));
+    gc.fillRect(0, 0, xResolution, yResolution);
+
+    double x = newMipsMan.getLocation().getX() - 0.5;
+    double y = newMipsMan.getLocation().getY() - 0.5;
+    java.lang.Double multiplier = entitySize.next();
+    Double rendCoord =
+        getIsoCoord(x, y, currentSprite.getHeight() * multiplier,
+            currentSprite.getWidth() * multiplier);
+
+    gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY(),
+        currentSprite.getWidth() * multiplier, currentSprite.getHeight() * multiplier);
+    gc.setFill(Color.WHITE);
+    gc.fillText("MIPS CAPTURED", xResolution / 2, yResolution * 0.7);
+  }
+
+
 
 
   /**
