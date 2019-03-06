@@ -50,6 +50,7 @@ public class Renderer {
   private int frameCounter = 0;
   private long timeSum;
   private Entity clientEntity = null;
+  private BufferedImage playerColours;
 
   private ArrayList<Point2D.Double> traversalOrder = new ArrayList<>();
 
@@ -66,7 +67,8 @@ public class Renderer {
     this.yResolution = _yResolution;
     this.background = r.getBackground();
     this.palette = r.getBackgroundPalette();
-    this.hudRender = new HeadsUpDisplay(gc, _xResolution, _yResolution);
+    this.playerColours = r.getPlayerPalette();
+    this.hudRender = new HeadsUpDisplay(gc, _xResolution, _yResolution, playerColours);
 
     this.initMapTraversal(r.getMap());
   }
@@ -116,24 +118,15 @@ public class Renderer {
   }
 
   /**
-   * @param map Game Map
-   * @param entityArr Playable objects
-   * @param now Current game time in nanoseconds
-   * @param pellets Consumable objects
+   * @param colour sets Graphics context fill colour using an intRGB (gc.setFillColour only allows
+   * setting of colour objects)
    */
-  public void render(Map map, Entity[] entityArr, long now, HashMap<String, Pellet> pellets) {
-    if (clientEntity == null) {
-      this.clientEntity = getClientEntity(new ArrayList<Entity>(Arrays.asList(entityArr)));
-    }
-
-    //clear screen
-    gc.clearRect(0, 0, xResolution, yResolution);
-    renderBackground(map);
-    renderGameOnly(map, entityArr, now, pellets);
-    //renderHUD(entityArr);
-    hudRender.renderHUD(entityArr);
-    showFPS(now);
-
+  public static Color intRGBtoColour(int colour) {
+    return new Color(
+        (colour >> 16 & 0xFF) / (double) 255,
+        (colour >> 8 & 0xFF) / (double) 255,
+        (colour & 0xFF) / (double) 255,
+        1);
   }
 
   public void renderGameOnly(Map map, Entity[] entityArr, long now,
@@ -251,32 +244,23 @@ public class Renderer {
     return null;
   }
 
-  public void renderCollisionAnimation(Entity newMipsMan, Entity[] entities, Map map,
-      AnimationTimer renderingLoop,
-      GameLoop inputProcessor) {
-    java.lang.Double[] num = {1.0, 1.0, 1.1, 1.25, 1.4};
-    UpDownIterator<java.lang.Double> entitySize = new UpDownIterator<>(num);
+  /**
+   * @param map Game Map
+   * @param entityArr Playable objects
+   * @param now Current game time in nanoseconds
+   * @param pellets Consumable objects
+   */
+  public void render(Map map, Entity[] entityArr, long now, HashMap<String, Pellet> pellets) {
+    if (clientEntity == null) {
+      this.clientEntity = getClientEntity(new ArrayList<Entity>(Arrays.asList(entityArr)));
+    }
 
-    java.lang.Double[] opacity = {0.5, 0.55, 0.65, 0.7};
-    UpDownIterator<java.lang.Double> backgroundOpacity = new UpDownIterator<>(opacity);
-
-    Image currentSprite = newMipsMan.getImage().get(newMipsMan.getCurrentFrame());
-    final double renderAnimationTime = 0.75 * Math.pow(10, 9);
-    double startTime = System.nanoTime();
-    final int frames = 22;
-    double frameTime = renderAnimationTime / frames;
-    new AnimationTimer() {
-      @Override
-      public void handle(long now) {
-        if (now - startTime > renderAnimationTime) {
-          this.stop();
-          renderingLoop.start();
-          inputProcessor.unpause();
-        } else {
-          renderCollision(newMipsMan, entities, map, entitySize, backgroundOpacity, currentSprite);
-        }
-      }
-    }.start();
+    //clear screen
+    gc.clearRect(0, 0, xResolution, yResolution);
+    renderBackground(map);
+    renderGameOnly(map, entityArr, now, pellets);
+    hudRender.renderHUD(entityArr, 0);
+    //showFPS(now);
 
   }
 
@@ -302,8 +286,6 @@ public class Renderer {
     gc.setFill(Color.WHITE);
     gc.fillText("MIPS CAPTURED", xResolution / 2, yResolution * 0.7);
   }
-
-
 
 
   /**
@@ -334,84 +316,32 @@ public class Renderer {
     this.clientID = _id;
   }
 
-  /**
-   * render the background image and pyramid under game map
-   *
-   * @param map game map
-   */
-  private void renderBackground(Map map) {
-    // render backing image
-    gc.drawImage(background, 0, 0, xResolution, yResolution);
+  public void renderCollisionAnimation(Entity newMipsMan, Entity[] entities, Map map,
+      AnimationTimer renderingLoop,
+      GameLoop inputProcessor) {
+    java.lang.Double[] num = {1.0, 1.0, 1.0, 1.0, 1.1, 1.1, 1.25, 1.25, 1.4, 1.4};
+    UpDownIterator<java.lang.Double> entitySize = new UpDownIterator<>(num);
 
-    // Render map base
-    Point2D.Double tmpCoord = getIsoCoord(0, 0, tileSizeY, tileSizeX);
-    Point2D.Double topLeft =
-        new Double(tmpCoord.getX() + 0.5 * tileSizeX, tmpCoord.getY() - 0.5 * MAP_BORDER);
+    java.lang.Double[] opacity = {0.5, 0.55, 0.65, 0.7};
+    UpDownIterator<java.lang.Double> backgroundOpacity = new UpDownIterator<>(opacity);
 
-    tmpCoord = getIsoCoord(map.getMaxX(), 0, tileSizeY, tileSizeX);
-    Point2D.Double topRight =
-        new Double(tmpCoord.getX() + MAP_BORDER + tileSizeX, tmpCoord.getY() + 0.5 * tileSizeY);
+    Image currentSprite = newMipsMan.getImage().get(newMipsMan.getCurrentFrame());
+    final double renderAnimationTime = 0.75 * Math.pow(10, 9);
+    double startTime = System.nanoTime();
+    final int frames = 22;
+    new AnimationTimer() {
+      @Override
+      public void handle(long now) {
+        if (now - startTime > renderAnimationTime) {
+          this.stop();
+          renderingLoop.start();
+          inputProcessor.unpause();
+        } else {
+          renderCollision(newMipsMan, entities, map, entitySize, backgroundOpacity, currentSprite);
+        }
+      }
+    }.start();
 
-    tmpCoord = getIsoCoord(0, map.getMaxY(), tileSizeY, tileSizeX);
-    Point2D.Double bottomLeft =
-        new Double(tmpCoord.getX() - 0.5 * MAP_BORDER, tmpCoord.getY() + 0.5 * tileSizeY);
-
-    tmpCoord = getIsoCoord(map.getMaxX(), map.getMaxY(), tileSizeY, tileSizeX);
-    Point2D.Double bottomRight =
-        new Double(
-            tmpCoord.getX() + 0.5 * tileSizeX, tmpCoord.getY() + 0.5 * MAP_BORDER + tileSizeY);
-
-    //get first colour from palette (lightest tone)
-    setFillColour(palette.getRGB(0, 0));
-    gc.fillPolygon(
-        new double[]{topLeft.getX(), topRight.getX(), bottomRight.getX(), bottomLeft.getX()},
-        new double[]{topLeft.getY(), topRight.getY(), bottomRight.getY(), bottomLeft.getY()},
-        4);
-
-    // Render Pyramid underside
-
-    double yChange = topRight.getX() - bottomRight.getX();
-
-    double percentageXRes = 0.04;
-    double ratio = ((percentageXRes * xResolution) / yChange) * (map.getMaxY() / (double) 20);
-
-    double x =
-        getIsoCoord(map.getMaxX() / (double) 2, map.getMaxY() / (double) 2, tileSizeY, tileSizeX)
-            .getX();
-    double y = bottomRight.getY() + yChange * ratio;
-
-    Point2D.Double pyramidVertex = new Point2D.Double(x, y);
-
-    //get third colour from palette (darkest tone)
-    setFillColour(palette.getRGB(2, 0));
-    gc.fillPolygon(
-        new double[]{topRight.getX(), bottomRight.getX(), pyramidVertex.getX()},
-        new double[]{topRight.getY(), bottomRight.getY(), pyramidVertex.getY()},
-        3);
-
-    //get second colour from palette (medium tone)
-    setFillColour(palette.getRGB(1, 0));
-    gc.fillPolygon(
-        new double[]{bottomLeft.getX(), bottomRight.getX(), pyramidVertex.getX()},
-        new double[]{bottomLeft.getY(), bottomRight.getY(), pyramidVertex.getY()},
-        3);
-
-    // Draw black outline
-    gc.setStroke(Color.BLACK);
-    gc.strokePolygon(
-        new double[]{bottomLeft.getX(), bottomRight.getX(), pyramidVertex.getX()},
-        new double[]{bottomLeft.getY(), bottomRight.getY(), pyramidVertex.getY()},
-        3);
-
-    gc.strokePolygon(
-        new double[]{topRight.getX(), bottomRight.getX(), pyramidVertex.getX()},
-        new double[]{topRight.getY(), bottomRight.getY(), pyramidVertex.getY()},
-        3);
-
-    gc.strokePolygon(
-        new double[]{topLeft.getX(), topRight.getX(), bottomRight.getX(), bottomLeft.getX()},
-        new double[]{topLeft.getY(), topRight.getY(), bottomRight.getY(), bottomLeft.getY()},
-        4);
   }
 
   /**
@@ -465,11 +395,83 @@ public class Renderer {
   }
 
   /**
-   * @return The top right corner coordinate to start rendering game map from
+   * render the background image and pyramid under game map
+   *
+   * @param map game map
    */
-  private Point2D.Double getMapRenderingCorner() {
-    return new Point2D.Double(this.xResolution / (double) 2, this.yResolution / (double) 10);
-    // return new Point2D.Double(getIsoCoord(0,map),getIsoCoord(0,0,tileSizeY).getY())
+  private void renderBackground(Map map) {
+    // render backing image
+    gc.drawImage(background, 0, 0, xResolution, yResolution);
+
+    // Render map base
+    Point2D.Double tmpCoord = getIsoCoord(0, 0, tileSizeY, tileSizeX);
+    Point2D.Double topLeft =
+        new Double(tmpCoord.getX() + 0.5 * tileSizeX, tmpCoord.getY() - 0.5 * MAP_BORDER);
+
+    tmpCoord = getIsoCoord(map.getMaxX(), 0, tileSizeY, tileSizeX);
+    Point2D.Double topRight =
+        new Double(tmpCoord.getX() + MAP_BORDER + tileSizeX, tmpCoord.getY() + 0.5 * tileSizeY);
+
+    tmpCoord = getIsoCoord(0, map.getMaxY(), tileSizeY, tileSizeX);
+    Point2D.Double bottomLeft =
+        new Double(tmpCoord.getX() - 0.5 * MAP_BORDER, tmpCoord.getY() + 0.5 * tileSizeY);
+
+    tmpCoord = getIsoCoord(map.getMaxX(), map.getMaxY(), tileSizeY, tileSizeX);
+    Point2D.Double bottomRight =
+        new Double(
+            tmpCoord.getX() + 0.5 * tileSizeX, tmpCoord.getY() + 0.5 * MAP_BORDER + tileSizeY);
+
+    //get first colour from palette (lightest tone)
+    gc.setFill(intRGBtoColour(palette.getRGB(0, 0)));
+    gc.fillPolygon(
+        new double[]{topLeft.getX(), topRight.getX(), bottomRight.getX(), bottomLeft.getX()},
+        new double[]{topLeft.getY(), topRight.getY(), bottomRight.getY(), bottomLeft.getY()},
+        4);
+
+    // Render Pyramid underside
+
+    double yChange = topRight.getX() - bottomRight.getX();
+
+    double percentageXRes = 0.04;
+    double ratio = ((percentageXRes * xResolution) / yChange) * (map.getMaxY() / (double) 20);
+
+    double x =
+        getIsoCoord(map.getMaxX() / (double) 2, map.getMaxY() / (double) 2, tileSizeY, tileSizeX)
+            .getX();
+    double y = bottomRight.getY() + yChange * ratio;
+
+    Point2D.Double pyramidVertex = new Point2D.Double(x, y);
+
+    //get third colour from palette (darkest tone)
+    gc.setFill(intRGBtoColour(palette.getRGB(2, 0)));
+    gc.fillPolygon(
+        new double[]{topRight.getX(), bottomRight.getX(), pyramidVertex.getX()},
+        new double[]{topRight.getY(), bottomRight.getY(), pyramidVertex.getY()},
+        3);
+
+    //get second colour from palette (medium tone)
+    gc.setFill(intRGBtoColour(palette.getRGB(1, 0)));
+    gc.fillPolygon(
+        new double[]{bottomLeft.getX(), bottomRight.getX(), pyramidVertex.getX()},
+        new double[]{bottomLeft.getY(), bottomRight.getY(), pyramidVertex.getY()},
+        3);
+
+    // Draw black outline
+    gc.setStroke(Color.BLACK);
+    gc.strokePolygon(
+        new double[]{bottomLeft.getX(), bottomRight.getX(), pyramidVertex.getX()},
+        new double[]{bottomLeft.getY(), bottomRight.getY(), pyramidVertex.getY()},
+        3);
+
+    gc.strokePolygon(
+        new double[]{topRight.getX(), bottomRight.getX(), pyramidVertex.getX()},
+        new double[]{topRight.getY(), bottomRight.getY(), pyramidVertex.getY()},
+        3);
+
+    gc.strokePolygon(
+        new double[]{topLeft.getX(), topRight.getX(), bottomRight.getX(), bottomLeft.getX()},
+        new double[]{topLeft.getY(), topRight.getY(), bottomRight.getY(), bottomLeft.getY()},
+        4);
   }
 
   /**
@@ -526,18 +528,12 @@ public class Renderer {
     }
   }
 
-
   /**
-   * @param colour sets Graphics context fill colour using an intRGB (gc.setFillColour only allows
-   * setting of colour objects)
+   * @return The top right corner coordinate to start rendering game map from
    */
-  private void setFillColour(int colour) {
-    gc.setFill(
-        new Color(
-            (colour >> 16 & 0xFF) / (double) 255,
-            (colour >> 8 & 0xFF) / (double) 255,
-            (colour & 0xFF) / (double) 255,
-            1));
+  private Point2D.Double getMapRenderingCorner() {
+    return new Point2D.Double(this.xResolution / (double) 2, this.yResolution / (double) 5);
+    // return new Point2D.Double(getIsoCoord(0,map),getIsoCoord(0,0,tileSizeY).getY())
   }
 
   /**
@@ -549,6 +545,7 @@ public class Renderer {
    */
   public void setResolution(int x, int y, RenderingMode mode) {
     r.setResolution(x, y, mode);
+    hudRender.setResolution(x, y);
     xResolution = x;
     yResolution = y;
     this.initMapTraversal(r.getMap());

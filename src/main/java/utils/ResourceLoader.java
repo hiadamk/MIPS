@@ -69,6 +69,10 @@ public class ResourceLoader {
     return getFileNames(themeFolders);
   }
 
+  public BufferedImage getPlayerPalette() {
+    return mipPalette;
+  }
+
   public String[] getValidMaps() {
     File[] maps = new File(BASE_DIR + "maps/").listFiles(File::isFile);
     String[] mapNames = getFileNames(maps);
