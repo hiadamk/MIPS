@@ -789,12 +789,9 @@ public class MenuController {
             ArrayList<Node> toShow = backTree.pop();
             itemsOnScreen.addAll(toShow);
             showItemsOnScreen();
-            System.out.println(itemsOnScreen.toString());
             isInstructions = false;
 
           }
-          System.out.println(backTree.toString());
-
           if (!backTree.isEmpty()) {
             hideItemsOnScreen();
             itemsOnScreen.clear();

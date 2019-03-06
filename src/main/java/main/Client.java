@@ -13,9 +13,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import objects.Entity;
 import objects.Pellet;
@@ -117,6 +115,8 @@ public class Client extends Application {
     GraphicsContext gc = canvas.getGraphicsContext2D();
     renderer = new Renderer(gc, xRes, yRes, resourceLoader);
     primaryStage.setScene(scene);
+    primaryStage.setMinWidth(1366);
+    primaryStage.setMinHeight(768);
     primaryStage
         .widthProperty()
         .addListener(
@@ -124,8 +124,6 @@ public class Client extends Application {
               menuController.scaleImages((double) newVal, (double) oldVal);
             });
 
-    scene.setFill(Color.TRANSPARENT);
-    root.setBackground(Background.EMPTY);
     primaryStage.show();
 
     updateResolution(this.screenRes);
