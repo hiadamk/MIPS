@@ -133,7 +133,6 @@ public class Client extends Application {
   public void startSinglePlayerGame() {
 
     singlePlayer = true;
-    System.out.println("Starting single player game...");
     map = resourceLoader.getMap();
 
     incomingQueue = new LinkedBlockingQueue<>();
@@ -170,7 +169,6 @@ public class Client extends Application {
       clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this, name);
       this.telemetry = new DumbTelemetry(clientIn, this);
       this.telemetry.setMipID(MIPID);
-      System.out.println("MIP ID: " + MIPID);
       // waits for game to start
       while (!clientLobbySession.isGameStarted()) {
         try {
@@ -200,7 +198,6 @@ public class Client extends Application {
       System.out.println("PLAYER COUNT IS: " + playerCount);
       this.telemetry = new HostTelemetry(playerCount, inputQueue, outputQueue, this);
       this.telemetry.setMipID(MIPID);
-      System.out.println("MIP ID: " + MIPID);
 
       gameScene.setOnKeyPressed(keyController);
       startGame();
@@ -234,7 +231,6 @@ public class Client extends Application {
         break;
     }
 
-    System.out.println(xRes + " " + yRes);
     canvas.setWidth(xRes);
     canvas.setHeight(yRes);
     renderer.setResolution(xRes, yRes, this.renderingMode);

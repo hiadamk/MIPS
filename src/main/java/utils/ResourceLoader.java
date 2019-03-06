@@ -237,17 +237,17 @@ public class ResourceLoader {
 
     // choose the smallest ratio to make sure map fits on screen
     double ratio = Math.min(targetX / (double) currentX, (double) targetY / currentY);
-    System.out.println(ratio);
-    System.out.println("rl:" + x + " " + y + " " + mode.toString());
+//    System.out.println(ratio);
+//    System.out.println("rl:" + x + " " + y + " " + mode.toString());
     boolean smoothEdges = false;
 
     switch (mode) {
       case NO_SCALING:
         return;
       case INTEGER_SCALING: {
-        System.out.println("ratio before:" + ratio);
+//        System.out.println("ratio before:" + ratio);
         ratio = Math.floor(ratio);
-        System.out.println("ratio after:" + ratio);
+//        System.out.println("ratio after:" + ratio);
         break;
       }
       case SMOOTH_SCALING: {
