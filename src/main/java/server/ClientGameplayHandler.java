@@ -91,7 +91,8 @@ public class ClientGameplayHandler {
                 String data = incomingQueue.poll();
 
                 if (data.startsWith(NetworkUtility.POSITION_CODE)
-                    || data.startsWith(NetworkUtility.COLLISIONS_CODE)) {
+                    || data.startsWith(NetworkUtility.COLLISIONS_CODE)
+                    || data.startsWith(NetworkUtility.POWERUP_CODE)) {
                   clientIn.add(data);
                   System.out.println("Got instruction from server");
                 } else if (data.startsWith(NetworkUtility.STOP_CODE)) {

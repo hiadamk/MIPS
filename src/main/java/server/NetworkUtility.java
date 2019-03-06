@@ -30,7 +30,8 @@ public class NetworkUtility {
   public static final String PREFIX = "SMSG";
   public static final String SUFFIX = "EMSG";
   public static final String POSITION_CODE = "POS";
-  public static final String COLLISIONS_CODE = "COS";
+  public static final String COLLISIONS_CODE = "COL";
+  public static final String POWERUP_CODE = "POW";
   public static final String STOP_CODE = "EXIT";
   public static final int STRING_LIMIT = 128;
   public static final Charset CHARSET = StandardCharsets.US_ASCII;

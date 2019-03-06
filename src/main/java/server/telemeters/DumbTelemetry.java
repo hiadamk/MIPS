@@ -148,6 +148,7 @@ public class DumbTelemetry extends Telemetry {
 	    int powerint = Integer.parseInt(ls[1]);
 	    double x = Double.valueOf(ls[2]);
 	    double y = Double.valueOf(ls[3]);
+	    System.out.println("New PowerUp activation!! : " + powerint );
 	    System.out.println("X: " + x);
 	    System.out.println("Y: " + y);
 	    System.out.println("ID: " + id);
