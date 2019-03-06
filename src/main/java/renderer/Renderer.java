@@ -322,19 +322,19 @@ public class Renderer {
     java.lang.Double[] num = {1.0, 1.0, 1.1, 1.25, 1.4};
     UpDownIterator<java.lang.Double> entitySize = new UpDownIterator<>(num);
 
-    java.lang.Double[] opacity = new java.lang.Double[20];
+    java.lang.Double[] opacity = new java.lang.Double[10];
     for (int i = 0; i < opacity.length; i++) {
-      opacity[i] = 0.5 + i * 0.01;
+      opacity[i] = 0.5 + i * 0.02;
     }
     UpDownIterator<java.lang.Double> backgroundOpacity = new UpDownIterator<>(opacity);
 
     Image currentSprite = newMipsMan.getImage().get(newMipsMan.getCurrentFrame());
     final double renderAnimationTime = 0.75 * Math.pow(10, 9);
     double startTime = System.nanoTime();
-    double currentTime = System.nanoTime();
-    final int frames = 22;
+    final int frames = 40;
     final double frameTime = renderAnimationTime / frames;
     new AnimationTimer() {
+      double currentTime = System.nanoTime();
       @Override
       public void handle(long now) {
         if (now - startTime > renderAnimationTime) {
@@ -345,6 +345,7 @@ public class Renderer {
           if (System.nanoTime() - currentTime > frameTime) {
             renderCollision(newMipsMan, entities, map, entitySize, backgroundOpacity,
                 currentSprite);
+            currentTime = System.nanoTime();
           }
         }
       }
