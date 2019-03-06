@@ -15,6 +15,7 @@ import objects.Entity;
 import utils.Input;
 import utils.Point;
 import utils.enums.Direction;
+import utils.enums.PowerUp;
 
 /**
  * Class which will holds shared utility data for classes.
@@ -124,15 +125,18 @@ public class NetworkUtility {
    *
    * @param input The most recent valid input of the agent (includes ID)
    * @param position The last known position of the entity
+ * @param mipID 
    * @return The string packet.
    */
-  public static String makeEntitiyMovementPacket(Input input, Point position) {
+  public static String makeEntitiyMovementPacket(Input input, Point position, int mipID) {
     return "POS1"
         + input.toString()
         + "|"
         + coordFormat.format(position.getX())
         + "|"
-        + coordFormat.format(position.getY()) + "|";
+        + coordFormat.format(position.getY())
+        + "|"
+        + mipID;
   }
 
   /**
@@ -210,4 +214,26 @@ public class NetworkUtility {
         + coordFormat.format(position.getX())
         + coordFormat.format(position.getY());
   }
+  
+  /**
+   * Makes the packet to send to the client that a powerup has been used
+   *
+   * @param id of the player that used the powerup
+   * @param powerup which powerup enum was used
+   * @param position The last known position of the entity
+   * @return The string packet.
+   */
+  public static String makePowerUpPacket(int id, PowerUp powerup, Point position) {
+    return "POW1"
+        + id
+        + "|"
+        + powerup.toInt()
+        + "|"
+        + coordFormat.format(position.getX())
+        + "|"
+        + coordFormat.format(position.getY());
+  }
+  
+  
+  
 }

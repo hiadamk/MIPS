@@ -112,4 +112,46 @@ public enum PowerUp {
     }
     return false;
   }
+
+  /**
+   * Used to communicate powerups to clients
+   *
+   * @return the int corresponding to the powerup's enum
+   */
+  public int toInt() {
+	  // TODO Auto-generated method stub
+	switch (this) {
+	case WEB:
+      return 0;
+	case SPEED:
+	  return 1;
+	case BLUESHELL:
+	  return 2;
+	case INVINCIBLE:
+	  return 3;
+	}
+	return -1;
+  }
+  
+  /**
+   * Used to communicate powerups to clients
+   *
+   * @return the PowerUp corresponding to the int provided
+   */
+  public static PowerUp fromInt(int n) {
+	  switch (n) {
+	    case 0:
+	      return WEB;
+	    case 1:
+	      return SPEED;
+	    case 2:
+	      return BLUESHELL;
+	    case 3:
+	      return INVINCIBLE;
+	  }
+	  return null;
+	}
+
+  
 }
+

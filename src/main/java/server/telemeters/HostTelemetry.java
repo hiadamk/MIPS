@@ -13,6 +13,7 @@ import utils.Input;
 import utils.Methods;
 import utils.Point;
 import utils.enums.Direction;
+import utils.enums.PowerUp;
 
 public class HostTelemetry extends Telemetry {
 
@@ -144,11 +145,13 @@ public class HostTelemetry extends Telemetry {
  
   private void usePowerUp(int id) {
 	//TODO : implement
-	
+	System.out.println("POWERUP USED PLAYER: "+ id);
+	//TODO if player has powerup, do this:
+	//   informPowerup(id, powerup, location);
 }
 
 private void informClients(Input input, Point location) {
-    outputs.add(NetworkUtility.makeEntitiyMovementPacket(input, location) + getMipID());
+    outputs.add(NetworkUtility.makeEntitiyMovementPacket(input, location, getMipID()));
   }
 
   private int getMipID() {
@@ -166,6 +169,10 @@ private void informClients(Input input, Point location) {
     inputProcessor.close();
   }
 
+  private void informPowerup(int id, PowerUp powerup, Point location) {
+	    outputs.add(NetworkUtility.makePowerUpPacket(id, powerup, location));
+	  }
+  
   private void updateClients(Entity[] agents) {
     outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents) + getMipID());
   }

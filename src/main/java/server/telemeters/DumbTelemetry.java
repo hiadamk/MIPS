@@ -9,6 +9,7 @@ import utils.GameLoop;
 import utils.Input;
 import utils.Point;
 import utils.enums.Direction;
+import utils.enums.PowerUp;
 
 public class DumbTelemetry extends Telemetry {
 
@@ -64,6 +65,9 @@ public class DumbTelemetry extends Telemetry {
         case "POS3":
           setEntityPositions(input.substring(4));
           break;
+        case "POW1":
+        	activatePowerup(input.substring(4));
+        	break;
         case NetworkUtility.STOP_CODE:
           stopGame();
           break;
@@ -112,7 +116,7 @@ public class DumbTelemetry extends Telemetry {
   // NetworkUtility.makeEntityMovementPacket(Input, Point)
   // without the starting POSx code
   private void setEntityMovement(String s) {
-    System.out.println("String to handle: " + s);
+    System.out.println("Movement to handle: " + s);
     String[] ls = s.split("\\|");
     Input input = Input.fromString(ls[0]);
     int id = input.getClientID();
@@ -133,6 +137,28 @@ public class DumbTelemetry extends Telemetry {
     }
   }
 
+  // takes a packet string as defined in
+  // NetworkUtility.makePowerUPPacket(Input, Point)
+  // without the starting POW1 code
+  private void activatePowerup(String s) {
+	    System.out.println("Powerup String to handle: " + s);
+	    String[] ls = s.split("\\|");
+
+	    int id 	 = Integer.parseInt(ls[0]);
+	    int powerint = Integer.parseInt(ls[1]);
+	    double x = Double.valueOf(ls[2]);
+	    double y = Double.valueOf(ls[3]);
+	    System.out.println("X: " + x);
+	    System.out.println("Y: " + y);
+	    System.out.println("ID: " + id);
+	    agents[id].setLocation(new Point(x, y));
+	    PowerUp powerup = PowerUp.fromInt(powerint);
+
+	    powerup.use(agents[id], activePowerUps);
+	  }
+
+  
+  
   public void startAI() {
     // haha trick this does nothing.
     // shouldn't actually be called from client if this object exists
