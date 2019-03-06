@@ -283,8 +283,9 @@ public class Renderer {
 
     gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY(),
         currentSprite.getWidth() * multiplier, currentSprite.getHeight() * multiplier);
-    gc.setFill(Color.WHITE);
-    gc.fillText("MIPS CAPTURED", xResolution / 2, yResolution * 0.7);
+    gc.setFill(intRGBtoColour(playerColours.getRGB(1, newMipsMan.getClientId())));
+    gc.fillText(newMipsMan.getName(), xResolution / 2, yResolution * 0.2);
+    gc.fillText("CAPTURED MIPS", xResolution / 2, yResolution * 0.45);
   }
 
 

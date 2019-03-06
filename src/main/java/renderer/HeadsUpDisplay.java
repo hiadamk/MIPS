@@ -79,7 +79,7 @@ public class HeadsUpDisplay {
       gc.setFill(Renderer.intRGBtoColour(playerColours.getRGB(0, e.getClientId())));
 
       String place = padRight(integerToOrdinal(i + 1), 4);
-      String name = padRight("player" + e.getClientId(), 10);
+      String name = padRight(e.getName(), 10);
       String score = padRight(Integer.toString(e.getScore()), 5);
       String currentPlayerScoreLine = name + " " + score;
 

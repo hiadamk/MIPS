@@ -25,6 +25,7 @@ public class Entity implements Renderable {
   private Direction direction;
   private int score;
   private int clientId;
+  private String name;
   private Boolean mipsman;
   private ArrayList<ArrayList<Image>> images;
   private ArrayList<Image> currentImage;
@@ -53,6 +54,7 @@ public class Entity implements Renderable {
     this.direction = Direction.UP;
     this.items = new LinkedList<PowerUp>();
     this.directionSet = false;
+    this.name = "Player" + clientId;
     // updateImages();
   }
 
@@ -338,6 +340,10 @@ public class Entity implements Renderable {
         currentFrame++;
       }
     }
+  }
+
+  public String getName() {
+    return name;
   }
 
   public boolean isDirectionSet() {
