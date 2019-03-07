@@ -30,6 +30,7 @@ public class NetworkUtility {
   public static final String PREFIX = "SMSG";
   public static final String SUFFIX = "EMSG";
   public static final String POSITION_CODE = "POS";
+  public static final String SCORE_CODE = "SCORE";
   public static final String COLLISIONS_CODE = "COL";
   public static final String POWERUP_CODE = "POW";
   public static final String STOP_CODE = "EXIT";
@@ -234,7 +235,19 @@ public class NetworkUtility {
         + "|"
         + coordFormat.format(position.getY());
   }
-  
-  
+
+  /**
+   * Makes the packet to send to the clients of the current scoreboard
+   *
+   * @param agents the array of game entities
+   * @return The string packet.
+   */
+  public static String makeScorePacket(Entity[] agents) {
+    String s = "SCORE";
+        for (Entity agent: agents){
+          s+= "|" + agent.getScore();
+        }
+        return s;
+  }
   
 }

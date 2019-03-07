@@ -30,6 +30,8 @@ public abstract class Telemetry {
   ResourceLoader resourceLoader;
   static Client client;
   protected GameLoop inputProcessor;
+  protected GameLoop positionUpdater;
+  protected GameLoop scoreUpdater;
 
   Telemetry(Client client) {
     this.map = client.getMap();

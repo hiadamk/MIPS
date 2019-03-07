@@ -90,25 +90,37 @@ public class HostTelemetry extends Telemetry {
 
     final long DELAY = (long) Math.pow(10, 7);
     final long positionDELAY = (long) Math.pow(10, 9)/2;
+    final long scoreDELAY = (long) Math.pow(10,9);
 
     inputProcessor =
         new GameLoop(DELAY) {
           @Override
           public void handle() {
             processInputs();
-
             processPhysics(agents, map, resourceLoader, pellets, activePowerUps);
           }
         };
     inputProcessor.start();
 
-    new GameLoop(positionDELAY) {
-      @Override
-      public void handle() {
-        updateClients(agents);
-      }
-    }.start();
+    positionUpdater =
+        new GameLoop(positionDELAY) {
+          @Override
+          public void handle() {
+            updateClients(agents);
+          }
+        };
+    positionUpdater.start();
+
+    scoreUpdater =
+        new GameLoop(scoreDELAY) {
+          @Override
+          public void handle() {
+            updateScores(agents);
+          }
+        };
+    scoreUpdater.start();
   }
+
 
   public void startAI() {
     if (!aiRunning && ai != null) {
@@ -168,12 +180,19 @@ private void informClients(Input input, Point location) {
   public void stopGame() {
     outputs.add(NetworkUtility.STOP_CODE);
     inputProcessor.close();
+    positionUpdater.close();
+    scoreUpdater.close();
   }
 
   private void informPowerup(int id, PowerUp powerup, Point location) {
-	    outputs.add(NetworkUtility.makePowerUpPacket(id, powerup, location));
+    outputs.add(NetworkUtility.makePowerUpPacket(id, powerup, location));
 	  }
-  
+
+  private void updateScores(Entity[] agents) {
+    outputs.add(NetworkUtility.makeScorePacket(agents));
+  }
+
+
   private void updateClients(Entity[] agents) {
     outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents) + getMipID());
   }

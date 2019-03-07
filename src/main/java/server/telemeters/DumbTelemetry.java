@@ -68,6 +68,9 @@ public class DumbTelemetry extends Telemetry {
         case "POW1":
         	activatePowerup(input.substring(4));
         	break;
+        case "SCORE":
+          setScore(input.substring(5));
+        	break;
         case NetworkUtility.STOP_CODE:
           stopGame();
           break;
@@ -134,6 +137,17 @@ public class DumbTelemetry extends Telemetry {
       } else {
         ent.setMipsman(false);
       }
+    }
+
+  }
+  // takes a packet string as defined in
+  // NetworkUtility.makeScorePacket(Entity[])
+  //without the starting SCORE| string
+  private void setScore(String scores){
+    String[] ls = scores.split("\\|");
+    for (int i=0; i<ls.length; i++){
+      int score = Integer.parseInt(ls[i]);
+      agents[i].setScore(score);
     }
   }
 
