@@ -72,8 +72,12 @@ public class MapGenerator {
     long t2;
     long t1;
     for (int c = 0; c < 1000; c++) {
+      Random r = new Random();
+      int x = 14 + r.nextInt(5) * 3;
+      int half = 7 + r.nextInt(9) * 3;
+      int y = half * 2 - 1;
       t1 = System.nanoTime();
-      int[][] map = generateNewMap();
+      int[][] map = generateNewMap(x, y);
       t2 = System.nanoTime();
       diff[c] = t2 - t1;
       //System.out.println("****************");
@@ -87,17 +91,22 @@ public class MapGenerator {
     }
     avg = avg / 1000;
     System.out.println(avg);
+
   }
 
-  public static int[][] generateNewMap() {
+  public static int[][] newRandomMap(int x_factor, int y_factor) {
+    //Run it on a new thread
+    return generateNewMap(14 + 3 * x_factor, 14 + 3 * y_factor);
+  }
+
+  public static int[][] generateNewMap(int x, int y) {
     int[][] map = null;
     int c = 0;
+    int half = (y + 1) / 2;
     while (!validateMap(map)) {
       //System.out.println("attempt " + c++);
       Random r = new Random();
-      int x = 14 + r.nextInt(5) * 3;
-      int half = 7 + r.nextInt(9) * 3;
-      int y = half * 2 - 1;
+
       map = new int[x][y];
       for (int i = 0; i < x; i++) {
         for (int j = 0; j < y; j++) {
