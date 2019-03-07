@@ -3,7 +3,6 @@ package utils;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -221,18 +220,11 @@ public class ResourceLoader {
     int tileHeight = this.mapTiles.get(MapElement.FLOOR.toInt()).getHeight();
     int tileWidth = this.mapTiles.get(MapElement.FLOOR.toInt()).getWidth();
 
-    Point2D.Double tl = getIsoCoord(0, 0, tileWidth, tileHeight);
-    Point2D.Double br = getIsoCoord(map.getMaxX(), map.getMaxY(), tileWidth, tileHeight);
-
-    Point2D.Double bl = getIsoCoord(0, map.getMaxY(), tileWidth, tileHeight);
-    Point2D.Double tr = getIsoCoord(map.getMaxX(), 0, tileWidth, tileHeight);
-
     // choose the smallest ratio to make sure map fits on screen
     double ratioX = (double) targetX / ((map.getMaxX() + map.getMaxY()) * (tileWidth / 2));
     double ratioY = (double) targetY / ((map.getMaxX() + map.getMaxY()) * (tileHeight / 2));
     double ratio = Math.min(ratioX, ratioY);
 
-    System.out.println(Math.abs(tl.getY() - br.getY()));
     double hudRatio = x / (double) 1366;
 
     boolean smoothEdges = false;
@@ -618,11 +610,5 @@ public class ResourceLoader {
 
   private int getOutlineColour(BufferedImage sprite) {
     return -16777216;
-  }
-
-  private Point2D.Double getIsoCoord(double x, double y, double spriteHeight, double spriteWidth) {
-    double isoX = (y - x) * (spriteWidth / (double) 2);
-    double isoY = (y + x) * (spriteHeight / (double) 2);
-    return new Point2D.Double(isoX, isoY);
   }
 }
