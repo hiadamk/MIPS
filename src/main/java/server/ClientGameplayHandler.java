@@ -99,6 +99,7 @@ public class ClientGameplayHandler {
                   clientIn.add(data);
                   close();
                 } else {
+                  System.out.println("Dodgy string "+ data);
                   throw new Exception();
                 }
                 Thread.sleep(50);
