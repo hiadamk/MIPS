@@ -28,7 +28,7 @@ import utils.enums.Direction;
  */
 public class AILoopControl extends Thread {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private static final int OPPOSITE_DIRECTION_DIVISOR = 4;
     private static final long SLEEP_TIME = 1;
