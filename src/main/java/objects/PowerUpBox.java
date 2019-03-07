@@ -21,7 +21,7 @@ public class PowerUpBox extends Pellet {
   }
 
   private void init() {
-    this.respawntime = 500;
+    this.respawntime = 300;
     this.value = 0;
   }
 

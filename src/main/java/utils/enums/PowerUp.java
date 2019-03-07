@@ -11,16 +11,16 @@ import utils.Point;
  * @author Matthew Jones
  */
 public enum PowerUp {
-  WEB(20, "web"), SPEED(200, "speed"), BLUESHELL(20, "blueshell"), INVINCIBLE(200, "invincible");
+  WEB(50, "web"), SPEED(200, "speed"), BLUESHELL(20, "blueshell"), INVINCIBLE(200, "invincible");
 
   private final String NAME;
   private final int EFFECTTIME;
   private Image image;
   private Entity effected;
-  private int counter;
+  private int counter = 500;
   private Point location;
 
-  private Boolean onMap;
+  private Boolean onMap = false;
 
   public Boolean getOnMap() {
     return onMap;
