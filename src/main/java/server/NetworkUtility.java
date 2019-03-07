@@ -15,6 +15,7 @@ import objects.Entity;
 import utils.Input;
 import utils.Point;
 import utils.enums.Direction;
+import utils.enums.PowerUp;
 
 /**
  * Class which will holds shared utility data for classes.
@@ -29,7 +30,9 @@ public class NetworkUtility {
   public static final String PREFIX = "SMSG";
   public static final String SUFFIX = "EMSG";
   public static final String POSITION_CODE = "POS";
-  public static final String COLLISIONS_CODE = "COS";
+  public static final String SCORE_CODE = "SCOR";
+  public static final String COLLISIONS_CODE = "COL";
+  public static final String POWERUP_CODE = "POW";
   public static final String STOP_CODE = "EXIT";
   public static final int STRING_LIMIT = 128;
   public static final Charset CHARSET = StandardCharsets.US_ASCII;
@@ -124,15 +127,18 @@ public class NetworkUtility {
    *
    * @param input The most recent valid input of the agent (includes ID)
    * @param position The last known position of the entity
+ * @param mipID 
    * @return The string packet.
    */
-  public static String makeEntitiyMovementPacket(Input input, Point position) {
+  public static String makeEntitiyMovementPacket(Input input, Point position, int mipID) {
     return "POS1"
         + input.toString()
         + "|"
         + coordFormat.format(position.getX())
         + "|"
-        + coordFormat.format(position.getY()) + "|";
+        + coordFormat.format(position.getY())
+        + "|"
+        + mipID;
   }
 
   /**
@@ -210,4 +216,38 @@ public class NetworkUtility {
         + coordFormat.format(position.getX())
         + coordFormat.format(position.getY());
   }
+  
+  /**
+   * Makes the packet to send to the client that a powerup has been used
+   *
+   * @param id of the player that used the powerup
+   * @param powerup which powerup enum was used
+   * @param position The last known position of the entity
+   * @return The string packet.
+   */
+  public static String makePowerUpPacket(int id, PowerUp powerup, Point position) {
+    return "POW1"
+        + id
+        + "|"
+        + powerup.toInt()
+        + "|"
+        + coordFormat.format(position.getX())
+        + "|"
+        + coordFormat.format(position.getY());
+  }
+
+  /**
+   * Makes the packet to send to the clients of the current scoreboard
+   *
+   * @param agents the array of game entities
+   * @return The string packet.
+   */
+  public static String makeScorePacket(Entity[] agents) {
+    String s = "SCOR";
+        for (Entity agent: agents){
+          s+= "|" + agent.getScore();
+        }
+        return s;
+  }
+  
 }

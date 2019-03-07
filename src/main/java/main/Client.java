@@ -126,6 +126,7 @@ public class Client extends Application {
             });
 
     primaryStage.show();
+    primaryStage.setOnCloseRequest(e -> System.exit(0));
 
     updateResolution(this.screenRes);
   }
