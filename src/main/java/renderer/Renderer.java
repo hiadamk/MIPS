@@ -68,7 +68,7 @@ public class Renderer {
     this.background = r.getBackground();
     this.palette = r.getBackgroundPalette();
     this.playerColours = r.getPlayerPalette();
-    this.hudRender = new HeadsUpDisplay(gc, _xResolution, _yResolution, playerColours);
+    this.hudRender = new HeadsUpDisplay(gc, _xResolution, _yResolution, r);
 
     this.initMapTraversal(r.getMap());
   }
@@ -261,6 +261,8 @@ public class Renderer {
     renderBackground(map);
     renderGameOnly(map, entityArr, now, pellets);
     hudRender.renderHUD(entityArr, 0);
+    hudRender
+        .renderInventory(getClientEntity(new ArrayList<>(Arrays.asList(entityArr))), timeElapsed);
     //showFPS(timeElapsed);
 
     lastFrame = now;
@@ -293,7 +295,7 @@ public class Renderer {
 
 
   /**
-   * @param now current time in nanoseconds
+   * @param timeElapsed current time in nanoseconds
    */
   private void showFPS(long timeElapsed) {
 
@@ -558,8 +560,9 @@ public class Renderer {
   public void setResolution(int x, int y, RenderingMode mode) {
     r.setResolution(x, y, mode);
     hudRender.setResolution(x, y);
-    xResolution = x;
-    yResolution = y;
+    this.xResolution = x;
+    this.yResolution = y;
+    this.mapRenderingCorner = getMapRenderingCorner();
     this.initMapTraversal(r.getMap());
   }
 }

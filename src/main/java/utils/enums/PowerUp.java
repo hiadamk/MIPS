@@ -11,8 +11,9 @@ import utils.Point;
  * @author Matthew Jones
  */
 public enum PowerUp {
-  WEB(20), SPEED(200), BLUESHELL(20), INVINCIBLE(200);
+  WEB(20, "web"), SPEED(200, "speed"), BLUESHELL(20, "blueshell"), INVINCIBLE(200, "invincible");
 
+  private final String NAME;
   private final int EFFECTTIME;
   private Image image;
   private Entity effected;
@@ -25,9 +26,10 @@ public enum PowerUp {
     return onMap;
   }
 
-  PowerUp(int effectTime) {
-    EFFECTTIME = effectTime;
-    location = null;
+  PowerUp(int effectTime, String name) {
+    this.EFFECTTIME = effectTime;
+    this.NAME = name;
+    this.location = null;
   }
 
   public Point getLocation() {
@@ -111,5 +113,10 @@ public enum PowerUp {
       return true;
     }
     return false;
+  }
+
+  @Override
+  public String toString() {
+    return this.NAME;
   }
 }

@@ -1,31 +1,47 @@
 package renderer;
 
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
+import java.util.LinkedList;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import objects.Entity;
+import utils.ResourceLoader;
+import utils.enums.PowerUp;
 
 public class HeadsUpDisplay {
 
   private final GraphicsContext gc;
+  private final ResourceLoader resourceLoader;
   private int xResolution;
   private int yResolution;
   private Font geoLarge = null;
   private Font geoSmall = null;
   private BufferedImage playerColours;
+  private final double secondaryInventoryRatio = 0.7;
+  LinkedList<PowerUp> items = null;
+  private Image inventory;
+  private int id = 0;
+  private boolean randomPrimary = false;
+  private boolean randomSecondary = false;
+
 
   public HeadsUpDisplay(GraphicsContext gc, int xResolution, int yResolution,
-      BufferedImage playerColours) {
+      ResourceLoader r) {
+    this.resourceLoader = r;
     this.gc = gc;
     this.xResolution = xResolution;
     this.yResolution = yResolution;
-    this.playerColours = playerColours;
+    this.playerColours = r.getPlayerPalette();
+    this.inventory = r.getInventory(id);
     final double fontRatio = 0.07;
     try {
       this.geoLarge =
@@ -94,8 +110,74 @@ public class HeadsUpDisplay {
     }
   }
 
+  public void renderInventory(Entity clientEntity, long timeElapsed) {
+    if (clientEntity.getClientId() != id) {
+      this.inventory = resourceLoader.getInventory(clientEntity.getClientId());
+      this.id = clientEntity.getClientId();
+    }
+    LinkedList currentItems = clientEntity.getItems();
+
+    Point2D.Double primaryInventoryCoord = new Point2D.Double(0.03 * xResolution,
+        0.9 * yResolution - inventory.getHeight());
+    Point2D.Double secondaryInventoryCoord = new Double(
+        primaryInventoryCoord.getX() + inventory.getWidth(),
+        0.90 * yResolution - inventory.getHeight() * secondaryInventoryRatio);
+
+    //find if new item has been picked up
+    if (items == null) {
+      items = (LinkedList<PowerUp>) currentItems.clone();
+    } else if (!items.equals(clientEntity.getItems())) {
+      if (items.size() == 1 && currentItems.size() == 2) {
+        randomPrimary = true;
+      } else if (items.size() == 0 && currentItems.size() == 1) {
+        randomSecondary = true;
+      } else if (items.size() == 2 && currentItems.size() == 1 && randomSecondary) {
+        randomSecondary = false;
+        randomPrimary = true;
+      } else {
+        randomPrimary = false;
+        randomSecondary = false;
+      }
+      items = (LinkedList<PowerUp>) currentItems.clone();
+    }
+    renderPrimaryInventoryBox(primaryInventoryCoord.getX(), primaryInventoryCoord.getY(), null);
+    renderSecondaryInventoryBox(secondaryInventoryCoord.getX(), secondaryInventoryCoord.getY(),
+        null);
+    if (randomPrimary) {
+
+    } else {
+
+    }
+
+    if (randomSecondary) {
+
+    } else {
+
+    }
+  }
+
+  private void renderPrimaryInventoryBox(double x, double y, PowerUp item) {
+    drawInventoryIcon(x, y, inventory.getWidth(), null);
+    gc.drawImage(inventory, x, y);
+  }
+
+  private void renderSecondaryInventoryBox(double x, double y, PowerUp item) {
+    drawInventoryIcon(x, y, inventory.getWidth() * secondaryInventoryRatio, null);
+    gc.drawImage(inventory, x, y, 0.7 * inventory.getWidth(), 0.7 * inventory.getHeight());
+  }
+
+  private void drawInventoryIcon(double x, double y, double width, PowerUp item) {
+    final double inventoryIconOffset = 0.0675;
+    gc.setFill(Color.GREY);
+    width = (1 - inventoryIconOffset * 2) * width;
+    if (item == null) {
+      gc.fillRect(x + inventoryIconOffset * width, y + inventoryIconOffset * width, width, width);
+    }
+  }
+
   public void setResolution(int x, int y) {
     this.xResolution = x;
     this.yResolution = y;
+    this.inventory = resourceLoader.getInventory(id);
   }
 }

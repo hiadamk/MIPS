@@ -14,6 +14,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
 import utils.enums.MapElement;
+import utils.enums.PowerUp;
 import utils.enums.RenderingMode;
 
 public class ResourceLoader {
@@ -42,6 +43,8 @@ public class ResourceLoader {
 
   private BufferedImage mipMarker;
   private BufferedImage clientMarker;
+  private BufferedImage inventory;
+  private ArrayList<BufferedImage> powerUps;
 
   /**
    * @param baseDir path to the resources folder
@@ -61,6 +64,8 @@ public class ResourceLoader {
     this.loadClientMarker(DEFAULT_THEME);
     this.loadMipMarker(DEFAULT_THEME);
     this.loadPellet(DEFAULT_THEME);
+    this.loadInventory(DEFAULT_THEME);
+    this.loadPowerUpIcons(DEFAULT_THEME);
   }
 
 
@@ -241,6 +246,7 @@ public class ResourceLoader {
 
     // choose the smallest ratio to make sure map fits on screen
     double ratio = Math.min(targetX / (double) currentX, (double) targetY / currentY);
+    double hudRatio = x / (double) 1366;
 //    System.out.println(ratio);
 //    System.out.println("rl:" + x + " " + y + " " + mode.toString());
     boolean smoothEdges = false;
@@ -267,6 +273,8 @@ public class ResourceLoader {
         return;
       }
     }
+    this.inventory = resizeSprite(inventory, hudRatio);
+    resizeSprites(this.powerUps, hudRatio);
 
     if (smoothEdges) {
       for (ArrayList<BufferedImage> mipSprite : mipSprites) {
@@ -297,6 +305,8 @@ public class ResourceLoader {
       mipMarker = resizeSprite(mipMarker, ratio);
       clientMarker = resizeSprite(clientMarker, ratio);
     }
+
+
   }
 
   /**
@@ -430,6 +440,29 @@ public class ResourceLoader {
     return SwingFXUtils.toFXImage(this.clientMarker, null);
   }
 
+  public void loadInventory(String theme) {
+    this.inventory = loadImageFile("sprites/" + theme + "/HUD/", "inventory");
+  }
+
+  public Image getInventory(int colourID) {
+    this.mipColourID = colourID;
+    return (SwingFXUtils
+        .toFXImage(recolourSprite(this.inventory, this.mipPalette, this.mipColourID, colourID),
+            null));
+  }
+
+  public void loadPowerUpIcons(String theme) {
+    ArrayList<BufferedImage> powerUps = new ArrayList<>();
+    for (PowerUp powerUp : PowerUp.values()) {
+      powerUps.add(loadImageFile("sprites/" + theme + "/misc/icon/", powerUp.name()));
+    }
+    this.powerUps = powerUps;
+  }
+
+  public ArrayList<Image> getPowerUps() {
+    return bufferedToJavaFxImage(this.powerUps);
+  }
+  
   /**
    * returns loads a png image in TYPE_4BYTE_ABGR
    *
