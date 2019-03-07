@@ -83,7 +83,7 @@ public enum PowerUp {
   public void trigger(Entity victim, ArrayList<PowerUp> activePowerUps) {
     switch (this) {
       case WEB:
-        victim.setVelocity(0);
+        victim.setStunned(true);
         activePowerUps.add(this);
         this.effected = victim;
         counter = 0;

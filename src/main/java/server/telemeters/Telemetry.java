@@ -158,7 +158,7 @@ public abstract class Telemetry {
       }
     }
 
-    pelletCollision(agents, pellets);
+    pelletCollision(agents, pellets, activePowerUps);
     for (Pellet p : pellets.values()) {
       p.incrementRespawn();
     }
@@ -218,14 +218,15 @@ public abstract class Telemetry {
    * @param pellets The pellets
    * @author Matthew Jones
    */
-  private static void pelletCollision(Entity[] agents, HashMap<String, Pellet> pellets) {
+  private static void pelletCollision(Entity[] agents, HashMap<String, Pellet> pellets,
+      ArrayList<PowerUp> activePowerUps) {
     for (Entity agent : agents) {
       Point p = agent.getLocation();
       int x = (int) p.getX();
       int y = (int) p.getY();
       Pellet pellet = pellets.get(x + "," + y);
       if (pellet != null) {
-        pellet.interact(agent);
+        pellet.interact(agent, activePowerUps);
       }
     }
   }
