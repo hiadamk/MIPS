@@ -61,7 +61,7 @@ public class PacketSender extends Thread {
           continue;
         }
         String s = feedQueue.poll();
-        System.out.println("About to send " + s);
+        //System.out.println("About to send " + s);
         send(s);
         Thread.sleep(50);
       }
