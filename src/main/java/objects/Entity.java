@@ -37,6 +37,34 @@ public class Entity implements Renderable {
   private static final double MIPS_SPEED = 0.08;
   private static final double GHOUL_SPEED = 0.06;
   private boolean directionSet;
+  private boolean stunned;
+  private boolean dead;
+
+  public boolean isStunned() {
+    return stunned;
+  }
+
+  public void setStunned(boolean stunned) {
+    this.stunned = stunned;
+    if (stunned) {
+      velocity = 0;
+    } else {
+      resetVelocity();
+    }
+  }
+
+  public boolean isDead() {
+    return dead;
+  }
+
+  public void setDead(boolean dead) {
+    this.dead = dead;
+    if (dead) {
+      velocity = 0;
+    } else {
+      resetVelocity();
+    }
+  }
 
   /**
    * Constructor
@@ -340,6 +368,10 @@ public class Entity implements Renderable {
         currentFrame++;
       }
     }
+  }
+
+  public void setName(String s) {
+    this.name = s;
   }
 
   public String getName() {

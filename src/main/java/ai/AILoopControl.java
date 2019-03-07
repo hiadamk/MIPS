@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import objects.Entity;
+import objects.Pellet;
 import utils.Input;
 import utils.Map;
 import utils.Methods;
@@ -29,6 +30,7 @@ import utils.enums.Direction;
 public class AILoopControl extends Thread {
 
     private static final boolean DEBUG = false;
+    private int counter = 0;
 
     private static final int OPPOSITE_DIRECTION_DIVISOR = 4;
     private static final long SLEEP_TIME = 1;
@@ -40,7 +42,7 @@ public class AILoopControl extends Thread {
     private final Entity[] gameAgents;
     private boolean runAILoop;
     private int mipsmanID;
-    private int counter = 0;
+    private HashMap<String, Pellet> pellets;
 
 
     /**Initialises the object prior to the AI loop being executed.
@@ -53,10 +55,12 @@ public class AILoopControl extends Thread {
      * @throws IllegalStateException The control ID does not match an agent main ID.
      * @author Lewis Ackroyd*/
     public AILoopControl(
-            Entity[] gameAgents, int[] controlIds, Map map, BlockingQueue<Input> directionsOut) {
+            Entity[] gameAgents, int[] controlIds, Map map, BlockingQueue<Input> directionsOut, HashMap<String, Pellet> pellets) {
         validateAgents(gameAgents);
-        for (int i : controlIds) {
-            System.out.println("ID: " + i);
+        if (DEBUG) {
+            for (int i : controlIds) {
+                System.out.println("ID: " + i);
+            }
         }
         this.setDaemon(true);
         this.runAILoop = true;
@@ -66,6 +70,7 @@ public class AILoopControl extends Thread {
         this.edges = Mapping.getEdges(map, junctions);
         this.directionsOut = directionsOut;
         this.map = map;
+        this.pellets = pellets;
 
         generateRouteFinders();
         correctMipsmanRouteFinder();
@@ -174,26 +179,12 @@ public class AILoopControl extends Thread {
     @Override
     public void run() {
         System.out.println("Starting AI loop...");
-        Iterator<Point> iterator = junctions.iterator();
-        while (iterator.hasNext()&&DEBUG) {
-            Point p = iterator.next();
-//            System.out.println("j " + p.toString());
-        }
 
         while (runAILoop && controlAgents.length > 0) {
             for (Entity ent : controlAgents) {
                 Point currentLocation = ent.getLocation().getCopy();
                 Point currentGridLocation = currentLocation.getGridCoord();
                 if (currentLocation.isCentered()) {
-                  if (DEBUG) {
-//                        System.out.println(currentGridLocation.toString());
-//                        System.out.println(junctions.contains(currentGridLocation));
-                        ArrayList<Direction> dirs = getValidDirections(currentLocation, map);
-                        for (Direction d : dirs) {
-//                            System.out.println(d);
-                        }
-//                        System.out.println();
-                    }
                   boolean atLastCoord = atPreviousCoordinate(ent, currentGridLocation);
                     if (ent.getDirection() == null
                         || !Methods.validateDirection(ent.getDirection(), currentLocation, map) || (
@@ -211,7 +202,6 @@ public class AILoopControl extends Thread {
                                             gameAgents[mipsmanID].getLocation());
                             }
                             dir = confirmOrReplaceDirection(ent.getDirection(), currentLocation, dir);
-
                             setDirection(dir, ent);
 
                         } else {
@@ -244,7 +234,7 @@ public class AILoopControl extends Thread {
     }
 
     private void setDirection(Direction direction, Entity ent) {
-        if (ent.getDirection() == null) {
+        if (direction == null) {
             return;
         }
         if(direction!=ent.getDirection()&&!ent.isDirectionSet()){

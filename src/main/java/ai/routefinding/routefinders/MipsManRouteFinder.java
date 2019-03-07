@@ -19,6 +19,7 @@ public class MipsManRouteFinder implements RouteFinder {
     if (!COMPLETE) {
       return new RandomRouteFinder().getRoute(myLocation, targetLocation);
     }
+
     return null;
   }
 }

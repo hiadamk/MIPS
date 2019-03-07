@@ -74,7 +74,7 @@ class AILoopControlTests {
 			ALL_AGENTS[i].updateImages(resourceLoader);
 		}
 
-		AILoopControl ailc = new AILoopControl(ALL_AGENTS,  ids, MAP, QUEUE);
+		AILoopControl ailc = new AILoopControl(ALL_AGENTS,  ids, MAP, QUEUE, null);
 		ailc.start();
 		try {
 			Thread.sleep(2000);
@@ -86,18 +86,18 @@ class AILoopControlTests {
 	@Test
 	void testAILoopControlEmptyControl() {
 		@SuppressWarnings("unused")
-		AILoopControl ailc = new AILoopControl(ALL_AGENTS, new int[0], MAP, QUEUE);
+		AILoopControl ailc = new AILoopControl(ALL_AGENTS, new int[0], MAP, QUEUE, null);
 	}
 	@Test
 	void testAILoopControlFullControl() {
 		int[] controlIDs = {0, 1, 2, 3, 4};
 		@SuppressWarnings("unused")
-		AILoopControl ailc = new AILoopControl(ALL_AGENTS, controlIDs, MAP, QUEUE);
+		AILoopControl ailc = new AILoopControl(ALL_AGENTS, controlIDs, MAP, QUEUE, null);
 	}
 	@Test
 	void testAILoopControlIdNotFound() {
 		int[] controlIDs = {0, 1, 2, 3, 5};
-		Executable e = () -> new AILoopControl(ALL_AGENTS, controlIDs, MAP, QUEUE);
+		Executable e = () -> new AILoopControl(ALL_AGENTS, controlIDs, MAP, QUEUE, null);
 		assertThrows(IllegalStateException.class, e);
 	}
 	@Test
@@ -108,13 +108,13 @@ class AILoopControlTests {
 				new Entity(false, 2, null),
 				new Entity(false, 3, null),
 				new Entity(false, 2, null)};
-		Executable e = () -> new AILoopControl(entities, new int[0], MAP, QUEUE);
+		Executable e = () -> new AILoopControl(entities, new int[0], MAP, QUEUE, null);
 		assertThrows(IllegalArgumentException.class, e);
 	}
 	@Test
 	void testAILoopControlAgentRoleSwap() {
 		int[] controlIDs = {0, 1, 2, 3, 4};
-		AILoopControl ailc = new AILoopControl(ALL_AGENTS, controlIDs, MAP, QUEUE);
+		AILoopControl ailc = new AILoopControl(ALL_AGENTS, controlIDs, MAP, QUEUE, null);
 		ailc.start();
 		try {
 			Thread.sleep(500);
@@ -157,21 +157,21 @@ class AILoopControlTests {
 	@Test
 	void testKillAI() {
 		int[] i = {0};
-		AILoopControl ailc = new AILoopControl(ALL_AGENTS,  i, MAP, QUEUE);
+		AILoopControl ailc = new AILoopControl(ALL_AGENTS,  i, MAP, QUEUE, null);
 		ailc.start();
 		assertTrue(ailc.killAI());
 		
-		ailc = new AILoopControl(ALL_AGENTS,  i, MAP, QUEUE);
+		ailc = new AILoopControl(ALL_AGENTS,  i, MAP, QUEUE, null);
 		assertFalse(ailc.killAI());
 		ailc.start();
 		assertTrue(ailc.killAI());
 		
 		i = new int[0];
-		ailc = new AILoopControl(ALL_AGENTS,  i, MAP, QUEUE);
+		ailc = new AILoopControl(ALL_AGENTS,  i, MAP, QUEUE, null);
 		ailc.start();
 		assertTrue(ailc.killAI());
 		
-		ailc = new AILoopControl(ALL_AGENTS,  i, MAP, QUEUE);
+		ailc = new AILoopControl(ALL_AGENTS,  i, MAP, QUEUE, null);
 		assertFalse(ailc.killAI());
 		ailc.start();
 		assertTrue(ailc.killAI());

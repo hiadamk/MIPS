@@ -69,7 +69,7 @@ public class DumbTelemetry extends Telemetry {
         	activatePowerup(input.substring(4));
         	break;
         case "SCOR":
-          setScore(input.substring(5));
+          setScore(input.substring(4));
         	break;
         case NetworkUtility.STOP_CODE:
           stopGame();
@@ -128,7 +128,7 @@ public class DumbTelemetry extends Telemetry {
     System.out.println("X: " + x);
     System.out.println("Y: " + y);
     System.out.println("ID: " + id);
-    agents[id].setLocation(new Point(x, y));
+    agents[id].setLocation(new Point(x, y, map));
     agents[id].setDirection(input.getMove());
     int MIPID = Integer.parseInt(ls[3]);
     for(Entity ent: agents){
@@ -166,7 +166,7 @@ public class DumbTelemetry extends Telemetry {
 	    System.out.println("X: " + x);
 	    System.out.println("Y: " + y);
 	    System.out.println("ID: " + id);
-	    agents[id].setLocation(new Point(x, y));
+    agents[id].setLocation(new Point(x, y, map));
 	    PowerUp powerup = PowerUp.fromInt(powerint);
     //TODO nullpointer when powerup tries to calculate location, one for @alex & @matty
 

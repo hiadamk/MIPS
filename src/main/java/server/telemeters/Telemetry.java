@@ -23,7 +23,12 @@ public abstract class Telemetry {
 
   static final int AGENT_COUNT = 5;
   static final int GAME_TIME = 30 * 100; // Number of seconds *100
-  static int gameTimer = 0;
+
+  public static int getGameTimer() {
+    return gameTimer;
+  }
+
+  static int gameTimer = GAME_TIME;
   Map map;
   Entity[] agents;
   HashMap<String, Pellet> pellets;
@@ -158,7 +163,7 @@ public abstract class Telemetry {
       }
     }
 
-    pelletCollision(agents, pellets);
+    pelletCollision(agents, pellets, activePowerUps);
     for (Pellet p : pellets.values()) {
       p.incrementRespawn();
     }
@@ -167,8 +172,8 @@ public abstract class Telemetry {
         activePowerUps.remove(p);
       }
     }
-    gameTimer++;
-    if (gameTimer == GAME_TIME) {
+    gameTimer--;
+    if (gameTimer == 0) {
       System.out.println("GAME HAS ENDED ITS OVER");
       System.out.println("GAME HAS ENDED ITS OVER");
       System.out.println("GAME HAS ENDED ITS OVER");
@@ -218,14 +223,15 @@ public abstract class Telemetry {
    * @param pellets The pellets
    * @author Matthew Jones
    */
-  private static void pelletCollision(Entity[] agents, HashMap<String, Pellet> pellets) {
+  private static void pelletCollision(Entity[] agents, HashMap<String, Pellet> pellets,
+      ArrayList<PowerUp> activePowerUps) {
     for (Entity agent : agents) {
       Point p = agent.getLocation();
       int x = (int) p.getX();
       int y = (int) p.getY();
       Pellet pellet = pellets.get(x + "," + y);
       if (pellet != null) {
-        pellet.interact(agent);
+        pellet.interact(agent, activePowerUps);
       }
     }
   }
