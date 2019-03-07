@@ -28,7 +28,7 @@ public abstract class Telemetry {
     return gameTimer;
   }
 
-  static int gameTimer = 0;
+  static int gameTimer = GAME_TIME;
   Map map;
   Entity[] agents;
   HashMap<String, Pellet> pellets;
@@ -172,8 +172,8 @@ public abstract class Telemetry {
         activePowerUps.remove(p);
       }
     }
-    gameTimer++;
-    if (gameTimer == GAME_TIME) {
+    gameTimer--;
+    if (gameTimer == 0) {
       System.out.println("GAME HAS ENDED ITS OVER");
       System.out.println("GAME HAS ENDED ITS OVER");
       System.out.println("GAME HAS ENDED ITS OVER");
