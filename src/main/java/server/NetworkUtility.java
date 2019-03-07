@@ -243,7 +243,7 @@ public class NetworkUtility {
    * @return The string packet.
    */
   public static String makeScorePacket(Entity[] agents) {
-    String s = "SCORE";
+    String s = SCORE_CODE;
         for (Entity agent: agents){
           s+= "|" + agent.getScore();
         }
