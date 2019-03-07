@@ -97,8 +97,6 @@ public class ServerLobby {
                 names[playerCount] = name;
 
                 if (r.equals(NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX)) {
-                  System.out.println(r);
-
                   InetAddress ip = soc.getInetAddress();
                   System.out.println("Connecting to: " + ip);
                   playerIPs.add(ip);

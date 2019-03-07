@@ -27,7 +27,6 @@ public class ClientGameplayHandler {
 
   private ArrayList<InetAddress> serverIP;
 
-  private int counter = 0;
   private boolean running = true;
 
   // clientIn gets recievedStrings
@@ -42,8 +41,6 @@ public class ClientGameplayHandler {
     this.serverIP.add(serverIP);
 
     initialisePacketManagers();
-
-    // outgoingQueue.add("POS");
 
     this.sender =
         new PacketSender(NetworkUtility.SERVER_DGRAM_PORT, this.outgoingQueue, this.serverIP);
@@ -65,7 +62,6 @@ public class ClientGameplayHandler {
               try {
                 key = keypressQueue.take();
                 // sends inputs as strings, which are converted back by ServerGameplay handler
-                System.out.println("ADDING KEY TO OUTGOING QUEUE: " + key.toString());
                 outgoingQueue.add(key.toString());
                 Thread.sleep(50);
               } catch (InterruptedException e) {
@@ -85,14 +81,12 @@ public class ClientGameplayHandler {
                 if (incomingQueue.isEmpty()) {
                   continue;
                 }
-                counter++;
-                System.out.println("CLIENT RECEIVED -> " + incomingQueue.peek());
-                System.out.println("THIS WAS PACKET NUMBER: " + counter);
                 String data = incomingQueue.poll();
 
                 if (data.startsWith(NetworkUtility.POSITION_CODE)
                     || data.startsWith(NetworkUtility.POWERUP_CODE)
-                    || data.startsWith(NetworkUtility.COLLISIONS_CODE)) {
+                    || data.startsWith(NetworkUtility.COLLISIONS_CODE)
+                    || data.startsWith(NetworkUtility.SCORE_CODE)) {
                   clientIn.add(data);
                   System.out.println("Got instruction from server");
                 } else if (data.startsWith(NetworkUtility.STOP_CODE)) {

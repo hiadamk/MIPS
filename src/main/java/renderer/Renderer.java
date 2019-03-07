@@ -547,7 +547,7 @@ public class Renderer {
    * @return The top right corner coordinate to start rendering game map from
    */
   private Point2D.Double getMapRenderingCorner() {
-    return new Point2D.Double(this.xResolution / (double) 2, this.yResolution / (double) 5);
+    return new Point2D.Double(this.xResolution / (double) 2, this.yResolution / (double) 6);
     // return new Point2D.Double(getIsoCoord(0,map),getIsoCoord(0,0,tileSizeY).getY())
   }
 
