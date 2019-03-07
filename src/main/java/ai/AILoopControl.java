@@ -28,7 +28,7 @@ import utils.enums.Direction;
  */
 public class AILoopControl extends Thread {
 
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     private static final int OPPOSITE_DIRECTION_DIVISOR = 4;
     private static final long SLEEP_TIME = 1;
@@ -174,26 +174,12 @@ public class AILoopControl extends Thread {
     @Override
     public void run() {
         System.out.println("Starting AI loop...");
-        Iterator<Point> iterator = junctions.iterator();
-        while (iterator.hasNext()&&DEBUG) {
-            Point p = iterator.next();
-//            System.out.println("j " + p.toString());
-        }
 
         while (runAILoop && controlAgents.length > 0) {
             for (Entity ent : controlAgents) {
                 Point currentLocation = ent.getLocation().getCopy();
                 Point currentGridLocation = currentLocation.getGridCoord();
                 if (currentLocation.isCentered()) {
-                  if (DEBUG) {
-//                        System.out.println(currentGridLocation.toString());
-//                        System.out.println(junctions.contains(currentGridLocation));
-                        ArrayList<Direction> dirs = getValidDirections(currentLocation, map);
-                        for (Direction d : dirs) {
-//                            System.out.println(d);
-                        }
-//                        System.out.println();
-                    }
                   boolean atLastCoord = atPreviousCoordinate(ent, currentGridLocation);
                     if (ent.getDirection() == null
                         || !Methods.validateDirection(ent.getDirection(), currentLocation, map) || (
@@ -211,7 +197,6 @@ public class AILoopControl extends Thread {
                                             gameAgents[mipsmanID].getLocation());
                             }
                             dir = confirmOrReplaceDirection(ent.getDirection(), currentLocation, dir);
-
                             setDirection(dir, ent);
 
                         } else {
@@ -244,7 +229,7 @@ public class AILoopControl extends Thread {
     }
 
     private void setDirection(Direction direction, Entity ent) {
-        if (ent.getDirection() == null) {
+        if (direction == null) {
             return;
         }
         if(direction!=ent.getDirection()&&!ent.isDirectionSet()){

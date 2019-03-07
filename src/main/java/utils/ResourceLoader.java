@@ -458,7 +458,7 @@ public class ResourceLoader {
   public void loadPowerUpIcons(String theme) {
     ArrayList<BufferedImage> powerUps = new ArrayList<>();
     for (PowerUp powerUp : PowerUp.values()) {
-      powerUps.add(loadImageFile("sprites/" + theme + "/misc/icon/", powerUp.name()));
+      powerUps.add(loadImageFile("sprites/" + theme + "/misc/icon/", powerUp.toString()));
     }
     this.powerUps = powerUps;
   }

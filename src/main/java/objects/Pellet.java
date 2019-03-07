@@ -6,6 +6,7 @@ import utils.Point;
 import utils.Renderable;
 import utils.ResourceLoader;
 import utils.enums.Direction;
+import utils.enums.PowerUp;
 
 /**
  * Class for the pellet items and base class for all items
@@ -20,6 +21,8 @@ public class Pellet implements Renderable {
   protected boolean active; // Weather or not the item is visible and able to be interacted with\
   protected int value = 1;
   private int respawnCount = 0;
+  private PowerUp trap;
+  private boolean isTrap = false;
 
   public Pellet(double x, double y) {
     this.location = new Point(x, y);
@@ -67,7 +70,10 @@ public class Pellet implements Renderable {
     currentImage = r.getPellet();
   }
 
-  public void interact(Entity entity) {
+  public void interact(Entity entity, ArrayList<PowerUp> activePowerUps) {
+    if (isTrap) {
+      trap.trigger(entity, activePowerUps);
+    }
     if (!active || !canUse(entity)) {
       return;
     }
@@ -91,4 +97,15 @@ public class Pellet implements Renderable {
       this.active = true;
     }
   }
+
+  public boolean isTrap() {
+    return isTrap;
+  }
+
+  public void setTrap(PowerUp p) {
+    this.trap = p;
+    this.active = true;
+  }
+
+
 }
