@@ -2,7 +2,6 @@ package server.telemeters;
 
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
-
 import main.Client;
 import objects.Entity;
 import server.NetworkUtility;
@@ -16,7 +15,7 @@ public class DumbTelemetry extends Telemetry {
 
   private BlockingQueue<String> inputs;
   private Queue<Input> clientQueue;
-  //private GameLoop inputProcessor;
+  // private GameLoop inputProcessor;
 
   // dumb telemetry is like telemetry but it relies on information from the server to set it's
   // entites
@@ -43,13 +42,13 @@ public class DumbTelemetry extends Telemetry {
     System.out.println("Started dumb telemetry");
     final long DELAY = (long) Math.pow(10, 7);
     inputProcessor =
-            new GameLoop(DELAY) {
-              @Override
-              public void handle() {
-                processInputs();
-                processPhysics(agents, map, resourceLoader, pellets, activePowerUps);
-              }
-            };
+        new GameLoop(DELAY) {
+          @Override
+          public void handle() {
+            processInputs();
+            processPhysics(agents, map, resourceLoader, pellets, activePowerUps);
+          }
+        };
     inputProcessor.start();
   }
 
@@ -139,12 +138,11 @@ public class DumbTelemetry extends Telemetry {
         ent.setMipsman(false);
       }
     }
-
   }
 
   // takes a packet string as defined in
   // NetworkUtility.makeScorePacket(Entity[])
-  //without the starting SCORE| string
+  // without the starting SCORE| string
   private void setScore(String scores) {
     try {
       String[] ls = scores.split("\\|");
@@ -171,11 +169,10 @@ public class DumbTelemetry extends Telemetry {
 
     agents[id].setLocation(new Point(x, y, map));
     PowerUp powerup = PowerUp.fromInt(powerint);
-    //TODO nullpointer when powerup tries to calculate location, one for @alex & @matty
+    // TODO nullpointer when powerup tries to calculate location, one for @alex & @matty
 
     //   powerup.use(agents[id], activePowerUps);
   }
-
 
   public void startAI() {
     // haha trick this does nothing.

@@ -36,7 +36,7 @@ public class HostTelemetry extends Telemetry {
     this.playerCount = playerCount;
     this.singlePlayer = false;
     initialise();
-//    startGame();
+    //    startGame();
   }
 
   /**
@@ -85,12 +85,12 @@ public class HostTelemetry extends Telemetry {
   }
 
   public void startGame() {
-    updateClients(agents); //set starting positions
+    updateClients(agents); // set starting positions
     startAI();
 
     final long DELAY = (long) Math.pow(10, 7);
-    final long positionDELAY = (long) Math.pow(10, 9)/2;
-    final long scoreDELAY = (long) Math.pow(10,9);
+    final long positionDELAY = (long) Math.pow(10, 9) / 2;
+    final long scoreDELAY = (long) Math.pow(10, 9);
 
     inputProcessor =
         new GameLoop(DELAY) {
@@ -121,7 +121,6 @@ public class HostTelemetry extends Telemetry {
     scoreUpdater.start();
   }
 
-
   public void startAI() {
     if (!aiRunning && ai != null) {
       ai.start();
@@ -138,11 +137,10 @@ public class HostTelemetry extends Telemetry {
       Input input = inputs.poll();
       int id = input.getClientID();
       Direction d = input.getMove();
-      if (d.equals(Direction.USE)){
-    	  usePowerUp(id);
-      }
-      else {
-    	agents[id].setDirectionSetFlag(false);
+      if (d.equals(Direction.USE)) {
+        usePowerUp(id);
+      } else {
+        agents[id].setDirectionSetFlag(false);
         if (Methods.validateDirection(d, agents[id].getLocation(), map)) {
           agents[id].setDirection(d);
           if (!singlePlayer) {
@@ -155,19 +153,18 @@ public class HostTelemetry extends Telemetry {
     }
   }
 
- 
   private void usePowerUp(int id) {
-	//TODO : implement
-	System.out.println("POWERUP USED PLAYER: "+ id);
+    // TODO : implement
+    System.out.println("POWERUP USED PLAYER: " + id);
     PowerUp item;
     if ((item = agents[id].getFirstItem()) != null) {
       item.use(agents[id], activePowerUps);
     }
-	//TODO if player has powerup, do this:
-	//   informPowerup(id, powerup, location);
-}
+    // TODO if player has powerup, do this:
+    //   informPowerup(id, powerup, location);
+  }
 
-private void informClients(Input input, Point location) {
+  private void informClients(Input input, Point location) {
     outputs.add(NetworkUtility.makeEntitiyMovementPacket(input, location, getMipID()));
   }
 
@@ -190,12 +187,11 @@ private void informClients(Input input, Point location) {
 
   private void informPowerup(int id, PowerUp powerup, Point location) {
     outputs.add(NetworkUtility.makePowerUpPacket(id, powerup, location));
-	  }
+  }
 
   private void updateScores(Entity[] agents) {
     outputs.add(NetworkUtility.makeScorePacket(agents));
   }
-
 
   private void updateClients(Entity[] agents) {
     outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents) + getMipID());
