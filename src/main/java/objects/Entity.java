@@ -370,6 +370,10 @@ public class Entity implements Renderable {
     }
   }
 
+  public void setName(String s) {
+    this.name = s;
+  }
+
   public String getName() {
     return name;
   }

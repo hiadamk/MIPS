@@ -82,6 +82,9 @@ public class Client extends Application {
 
   public void setPlayerNames(String[] names) {
     this.playerNames = names;
+    for (int i = 0; i < agents.length; i++) {
+      agents[i].setName(names[i]);
+    }
   }
 
   public void setScreenRes(ScreenResolution s) {
