@@ -1,7 +1,6 @@
 package utils.enums;
 
 import java.util.ArrayList;
-import javafx.scene.image.Image;
 import objects.Entity;
 import utils.Point;
 
@@ -15,7 +14,6 @@ public enum PowerUp {
 
   private final String NAME;
   private final int EFFECTTIME;
-  private Image image;
   private Entity effected;
   private int counter = 500;
   private Point location;
@@ -34,13 +32,6 @@ public enum PowerUp {
 
   public Point getLocation() {
     return location;
-  }
-
-  /**
-   * @return the Image to render them
-   */
-  public Image getImage() {
-    return image;
   }
 
   /**

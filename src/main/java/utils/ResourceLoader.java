@@ -220,15 +220,13 @@ public class ResourceLoader {
     int tileHeight = this.mapTiles.get(MapElement.FLOOR.toInt()).getHeight();
     int tileWidth = this.mapTiles.get(MapElement.FLOOR.toInt()).getWidth();
 
-    // find the dimensions of the rendered map based on default sprite scaling
-    int currentX = tileHeight + (int) (0.5 * tileHeight * map.getMaxX());
-    int currentY = tileHeight + (int) (0.5 * tileWidth * map.getMaxY());
-
     // choose the smallest ratio to make sure map fits on screen
-    double ratio = Math.min(targetX / (double) currentX, (double) targetY / currentY);
+    double ratioX = (double) targetX / ((map.getMaxX() + map.getMaxY()) * (tileWidth / 2));
+    double ratioY = (double) targetY / ((map.getMaxX() + map.getMaxY()) * (tileHeight / 2));
+    double ratio = Math.min(ratioX, ratioY);
+
     double hudRatio = x / (double) 1366;
-//    System.out.println(ratio);
-//    System.out.println("rl:" + x + " " + y + " " + mode.toString());
+
     boolean smoothEdges = false;
 
     switch (mode) {

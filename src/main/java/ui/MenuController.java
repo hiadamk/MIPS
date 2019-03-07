@@ -114,6 +114,7 @@ public class MenuController {
 
   private boolean isHome = true;
   private boolean isInstructions = false;
+  private boolean inLobby;
 
   /**
    * @param audio Global audio controller which is passed around the system
@@ -288,9 +289,9 @@ public class MenuController {
     });
 
     generateMapBtn.setOnAction(event -> {
-      int[][] newMap = MapGenerator.generateNewMap();
+      int[][] newMap = MapGenerator.newRandomMap(3,3);
       while (!MapGenerator.validateMap(newMap)) {
-        newMap = MapGenerator.generateNewMap();
+        newMap = MapGenerator.generateNewMap(3,3);
       }
       Map generatedMap = new Map(newMap);
       validMaps.add(generatedMap);
@@ -371,6 +372,7 @@ public class MenuController {
           lobbyStatusLbl.setText("Waiting for game to start");
           itemsOnScreen.add(searchingForMultiplayers);
           showItemsOnScreen();
+          inLobby = true;
           client.joinMultiplayerLobby();
 
         });
@@ -385,6 +387,7 @@ public class MenuController {
           itemsOnScreen.add(startMGameBtn);
           showItemsOnScreen();
           client.createMultiplayerLobby();
+          inLobby = true;
         });
 
     multiplayerOptions = new VBox(10, createGameBtn, joinGameBtn);
@@ -791,6 +794,11 @@ public class MenuController {
             showItemsOnScreen();
             isInstructions = false;
 
+          }
+
+          if(inLobby){
+            client.leaveLobby();
+            inLobby = false;
           }
           if (!backTree.isEmpty()) {
             hideItemsOnScreen();

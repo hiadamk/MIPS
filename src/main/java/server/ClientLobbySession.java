@@ -22,6 +22,11 @@ public class ClientLobbySession {
   private String clientName;
   private String[] playerNames = new String[5];
   private volatile boolean gameStarted = false;
+
+  private Socket soc;
+  private PrintWriter out;
+  private BufferedReader in;
+
   Thread joiner =
           new Thread() {
             @Override
@@ -54,9 +59,9 @@ public class ClientLobbySession {
                 System.out.printf("Server Address: " + packet.getAddress());
                 serverIP = packet.getAddress();
 
-                Socket soc = new Socket(serverIP, NetworkUtility.SERVER_DGRAM_PORT);
-                PrintWriter out = new PrintWriter(soc.getOutputStream());
-                BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+                soc = new Socket(serverIP, NetworkUtility.SERVER_DGRAM_PORT);
+                out = new PrintWriter(soc.getOutputStream());
+                in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
 
                 String str = NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX;
                 out.println(str);
@@ -76,12 +81,12 @@ public class ClientLobbySession {
                 if (r.equals("SUCCESS")) {
                   System.out.println("Server connection success");
                 }
-                out.close();
-                in.close();
-                soc.close();
+//                out.close();
+//                in.close();
+//                soc.close();
 
-                soc = new ServerSocket(NetworkUtility.CLIENT_DGRAM_PORT).accept();
-                in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+                Socket ss = new ServerSocket(NetworkUtility.CLIENT_DGRAM_PORT).accept();
+                in = new BufferedReader(new InputStreamReader(ss.getInputStream()));
 
                 // get other player names
                 r = in.readLine();
@@ -95,11 +100,12 @@ public class ClientLobbySession {
                   client.setPlayerNames(playerNames);
                   if(!client.isHost){
                     Platform.runLater(()-> client.startMultiplayerGame());
+                    shutdownTCP();
                   }
                 }
 
                 in.close();
-                soc.close();
+                ss.close();
               } catch (IOException e) {
 
               }
@@ -116,6 +122,21 @@ public class ClientLobbySession {
     this.client = client;
     this.clientName = clientName;
     joiner.start();
+  }
+
+  public void leaveLobby(){
+      out.write(NetworkUtility.DISCONNECT);
+      shutdownTCP();
+  }
+
+  private void shutdownTCP(){
+    try{
+      out.close();
+      in.close();
+      soc.close();
+    }catch (IOException e){
+      e.printStackTrace();
+    }
   }
 
   public boolean isGameStarted() {
