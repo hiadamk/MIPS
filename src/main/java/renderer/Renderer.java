@@ -251,7 +251,8 @@ public class Renderer {
    * @param now Current game time in nanoseconds
    * @param pellets Consumable objects
    */
-  public void render(Map map, Entity[] entityArr, long now, HashMap<String, Pellet> pellets) {
+  public void render(Map map, Entity[] entityArr, long now, HashMap<String, Pellet> pellets,
+      int gameTime) {
     if (clientEntity == null) {
       this.clientEntity = getClientEntity(new ArrayList<Entity>(Arrays.asList(entityArr)));
     }
@@ -260,7 +261,7 @@ public class Renderer {
     gc.clearRect(0, 0, xResolution, yResolution);
     renderBackground(map);
     renderGameOnly(map, entityArr, now, pellets);
-    hudRender.renderHUD(entityArr, 0);
+    hudRender.renderHUD(entityArr, gameTime);
     hudRender
         .renderInventory(getClientEntity(new ArrayList<>(Arrays.asList(entityArr))), timeElapsed);
     //showFPS(timeElapsed);
