@@ -65,6 +65,8 @@ public class HostTelemetry extends Telemetry {
       agents[(new Random()).nextInt(AGENT_COUNT)].setMipsman(true);
     }
 
+    initialisePellets();
+
     int aiCount = AGENT_COUNT - playerCount;
     if (aiCount > 0) {
       int[] aiControlled = new int[aiCount];
@@ -74,10 +76,8 @@ public class HostTelemetry extends Telemetry {
         highestId--;
       }
       aiRunning = false;
-      ai = new AILoopControl(agents, aiControlled, map, inputs);
+      ai = new AILoopControl(agents, aiControlled, map, inputs, pellets);
     }
-
-    initialisePellets();
   }
 
   public void addInput(Input in) {
