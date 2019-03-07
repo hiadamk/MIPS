@@ -1,5 +1,6 @@
 package objects;
 
+import java.util.ArrayList;
 import java.util.Random;
 import utils.Point;
 import utils.ResourceLoader;
@@ -48,7 +49,7 @@ public class PowerUpBox extends Pellet {
   }
 
   @Override
-  public void interact(Entity entity) {
+  public void interact(Entity entity, ArrayList<PowerUp> activePowerUps) {
     if (!active) {
       return;
     }
