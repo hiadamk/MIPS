@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.net.*;
 import java.util.Enumeration;
 import java.util.Queue;
+
+import javafx.application.Platform;
 import main.Client;
 import utils.Input;
 
@@ -91,6 +93,9 @@ public class ClientLobbySession {
                   gameStarted = true;
                   handler = new ClientGameplayHandler(serverIP, keypressQueue, clientIn);
                   client.setPlayerNames(playerNames);
+                  if(!client.isHost){
+                    Platform.runLater(()-> client.startMultiplayerGame());
+                  }
                 }
 
                 in.close();
