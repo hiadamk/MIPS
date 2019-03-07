@@ -45,6 +45,7 @@ public class ResourceLoader {
   private BufferedImage clientMarker;
   private BufferedImage inventory;
   private ArrayList<BufferedImage> powerUps;
+  private int inventoryColourID;
 
   /**
    * @param baseDir path to the resources folder
@@ -442,13 +443,16 @@ public class ResourceLoader {
 
   public void loadInventory(String theme) {
     this.inventory = loadImageFile("sprites/" + theme + "/HUD/", "inventory");
+    this.inventoryColourID = 0;
   }
 
   public Image getInventory(int colourID) {
-    this.mipColourID = colourID;
-    return (SwingFXUtils
-        .toFXImage(recolourSprite(this.inventory, this.mipPalette, this.mipColourID, colourID),
+    Image recolouredInventory = (SwingFXUtils
+        .toFXImage(
+            recolourSprite(this.inventory, this.mipPalette, this.inventoryColourID, colourID),
             null));
+    this.inventoryColourID = colourID;
+    return recolouredInventory;
   }
 
   public void loadPowerUpIcons(String theme) {
