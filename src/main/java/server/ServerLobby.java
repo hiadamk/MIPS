@@ -148,7 +148,6 @@ public class ServerLobby {
   }
 
   public void shutDown(){
-    pinger.interrupt();
     acceptConnections.interrupt();
     if (server != null && !server.isClosed()) {
       try {
@@ -159,6 +158,7 @@ public class ServerLobby {
       }
     }
     shutdownTCP();
+    pinger.interrupt();
   }
 
   /**

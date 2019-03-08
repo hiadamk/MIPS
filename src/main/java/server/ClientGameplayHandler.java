@@ -88,7 +88,6 @@ public class ClientGameplayHandler {
                     || data.startsWith(NetworkUtility.COLLISIONS_CODE)
                     || data.startsWith(NetworkUtility.SCORE_CODE)) {
                   clientIn.add(data);
-                  System.out.println("Got instruction from server");
                 } else if (data.startsWith(NetworkUtility.STOP_CODE)) {
                   clientIn.add(data);
                   close();

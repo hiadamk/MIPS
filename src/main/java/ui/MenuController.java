@@ -122,6 +122,7 @@ public class MenuController {
   private boolean isHome = true;
   private boolean isInstructions = false;
   private boolean inLobby;
+  private Thread playerNumberDiscobery;
 
   /**
    * @param audio Global audio controller which is passed around the system
@@ -136,67 +137,66 @@ public class MenuController {
     this.resourceLoader = resourceLoader;
   }
 
-  Thread lobbyPlayers = new Thread(()->{
-    while(!Thread.currentThread().isInterrupted()){
-      try{
-        Thread.sleep(1000);
-        System.out.println("Listening for number of players...");
-        MulticastSocket socket = new MulticastSocket(NetworkUtility.CLIENT_M_PORT);
-        InetAddress group = NetworkUtility.GROUP;
-        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-        while (interfaces.hasMoreElements()) {
-          NetworkInterface iface = interfaces.nextElement();
-          if (iface.isLoopback() || !iface.isUp()) {
-            continue;
+  Runnable lobbyPlayers = (() -> {
+      while (!Thread.currentThread().isInterrupted()) {
+          try {
+              Thread.sleep(1000);
+              System.out.println("Listening for number of players...");
+              MulticastSocket socket = new MulticastSocket(NetworkUtility.CLIENT_M_PORT);
+              InetAddress group = NetworkUtility.GROUP;
+              Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+              while (interfaces.hasMoreElements()) {
+                  NetworkInterface iface = interfaces.nextElement();
+                  if (iface.isLoopback() || !iface.isUp()) {
+                      continue;
+                  }
+
+                  Enumeration<InetAddress> addresses = iface.getInetAddresses();
+                  while (addresses.hasMoreElements()) {
+                      InetAddress addr = addresses.nextElement();
+                      socket.setInterface(addr);
+                      socket.joinGroup(group);
+                  }
+              }
+
+              byte[] buf = new byte[256];
+              DatagramPacket packet = new DatagramPacket(buf, buf.length);
+              socket.receive(packet);
+
+              byte[] data = new byte[packet.getLength()];
+              System.arraycopy(buf, 0, data, 0, packet.getLength());
+              String lobbyStatus = new String(data);
+              System.out.println(new String(data));
+              String[] statusPackets = lobbyStatus.split("\\|");
+              System.out.println("Array: " + Arrays.toString(statusPackets));
+              int players = Integer.parseInt(statusPackets[0]);
+              int hostStatus = Integer.parseInt(statusPackets[1]);
+              if (hostStatus == 0) {
+                  System.out.println("Server left lobby");
+                  client.leaveLobby();
+                  Platform.runLater(() -> {
+                      lobbyStatusLbl.setText("Host left the game");
+                      loadingDots.setVisible(false);
+                      playersInLobby.setVisible(false);
+                  });
+                  socket.close();
+                  Thread.currentThread().interrupt();
+              }
+
+
+              if (numberOfPlayers != players) {
+                  System.out.println("Updating player count");
+                  Platform.runLater(() -> {
+                      playersInLobby.setText("Players in lobby: " + players);
+                  });
+              }
+              socket.close();
+          } catch (IOException e) {
+              System.out.println("Menu can't listen to players yet");
+          } catch (InterruptedException e1) {
+              System.out.println("Lobby players thread was interrupted. ");
           }
-
-          Enumeration<InetAddress> addresses = iface.getInetAddresses();
-          while (addresses.hasMoreElements()) {
-            InetAddress addr = addresses.nextElement();
-            socket.setInterface(addr);
-            socket.joinGroup(group);
-          }
-        }
-
-        byte[] buf = new byte[256];
-        DatagramPacket packet = new DatagramPacket(buf, buf.length);
-        socket.receive(packet);
-
-        byte[]data = new byte[packet.getLength()];
-//        serverIP = packet.getAddress();
-        System.arraycopy(buf, 0, data, 0, packet.getLength());
-        String lobbyStatus = new String(data);
-        System.out.println(new String(data));
-        String[] statusPackets = lobbyStatus.split("\\|");
-        System.out.println("Array: " + Arrays.toString(statusPackets));
-        int players = Integer.parseInt(statusPackets[0]);
-        int hostStatus = Integer.parseInt(statusPackets[1]);
-        if(hostStatus == 0){
-          System.out.println("Server left lobby");
-          client.leaveLobby();
-          Platform.runLater(()->{
-            lobbyStatusLbl.setText("Host left the game");
-            loadingDots.setVisible(false);
-            playersInLobby.setVisible(false);
-          });
-          socket.close();
-          Thread.currentThread().interrupt();
-        }
-
-
-        if(numberOfPlayers != players){
-          System.out.println("Updating player count");
-          Platform.runLater(()->{
-            playersInLobby.setText("Players in lobby: " + players);
-          });
-        }
-        socket.close();
-      }catch (IOException e){
-        System.out.println("Menu can't listen to players yet");
-      }catch (InterruptedException e1){
-        System.out.println("Lobby players thread was interrupted. ");
       }
-    }
   });
 
   /**
@@ -444,7 +444,8 @@ public class MenuController {
           showItemsOnScreen();
           inLobby = true;
           client.joinMultiplayerLobby();
-          lobbyPlayers.start();
+          playerNumberDiscobery = new Thread(lobbyPlayers);
+          playerNumberDiscobery.start();
 
         });
 
@@ -459,7 +460,8 @@ public class MenuController {
           showItemsOnScreen();
           client.createMultiplayerLobby();
           inLobby = true;
-          lobbyPlayers.start();
+          playerNumberDiscobery = new Thread(lobbyPlayers);
+          playerNumberDiscobery.start();
         });
 
     multiplayerOptions = new VBox(10, createGameBtn, joinGameBtn);
@@ -870,7 +872,10 @@ public class MenuController {
 
           if(inLobby){
             client.leaveLobby();
+//            lobbyPlayers.interrupt();
+            playerNumberDiscobery.interrupt();
             inLobby = false;
+
           }
           if (!backTree.isEmpty()) {
             hideItemsOnScreen();
