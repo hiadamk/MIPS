@@ -109,6 +109,7 @@ public class MenuController {
   private boolean isInstructions = false;
   private boolean inLobby;
   private Thread playerNumberDiscovery;
+  private MulticastSocket socket;
 
   /**
    * @param audio Global audio controller which is passed around the system
@@ -128,7 +129,8 @@ public class MenuController {
       try {
         Thread.sleep(1000);
         System.out.println("Listening for number of players...");
-        MulticastSocket socket = new MulticastSocket(NetworkUtility.CLIENT_M_PORT);
+        socket = new MulticastSocket(NetworkUtility.CLIENT_M_PORT);
+        socket.setSoTimeout(3500);
         InetAddress group = NetworkUtility.GROUP;
         Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
         while (interfaces.hasMoreElements()) {
@@ -192,6 +194,10 @@ public class MenuController {
 
       }
     }
+    if (!socket.isClosed() && socket != null) {
+      socket.close();
+    }
+
     System.out.println("Lobby players thread fully ended");
   });
 
