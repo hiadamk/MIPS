@@ -135,7 +135,7 @@ public abstract class Telemetry {
       ArrayList<PowerUp> activePowerUps) {
 
     for (int i = 0; i < AGENT_COUNT; i++) {
-      if (agents[i].getDirection() != null) {
+      if (agents[i].getDirection() != Direction.STOP) {
         Point prevLocation = agents[i].getLocation();
         agents[i].move();
         Point faceLocation = agents[i].getFaceLocation();
@@ -143,7 +143,7 @@ public abstract class Telemetry {
         if (m.isWall(faceLocation)) {
           // System.out.println("~Player" + i + " drove into a wall");
           agents[i].setLocation(prevLocation.centralise());
-          agents[i].setDirection(null);
+          agents[i].setDirection(Direction.STOP);
         }
       }
     }
