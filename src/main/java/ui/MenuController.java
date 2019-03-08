@@ -10,10 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-import java.net.NetworkInterface;
+import java.net.*;
 import java.util.*;
 
 import javafx.animation.FadeTransition;
@@ -142,6 +139,7 @@ public class MenuController {
         Thread.sleep(1000);
         System.out.println("Listening for number of players...");
         MulticastSocket socket = new MulticastSocket(NetworkUtility.CLIENT_M_PORT);
+        socket.setSoTimeout(5000);
         InetAddress group = NetworkUtility.GROUP;
         Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
         while (interfaces.hasMoreElements()) {
@@ -163,7 +161,6 @@ public class MenuController {
         socket.receive(packet);
 
         byte[]data = new byte[packet.getLength()];
-//        serverIP = packet.getAddress();
         System.arraycopy(buf, 0, data, 0, packet.getLength());
         String lobbyStatus = new String(data);
         System.out.println(new String(data));
@@ -191,10 +188,19 @@ public class MenuController {
           });
         }
         socket.close();
-      }catch (IOException e){
-        System.out.println("Menu can't listen to players yet");
+      }catch (SocketTimeoutException e){
+        System.out.println("Server has disconnected");
+        client.leaveLobby();
+        Platform.runLater(()->{
+          lobbyStatusLbl.setText("Host left the game");
+          loadingDots.setVisible(false);
+          playersInLobby.setVisible(false);
+        });
+        Thread.currentThread().interrupt();
       }catch (InterruptedException e1){
         System.out.println("Lobby players thread was interrupted. ");
+      }catch (IOException e2){
+
       }
     }
   });

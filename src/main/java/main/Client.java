@@ -1,12 +1,6 @@
 package main;
 
 import audio.AudioController;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -32,6 +26,13 @@ import utils.ResourceLoader;
 import utils.enums.Direction;
 import utils.enums.RenderingMode;
 import utils.enums.ScreenResolution;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Client extends Application {
 
@@ -194,14 +195,14 @@ public class Client extends Application {
       server.shutDown();
       setId(0);
       this.telemetry = null;
-      this.clientLobbySession = null;
+//      this.clientLobbySession = null;
       this.keypressQueue = null;
       isHost = false;
     }else{
       clientLobbySession.leaveLobby();
       setId(0);
       this.telemetry = null;
-      this.clientLobbySession = null;
+//      this.clientLobbySession = null;
       this.keypressQueue = null;
       isHost = false;
     }
