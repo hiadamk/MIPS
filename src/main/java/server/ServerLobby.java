@@ -1,18 +1,17 @@
 package server;
 
+import utils.Input;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import utils.Input;
 
 // TODO Use multi-casting to constantly ping the number of players in the game in a thread.
 // TODO Use multi-casting to constantly ping the current players in the game in a thread
@@ -244,12 +243,6 @@ public class ServerLobby {
 
   }
 
-//  private void shutdownLobby(){
-//    acceptConnections.interrupt();
-//    shutDown();
-//    pinger.interrupt();
-//  }
-
   private class lobbyLeaverListener extends Thread{
 
     private Socket client;
@@ -293,6 +286,19 @@ public class ServerLobby {
           }
         } catch (IOException e) {
 
+        }catch(NullPointerException e1){
+          ServerLobby.this.usedIDs[id] = false;
+          ServerLobby.this.playerIPs.remove(ip);
+          ServerLobby.this.names[id] = null;
+          ServerLobby.this.playerCount.set(ServerLobby.this.playerCount.get() -1);
+          try {
+            in.close();
+            out.close();
+            client.close();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+          System.out.println("Removed Player: " + id + " from game");
         }
       }
     }
