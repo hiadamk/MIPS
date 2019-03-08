@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import utils.Input;
 
@@ -30,7 +31,7 @@ public class ServerLobby {
                 InetAddress group = NetworkUtility.GROUP;
 
                 byte[] buf;
-                String message = playerCount + "|" + (hostPresent ? 1 : 0);
+                String message = playerCount.get() + "|" + (hostPresent ? 1 : 0);
 
                 buf = message.getBytes();
                 DatagramPacket sending =
@@ -62,7 +63,7 @@ public class ServerLobby {
               }
             }
           };
-  private int playerCount;
+  private AtomicInteger playerCount;
   private ArrayList<InetAddress> playerIPs;
   private boolean gameStarted;
   private ServerGameplayHandler s;
@@ -89,7 +90,7 @@ public class ServerLobby {
               try {
                 server = new ServerSocket(NetworkUtility.SERVER_DGRAM_PORT);
                 while (!isInterrupted()) {
-                  if (playerCount < 5) {
+                  if (playerCount.get() < 5) {
                     Socket soc = server.accept();
                     BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
                     PrintWriter out = new PrintWriter(soc.getOutputStream());
@@ -100,7 +101,7 @@ public class ServerLobby {
 
                     String r = in.readLine();
                     String name = in.readLine();
-                    names[playerCount] = name;
+                    names[playerCount.get()] = name;
 
                     if (r.equals(NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX)) {
                       InetAddress ip = soc.getInetAddress();
@@ -117,7 +118,7 @@ public class ServerLobby {
                       out.flush();
                       System.out.println(
                               "Sent client " + playerID + " a successful connection message...");
-                      playerCount++;
+                      playerCount.set(playerCount.get() + 1);
                       lobbyLeaverListener l = new lobbyLeaverListener(soc, in, out, ip,playerID);
                       lobbyLeavers.add(l);
                       l.start();
@@ -138,7 +139,7 @@ public class ServerLobby {
 
   public ServerLobby() {
     pinger.start();
-    this.playerCount = 0;
+    this.playerCount.set(0);
     this.playerIPs = new ArrayList<>();
     acceptConnections.start();
     this.MIPID = (new Random()).nextInt(5);
@@ -188,7 +189,7 @@ public class ServerLobby {
       }
     }
     try {
-      this.s = new ServerGameplayHandler(this.playerIPs, playerCount, inputQueue, outputQueue);
+      this.s = new ServerGameplayHandler(this.playerIPs, playerCount.get(), inputQueue, outputQueue);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -215,7 +216,7 @@ public class ServerLobby {
   }
 
   public int getPlayerCount() {
-    return this.playerCount;
+    return this.playerCount.get();
   }
 
   private void shutdownTCP(){
@@ -271,7 +272,7 @@ public class ServerLobby {
             ServerLobby.this.usedIDs[id] = false;
             ServerLobby.this.playerIPs.remove(ip);
             ServerLobby.this.names[id] = null;
-            ServerLobby.this.playerCount--;
+            ServerLobby.this.playerCount.set(ServerLobby.this.playerCount.get() -1);
             in.close();
             out.close();
             client.close();
@@ -281,7 +282,7 @@ public class ServerLobby {
             ServerLobby.this.usedIDs[id] = false;
             ServerLobby.this.playerIPs.remove(ip);
             ServerLobby.this.names[id] = null;
-            ServerLobby.this.playerCount--;
+            ServerLobby.this.playerCount.set(ServerLobby.this.playerCount.get() -1);
             in.close();
             out.close();
             client.close();

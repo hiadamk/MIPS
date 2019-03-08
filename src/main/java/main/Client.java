@@ -189,12 +189,23 @@ public class Client extends Application {
   }
 
   public void leaveLobby(){
-    clientLobbySession.leaveLobby();
-    setId(0);
-    this.telemetry = null;
-    this.clientLobbySession = null;
-    this.keypressQueue = null;
-    isHost = false;
+    if(isHost){
+      clientLobbySession.leaveLobby();
+      server.shutDown();
+      setId(0);
+      this.telemetry = null;
+      this.clientLobbySession = null;
+      this.keypressQueue = null;
+      isHost = false;
+    }else{
+      clientLobbySession.leaveLobby();
+      setId(0);
+      this.telemetry = null;
+      this.clientLobbySession = null;
+      this.keypressQueue = null;
+      isHost = false;
+    }
+
   }
 
   public void startMultiplayerGame() {

@@ -9,10 +9,13 @@ import com.jfoenix.controls.JFXToggleButton;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.net.NetworkInterface;
+import java.util.*;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -40,6 +43,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.Client;
+import server.NetworkUtility;
 import utils.KeyRemapping;
 import utils.Map;
 import utils.MapGenerator;
@@ -72,6 +76,8 @@ public class MenuController {
 
   private Label lobbyStatusLbl;
   private Label loadingDots;
+  private Label playersInLobby;
+  private int numberOfPlayers;
 
   private TextField nameEntry;
 
@@ -128,6 +134,42 @@ public class MenuController {
     this.client = client;
     this.resourceLoader = resourceLoader;
   }
+
+  Thread lobbyPlayers = new Thread(()->{
+    while(!Thread.currentThread().isInterrupted()){
+      try{
+        System.out.println("Listening for number of players...");
+        MulticastSocket socket = new MulticastSocket(NetworkUtility.CLIENT_M_PORT);
+        InetAddress group = NetworkUtility.GROUP;
+        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+        while (interfaces.hasMoreElements()) {
+          NetworkInterface iface = interfaces.nextElement();
+          if (iface.isLoopback() || !iface.isUp()) {
+            continue;
+          }
+
+          Enumeration<InetAddress> addresses = iface.getInetAddresses();
+          while (addresses.hasMoreElements()) {
+            InetAddress addr = addresses.nextElement();
+            socket.setInterface(addr);
+            socket.joinGroup(group);
+          }
+        }
+
+        byte[] buf = new byte[256];
+        DatagramPacket packet = new DatagramPacket(buf, buf.length);
+        socket.receive(packet);
+
+        byte[]data = new byte[packet.getLength()];
+//        serverIP = packet.getAddress();
+        System.arraycopy(buf, 0, data, 0, packet.getLength());
+        System.out.println(new String(data));
+        socket.close();
+      }catch (IOException e){
+        System.out.println("Menu can't listen to players yet");
+      }
+    }
+  });
 
   /**
    * Hides the components on the screen
@@ -374,6 +416,7 @@ public class MenuController {
           showItemsOnScreen();
           inLobby = true;
           client.joinMultiplayerLobby();
+          lobbyPlayers.start();
 
         });
 
@@ -403,7 +446,7 @@ public class MenuController {
         .generate(true, searchingForMultiplayers, "Searching for players", UIColours.WHITE, 20);
     loadingDots = LabelGenerator
         .generate(true, searchingForMultiplayers, " .", UIColours.WHITE, 20);
-    Label playersInLobby = LabelGenerator
+    playersInLobby = LabelGenerator
         .generate(true, searchingForMultiplayers, "Players in Lobby: 0", UIColours.WHITE, 20);
     searchingForMultiplayers.setAlignment(Pos.CENTER);
     StackPane.setAlignment(searchingForMultiplayers, Pos.CENTER);
