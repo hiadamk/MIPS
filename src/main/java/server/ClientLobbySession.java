@@ -146,7 +146,6 @@ public class ClientLobbySession {
 
     this.clientIn = clientIn;
     this.keypressQueue = keypressQueue;
-//    this.serverIP = NetworkUtility.getServerIP();
     this.client = client;
     this.clientName = clientName;
     joiner.start();

@@ -30,14 +30,15 @@ public class ServerLobby {
                 MulticastSocket socket = new MulticastSocket();
                 InetAddress group = NetworkUtility.GROUP;
 
-                byte[] buf;
-                String message = playerCount.get() + "|" + (hostPresent ? 1 : 0);
 
-                buf = message.getBytes();
-                DatagramPacket sending =
-                        new DatagramPacket(buf, 0, buf.length, group, NetworkUtility.CLIENT_M_PORT);
 
                 while (!isInterrupted()) {
+                  byte[] buf;
+                  String message = playerCount.get() + "|" + (hostPresent ? 1 : 0);
+
+                  buf = message.getBytes();
+                  DatagramPacket sending =
+                          new DatagramPacket(buf, 0, buf.length, group, NetworkUtility.CLIENT_M_PORT);
                   Enumeration<NetworkInterface> faces = NetworkInterface.getNetworkInterfaces();
                   a:
                   while (faces.hasMoreElements()) {
@@ -48,6 +49,7 @@ public class ServerLobby {
 
                     Enumeration<InetAddress> addresses = iface.getInetAddresses();
                     while (addresses.hasMoreElements()) {
+
                       InetAddress addr = addresses.nextElement();
                       socket.setInterface(addr);
                       socket.send(sending);
@@ -139,7 +141,7 @@ public class ServerLobby {
 
   public ServerLobby() {
     pinger.start();
-    this.playerCount.set(0);
+    this.playerCount = new AtomicInteger(0);
     this.playerIPs = new ArrayList<>();
     acceptConnections.start();
     this.MIPID = (new Random()).nextInt(5);

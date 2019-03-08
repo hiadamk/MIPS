@@ -19,6 +19,7 @@ import java.util.*;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -138,6 +139,7 @@ public class MenuController {
   Thread lobbyPlayers = new Thread(()->{
     while(!Thread.currentThread().isInterrupted()){
       try{
+        Thread.sleep(1000);
         System.out.println("Listening for number of players...");
         MulticastSocket socket = new MulticastSocket(NetworkUtility.CLIENT_M_PORT);
         InetAddress group = NetworkUtility.GROUP;
@@ -163,10 +165,36 @@ public class MenuController {
         byte[]data = new byte[packet.getLength()];
 //        serverIP = packet.getAddress();
         System.arraycopy(buf, 0, data, 0, packet.getLength());
+        String lobbyStatus = new String(data);
         System.out.println(new String(data));
+        String[] statusPackets = lobbyStatus.split("\\|");
+        System.out.println("Array: " + Arrays.toString(statusPackets));
+        int players = Integer.parseInt(statusPackets[0]);
+        int hostStatus = Integer.parseInt(statusPackets[1]);
+        if(hostStatus == 0){
+          System.out.println("Server left lobby");
+          client.leaveLobby();
+          Platform.runLater(()->{
+            lobbyStatusLbl.setText("Host left the game");
+            loadingDots.setVisible(false);
+            playersInLobby.setVisible(false);
+          });
+          socket.close();
+          Thread.currentThread().interrupt();
+        }
+
+
+        if(numberOfPlayers != players){
+          System.out.println("Updating player count");
+          Platform.runLater(()->{
+            playersInLobby.setText("Players in lobby: " + players);
+          });
+        }
         socket.close();
       }catch (IOException e){
         System.out.println("Menu can't listen to players yet");
+      }catch (InterruptedException e1){
+        System.out.println("Lobby players thread was interrupted. ");
       }
     }
   });
@@ -431,6 +459,7 @@ public class MenuController {
           showItemsOnScreen();
           client.createMultiplayerLobby();
           inLobby = true;
+          lobbyPlayers.start();
         });
 
     multiplayerOptions = new VBox(10, createGameBtn, joinGameBtn);
