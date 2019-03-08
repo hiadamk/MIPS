@@ -358,10 +358,6 @@ public class ResourceLoader {
             recolourSprite(
                 this.ghoulSprites.get(i).get(j), this.ghoulPalette, 0, _colourID),
             this.ghoulOutlineSprites.get(i).get(j)));
-        tmp.add(mergeImage(
-            recolourSprite(
-                this.ghoulSprites.get(i).get(j), this.ghoulPalette, 0, _colourID),
-            this.ghoulOutlineSprites.get(i).get(j)));
       }
       recolouredSprites.add(tmp);
     }
@@ -561,7 +557,7 @@ public class ResourceLoader {
       }
     }
 
-    return recolouredSprite;
+    return mergeImage(sprite, recolouredSprite);
   }
 
   private BufferedImage transparentizeSprite(BufferedImage sprite) {
