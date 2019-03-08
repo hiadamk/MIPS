@@ -188,6 +188,15 @@ public class Client extends Application {
     }
   }
 
+  public void leaveLobby(){
+    clientLobbySession.leaveLobby();
+    setId(0);
+    this.telemetry = null;
+    this.clientLobbySession = null;
+    this.keypressQueue = null;
+    isHost = false;
+  }
+
   public void startMultiplayerGame() {
     if (isHost) {
       System.out.println("Starting multiplayer for host");
@@ -331,10 +340,6 @@ public class Client extends Application {
         keypressQueue.add(input);
       }
     }
-  }
-  public void leaveLobby(){
-    clientLobbySession.leaveLobby();
-    setId(0);
   }
 
   // communicates to clients

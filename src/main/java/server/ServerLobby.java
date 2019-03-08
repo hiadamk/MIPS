@@ -148,6 +148,12 @@ public class ServerLobby {
     this.MIPID = (new Random()).nextInt(2);
   }
 
+  public void shutDown(){
+    pinger.interrupt();
+    acceptConnections.interrupt();
+    shutdownTCP();
+  }
+
   /**
    * Starts the game for all clients Needs to send player Names
    *
@@ -255,6 +261,7 @@ public class ServerLobby {
             ServerLobby.this.usedIDs[id] = false;
             ServerLobby.this.playerIPs.remove(ip);
             ServerLobby.this.names[id] = null;
+            ServerLobby.this.playerCount--;
             in.close();
             out.close();
             client.close();
