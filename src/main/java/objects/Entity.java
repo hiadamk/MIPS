@@ -190,7 +190,7 @@ public class Entity implements Renderable {
    */
   @Override
   public ArrayList<Image> getImage() {
-    if (direction != null) {
+    if (direction.toInt() < 4) {
       return images.get(direction.toInt());
     }
     return currentImage == null ? images.get(0) : currentImage;
@@ -226,7 +226,7 @@ public class Entity implements Renderable {
   public void setDirection(Direction direction) {
     if (this.direction != direction) {
       this.direction = direction;
-      if (direction != null) {
+      if (direction != Direction.STOP) {
         currentImage = images.get(direction.toInt());
       }
     }
