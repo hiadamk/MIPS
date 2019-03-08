@@ -332,6 +332,10 @@ public class Client extends Application {
       }
     }
   }
+  public void leaveLobby(){
+    clientLobbySession.leaveLobby();
+    setId(0);
+  }
 
   // communicates to clients
   private void stopMultiplayerGame() {

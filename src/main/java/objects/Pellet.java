@@ -73,6 +73,8 @@ public class Pellet implements Renderable {
   public void interact(Entity entity, ArrayList<PowerUp> activePowerUps) {
     if (isTrap) {
       trap.trigger(entity, activePowerUps);
+      isTrap = false;
+      return;
     }
     if (!active || !canUse(entity)) {
       return;

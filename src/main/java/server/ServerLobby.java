@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Queue;
 import java.util.Random;
+
 import utils.Input;
 
 // TODO Use multi-casting to constantly ping the number of players in the game in a thread.
@@ -25,48 +26,47 @@ public class ServerLobby {
    * Thread which sends messages to multicast group to make server IP known
    */
   Thread pinger =
-      new Thread() {
-        @Override
-        public void run() {
-          super.run();
-          try {
-            MulticastSocket socket = new MulticastSocket();
-            InetAddress group = NetworkUtility.GROUP;
+          new Thread() {
+            @Override
+            public void run() {
+              super.run();
+              try {
+                MulticastSocket socket = new MulticastSocket();
+                InetAddress group = NetworkUtility.GROUP;
 
-            byte[] buf;
-            String message = "PING";
+                byte[] buf;
+                String message = "PING";
 
-            buf = message.getBytes();
-            DatagramPacket sending =
-                new DatagramPacket(buf, 0, buf.length, group, NetworkUtility.CLIENT_M_PORT);
+                buf = message.getBytes();
+                DatagramPacket sending =
+                        new DatagramPacket(buf, 0, buf.length, group, NetworkUtility.CLIENT_M_PORT);
 
-            while (!isInterrupted()) {
-              Enumeration<NetworkInterface> faces = NetworkInterface.getNetworkInterfaces();
-              a:
-              while (faces.hasMoreElements()) {
-                NetworkInterface iface = faces.nextElement();
-                if (iface.isLoopback() || !iface.isUp()) {
-                  continue;
+                while (!isInterrupted()) {
+                  Enumeration<NetworkInterface> faces = NetworkInterface.getNetworkInterfaces();
+                  a:
+                  while (faces.hasMoreElements()) {
+                    NetworkInterface iface = faces.nextElement();
+                    if (iface.isLoopback() || !iface.isUp()) {
+                      continue;
+                    }
+
+                    Enumeration<InetAddress> addresses = iface.getInetAddresses();
+                    while (addresses.hasMoreElements()) {
+                      InetAddress addr = addresses.nextElement();
+                      socket.setInterface(addr);
+                      socket.send(sending);
+                    }
+                  }
+                  Thread.sleep(1000);
                 }
 
-                Enumeration<InetAddress> addresses = iface.getInetAddresses();
-                while (addresses.hasMoreElements()) {
-                  InetAddress addr = addresses.nextElement();
-                  socket.setInterface(addr);
-                  socket.send(sending);
-                }
+              } catch (InterruptedException e) {
+                return;
+              } catch (IOException e) {
+                e.printStackTrace();
               }
-              Thread.sleep(1000);
             }
-
-          } catch (InterruptedException e) {
-            System.out.println("Server pinger was closed successfully");
-            return;
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-        }
-      };
+          };
   private int playerCount;
   private ArrayList<InetAddress> playerIPs;
   private boolean gameStarted;
@@ -74,59 +74,71 @@ public class ServerLobby {
   private String[] names = new String[5];
   private Queue<String> outputQueue;
   private int MIPID;
+  private boolean[] usedIDs = {false, false, false, false, false};
+  private ArrayList<Socket> activeClientSockets = new ArrayList<>();
+  private ArrayList<PrintWriter> activeOutstreams = new ArrayList<>();
+  private ArrayList<BufferedReader> activeInputStreams = new ArrayList<>();
+  private ArrayList<lobbyLeaverListener> lobbyLeavers = new ArrayList<>();
+
   /**
    * Accepts connections from clients
    */
   Thread acceptConnections =
-      new Thread() {
-        @Override
-        public void run() {
-          super.run();
+          new Thread() {
+            @Override
+            public void run() {
+              super.run();
 
-          try {
-            ServerSocket server = new ServerSocket(NetworkUtility.SERVER_DGRAM_PORT);
-            while (!isInterrupted()) {
-              if (playerCount < 5) {
-                Socket soc = server.accept();
-                BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
-                PrintWriter out = new PrintWriter(soc.getOutputStream());
-                System.out.println("Waiting for new connection...");
+              try {
+                ServerSocket server = new ServerSocket(NetworkUtility.SERVER_DGRAM_PORT);
+                while (!isInterrupted()) {
+                  if (playerCount < 5) {
+                    Socket soc = server.accept();
+                    BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+                    PrintWriter out = new PrintWriter(soc.getOutputStream());
+                    activeInputStreams.add(in);
+                    activeOutstreams.add(out);
+                    activeClientSockets.add(soc);
+                    System.out.println("Waiting for new connection...");
 
-                String r = in.readLine();
-                String name = in.readLine();
-                names[playerCount] = name;
+                    String r = in.readLine();
+                    String name = in.readLine();
+                    names[playerCount] = name;
 
-                if (r.equals(NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX)) {
-                  InetAddress ip = soc.getInetAddress();
-                  System.out.println("Connecting to: " + ip);
-                  playerIPs.add(ip);
+                    if (r.equals(NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX)) {
+                      InetAddress ip = soc.getInetAddress();
+                      System.out.println("Connecting to: " + ip);
+                      playerIPs.add(ip);
 
-                  int playerID = playerCount;
-                  out.println("" + playerID);
-                  out.flush();
-                  System.out.println("Sent client " + playerID + " their ID...");
-                  out.println("" + MIPID);
-                  out.flush();
-                  out.println("SUCCESS");
-                  out.flush();
-                  System.out.println(
-                      "Sent client " + playerID + " a successful connection message...");
-                  playerCount++;
-                  in.close();
-                  out.close();
-                  soc.close();
+                      int playerID = getNextID();
+                      out.println("" + playerID);
+                      out.flush();
+                      System.out.println("Sent client " + playerID + " their ID...");
+                      out.println("" + MIPID);
+                      out.flush();
+                      out.println("SUCCESS");
+                      out.flush();
+                      System.out.println(
+                              "Sent client " + playerID + " a successful connection message...");
+                      playerCount++;
+                      lobbyLeaverListener l = new lobbyLeaverListener(soc, in, out, ip,playerID);
+                      lobbyLeavers.add(l);
+                      l.start();
+//                      in.close();
+//                      out.close();
+//                      soc.close();
+                    }
+
+                  } else {
+                    return;
+                  }
                 }
-
-              } else {
-                return;
+                server.close();
+              } catch (IOException e) {
+                e.printStackTrace();
               }
             }
-            server.close();
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-        }
-      };
+          };
 
   public ServerLobby() {
     pinger.start();
@@ -146,8 +158,6 @@ public class ServerLobby {
     pinger.interrupt();
     acceptConnections.interrupt();
     gameStarted = true;
-    System.out.printf("Server starting game...");
-    System.out.println("THE IPS I WILL SEND TO: " + playerIPs.toString());
     for (InetAddress ip : playerIPs) {
       try {
         Socket soc = new Socket(ip, NetworkUtility.CLIENT_DGRAM_PORT);
@@ -156,15 +166,12 @@ public class ServerLobby {
 
         out.println(str);
         out.flush();
-        System.out.println("SERVER SENT START GAME");
-        System.out.println("NAMES IN NAMES ARRAY: " + Arrays.toString(names));
         for (String name : names) {
           out.println(name);
           out.flush();
-          System.out.println("SENT THE NAME: " + name);
         }
-
         out.flush();
+        shutdownTCP();
         out.close();
       } catch (IOException e) {
         e.printStackTrace();
@@ -179,7 +186,19 @@ public class ServerLobby {
     return s;
   }
 
-  /** Stops the game for clients. */
+  private int getNextID(){
+    for(int i = 0; i < usedIDs.length; i++){
+      if(!usedIDs[i]){
+        usedIDs[i] = true;
+        return i;
+      }
+    }
+    return 0;
+  }
+
+  /**
+   * Stops the game for clients.
+   */
   public void gameStop() {
     s.close();
 
@@ -187,5 +206,64 @@ public class ServerLobby {
 
   public int getPlayerCount() {
     return this.playerCount;
+  }
+
+  private void shutdownTCP(){
+    try{
+      for(Socket s: activeClientSockets){
+        s.close();
+      }
+
+      for(PrintWriter p:activeOutstreams){
+        p.close();
+      }
+
+      for(BufferedReader b:activeInputStreams){
+        b.close();
+      }
+
+      for(lobbyLeaverListener l:lobbyLeavers){
+        l.interrupt();
+      }
+    }catch (IOException e){
+      e.printStackTrace();
+    }
+
+  }
+
+  private class lobbyLeaverListener extends Thread{
+
+    private Socket client;
+    private BufferedReader in;
+    private PrintWriter out;
+    private int id;
+    private InetAddress ip;
+    public lobbyLeaverListener(Socket client, BufferedReader in, PrintWriter out, InetAddress ip, int id){
+      this.client = client;
+      this.in = in;
+      this.out = out;
+      this.ip = ip;
+      this.id = id;
+    }
+
+    @Override
+    public void run(){
+      while(!isInterrupted()){
+        try {
+          String message = in.readLine();
+          if(message.equals(NetworkUtility.DISCONNECT)){
+            ServerLobby.this.usedIDs[id] = false;
+            ServerLobby.this.playerIPs.remove(ip);
+            ServerLobby.this.names[id] = null;
+            in.close();
+            out.close();
+            client.close();
+            System.out.println("Removed Player: " + id + " from game");
+          }
+        } catch (IOException e) {
+
+        }
+      }
+    }
   }
 }
