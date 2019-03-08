@@ -35,6 +35,8 @@ public class NetworkUtility {
   public static final String POWERUP_CODE = "POW";
   public static final String STOP_CODE = "EXIT";
   public static final String DISCONNECT = "DISCONNECT";
+  public static final String DISCONNECT_HOST = "DISCONNECT_HOST";
+  public static final String DISCONNECT_NON_HOST = "DISCONNECT_NON_HOST";
   public static final int STRING_LIMIT = 128;
   public static final Charset CHARSET = StandardCharsets.US_ASCII;
 

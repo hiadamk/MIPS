@@ -56,6 +56,7 @@ public class ClientLobbySession {
                   socket.receive(packet);
                   System.out.printf("Server Address: " + packet.getAddress());
                   serverIP = packet.getAddress();
+                  socket.close();
 
                   soc = new Socket(serverIP, NetworkUtility.SERVER_DGRAM_PORT);
                   out = new PrintWriter(soc.getOutputStream());
@@ -125,7 +126,6 @@ public class ClientLobbySession {
           err.printStackTrace(System.err);
         }
       }
-      e.printStackTrace();
 
       if (serverSocket != null && !serverSocket.isClosed()) {
         try {
@@ -135,6 +135,7 @@ public class ClientLobbySession {
           err.printStackTrace(System.err);
         }
       }
+      System.out.println("Sockets have been closed in lobby session: " + e.getMessage());
     }
 
   });
@@ -152,7 +153,11 @@ public class ClientLobbySession {
   }
 
   public void leaveLobby() {
-    out.write(NetworkUtility.DISCONNECT);
+    if(client.isHost){
+      out.write(NetworkUtility.DISCONNECT_HOST);
+    }else{
+      out.write(NetworkUtility.DISCONNECT_NON_HOST);
+    }
     shutdownTCP();
     joiner.interrupt();
     gameStarter.interrupt();

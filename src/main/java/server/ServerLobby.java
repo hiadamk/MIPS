@@ -4,12 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-import java.net.NetworkInterface;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -35,7 +30,7 @@ public class ServerLobby {
                 InetAddress group = NetworkUtility.GROUP;
 
                 byte[] buf;
-                String message = "PING";
+                String message = playerCount + "|" + (hostPresent ? 1 : 0);
 
                 buf = message.getBytes();
                 DatagramPacket sending =
@@ -79,6 +74,8 @@ public class ServerLobby {
   private ArrayList<PrintWriter> activeOutstreams = new ArrayList<>();
   private ArrayList<BufferedReader> activeInputStreams = new ArrayList<>();
   private ArrayList<lobbyLeaverListener> lobbyLeavers = new ArrayList<>();
+  private ServerSocket server;
+  private boolean hostPresent = true;
 
   /**
    * Accepts connections from clients
@@ -90,7 +87,7 @@ public class ServerLobby {
               super.run();
 
               try {
-                ServerSocket server = new ServerSocket(NetworkUtility.SERVER_DGRAM_PORT);
+                server = new ServerSocket(NetworkUtility.SERVER_DGRAM_PORT);
                 while (!isInterrupted()) {
                   if (playerCount < 5) {
                     Socket soc = server.accept();
@@ -124,9 +121,6 @@ public class ServerLobby {
                       lobbyLeaverListener l = new lobbyLeaverListener(soc, in, out, ip,playerID);
                       lobbyLeavers.add(l);
                       l.start();
-//                      in.close();
-//                      out.close();
-//                      soc.close();
                     }
 
                   } else {
@@ -134,7 +128,9 @@ public class ServerLobby {
                   }
                 }
                 server.close();
-              } catch (IOException e) {
+              } catch (SocketException e) {
+                System.out.println("Sockets were closed while waiting to accept");
+              }catch (IOException e){
                 e.printStackTrace();
               }
             }
@@ -145,12 +141,20 @@ public class ServerLobby {
     this.playerCount = 0;
     this.playerIPs = new ArrayList<>();
     acceptConnections.start();
-    this.MIPID = (new Random()).nextInt(2);
+    this.MIPID = (new Random()).nextInt(5);
   }
 
   public void shutDown(){
     pinger.interrupt();
     acceptConnections.interrupt();
+    if (server != null && !server.isClosed()) {
+      try {
+        server.close();
+      } catch (IOException err)
+      {
+        err.printStackTrace(System.err);
+      }
+    }
     shutdownTCP();
   }
 
@@ -237,6 +241,12 @@ public class ServerLobby {
 
   }
 
+//  private void shutdownLobby(){
+//    acceptConnections.interrupt();
+//    shutDown();
+//    pinger.interrupt();
+//  }
+
   private class lobbyLeaverListener extends Thread{
 
     private Socket client;
@@ -257,7 +267,7 @@ public class ServerLobby {
       while(!isInterrupted()){
         try {
           String message = in.readLine();
-          if(message.equals(NetworkUtility.DISCONNECT)){
+          if(message.equals(NetworkUtility.DISCONNECT_NON_HOST)){
             ServerLobby.this.usedIDs[id] = false;
             ServerLobby.this.playerIPs.remove(ip);
             ServerLobby.this.names[id] = null;
@@ -266,6 +276,17 @@ public class ServerLobby {
             out.close();
             client.close();
             System.out.println("Removed Player: " + id + " from game");
+          }else if(message.equals(NetworkUtility.DISCONNECT_HOST)){
+            hostPresent = false;
+            ServerLobby.this.usedIDs[id] = false;
+            ServerLobby.this.playerIPs.remove(ip);
+            ServerLobby.this.names[id] = null;
+            ServerLobby.this.playerCount--;
+            in.close();
+            out.close();
+            client.close();
+            System.out.println("Removed Host Player: " + id + " from game. And shut down the game");
+            ServerLobby.this.shutDown();
           }
         } catch (IOException e) {
 
