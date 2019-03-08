@@ -33,6 +33,7 @@ public class Renderer {
   private final GraphicsContext gc;
   private final long secondInNanoseconds = (long) Math.pow(10, 9);
   private final HeadsUpDisplay hudRender;
+  private Map map;
   private ResourceLoader r;
   private int xResolution;
   private int yResolution;
@@ -62,6 +63,7 @@ public class Renderer {
    */
   public Renderer(GraphicsContext _gc, int _xResolution, int _yResolution, ResourceLoader r) {
     this.r = r;
+    this.map = r.getMap();
     this.gc = _gc;
     this.xResolution = _xResolution;
     this.yResolution = _yResolution;
@@ -341,6 +343,7 @@ public class Renderer {
     final double frameTime = renderAnimationTime / frames;
     new AnimationTimer() {
       double currentTime = System.nanoTime();
+
       @Override
       public void handle(long now) {
         if (now - startTime > renderAnimationTime) {
@@ -547,8 +550,12 @@ public class Renderer {
    * @return The top right corner coordinate to start rendering game map from
    */
   private Point2D.Double getMapRenderingCorner() {
-    return new Point2D.Double(this.xResolution / (double) 2, this.yResolution / (double) 6);
-    // return new Point2D.Double(getIsoCoord(0,map),getIsoCoord(0,0,tileSizeY).getY())
+
+    double bottomLeftX = -map.getMaxY() * (this.tileSizeX / (double) 2);
+    double topRightX = map.getMaxX() * (this.tileSizeX / (double) 2);
+    double mapMidPointX = bottomLeftX + 0.5 * Math.abs(topRightX - bottomLeftX);
+    System.out.println("offset: " + mapMidPointX);
+    return new Point2D.Double((this.xResolution / (double) 2) - mapMidPointX, yResolution / 6);
   }
 
   /**
@@ -563,7 +570,8 @@ public class Renderer {
     hudRender.setResolution(x, y);
     this.xResolution = x;
     this.yResolution = y;
+    this.map = r.getMap();
+    this.initMapTraversal(this.map);
     this.mapRenderingCorner = getMapRenderingCorner();
-    this.initMapTraversal(r.getMap());
   }
 }
