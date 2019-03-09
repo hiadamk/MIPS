@@ -167,11 +167,13 @@ public abstract class Telemetry {
     for (Pellet p : pellets.values()) {
       p.incrementRespawn();
     }
+    ArrayList<PowerUp> toRemove = new ArrayList<>();
     for (PowerUp p : activePowerUps) {
       if (p.incrementTime()) {
-        activePowerUps.remove(p);
+        toRemove.add(p);
       }
     }
+    activePowerUps.removeAll(toRemove);
     gameTimer--;
     if (gameTimer == 0) {
       System.out.println("GAME HAS ENDED ITS OVER");

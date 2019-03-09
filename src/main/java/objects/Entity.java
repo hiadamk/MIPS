@@ -45,6 +45,7 @@ public class Entity implements Renderable {
   }
 
   public void setStunned(boolean stunned) {
+    System.out.println("entity " + clientId + " is " + stunned + " stunned");
     this.stunned = stunned;
     if (stunned) {
       velocity = 0;
@@ -99,6 +100,9 @@ public class Entity implements Renderable {
   }
 
   public PowerUp getFirstItem() {
+    if (items.size() < 1) {
+      return null;
+    }
     return items.pop();
   }
 
@@ -156,7 +160,9 @@ public class Entity implements Renderable {
    * @see #getMoveInDirection(double, Direction...)
    */
   public void move() {
-    this.location = getMoveInDirection(this.velocity);
+    if (!stunned && !dead) {
+      this.location = getMoveInDirection(this.velocity);
+    }
   }
 
   /**

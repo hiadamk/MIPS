@@ -158,7 +158,7 @@ public class HostTelemetry extends Telemetry {
     System.out.println("POWERUP USED PLAYER: " + id);
     PowerUp item;
     if ((item = agents[id].getFirstItem()) != null) {
-      item.use(agents[id], activePowerUps);
+      item.use(agents[id], activePowerUps, pellets);
     }
     // TODO if player has powerup, do this:
     //   informPowerup(id, powerup, location);
