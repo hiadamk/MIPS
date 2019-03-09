@@ -1,8 +1,10 @@
 package utils.enums;
 
 import java.util.ArrayList;
-import javafx.scene.image.Image;
+import java.util.HashMap;
 import objects.Entity;
+import objects.Pellet;
+import objects.PowerUpBox;
 import utils.Point;
 
 /**
@@ -15,11 +17,8 @@ public enum PowerUp {
 
   private final String NAME;
   private final int EFFECTTIME;
-  private Image image;
   private Entity effected;
   private int counter = 500;
-  private Point location;
-
   private Boolean onMap = false;
 
   public Boolean getOnMap() {
@@ -29,18 +28,6 @@ public enum PowerUp {
   PowerUp(int effectTime, String name) {
     this.EFFECTTIME = effectTime;
     this.NAME = name;
-    this.location = null;
-  }
-
-  public Point getLocation() {
-    return location;
-  }
-
-  /**
-   * @return the Image to render them
-   */
-  public Image getImage() {
-    return image;
   }
 
   /**
@@ -49,12 +36,16 @@ public enum PowerUp {
    * @param user The entity that used the powerUp
    * @param activePowerUps All active powerUps in the game
    */
-  public void use(Entity user, ArrayList<PowerUp> activePowerUps) {
+  public void use(Entity user, ArrayList<PowerUp> activePowerUps, HashMap<String, Pellet> pellets) {
     switch (this) {
       case WEB:
         this.onMap = true;
-        location = user.getMoveInDirection(0.5, user.getDirection().getInverse());
-        activePowerUps.add(this);
+        Point loc = user.getMoveInDirection(0.7, user.getDirection().getInverse());
+        int x = (int) loc.getX();
+        int y = (int) loc.getY();
+        PowerUpBox box = new PowerUpBox(x + 0.5, y + 0.5);
+        box.setTrap(this);
+        pellets.put(x + "," + y, box);
         break;
       case SPEED:
         user.setVelocity(user.getVelocity() * 1.2);
@@ -104,10 +95,10 @@ public enum PowerUp {
     if (counter == EFFECTTIME) {
       switch (this) {
         case WEB:
-          effected.resetVelocity();
+          effected.setStunned(false);
           break;
         case BLUESHELL:
-          effected.resetVelocity();
+          effected.setDead(false);
           break;
       }
       return true;

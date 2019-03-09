@@ -50,6 +50,12 @@ public class PowerUpBox extends Pellet {
 
   @Override
   public void interact(Entity entity, ArrayList<PowerUp> activePowerUps) {
+    if (isTrap) {
+      trap.trigger(entity, activePowerUps);
+      isTrap = false;
+      setActive(false);
+      return;
+    }
     if (!active) {
       return;
     }

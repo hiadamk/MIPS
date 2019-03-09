@@ -83,7 +83,7 @@ public abstract class Telemetry {
     agents = new Entity[AGENT_COUNT];
     switch (AGENT_COUNT) {
       default: {
-        for (int i = AGENT_COUNT-1; i>=5; i--) {
+        for (int i = AGENT_COUNT - 1; i >= 5; i--) {
           agents[i] = new Entity(false, i, new Point(1.5, 1.5));
         }
       }
@@ -135,15 +135,15 @@ public abstract class Telemetry {
       ArrayList<PowerUp> activePowerUps) {
 
     for (int i = 0; i < AGENT_COUNT; i++) {
-      if (agents[i].getDirection() != null) {
+      if (agents[i].getDirection() != Direction.STOP) {
         Point prevLocation = agents[i].getLocation();
         agents[i].move();
         Point faceLocation = agents[i].getFaceLocation();
 
         if (m.isWall(faceLocation)) {
-	        //System.out.println("~Player" + i + " drove into a wall");
+          // System.out.println("~Player" + i + " drove into a wall");
           agents[i].setLocation(prevLocation.centralise());
-          agents[i].setDirection(null);
+          agents[i].setDirection(Direction.STOP);
         }
       }
     }
@@ -167,11 +167,13 @@ public abstract class Telemetry {
     for (Pellet p : pellets.values()) {
       p.incrementRespawn();
     }
+    ArrayList<PowerUp> toRemove = new ArrayList<>();
     for (PowerUp p : activePowerUps) {
       if (p.incrementTime()) {
-        activePowerUps.remove(p);
+        toRemove.add(p);
       }
     }
+    activePowerUps.removeAll(toRemove);
     gameTimer--;
     if (gameTimer == 0) {
       System.out.println("GAME HAS ENDED ITS OVER");
@@ -202,7 +204,7 @@ public abstract class Telemetry {
     Point mipsmanCenter = mipsman.getLocation();
     Point ghoulFace = ghoul.getFaceLocation();
 
-    if (mipsmanCenter.inRange(ghoulFace)) { //check temporary invincibility here
+    if (mipsmanCenter.inRange(ghoulFace)) { // check temporary invincibility here
       client.collisionDetected(ghoul);
       mipsman.setMipsman(false);
       ghoul.setMipsman(true);
@@ -223,8 +225,8 @@ public abstract class Telemetry {
    * @param pellets The pellets
    * @author Matthew Jones
    */
-  private static void pelletCollision(Entity[] agents, HashMap<String, Pellet> pellets,
-      ArrayList<PowerUp> activePowerUps) {
+  private static void pelletCollision(
+      Entity[] agents, HashMap<String, Pellet> pellets, ArrayList<PowerUp> activePowerUps) {
     for (Entity agent : agents) {
       Point p = agent.getLocation();
       int x = (int) p.getX();

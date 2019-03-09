@@ -6,27 +6,14 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXToggleButton;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.SingleSelectionModel;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -40,19 +27,23 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.Client;
-import utils.KeyRemapping;
+import server.NetworkUtility;
+import utils.*;
 import utils.Map;
-import utils.MapGenerator;
-import utils.MapPreview;
-import utils.ResourceLoader;
-import utils.Settings;
 import utils.enums.InputKey;
 import utils.enums.RenderingMode;
 import utils.enums.ScreenResolution;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.*;
+import java.util.*;
+
 /**
  * @author Adam Kona Class which handles the creation and functionality of components in the main
- * menu.
+ *         menu.
  */
 public class MenuController {
 
@@ -72,6 +63,8 @@ public class MenuController {
 
   private Label lobbyStatusLbl;
   private Label loadingDots;
+  private Label playersInLobby;
+  private int numberOfPlayers;
 
   private TextField nameEntry;
 
@@ -114,6 +107,9 @@ public class MenuController {
 
   private boolean isHome = true;
   private boolean isInstructions = false;
+  private boolean inLobby;
+  private Thread playerNumberDiscovery;
+  private MulticastSocket socket;
 
   /**
    * @param audio Global audio controller which is passed around the system
@@ -121,12 +117,89 @@ public class MenuController {
    * @author Adam Kona Constructor takes in the audio controller stage and game scene
    */
   public MenuController(AudioController audio, Stage stage, Client client,
-      ResourceLoader resourceLoader) {
+                        ResourceLoader resourceLoader) {
     this.audioController = audio;
     this.primaryStage = stage;
     this.client = client;
     this.resourceLoader = resourceLoader;
   }
+
+  Runnable lobbyPlayers = (() -> {
+    while (!Thread.currentThread().isInterrupted()) {
+      try {
+        Thread.sleep(1000);
+        System.out.println("Listening for number of players...");
+        socket = new MulticastSocket(NetworkUtility.CLIENT_M_PORT);
+        socket.setSoTimeout(3500);
+        InetAddress group = NetworkUtility.GROUP;
+        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+        while (interfaces.hasMoreElements()) {
+          NetworkInterface iface = interfaces.nextElement();
+          if (iface.isLoopback() || !iface.isUp()) {
+            continue;
+          }
+
+          Enumeration<InetAddress> addresses = iface.getInetAddresses();
+          while (addresses.hasMoreElements()) {
+            InetAddress addr = addresses.nextElement();
+            socket.setInterface(addr);
+            socket.joinGroup(group);
+          }
+        }
+
+        byte[] buf = new byte[256];
+        DatagramPacket packet = new DatagramPacket(buf, buf.length);
+        socket.receive(packet);
+
+        byte[] data = new byte[packet.getLength()];
+        System.arraycopy(buf, 0, data, 0, packet.getLength());
+        String lobbyStatus = new String(data);
+        System.out.println(new String(data));
+        String[] statusPackets = lobbyStatus.split("\\|");
+        System.out.println("Array: " + Arrays.toString(statusPackets));
+        int players = Integer.parseInt(statusPackets[0]);
+        int hostStatus = Integer.parseInt(statusPackets[1]);
+        if (hostStatus == 0) {
+          System.out.println("Server left lobby");
+          client.leaveLobby();
+          Platform.runLater(() -> {
+            lobbyStatusLbl.setText("Host left the game");
+            loadingDots.setVisible(false);
+            playersInLobby.setVisible(false);
+          });
+          socket.close();
+          Thread.currentThread().interrupt();
+        }
+
+
+        if (numberOfPlayers != players) {
+          System.out.println("Updating player count");
+          Platform.runLater(() -> {
+            playersInLobby.setText("Players in lobby: " + players);
+          });
+        }
+        socket.close();
+      } catch (SocketTimeoutException e) {
+        System.out.println("Server has disconnected");
+        client.leaveLobby();
+        Platform.runLater(() -> {
+          lobbyStatusLbl.setText("Host left the game");
+          loadingDots.setVisible(false);
+          playersInLobby.setVisible(false);
+        });
+        Thread.currentThread().interrupt();
+      } catch (InterruptedException e1) {
+        System.out.println("Lobby players thread was interrupted. ");
+      } catch (IOException e2) {
+
+      }
+    }
+    if (!socket.isClosed() && socket != null) {
+      socket.close();
+    }
+
+    System.out.println("Lobby players thread fully ended");
+  });
 
   /**
    * Hides the components on the screen
@@ -243,10 +316,10 @@ public class MenuController {
     StackPane.setAlignment(startGameBtn, Pos.CENTER);
     StackPane.setMargin(startGameBtn, new Insets(0, 0, 0, 0));
     startGameBtn.setOnAction(
-        e -> {
-          audioController.playSound(Sounds.click);
-          client.startSinglePlayerGame();
-        });
+            e -> {
+              audioController.playSound(Sounds.click);
+              client.startSinglePlayerGame();
+            });
 
     String[] knownMaps = resourceLoader.getValidMaps();
     numberOfMaps = knownMaps.length;
@@ -258,7 +331,7 @@ public class MenuController {
 
     VBox mapSelectionView = new VBox(40);
     Label selectMapLbl = LabelGenerator
-        .generate(true, mapSelectionView, "Select a map: ", UIColours.BLACK, 14);
+            .generate(true, mapSelectionView, "Select a map: ", UIColours.BLACK, 14);
     moveMapsLeftBtn = ButtonGenerator.generate(true, root, "<", UIColours.WHITE, 40);
     moveMapsRightBtn = ButtonGenerator.generate(true, root, ">", UIColours.WHITE, 40);
     moveMapsLeftBtn.setVisible(false);
@@ -275,9 +348,9 @@ public class MenuController {
     mapView.setPreserveRatio(true);
     mapView.setFitWidth(700);
     Button generateMapBtn = ButtonGenerator
-        .generate(true, root, "Generate Map", UIColours.WHITE, 25);
+            .generate(true, root, "Generate Map", UIColours.WHITE, 25);
     Button mapConfirmationBtn = ButtonGenerator
-        .generate(true, root, "Continue", UIColours.GREEN, 25);
+            .generate(true, root, "Continue", UIColours.GREEN, 25);
     mapConfirmationBtn.setOnAction(event -> {
       audioController.playSound(Sounds.click);
       moveItemsToBackTree();
@@ -288,9 +361,9 @@ public class MenuController {
     });
 
     generateMapBtn.setOnAction(event -> {
-      int[][] newMap = MapGenerator.generateNewMap();
+      int[][] newMap = MapGenerator.newRandomMap(3, 3);
       while (!MapGenerator.validateMap(newMap)) {
-        newMap = MapGenerator.generateNewMap();
+        newMap = MapGenerator.generateNewMap(3, 3);
       }
       Map generatedMap = new Map(newMap);
       validMaps.add(generatedMap);
@@ -315,24 +388,24 @@ public class MenuController {
     root.getChildren().add(mapSelectionView);
 
     Button singlePlayerBtn = ButtonGenerator
-        .generate(true, root, "Singleplayer", UIColours.WHITE, 40);
+            .generate(true, root, "Singleplayer", UIColours.WHITE, 40);
     singlePlayerBtn.setOnAction(
-        e -> {
-          audioController.playSound(Sounds.click);
-          moveItemsToBackTree();
-          itemsOnScreen.add(mapSelectionView);
-          showItemsOnScreen();
-        });
+            e -> {
+              audioController.playSound(Sounds.click);
+              moveItemsToBackTree();
+              itemsOnScreen.add(mapSelectionView);
+              showItemsOnScreen();
+            });
 
     Button multiplayerBtn = ButtonGenerator
-        .generate(true, root, "Multiplayer", UIColours.WHITE, 40);
+            .generate(true, root, "Multiplayer", UIColours.WHITE, 40);
     multiplayerBtn.setOnAction(
-        e -> {
-          audioController.playSound(Sounds.click);
-          moveItemsToBackTree();
-          itemsOnScreen.add(nameEntryOptions);
-          showItemsOnScreen();
-        });
+            e -> {
+              audioController.playSound(Sounds.click);
+              moveItemsToBackTree();
+              itemsOnScreen.add(nameEntryOptions);
+              showItemsOnScreen();
+            });
 
     gameModeOptions = new VBox(10, singlePlayerBtn, multiplayerBtn);
     gameModeOptions.setAlignment(Pos.CENTER);
@@ -346,14 +419,14 @@ public class MenuController {
     StackPane.setAlignment(playBtn, Pos.CENTER);
     StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
     playBtn.setOnAction(
-        e -> {
-          audioController.playSound(Sounds.click);
-          isHome = false;
-          backBtn.setVisible(true);
-          moveItemsToBackTree();
-          itemsOnScreen.add(gameModeOptions);
-          showItemsOnScreen();
-        });
+            e -> {
+              audioController.playSound(Sounds.click);
+              isHome = false;
+              backBtn.setVisible(true);
+              moveItemsToBackTree();
+              itemsOnScreen.add(gameModeOptions);
+              showItemsOnScreen();
+            });
 
     client.setRenderingMode(RenderingMode.SMOOTH_SCALING);
 
@@ -365,27 +438,33 @@ public class MenuController {
     Button joinGameBtn = ButtonGenerator.generate(true, root, "Join a game", UIColours.WHITE, 40);
     joinGameBtn.setPickOnBounds(true);
     joinGameBtn.setOnAction(
-        event -> {
-          audioController.playSound(Sounds.click);
-          moveItemsToBackTree();
-          lobbyStatusLbl.setText("Waiting for game to start");
-          itemsOnScreen.add(searchingForMultiplayers);
-          showItemsOnScreen();
-          client.joinMultiplayerLobby();
+            event -> {
+              audioController.playSound(Sounds.click);
+              moveItemsToBackTree();
+              lobbyStatusLbl.setText("Waiting for game to start");
+              itemsOnScreen.add(searchingForMultiplayers);
+              showItemsOnScreen();
+              inLobby = true;
+              client.joinMultiplayerLobby();
+              playerNumberDiscovery = new Thread(lobbyPlayers);
+              playerNumberDiscovery.start();
 
-        });
+            });
 
     Button createGameBtn = ButtonGenerator.generate(true, root, "Create game", UIColours.WHITE, 40);
     createGameBtn.setPickOnBounds(true);
     createGameBtn.setOnAction(
-        event -> {
-          audioController.playSound(Sounds.click);
-          moveItemsToBackTree();
-          itemsOnScreen.add(searchingForMultiplayers);
-          itemsOnScreen.add(startMGameBtn);
-          showItemsOnScreen();
-          client.createMultiplayerLobby();
-        });
+            event -> {
+              audioController.playSound(Sounds.click);
+              moveItemsToBackTree();
+              itemsOnScreen.add(searchingForMultiplayers);
+              itemsOnScreen.add(startMGameBtn);
+              showItemsOnScreen();
+              client.createMultiplayerLobby();
+              inLobby = true;
+              playerNumberDiscovery = new Thread(lobbyPlayers);
+              playerNumberDiscovery.start();
+            });
 
     multiplayerOptions = new VBox(10, createGameBtn, joinGameBtn);
     multiplayerOptions.setAlignment(Pos.CENTER);
@@ -397,26 +476,26 @@ public class MenuController {
     searchingForMultiplayers = new VBox(5);
 
     lobbyStatusLbl = LabelGenerator
-        .generate(true, searchingForMultiplayers, "Searching for players", UIColours.WHITE, 20);
+            .generate(true, searchingForMultiplayers, "Searching for players", UIColours.WHITE, 20);
     loadingDots = LabelGenerator
-        .generate(true, searchingForMultiplayers, " .", UIColours.WHITE, 20);
-    Label playersInLobby = LabelGenerator
-        .generate(true, searchingForMultiplayers, "Players in Lobby: 0", UIColours.WHITE, 20);
+            .generate(true, searchingForMultiplayers, " .", UIColours.WHITE, 20);
+    playersInLobby = LabelGenerator
+            .generate(true, searchingForMultiplayers, "Players in Lobby: 0", UIColours.WHITE, 20);
     searchingForMultiplayers.setAlignment(Pos.CENTER);
     StackPane.setAlignment(searchingForMultiplayers, Pos.CENTER);
     root.getChildren().add(searchingForMultiplayers);
     searchingForMultiplayers.setVisible(false);
 
     Timeline timeline =
-        new Timeline(
-            new KeyFrame(
-                Duration.ZERO,
-                event -> {
-                  String statusText = loadingDots.getText();
-                  loadingDots
-                      .setText((" . . .".equals(statusText)) ? " ." : statusText + " .");
-                }),
-            new KeyFrame(Duration.millis(1000)));
+            new Timeline(
+                    new KeyFrame(
+                            Duration.ZERO,
+                            event -> {
+                              String statusText = loadingDots.getText();
+                              loadingDots
+                                      .setText((" . . .".equals(statusText)) ? " ." : statusText + " .");
+                            }),
+                    new KeyFrame(Duration.millis(1000)));
     timeline.setCycleCount(Timeline.INDEFINITE);
     timeline.play();
 
@@ -424,16 +503,16 @@ public class MenuController {
     Font nameEntryFont = Font.font("Verdana");
     try {
       nameEntryFont =
-          Font.loadFont(
-              new FileInputStream(new File("src/main/resources/ui/PressStart2P.ttf")), 16);
+              Font.loadFont(
+                      new FileInputStream(new File("src/main/resources/ui/PressStart2P.ttf")), 16);
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
     nameEntry.setPromptText("Please enter your player name...");
     nameEntry.setStyle(
-        "-fx-text-inner-color: white; "
-            + "-fx-prompt-text-fill: white; "
-            + "-fx-background-color: transparent;");
+            "-fx-text-inner-color: white; "
+                    + "-fx-prompt-text-fill: white; "
+                    + "-fx-background-color: transparent;");
     nameEntry.setFont(nameEntryFont);
     nameEntry.setAlignment(Pos.CENTER);
 
@@ -444,14 +523,14 @@ public class MenuController {
 
     Button nameEntryBtn = ButtonGenerator.generate(true, root, "Continue", UIColours.GREEN, 30);
     nameEntryBtn.setOnAction(
-        event -> {
-          audioController.playSound(Sounds.click);
-          moveItemsToBackTree();
-          hideItemsOnScreen();
-          this.client.setName(nameEntry.getText());
-          itemsOnScreen.add(multiplayerOptions);
-          showItemsOnScreen();
-        });
+            event -> {
+              audioController.playSound(Sounds.click);
+              moveItemsToBackTree();
+              hideItemsOnScreen();
+              this.client.setName(nameEntry.getText());
+              itemsOnScreen.add(multiplayerOptions);
+              showItemsOnScreen();
+            });
 
     nameEntryOptions = new VBox(30, nameAndLine, nameEntryBtn);
     nameEntryOptions.setAlignment(Pos.CENTER);
@@ -465,10 +544,10 @@ public class MenuController {
     StackPane.setAlignment(quitBtn, Pos.TOP_RIGHT);
     StackPane.setMargin(quitBtn, new Insets(50, 50, 0, 0));
     quitBtn.setOnAction(
-        event -> {
-          audioController.playSound(Sounds.click);
-          System.exit(0);
-        });
+            event -> {
+              audioController.playSound(Sounds.click);
+              System.exit(0);
+            });
 
     //Creating the settings tab pane
     JFXTabPane settingsTabs = new JFXTabPane();
@@ -502,7 +581,7 @@ public class MenuController {
     StackPane.setMargin(musicToggle, new Insets(128, 0, 0, 200));
 
     Label soundFXLbl = LabelGenerator
-        .generate(true, soundTabLayout, "SoundFX:", UIColours.BLACK, 16);
+            .generate(true, soundTabLayout, "SoundFX:", UIColours.BLACK, 16);
     JFXToggleButton soundFXToggle = new JFXToggleButton();
     soundFXToggle.setSelected(true);
     soundFXToggle.setOnAction(event -> {
@@ -537,7 +616,7 @@ public class MenuController {
     StackPane.setMargin(volumeLbl, new Insets(0, 200, 150, 0));
 
     soundTabLayout.getChildren()
-        .addAll(musicToggle, soundFXToggle, volumeSlider);
+            .addAll(musicToggle, soundFXToggle, volumeSlider);
     soundTab.setContent(soundTabLayout);
 
     //Creates the tab for graphics
@@ -547,7 +626,7 @@ public class MenuController {
 
     //Adding resolution label and combo box
     Label resolutionLbl = LabelGenerator
-        .generate(true, graphicsTabLayout, "Resolution: ", UIColours.BLACK, 14);
+            .generate(true, graphicsTabLayout, "Resolution: ", UIColours.BLACK, 14);
 
     JFXComboBox<String> resolutionCombo = new JFXComboBox<>();
     resolutionCombo.getItems().add("1366x768");
@@ -584,7 +663,7 @@ public class MenuController {
 
     //Adding resolution label and combo box
     Label scalingLbl = LabelGenerator
-        .generate(true, graphicsTabLayout, "Resolution Scaling: ", UIColours.BLACK, 14);
+            .generate(true, graphicsTabLayout, "Resolution Scaling: ", UIColours.BLACK, 14);
 
     JFXComboBox<String> scalingCombo = new JFXComboBox<>();
     scalingCombo.getItems().add("None");
@@ -622,7 +701,7 @@ public class MenuController {
     StackPane.setMargin(scalingCombo, new Insets(200, 0, 200, 350));
 
     graphicsTabLayout.getChildren()
-        .addAll(resolutionCombo, scalingCombo);
+            .addAll(resolutionCombo, scalingCombo);
     graphicsTab.setContent(graphicsTabLayout);
 
     //Creates the tab for controls
@@ -634,20 +713,20 @@ public class MenuController {
     VBox keyLbls = new VBox(45);
 
     upLbl = LabelGenerator
-        .generate(true, keyLbls, "UP KEY: " + Settings.getKey(InputKey.UP).getName(),
-            UIColours.BLACK, 14);
+            .generate(true, keyLbls, "UP KEY: " + Settings.getKey(InputKey.UP).getName(),
+                    UIColours.BLACK, 14);
     leftLbl = LabelGenerator
-        .generate(true, keyLbls, "LEFT KEY: " + Settings.getKey(InputKey.LEFT).getName(),
-            UIColours.BLACK, 14);
+            .generate(true, keyLbls, "LEFT KEY: " + Settings.getKey(InputKey.LEFT).getName(),
+                    UIColours.BLACK, 14);
     rightLbl = LabelGenerator
-        .generate(true, keyLbls, "RIGHT KEY: " + Settings.getKey(InputKey.RIGHT).getName(),
-            UIColours.BLACK, 14);
+            .generate(true, keyLbls, "RIGHT KEY: " + Settings.getKey(InputKey.RIGHT).getName(),
+                    UIColours.BLACK, 14);
     downLbl = LabelGenerator
-        .generate(true, keyLbls, "DOWN KEY: " + Settings.getKey(InputKey.DOWN).getName(),
-            UIColours.BLACK, 14);
+            .generate(true, keyLbls, "DOWN KEY: " + Settings.getKey(InputKey.DOWN).getName(),
+                    UIColours.BLACK, 14);
     useLbl = LabelGenerator
-        .generate(true, keyLbls, "USE KEY: " + Settings.getKey(InputKey.USE).getName(),
-            UIColours.BLACK, 14);
+            .generate(true, keyLbls, "USE KEY: " + Settings.getKey(InputKey.USE).getName(),
+                    UIColours.BLACK, 14);
     keyLbls.setAlignment(Pos.CENTER);
 
     StackPane.setAlignment(keyLbls, Pos.CENTER);
@@ -711,34 +790,34 @@ public class MenuController {
     settingsView.setFitHeight(50);
     settingsView.setFitWidth(50);
     settingsBtn.setOnAction(
-        event -> {
-          audioController.playSound(Sounds.click);
-          if (!viewSettings) {
-            viewSettings = true;
-            hideItemsOnScreen();
+            event -> {
+              audioController.playSound(Sounds.click);
+              if (!viewSettings) {
+                viewSettings = true;
+                hideItemsOnScreen();
 
-            backBtn.setVisible(false);
-            settingsTabs.setVisible(true);
-            settingsBtn.setVisible(true);
+                backBtn.setVisible(false);
+                settingsTabs.setVisible(true);
+                settingsBtn.setVisible(true);
 
-          } else {
-            viewSettings = false;
-            settingsTabs.setVisible(false);
-            showItemsOnScreen();
-            if (!isHome) {
-              backBtn.setVisible(true);
-            }
-          }
-        });
+              } else {
+                viewSettings = false;
+                settingsTabs.setVisible(false);
+                showItemsOnScreen();
+                if (!isHome) {
+                  backBtn.setVisible(true);
+                }
+              }
+            });
 
     startMGameBtn = ButtonGenerator.generate(false, root, "Start", UIColours.GREEN, 30);
     StackPane.setAlignment(startMGameBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(startMGameBtn, new Insets(0, 0, 200, 0));
     startMGameBtn.setOnAction(
-        e -> {
-          audioController.playSound(Sounds.click);
-          client.startMultiplayerGame();
-        });
+            e -> {
+              audioController.playSound(Sounds.click);
+              client.startMultiplayerGame();
+            });
 
     ImageView instructionsGif = new ImageView("ui/preview.gif");
     instructionsGif.setPreserveRatio(true);
@@ -749,9 +828,9 @@ public class MenuController {
     root.getChildren().add(instructionsGif);
 
     Label instructionLbl = new Label("Use your keyboard mastery to capture MIPs man "
-        + "and collect as many points as possible whilst you control him. "
-        + "Beware: If you are captured by a ghoul, you will become one and have to capture"
-        + " the new MIPs man all over again. Good luck! ");
+            + "and collect as many points as possible whilst you control him. "
+            + "Beware: If you are captured by a ghoul, you will become one and have to capture"
+            + " the new MIPs man all over again. Good luck! ");
     instructionLbl.setWrapText(true);
     instructionLbl.setTextAlignment(TextAlignment.CENTER);
     StackPane.setAlignment(instructionLbl, Pos.CENTER);
@@ -760,7 +839,7 @@ public class MenuController {
     instructionLbl.setVisible(false);
 
     Button instructions = ButtonGenerator
-        .generate(true, root, "Instructions", UIColours.YELLOW, 30);
+            .generate(true, root, "Instructions", UIColours.YELLOW, 30);
     StackPane.setAlignment(instructions, Pos.BOTTOM_CENTER);
     StackPane.setMargin(instructions, new Insets(0, 0, 100, 0));
     instructions.setOnAction(event -> {
@@ -774,36 +853,44 @@ public class MenuController {
     });
 
 
-
     backBtn = ButtonGenerator.generate(false, root, "back", UIColours.RED, 30);
     StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(backBtn, new Insets(0, 0, 100, 0));
     backBtn.setOnAction(
-        event -> {
-          audioController.playSound(Sounds.click);
-          if (isInstructions) {
-            instructionLbl.setVisible(false);
-            instructionsGif.setVisible(false);
-            backBtn.setVisible(false);
-            itemsOnScreen.clear();
-            ArrayList<Node> toShow = backTree.pop();
-            itemsOnScreen.addAll(toShow);
-            showItemsOnScreen();
-            isInstructions = false;
+            event -> {
+              audioController.playSound(Sounds.click);
+              if (isInstructions) {
+                instructionLbl.setVisible(false);
+                instructionsGif.setVisible(false);
+                backBtn.setVisible(false);
+                itemsOnScreen.clear();
+                ArrayList<Node> toShow = backTree.pop();
+                itemsOnScreen.addAll(toShow);
+                showItemsOnScreen();
+                isInstructions = false;
 
-          }
-          if (!backTree.isEmpty()) {
-            hideItemsOnScreen();
-            itemsOnScreen.clear();
-            ArrayList<Node> toShow = backTree.pop();
-            itemsOnScreen.addAll(toShow);
-            showItemsOnScreen();
-            if (backTree.isEmpty()) {
-              backBtn.setVisible(false);
-              isHome = true;
-            }
-          }
-        });
+              }
+
+              if (inLobby) {
+                playerNumberDiscovery.interrupt();
+                client.leaveLobby();
+//            lobbyPlayers.interrupt();
+
+                inLobby = false;
+
+              }
+              if (!backTree.isEmpty()) {
+                hideItemsOnScreen();
+                itemsOnScreen.clear();
+                ArrayList<Node> toShow = backTree.pop();
+                itemsOnScreen.addAll(toShow);
+                showItemsOnScreen();
+                if (backTree.isEmpty()) {
+                  backBtn.setVisible(false);
+                  isHome = true;
+                }
+              }
+            });
 
     backTree.empty();
     itemsOnScreen.add(playBtn);
@@ -813,10 +900,10 @@ public class MenuController {
     itemsOnScreen.add(settingsBtn);
 
     imageViews =
-        Arrays.asList(
-            logo,
-            settingsView
-        );
+            Arrays.asList(
+                    logo,
+                    settingsView
+            );
 
     for (int i = 0; i < imageViews.size(); i++) {
       originalViewWidths.add(imageViews.get(i).getBoundsInLocal().getWidth());

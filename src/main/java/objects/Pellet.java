@@ -21,8 +21,8 @@ public class Pellet implements Renderable {
   protected boolean active; // Weather or not the item is visible and able to be interacted with\
   protected int value = 1;
   private int respawnCount = 0;
-  private PowerUp trap;
-  private boolean isTrap = false;
+  protected PowerUp trap;
+  protected boolean isTrap = false;
 
   public Pellet(double x, double y) {
     this.location = new Point(x, y);
@@ -35,6 +35,9 @@ public class Pellet implements Renderable {
   }
 
   public boolean canUse(Entity e) {
+    if (isTrap) {
+      return true;
+    }
     return e.isMipsman();
   }
 
@@ -73,6 +76,9 @@ public class Pellet implements Renderable {
   public void interact(Entity entity, ArrayList<PowerUp> activePowerUps) {
     if (isTrap) {
       trap.trigger(entity, activePowerUps);
+      isTrap = false;
+      setActive(false);
+      return;
     }
     if (!active || !canUse(entity)) {
       return;
@@ -105,6 +111,7 @@ public class Pellet implements Renderable {
   public void setTrap(PowerUp p) {
     this.trap = p;
     this.active = true;
+    this.isTrap = true;
   }
 
 

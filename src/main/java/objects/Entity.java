@@ -45,6 +45,7 @@ public class Entity implements Renderable {
   }
 
   public void setStunned(boolean stunned) {
+    System.out.println("entity " + clientId + " is " + stunned + " stunned");
     this.stunned = stunned;
     if (stunned) {
       velocity = 0;
@@ -99,6 +100,9 @@ public class Entity implements Renderable {
   }
 
   public PowerUp getFirstItem() {
+    if (items.size() < 1) {
+      return null;
+    }
     return items.pop();
   }
 
@@ -156,7 +160,9 @@ public class Entity implements Renderable {
    * @see #getMoveInDirection(double, Direction...)
    */
   public void move() {
-    this.location = getMoveInDirection(this.velocity);
+    if (!stunned && !dead) {
+      this.location = getMoveInDirection(this.velocity);
+    }
   }
 
   /**
@@ -190,7 +196,7 @@ public class Entity implements Renderable {
    */
   @Override
   public ArrayList<Image> getImage() {
-    if (direction != null) {
+    if (direction.toInt() < 4) {
       return images.get(direction.toInt());
     }
     return currentImage == null ? images.get(0) : currentImage;
@@ -226,7 +232,7 @@ public class Entity implements Renderable {
   public void setDirection(Direction direction) {
     if (this.direction != direction) {
       this.direction = direction;
-      if (direction != null) {
+      if (direction != Direction.STOP) {
         currentImage = images.get(direction.toInt());
       }
     }
@@ -368,6 +374,10 @@ public class Entity implements Renderable {
         currentFrame++;
       }
     }
+  }
+
+  public void setName(String s) {
+    this.name = s;
   }
 
   public String getName() {

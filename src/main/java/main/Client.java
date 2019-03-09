@@ -1,12 +1,6 @@
 package main;
 
 import audio.AudioController;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -33,12 +27,19 @@ import utils.enums.Direction;
 import utils.enums.RenderingMode;
 import utils.enums.ScreenResolution;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 public class Client extends Application {
 
   Map map;
   private int id;
   private String name;
-  private String[] playerNames;
+  private String[] playerNames = new String[5];
   private KeyController keyController;
   //  private HostTelemetry telemetry;
   private Telemetry telemetry;
@@ -58,7 +59,7 @@ public class Client extends Application {
   private ClientLobbySession clientLobbySession;
   private Queue<String> clientIn;
   private Queue<Input> keypressQueue;
-  private boolean isHost;
+  public boolean isHost;
   private boolean singlePlayer = false;
   private BlockingQueue<Input> incomingQueue; // only used in singleplayer
   private HashMap<String, Pellet> pellets;
@@ -82,6 +83,7 @@ public class Client extends Application {
 
   public void setPlayerNames(String[] names) {
     this.playerNames = names;
+
   }
 
   public void setScreenRes(ScreenResolution s) {
@@ -171,24 +173,43 @@ public class Client extends Application {
       this.telemetry = new DumbTelemetry(clientIn, this);
       this.telemetry.setMipID(MIPID);
       // waits for game to start
-      while (!clientLobbySession.isGameStarted()) {
-        try {
-          Thread.sleep(250);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-      }
-      this.primaryStage.setScene(gameScene);
-      gameScene.setOnKeyPressed(keyController);
-      startGame();
+//      while (!clientLobbySession.isGameStarted()) {
+//        try {
+//          Thread.sleep(250);
+//        } catch (InterruptedException e) {
+//          e.printStackTrace();
+//        }
+//      }
+//      this.primaryStage.setScene(gameScene);
+//      gameScene.setOnKeyPressed(keyController);
+//      startGame();
 
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
 
-  public void startMultiplayerGame() {
+  public void leaveLobby(){
+    if(isHost){
+      clientLobbySession.leaveLobby();
+      server.shutDown();
+      setId(0);
+      this.telemetry = null;
+//      this.clientLobbySession = null;
+      this.keypressQueue = null;
+      isHost = false;
+    }else{
+      clientLobbySession.leaveLobby();
+      setId(0);
+      this.telemetry = null;
+//      this.clientLobbySession = null;
+      this.keypressQueue = null;
+      isHost = false;
+    }
 
+  }
+
+  public void startMultiplayerGame() {
     if (isHost) {
       System.out.println("Starting multiplayer for host");
       BlockingQueue<Input> inputQueue = new LinkedBlockingQueue<Input>();
@@ -199,7 +220,11 @@ public class Client extends Application {
       System.out.println("PLAYER COUNT IS: " + playerCount);
       this.telemetry = new HostTelemetry(playerCount, inputQueue, outputQueue, this);
       this.telemetry.setMipID(MIPID);
-
+      gameScene.setOnKeyPressed(keyController);
+      startGame();
+    }else{
+      System.out.println("Starting multiplayer for non-host");
+      this.primaryStage.setScene(gameScene);
       gameScene.setOnKeyPressed(keyController);
       startGame();
     }
@@ -256,6 +281,13 @@ public class Client extends Application {
       agents = telemetry.getAgents();
       map = telemetry.getMap();
       pellets = telemetry.getPellets();
+    }
+
+    for (int i = 0; i < agents.length; i++) {
+      if(!(playerNames[i] == null) && !playerNames[i].equals("null")){
+        agents[i].setName(playerNames[i]);
+      }
+
     }
     this.inputRenderLoop = new AnimationTimer() {
       @Override
