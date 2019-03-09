@@ -69,7 +69,7 @@ public class DumbTelemetry extends Telemetry {
           activatePowerup(input.substring(4));
           break;
         case "SCOR":
-          setScore(input.substring(4));
+          setScore(input.substring(5));
           break;
         case NetworkUtility.STOP_CODE:
           stopGame();
@@ -142,7 +142,7 @@ public class DumbTelemetry extends Telemetry {
 
   // takes a packet string as defined in
   // NetworkUtility.makeScorePacket(Entity[])
-  // without the starting SCORE| string
+  // without the starting SCOR| string
   private void setScore(String scores) {
     try {
       String[] ls = scores.split("\\|");

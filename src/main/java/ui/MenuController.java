@@ -130,7 +130,7 @@ public class MenuController {
         Thread.sleep(1000);
         System.out.println("Listening for number of players...");
         socket = new MulticastSocket(NetworkUtility.CLIENT_M_PORT);
-        socket.setSoTimeout(3500);
+        socket.setSoTimeout(NetworkUtility.LOBBY_TIMEOUT);
         InetAddress group = NetworkUtility.GROUP;
         Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
         while (interfaces.hasMoreElements()) {
