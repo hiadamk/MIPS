@@ -46,8 +46,9 @@ public class ResourceLoader {
   private BufferedImage mipMarker;
   private BufferedImage clientMarker;
   private BufferedImage inventory;
-  private ArrayList<BufferedImage> powerUps;
+  private ArrayList<BufferedImage> powerUpIcons;
   private int inventoryColourID;
+  private ArrayList<BufferedImage> powerUps;
 
   /**
    * @param baseDir path to the resources folder
@@ -69,6 +70,7 @@ public class ResourceLoader {
     this.loadPellet(DEFAULT_THEME);
     this.loadInventory(DEFAULT_THEME);
     this.loadPowerUpIcons(DEFAULT_THEME);
+    this.loadPowerUps(DEFAULT_THEME);
   }
 
 
@@ -252,7 +254,7 @@ public class ResourceLoader {
       }
     }
     this.inventory = resizeSprite(inventory, hudRatio);
-    resizeSprites(this.powerUps, hudRatio);
+    resizeSprites(this.powerUpIcons, hudRatio);
     for (ArrayList<BufferedImage> mipSprite : mipSprites) {
       resizeSprites(mipSprite, ratio);
     }
@@ -272,6 +274,7 @@ public class ResourceLoader {
       resizeSpritesSmooth(pellets, ratio);
       resizeSpritesSmooth(powerUpBox, ratio);
       resizeSpritesSmooth(translucentPellets, ratio);
+      resizeSpritesSmooth(powerUps, ratio);
       resizeSpritesSmooth(mapTiles, ratio);
       mipMarker = resizeSpriteSmooth(mipMarker, ratio);
       clientMarker = resizeSpriteSmooth(clientMarker, ratio);
@@ -286,6 +289,7 @@ public class ResourceLoader {
       resizeSprites(pellets, ratio);
       resizeSprites(powerUpBox, ratio);
       resizeSprites(translucentPellets, ratio);
+      resizeSprites(powerUps, ratio);
       resizeSprites(mapTiles, ratio);
       mipMarker = resizeSprite(mipMarker, ratio);
       clientMarker = resizeSprite(clientMarker, ratio);
@@ -452,11 +456,21 @@ public class ResourceLoader {
     for (PowerUp powerUp : PowerUp.values()) {
       powerUps.add(loadImageFile("sprites/" + theme + "/misc/icon/", powerUp.toString()));
     }
+    this.powerUpIcons = powerUps;
+  }
+
+  public ArrayList<Image> getPowerUpIcons() {
+    return bufferedToJavaFxImage(this.powerUpIcons);
+  }
+
+  public void loadPowerUps(String theme) {
+    ArrayList<BufferedImage> powerUps = new ArrayList<>();
+    powerUps.add(loadImageFile("sprites/" + theme + "/powerups/", "web"));
     this.powerUps = powerUps;
   }
 
   public ArrayList<Image> getPowerUps() {
-    return bufferedToJavaFxImage(this.powerUps);
+    return bufferedToJavaFxImage(powerUps);
   }
 
   /**
@@ -556,7 +570,6 @@ public class ResourceLoader {
         }
       }
     }
-
     return mergeImage(sprite, recolouredSprite);
   }
 

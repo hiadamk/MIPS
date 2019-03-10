@@ -52,7 +52,7 @@ public class HeadsUpDisplay {
     this.yResolution = yResolution;
     this.playerColours = r.getPlayerPalette();
     this.inventory = r.getInventory(id);
-    this.powerUpsIcon = r.getPowerUps();
+    this.powerUpsIcon = r.getPowerUpIcons();
 
     Integer[] powerupIDs = new Integer[PowerUp.values().length];
     for (int i = 0; i < powerupIDs.length; i++) {

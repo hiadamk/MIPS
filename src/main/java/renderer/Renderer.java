@@ -25,6 +25,7 @@ import utils.Point;
 import utils.ResourceLoader;
 import utils.UpDownIterator;
 import utils.enums.MapElement;
+import utils.enums.PowerUp;
 import utils.enums.RenderingMode;
 
 public class Renderer {
@@ -399,6 +400,11 @@ public class Renderer {
     Point2D.Double rendCoord =
         getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
     gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
+
+    //is the entity stunned?
+    if (e.isStunned()) {
+      gc.drawImage(r.getPowerUps().get(PowerUp.WEB.toInt()), rendCoord.getX(), rendCoord.getY());
+    }
 
     // render marker for entity
     if (e.getClientId() != clientID && !e.isMipsman()) {
