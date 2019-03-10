@@ -221,6 +221,10 @@ public class MenuController {
     System.out.println("Lobby players thread fully ended");
   });
 
+  public void endPlayerDiscovery() {
+    this.playerNumberDiscovery.interrupt();
+  }
+
   /**
    * Hides the components on the screen
    */

@@ -42,7 +42,7 @@ public class NetworkUtility {
   public static final String DISCONNECT_NON_HOST = "DISCONNECT_NON_HOST";
   public static final int STRING_LIMIT = 128;
   public static final Charset CHARSET = StandardCharsets.US_ASCII;
-  public static final int LOBBY_TIMEOUT = 300500;
+  public static final int LOBBY_TIMEOUT = 3500;
 
   public static InetAddress GROUP;
   private static DecimalFormat coordFormat = new DecimalFormat("000.000");
