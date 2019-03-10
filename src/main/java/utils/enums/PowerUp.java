@@ -51,7 +51,7 @@ public enum PowerUp {
         pellets.put(x + "," + y, box);
         break;
       case SPEED:
-        user.setVelocity(user.getVelocity() + 0.03);
+        user.changeBonusSpeed(0.03);
         activePowerUps.add(this);
         this.effected = user;
         user.setSpeeding(true);
@@ -109,7 +109,7 @@ public enum PowerUp {
           break;
         case SPEED:
           effected.setSpeeding(false);
-          effected.setVelocity(effected.getVelocity() - 0.03);
+          effected.changeBonusSpeed(-0.03);
           break;
         case INVINCIBLE:
           effected.setInvincible(false);
