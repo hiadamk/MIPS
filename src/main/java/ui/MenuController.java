@@ -196,7 +196,11 @@ public class MenuController {
 
         if (numberOfPlayers != players) {
           System.out.println("Updating player count");
-          Platform.runLater(() -> playersInLobby.setText("Players in lobby: " + players));
+          Platform.runLater(() -> {
+            lobbyStatusLbl.setText("Waiting for game to start");
+            playersInLobby.setVisible(true);
+            playersInLobby.setText("Players in lobby: " + players);
+          });
         }
         socket.close();
       } catch (SocketTimeoutException e) {
@@ -581,7 +585,7 @@ public class MenuController {
             event -> {
               audioController.playSound(Sounds.click);
               moveItemsToBackTree();
-              lobbyStatusLbl.setText("Waiting for game to start");
+              lobbyStatusLbl.setText("Searching for game");
               itemsOnScreen.add(searchingForMultiplayers);
               showItemsOnScreen();
               inLobby = true;
@@ -597,6 +601,7 @@ public class MenuController {
             event -> {
               audioController.playSound(Sounds.click);
               moveItemsToBackTree();
+              lobbyStatusLbl.setText("Creating Game");
               itemsOnScreen.add(searchingForMultiplayers);
               itemsOnScreen.add(startMGameBtn);
               showItemsOnScreen();
@@ -620,7 +625,7 @@ public class MenuController {
     loadingDots = LabelGenerator
             .generate(true, searchingForMultiplayers, " .", UIColours.WHITE, 20);
     playersInLobby = LabelGenerator
-            .generate(true, searchingForMultiplayers, "Players in Lobby: 0", UIColours.WHITE, 20);
+        .generate(false, searchingForMultiplayers, "Players in Lobby: 0", UIColours.WHITE, 20);
     searchingForMultiplayers.setAlignment(Pos.CENTER);
     StackPane.setAlignment(searchingForMultiplayers, Pos.CENTER);
     root.getChildren().add(searchingForMultiplayers);
