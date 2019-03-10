@@ -153,11 +153,11 @@ public abstract class Telemetry {
     for (int i = 0; i < AGENT_COUNT; i++) {
       for (int j = (i + 1); j < AGENT_COUNT; j++) {
 
-        if (agents[i].isMipsman() && !agents[j].isMipsman()) {
+        if (agents[i].isMipsman() && !agents[j].isMipsman() && !agents[i].isInvincible()) {
           detectEntityCollision(agents[i], agents[j], resourceLoader);
         }
 
-        if (agents[j].isMipsman() && !agents[i].isMipsman()) {
+        if (agents[j].isMipsman() && !agents[i].isMipsman() && !agents[j].isInvincible()) {
           detectEntityCollision(agents[j], agents[i], resourceLoader);
         }
       }
