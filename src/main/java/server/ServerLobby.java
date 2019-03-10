@@ -1,24 +1,42 @@
 package server;
 
-import utils.Input;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.net.NetworkInterface;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import utils.Input;
 
-// TODO Use multi-casting to constantly ping the number of players in the game in a thread.
-// TODO Use multi-casting to constantly ping the current players in the game in a thread
 public class ServerLobby {
 
+  private AtomicInteger playerCount;
+  private ArrayList<InetAddress> playerIPs;
+  private ServerGameplayHandler s;
+  private String[] names = new String[5];
+  private Queue<String> outputQueue;
+  private int MIPID;
+  private boolean[] usedIDs = {false, false, false, false, false};
+  private ArrayList<Socket> activeClientSockets = new ArrayList<>();
+  private ArrayList<PrintWriter> activeOutstreams = new ArrayList<>();
+  private ArrayList<BufferedReader> activeInputStreams = new ArrayList<>();
+  private ArrayList<lobbyLeaverListener> lobbyLeavers = new ArrayList<>();
+  private ServerSocket server;
+  private boolean hostPresent = true;
+
   /**
-   * Thread which sends messages to multicast group to make server IP known
+   * Thread which sends messages to multicast group to make server IP known but also includes number
+   * of players in the lobby
    */
   Thread pinger =
           new Thread() {
@@ -64,20 +82,6 @@ public class ServerLobby {
               }
             }
           };
-  private AtomicInteger playerCount;
-  private ArrayList<InetAddress> playerIPs;
-  private boolean gameStarted;
-  private ServerGameplayHandler s;
-  private String[] names = new String[5];
-  private Queue<String> outputQueue;
-  private int MIPID;
-  private boolean[] usedIDs = {false, false, false, false, false};
-  private ArrayList<Socket> activeClientSockets = new ArrayList<>();
-  private ArrayList<PrintWriter> activeOutstreams = new ArrayList<>();
-  private ArrayList<BufferedReader> activeInputStreams = new ArrayList<>();
-  private ArrayList<lobbyLeaverListener> lobbyLeavers = new ArrayList<>();
-  private ServerSocket server;
-  private boolean hostPresent = true;
 
   /**
    * Accepts connections from clients
@@ -146,13 +150,15 @@ public class ServerLobby {
     this.MIPID = (new Random()).nextInt(5);
   }
 
+  /**
+   * Shuts down the internal threads and all TCP connections
+   */
   public void shutDown(){
     acceptConnections.interrupt();
     if (server != null && !server.isClosed()) {
       try {
         server.close();
-      } catch (IOException err)
-      {
+      } catch (IOException err) {
         err.printStackTrace(System.err);
       }
     }
@@ -161,22 +167,19 @@ public class ServerLobby {
   }
 
   /**
-   * Starts the game for all clients Needs to send player Names
+   * Starts the game for all clients by sending player names and start game flag.
    *
-   * @return
+   * @return The server gameplay handler which will be used by the client.
    */
   public ServerGameplayHandler gameStart(Queue<Input> inputQueue, Queue<String> outputQueue) {
     this.outputQueue = outputQueue;
     pinger.interrupt();
     acceptConnections.interrupt();
-    gameStarted = true;
     for (InetAddress ip : playerIPs) {
       try {
         Socket soc = new Socket(ip, NetworkUtility.CLIENT_DGRAM_PORT);
         PrintWriter out = new PrintWriter(soc.getOutputStream());
-        String str = "START GAME";
-
-        out.println(str);
+        out.println(NetworkUtility.GAME_START);
         out.flush();
         for (String name : names) {
           out.println(name);
@@ -198,6 +201,11 @@ public class ServerLobby {
     return s;
   }
 
+  /**
+   * Gets the next available ID in the lobby to assign to the incoming client.
+   *
+   * @return the integer of the available ID
+   */
   private int getNextID(){
     for(int i = 0; i < usedIDs.length; i++){
       if(!usedIDs[i]){
@@ -216,10 +224,17 @@ public class ServerLobby {
 
   }
 
+  /**
+   * Gets the current number of players in the lobby
+   * @return the number of players in the lobby
+   */
   public int getPlayerCount() {
     return this.playerCount.get();
   }
 
+  /**
+   * Shuts down all the TCP connections in the current client
+   */
   private void shutdownTCP(){
     try{
       for(Socket s: activeClientSockets){
@@ -243,6 +258,9 @@ public class ServerLobby {
 
   }
 
+  /**
+   * Private class which is listening for clients in the lobby who leave the game.
+   */
   private class lobbyLeaverListener extends Thread{
 
     private Socket client;
@@ -250,6 +268,7 @@ public class ServerLobby {
     private PrintWriter out;
     private int id;
     private InetAddress ip;
+
     public lobbyLeaverListener(Socket client, BufferedReader in, PrintWriter out, InetAddress ip, int id){
       this.client = client;
       this.in = in;

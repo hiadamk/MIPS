@@ -22,6 +22,9 @@ import utils.enums.PowerUp;
  */
 public class NetworkUtility {
 
+  /**
+   * Networking constants
+   */
   public static final int SERVER_M_PORT = 4446;
   public static final int CLIENT_M_PORT = 4445;
   public static final int SERVER_DGRAM_PORT = 3000;
@@ -34,7 +37,7 @@ public class NetworkUtility {
   public static final String COLLISIONS_CODE = "COL";
   public static final String POWERUP_CODE = "POW";
   public static final String STOP_CODE = "EXIT";
-  public static final String DISCONNECT = "DISCONNECT";
+  public static final String GAME_START = "START GAME";
   public static final String DISCONNECT_HOST = "DISCONNECT_HOST";
   public static final String DISCONNECT_NON_HOST = "DISCONNECT_NON_HOST";
   public static final int STRING_LIMIT = 128;

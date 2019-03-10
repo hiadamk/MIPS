@@ -6,6 +6,20 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXToggleButton;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.net.NetworkInterface;
+import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Stack;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -13,7 +27,14 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.SingleSelectionModel;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -28,18 +49,15 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.Client;
 import server.NetworkUtility;
-import utils.*;
+import utils.KeyRemapping;
 import utils.Map;
+import utils.MapGenerator;
+import utils.MapPreview;
+import utils.ResourceLoader;
+import utils.Settings;
 import utils.enums.InputKey;
 import utils.enums.RenderingMode;
 import utils.enums.ScreenResolution;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.*;
-import java.util.*;
 
 /**
  * @author Adam Kona Class which handles the creation and functionality of components in the main
@@ -124,7 +142,11 @@ public class MenuController {
     this.resourceLoader = resourceLoader;
   }
 
-  Runnable lobbyPlayers = (() -> {
+  /**
+   * Thread to listen to the Server Lobby which is contrantly pinging the number of players in the
+   * lobby.
+   */
+  private Runnable lobbyPlayers = (() -> {
     while (!Thread.currentThread().isInterrupted()) {
       try {
         Thread.sleep(1000);
@@ -174,9 +196,7 @@ public class MenuController {
 
         if (numberOfPlayers != players) {
           System.out.println("Updating player count");
-          Platform.runLater(() -> {
-            playersInLobby.setText("Players in lobby: " + players);
-          });
+          Platform.runLater(() -> playersInLobby.setText("Players in lobby: " + players));
         }
         socket.close();
       } catch (SocketTimeoutException e) {
@@ -191,7 +211,7 @@ public class MenuController {
       } catch (InterruptedException e1) {
         System.out.println("Lobby players thread was interrupted. ");
       } catch (IOException e2) {
-
+        e2.printStackTrace();
       }
     }
     if (!socket.isClosed() && socket != null) {
@@ -266,6 +286,9 @@ public class MenuController {
     });
   }
 
+  /**
+   * Handles showing the next map in the menu
+   */
   private void showNextMap() {
     mapsIndex++;
     if (mapsIndex >= (numberOfMaps - 1)) {
@@ -277,6 +300,9 @@ public class MenuController {
     currentMap = validMaps.get(mapsIndex);
   }
 
+  /**
+   * Handles showing the previous map in the menu
+   */
   private void showPreviousMap() {
     mapsIndex--;
     if (mapsIndex <= 0) {
@@ -286,6 +312,116 @@ public class MenuController {
     moveMapsRightBtn.setVisible(true);
     mapView.setImage(mapImages.get(mapsIndex));
     currentMap = validMaps.get(mapsIndex);
+  }
+
+  /**
+   * Hides remapping toggles when they are no longer needed
+   *
+   * @param toShow the toggle we want to keep showing
+   */
+  private void hideInactiveToggles(ToggleButton toShow) {
+    for (ToggleButton t : keyToggleList) {
+      if (!t.equals(toShow)) {
+        t.setVisible(false);
+      }
+    }
+  }
+
+  /**
+   * Shows the toggles in their original state
+   */
+  private void resetToggles() {
+    for (ToggleButton t : keyToggleList) {
+      t.setText(defaultToggleText);
+      t.setVisible(true);
+    }
+  }
+
+  /**
+   * Initialises the behaviour for the toggle buttons
+   */
+  private void initialiseToggleActions() {
+    for (ToggleButton t : keyToggleList) {
+      t.setOnAction(event -> {
+        if (t.isSelected()) {
+          t.setText(remapToggleText);
+          toRemap = (InputKey) t.getUserData();
+          hideInactiveToggles(t);
+          keyToggleStatus.setText(remapReady);
+          primaryStage.getScene().setOnKeyPressed(keyRemapper);
+          new Thread(() -> {
+            while (true) {
+              if (keyRemapper.getActiveKey() == null) {
+                try {
+                  Thread.sleep(50);
+                } catch (InterruptedException e) {
+                  e.printStackTrace();
+                }
+                continue;
+              }
+
+              proposedChange = keyRemapper.getActiveKey();
+              break;
+            }
+          }).start();
+
+        } else {
+          if (proposedChange == null) {
+            keyToggleStatus.setText(remapCancelled);
+          } else if (keyRemapper.checkForDublicates(proposedChange) && proposedChange != null) {
+            keyToggleStatus.setText("Sorry, key already in use.");
+          } else {
+            keyToggleStatus.setText(remapComplete);
+            Settings.setKey(toRemap, proposedChange);
+            keyRemapper.reset();
+          }
+          resetToggles();
+          updateToggleLabels();
+          primaryStage.getScene().setOnKeyPressed(null);
+          toRemap = null;
+          proposedChange = null;
+        }
+      });
+    }
+  }
+
+  /**
+   * Resets the toggle labels to their default state with the current control values.
+   */
+  private void updateToggleLabels() {
+    System.out.println("Current UP KEY: " + Settings.getKey(InputKey.UP).getName());
+    upLbl.setText("UP KEY: " + Settings.getKey(InputKey.UP).getName());
+    leftLbl.setText("LEFT KEY: " + Settings.getKey(InputKey.LEFT).getName());
+    rightLbl.setText("RIGHT KEY: " + Settings.getKey(InputKey.RIGHT).getName());
+    downLbl.setText("DOWN KEY: " + Settings.getKey(InputKey.DOWN).getName());
+    useLbl.setText("USE ITEM KEY: " + Settings.getKey(InputKey.USE).getName());
+  }
+
+  /**
+   * @param newVal the new screen width.
+   * @param oldVal the old screen width.
+   * @author Adam Kona Updates the current size of all the images in the menu whilst preserving
+   * their aspect ratio. The percentage change in the screen width is calculated and the size of the
+   * images is changed along with it as long as this does not fall below 40% the original image size
+   * and does not rise above the original image size.
+   */
+  public void scaleImages(double newVal, double oldVal) {
+
+    for (int i = 0; i < imageViews.size(); i++) {
+      ImageView currentView = imageViews.get(i);
+      double currentWidth = currentView.getBoundsInLocal().getWidth();
+      currentView.setPreserveRatio(true);
+      currentView.setSmooth(true);
+
+      double proposedWidth = Math.floor(currentWidth * (newVal / oldVal));
+      if (proposedWidth > originalViewWidths.get(i)) {
+        currentView.setFitWidth(originalViewWidths.get(i));
+      } else if (proposedWidth < minimumViewWidths.get(i)) {
+        currentView.setFitWidth(minimumViewWidths.get(i));
+      } else {
+        currentView.setFitWidth(Math.floor(currentWidth * (newVal / oldVal)));
+      }
+    }
   }
 
   /**
@@ -911,116 +1047,6 @@ public class MenuController {
     }
 
     return root;
-  }
-
-  /**
-   * Hides remapping toggles when they are no longer needed
-   *
-   * @param toShow the toggle we want to keep showing
-   */
-  private void hideInactiveToggles(ToggleButton toShow) {
-    for (ToggleButton t : keyToggleList) {
-      if (!t.equals(toShow)) {
-        t.setVisible(false);
-      }
-    }
-  }
-
-  /**
-   * Shows the toggles in their original state
-   */
-  private void resetToggles() {
-    for (ToggleButton t : keyToggleList) {
-      t.setText(defaultToggleText);
-      t.setVisible(true);
-    }
-  }
-
-  /**
-   * Initialises the behaviour for the toggle buttons
-   */
-  private void initialiseToggleActions() {
-    for (ToggleButton t : keyToggleList) {
-      t.setOnAction(event -> {
-        if (t.isSelected()) {
-          t.setText(remapToggleText);
-          toRemap = (InputKey) t.getUserData();
-          hideInactiveToggles(t);
-          keyToggleStatus.setText(remapReady);
-          primaryStage.getScene().setOnKeyPressed(keyRemapper);
-          new Thread(() -> {
-            while (true) {
-              if (keyRemapper.getActiveKey() == null) {
-                try {
-                  Thread.sleep(50);
-                } catch (InterruptedException e) {
-                  e.printStackTrace();
-                }
-                continue;
-              }
-
-              proposedChange = keyRemapper.getActiveKey();
-              break;
-            }
-          }).start();
-
-        } else {
-          if (proposedChange == null) {
-            keyToggleStatus.setText(remapCancelled);
-          } else if (keyRemapper.checkForDublicates(proposedChange) && proposedChange != null) {
-            keyToggleStatus.setText("Sorry, key already in use.");
-          } else {
-            keyToggleStatus.setText(remapComplete);
-            Settings.setKey(toRemap, proposedChange);
-            keyRemapper.reset();
-          }
-          resetToggles();
-          updateToggleLabels();
-          primaryStage.getScene().setOnKeyPressed(null);
-          toRemap = null;
-          proposedChange = null;
-        }
-      });
-    }
-  }
-
-  /**
-   * Resets the toggle labels to their default state with the current control values.
-   */
-  private void updateToggleLabels() {
-    System.out.println("Current UP KEY: " + Settings.getKey(InputKey.UP).getName());
-    upLbl.setText("UP KEY: " + Settings.getKey(InputKey.UP).getName());
-    leftLbl.setText("LEFT KEY: " + Settings.getKey(InputKey.LEFT).getName());
-    rightLbl.setText("RIGHT KEY: " + Settings.getKey(InputKey.RIGHT).getName());
-    downLbl.setText("DOWN KEY: " + Settings.getKey(InputKey.DOWN).getName());
-    useLbl.setText("USE ITEM KEY: " + Settings.getKey(InputKey.USE).getName());
-  }
-
-  /**
-   * @param newVal the new screen width.
-   * @param oldVal the old screen width.
-   * @author Adam Kona Updates the current size of all the images in the menu whilst preserving
-   * their aspect ratio. The percentage change in the screen width is calculated and the size of the
-   * images is changed along with it as long as this does not fall below 40% the original image size
-   * and does not rise above the original image size.
-   */
-  public void scaleImages(double newVal, double oldVal) {
-
-    for (int i = 0; i < imageViews.size(); i++) {
-      ImageView currentView = imageViews.get(i);
-      double currentWidth = currentView.getBoundsInLocal().getWidth();
-      currentView.setPreserveRatio(true);
-      currentView.setSmooth(true);
-
-      double proposedWidth = Math.floor(currentWidth * (newVal / oldVal));
-      if (proposedWidth > originalViewWidths.get(i)) {
-        currentView.setFitWidth(originalViewWidths.get(i));
-      } else if (proposedWidth < minimumViewWidths.get(i)) {
-        currentView.setFitWidth(minimumViewWidths.get(i));
-      } else {
-        currentView.setFitWidth(Math.floor(currentWidth * (newVal / oldVal)));
-      }
-    }
   }
 
 }
