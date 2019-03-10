@@ -73,7 +73,7 @@ public class Pellet implements Renderable {
     currentImage = r.getPellet();
   }
 
-  public void interact(Entity entity, ArrayList<PowerUp> activePowerUps) {
+  public void interact(Entity entity, Entity[] agents, ArrayList<PowerUp> activePowerUps) {
     if (isTrap) {
       trap.trigger(entity, activePowerUps);
       isTrap = false;

@@ -22,7 +22,7 @@ import utils.enums.PowerUp;
 public abstract class Telemetry {
 
   static final int AGENT_COUNT = 5;
-  static final int GAME_TIME = 30 * 100; // Number of seconds *100
+  static final int GAME_TIME = 150 * 100; // Number of seconds *100
 
   public static int getGameTimer() {
     return gameTimer;
@@ -233,7 +233,7 @@ public abstract class Telemetry {
       int y = (int) p.getY();
       Pellet pellet = pellets.get(x + "," + y);
       if (pellet != null) {
-        pellet.interact(agent, activePowerUps);
+        pellet.interact(agent, agents, activePowerUps);
       }
     }
   }
