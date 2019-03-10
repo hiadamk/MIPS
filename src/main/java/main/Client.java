@@ -1,6 +1,12 @@
 package main;
 
 import audio.AudioController;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -27,13 +33,6 @@ import utils.enums.Direction;
 import utils.enums.RenderingMode;
 import utils.enums.ScreenResolution;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
 public class Client extends Application {
 
   Map map;
@@ -56,6 +55,7 @@ public class Client extends Application {
   private Queue<Input> inputs;
   private ServerLobby server;
   private ServerGameplayHandler serverGameplayHandler;
+  private MenuController menuController;
   private ClientLobbySession clientLobbySession;
   private Queue<String> clientIn;
   private Queue<Input> keypressQueue;
@@ -106,7 +106,7 @@ public class Client extends Application {
     resourceLoader = new ResourceLoader("src/main/resources/");
     this.primaryStage = primaryStage;
     //    audioController.playMusic(Sounds.intro);
-    MenuController menuController =
+    menuController =
         new MenuController(audioController, primaryStage, this, resourceLoader);
     StackPane root = (StackPane) menuController.createMainMenu();
     root.getStylesheets().add(getClass().getResource("/ui/stylesheet.css").toExternalForm());
@@ -210,6 +210,7 @@ public class Client extends Application {
   }
 
   public void startMultiplayerGame() {
+    menuController.endPlayerDiscovery();
     if (isHost) {
       System.out.println("Starting multiplayer for host");
       BlockingQueue<Input> inputQueue = new LinkedBlockingQueue<Input>();
