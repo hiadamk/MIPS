@@ -39,6 +39,24 @@ public class Entity implements Renderable {
   private boolean directionSet;
   private boolean stunned;
   private boolean dead;
+  private boolean speeding;
+  private boolean invincible;
+
+  public boolean isSpeeding() {
+    return speeding;
+  }
+
+  public void setSpeeding(boolean speeding) {
+    this.speeding = speeding;
+  }
+
+  public boolean isInvincible() {
+    return invincible;
+  }
+
+  public void setInvincible(boolean invincible) {
+    this.invincible = invincible;
+  }
 
   public boolean isStunned() {
     return stunned;
@@ -107,7 +125,7 @@ public class Entity implements Renderable {
   }
 
   public void giveItem(PowerUp powerUp) {
-    if (items.size() <= 2) {
+    if (items.size() < 2) {
       items.add(powerUp);
     }
   }

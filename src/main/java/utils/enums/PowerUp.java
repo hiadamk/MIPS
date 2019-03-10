@@ -5,6 +5,7 @@ import java.util.HashMap;
 import objects.Entity;
 import objects.Pellet;
 import objects.PowerUpBox;
+import utils.Methods;
 import utils.Point;
 
 /**
@@ -13,13 +14,14 @@ import utils.Point;
  * @author Matthew Jones
  */
 public enum PowerUp {
-  WEB(50, "web"), SPEED(200, "speed"), BLUESHELL(20, "blueshell"), INVINCIBLE(200, "invincible");
+  WEB(100, "web"), SPEED(300, "speed"), BLUESHELL(20, "blueshell"), INVINCIBLE(200, "invincible");
 
   private final String NAME;
   private final int EFFECTTIME;
   private Entity effected;
   private int counter = 500;
   private Boolean onMap = false;
+  private Entity user;
 
   public Boolean getOnMap() {
     return onMap;
@@ -36,11 +38,12 @@ public enum PowerUp {
    * @param user The entity that used the powerUp
    * @param activePowerUps All active powerUps in the game
    */
-  public void use(Entity user, ArrayList<PowerUp> activePowerUps, HashMap<String, Pellet> pellets) {
+  public void use(Entity user, ArrayList<PowerUp> activePowerUps, HashMap<String, Pellet> pellets,
+      Entity[] agents) {
     switch (this) {
       case WEB:
         this.onMap = true;
-        Point loc = user.getMoveInDirection(0.7, user.getDirection().getInverse());
+        Point loc = user.getMoveInDirection(1.5, user.getDirection().getInverse());
         int x = (int) loc.getX();
         int y = (int) loc.getY();
         PowerUpBox box = new PowerUpBox(x + 0.5, y + 0.5);
@@ -48,18 +51,22 @@ public enum PowerUp {
         pellets.put(x + "," + y, box);
         break;
       case SPEED:
-        user.setVelocity(user.getVelocity() * 1.2);
+        user.setVelocity(user.getVelocity() + 0.03);
         activePowerUps.add(this);
         this.effected = user;
+        user.setSpeeding(true);
         counter = 0;
         break;
 
       case BLUESHELL:
+        effected = agents[Methods.findWinner(agents)];
+        this.user = user;
 
         break;
       case INVINCIBLE:
         activePowerUps.add(this);
         this.effected = user;
+        user.setInvincible(true);
         counter = 0;
         break;
     }
@@ -99,6 +106,13 @@ public enum PowerUp {
           break;
         case BLUESHELL:
           effected.setDead(false);
+          break;
+        case SPEED:
+          effected.setSpeeding(false);
+          effected.setVelocity(effected.getVelocity() - 0.03);
+          break;
+        case INVINCIBLE:
+          effected.setInvincible(false);
           break;
       }
       return true;
