@@ -69,19 +69,15 @@ public class MapGenerator {
     if (validateMap(test3)) {
       System.out.println("test three true");
     }
-    long[] diff = new long[25];
+    long[] diff = new long[10];
     long t2;
     long t1;
-    for (int c = 0; c < 25; c++) {
-      Random r = new Random();
-      int x = 14 + r.nextInt(5) * 3;
-      int y = 14 + r.nextInt(5) * 3;
+    for (int c = 0; c < 10; c++) {
       t1 = System.nanoTime();
-      int[][] map = generateNewMap(x, y);
+      int[][] map = newRandomMap(2, 2);
       t2 = System.nanoTime();
       diff[c] = t2 - t1;
       System.out.println("****************");
-      System.out.println("X: " + x + " Y: " + y + "  Time: " + diff[c] / 1000000);
       for (int[] bit : map) {
         System.out.println(Arrays.toString(bit));
       }
@@ -90,9 +86,8 @@ public class MapGenerator {
     for (long i : diff) {
       avg = avg + i;
     }
-    avg = avg / 25;
-    System.out.println(avg);
-
+    avg = avg / 10;
+    System.out.println(avg / 100000000);
   }
 
   public static int[][] newRandomMap(int x_factor, int y_factor) {

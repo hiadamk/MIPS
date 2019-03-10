@@ -505,9 +505,10 @@ public class MenuController {
     });
 
     generateMapBtn.setOnAction(event -> {
-      int[][] newMap = MapGenerator.newRandomMap(3, 3);
+      int[][] newMap = MapGenerator.newRandomMap(2, 2);
       while (!MapGenerator.validateMap(newMap)) {
-        newMap = MapGenerator.generateNewMap(3, 3);
+        System.out.println("invalid");
+        newMap = MapGenerator.generateNewMap(1, 1);
       }
       Map generatedMap = new Map(newMap);
       validMaps.add(generatedMap);
