@@ -77,6 +77,32 @@ public class Renderer {
   }
 
   /**
+   * @param map Game Map
+   * @param entityArr Playable objects
+   * @param now Current game time in nanoseconds
+   * @param pellets Consumable objects
+   */
+  public void render(Map map, Entity[] entityArr, long now, HashMap<String, Pellet> pellets,
+      ArrayList<PowerUp> activePowerUps,
+      int gameTime) {
+    if (clientEntity == null) {
+      this.clientEntity = getClientEntity(new ArrayList<>(Arrays.asList(entityArr)));
+    }
+    long timeElapsed = now - lastFrame;
+    //clear screen
+    gc.clearRect(0, 0, xResolution, yResolution);
+    renderBackground(map);
+    renderGameOnly(map, entityArr, now, pellets, activePowerUps);
+    hudRender.renderHUD(entityArr, gameTime);
+    hudRender
+        .renderInventory(getClientEntity(new ArrayList<>(Arrays.asList(entityArr))), timeElapsed);
+    //showFPS(timeElapsed);
+
+    lastFrame = now;
+
+  }
+
+  /**
    * initialises map array, map traversal order, map tiles and fonts
    */
   public void initMapTraversal(Map map) {
@@ -133,7 +159,7 @@ public class Renderer {
   }
 
   public void renderGameOnly(Map map, Entity[] entityArr, long now,
-      HashMap<String, Pellet> pellets) {
+      HashMap<String, Pellet> pellets, ArrayList<PowerUp> activePowerUps) {
 
     int[][] rawMap = map.raw();
     ArrayList<Entity> entities = new ArrayList<>(Arrays.asList(entityArr));
@@ -147,6 +173,16 @@ public class Renderer {
 
     int x;
     int y;
+
+    HashMap<Entity, HashMap<PowerUp, PowerUp>> entityPowerUps = new HashMap<>();
+    for (Entity e : entityArr) {
+      entityPowerUps.put(e, new HashMap<>());
+    }
+    if (activePowerUps != null) {
+      for (PowerUp p : activePowerUps) {
+        entityPowerUps.get(p.getUser()).put(p, p);
+      }
+    }
 
     // Render floor first (floors will never be on a higher layer than anything apart form the background
     for (Double coord : traversalOrder) {
@@ -223,10 +259,11 @@ public class Renderer {
           && spriteCoord.getX() > x) {
 
         if (now == 0) {
-          renderEntity(entities.get(entityCounter), 0);
+          renderEntity(entities.get(entityCounter), null, 0);
           entityCounter++;
         } else {
-          renderEntity(entities.get(entityCounter), now - lastFrame);
+          Entity entityToRender = entities.get(entityCounter);
+          renderEntity(entityToRender, entityPowerUps.get(entityToRender), now - lastFrame);
           entityCounter++;
         }
 
@@ -248,38 +285,13 @@ public class Renderer {
     return null;
   }
 
-  /**
-   * @param map Game Map
-   * @param entityArr Playable objects
-   * @param now Current game time in nanoseconds
-   * @param pellets Consumable objects
-   */
-  public void render(Map map, Entity[] entityArr, long now, HashMap<String, Pellet> pellets,
-      int gameTime) {
-    if (clientEntity == null) {
-      this.clientEntity = getClientEntity(new ArrayList<Entity>(Arrays.asList(entityArr)));
-    }
-    long timeElapsed = now - lastFrame;
-    //clear screen
-    gc.clearRect(0, 0, xResolution, yResolution);
-    renderBackground(map);
-    renderGameOnly(map, entityArr, now, pellets);
-    hudRender.renderHUD(entityArr, gameTime);
-    hudRender
-        .renderInventory(getClientEntity(new ArrayList<>(Arrays.asList(entityArr))), timeElapsed);
-    //showFPS(timeElapsed);
-
-    lastFrame = now;
-
-  }
-
   private void renderCollision(Entity newMipsMan, Entity[] entities, Map map,
       UpDownIterator<java.lang.Double> entitySize,
       UpDownIterator<java.lang.Double> backgroundOpacity,
       Image currentSprite) {
     gc.setTextAlign(TextAlignment.CENTER);
     renderBackground(map);
-    renderGameOnly(map, entities, 0, new HashMap<String, Pellet>());
+    renderGameOnly(map, entities, 0, new HashMap<String, Pellet>(), null);
     gc.setFill(new Color(0, 0, 0, backgroundOpacity.next()));
     gc.fillRect(0, 0, xResolution, yResolution);
 
@@ -384,12 +396,15 @@ public class Renderer {
    * @param e entitiy to render
    * @param timeElapsed time since last frame to decide whether to move to next animation frame
    */
-  private void renderEntity(Entity e, long timeElapsed) {
+  private void renderEntity(Entity e, HashMap<PowerUp, PowerUp> selfPowerUps, long timeElapsed) {
     // choose correct animation
     ArrayList<Image> currentSprites = e.getImage();
     if (secondInNanoseconds / e.getAnimationSpeed() < e.getTimeSinceLastFrame()) {
       e.setTimeSinceLastFrame(0);
       e.nextFrame();
+      for (PowerUp p : selfPowerUps.values()) {
+        p.incrementFrame();
+      }
     } else {
       e.setTimeSinceLastFrame(e.getTimeSinceLastFrame() + timeElapsed);
     }
@@ -401,11 +416,9 @@ public class Renderer {
         getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
     gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
 
-    //is the entity stunned?
-    if (e.isStunned()) {
-      gc.drawImage(r.getPowerUps().get(PowerUp.WEB.toInt()), rendCoord.getX(), rendCoord.getY());
+    if (selfPowerUps != null) {
+      renderPowerUpEffects(e, selfPowerUps, rendCoord);
     }
-
     // render marker for entity
     if (e.getClientId() != clientID && !e.isMipsman()) {
       return;
@@ -416,6 +429,20 @@ public class Renderer {
         getIsoCoord(x, y, marker.getHeight() + currentSprite.getHeight(), marker.getWidth());
 
     gc.drawImage(marker, coord.getX(), coord.getY());
+  }
+
+  private void renderPowerUpEffects(Entity e, HashMap<PowerUp, PowerUp> selfPowerUps,
+      Double rendCoord) {
+    if (e.isSpeeding()) {
+      PowerUp speed = selfPowerUps.get(PowerUp.SPEED);
+      gc.drawImage(r.getPowerUps().get(PowerUp.SPEED)
+              .get(speed.getCurrentFrame() % r.getPowerUps().get(PowerUp.SPEED).size()),
+          rendCoord.getX(), rendCoord.getY());
+    }
+    //is the entity stunned?
+    if (e.isStunned()) {
+      gc.drawImage(r.getPowerUps().get(PowerUp.WEB).get(0), rendCoord.getX(), rendCoord.getY());
+    }
   }
 
   /**

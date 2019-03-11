@@ -241,4 +241,8 @@ public abstract class Telemetry {
   public GameLoop getInputProcessor() {
     return inputProcessor;
   }
+
+  public ArrayList<PowerUp> getActivePowerUps() {
+    return activePowerUps;
+  }
 }

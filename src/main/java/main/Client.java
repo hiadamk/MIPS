@@ -294,7 +294,8 @@ public class Client extends Application {
       @Override
       public void handle(long now) {
         processInput();
-        renderer.render(map, agents, now, pellets, telemetry.getGameTimer() / 100);
+        renderer.render(map, agents, now, pellets, telemetry.getActivePowerUps(),
+            Telemetry.getGameTimer() / 100);
 
       }
     };
