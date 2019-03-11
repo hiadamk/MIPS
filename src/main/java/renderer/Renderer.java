@@ -439,6 +439,12 @@ public class Renderer {
               .get(speed.getCurrentFrame() % r.getPowerUps().get(PowerUp.SPEED).size()),
           rendCoord.getX(), rendCoord.getY());
     }
+    if (e.isInvincible()) {
+      PowerUp invincible = selfPowerUps.get(PowerUp.INVINCIBLE);
+      gc.drawImage(r.getPowerUps().get(PowerUp.INVINCIBLE)
+              .get(invincible.getCurrentFrame() % r.getPowerUps().get(PowerUp.INVINCIBLE).size()),
+          rendCoord.getX(), rendCoord.getY());
+    }
     //is the entity stunned?
     if (e.isStunned()) {
       gc.drawImage(r.getPowerUps().get(PowerUp.WEB).get(0), rendCoord.getX(), rendCoord.getY());
