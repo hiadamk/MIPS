@@ -21,6 +21,7 @@ import utils.enums.PowerUp;
  */
 public abstract class Telemetry {
 
+
   static final int AGENT_COUNT = 5;
   static final int GAME_TIME = 150 * 100; // Number of seconds *100
 

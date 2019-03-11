@@ -42,9 +42,11 @@ public class AStarRouteFinder implements RouteFinder {
        */
   @Override
   public Direction getRoute(Point myLocPointDouble, Point targetLocPointDouble) {
+
     if (!COMPLETE) {
       return new RandomRouteFinder().getRoute(myLocPointDouble,targetLocPointDouble);
     }
+    System.out.println("A");
     if (myLocPointDouble == null || targetLocPointDouble == null) {
       throw new NullPointerException("One or both positions are null.");
     }
