@@ -594,7 +594,7 @@ public class Renderer {
     double bottomLeftX = -map.getMaxY() * (this.tileSizeX / (double) 2);
     double topRightX = map.getMaxX() * (this.tileSizeX / (double) 2);
     double mapMidPointX = bottomLeftX + 0.5 * Math.abs(topRightX - bottomLeftX);
-    System.out.println("offset: " + mapMidPointX);
+//    System.out.println("offset: " + mapMidPointX);
     return new Point2D.Double((this.xResolution / (double) 2) - mapMidPointX, yResolution / 6);
   }
 

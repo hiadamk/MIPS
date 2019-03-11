@@ -78,6 +78,10 @@ public class MenuController {
   private Button backBtn;
   private Button startMGameBtn;
   private Button settingsBtn;
+  private Button playBtn;
+  private Button quitBtn;
+  private ImageView logo;
+  private Button instructions;
 
   private Label lobbyStatusLbl;
   private Label loadingDots;
@@ -432,6 +436,20 @@ public class MenuController {
     }
   }
 
+  public void reset() {
+    hideItemsOnScreen();
+    itemsOnScreen.clear();
+    backTree.clear();
+    itemsOnScreen.add(playBtn);
+    itemsOnScreen.add(instructions);
+    itemsOnScreen.add(logo);
+    itemsOnScreen.add(quitBtn);
+    itemsOnScreen.add(settingsBtn);
+    backBtn.setVisible(false);
+    showItemsOnScreen();
+
+  }
+
   /**
    * Creates all the menu items and defines their functionality.
    *
@@ -448,7 +466,7 @@ public class MenuController {
     root.getChildren().add(bg);
     StackPane.setAlignment(bg, Pos.CENTER);
 
-    ImageView logo = new ImageView("ui/MIPS-B.png");
+    logo = new ImageView("ui/MIPS-B.png");
     logo.preserveRatioProperty();
     StackPane.setAlignment(logo, Pos.TOP_CENTER);
     StackPane.setMargin(logo, new Insets(200, 0, 0, 0));
@@ -559,7 +577,7 @@ public class MenuController {
     root.getChildren().add(gameModeOptions);
     gameModeOptions.setVisible(false);
 
-    Button playBtn = ButtonGenerator.generate(true, root, "Play", UIColours.GREEN, 35);
+    playBtn = ButtonGenerator.generate(true, root, "Play", UIColours.GREEN, 35);
     playBtn.setText("Play");
     StackPane.setAlignment(playBtn, Pos.CENTER);
     StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
@@ -686,7 +704,7 @@ public class MenuController {
     nameEntryOptions.setVisible(false);
     root.getChildren().add(nameEntryOptions);
 
-    Button quitBtn = ButtonGenerator.generate(true, root, "quit", UIColours.QUIT_RED, 30);
+    quitBtn = ButtonGenerator.generate(true, root, "quit", UIColours.QUIT_RED, 30);
     StackPane.setAlignment(quitBtn, Pos.TOP_RIGHT);
     StackPane.setMargin(quitBtn, new Insets(50, 50, 0, 0));
     quitBtn.setOnAction(
@@ -984,7 +1002,7 @@ public class MenuController {
     root.getChildren().add(instructionLbl);
     instructionLbl.setVisible(false);
 
-    Button instructions = ButtonGenerator
+    instructions = ButtonGenerator
             .generate(true, root, "Instructions", UIColours.YELLOW, 30);
     StackPane.setAlignment(instructions, Pos.BOTTOM_CENTER);
     StackPane.setMargin(instructions, new Insets(0, 0, 100, 0));
