@@ -38,6 +38,8 @@ public class GameSceneController {
     Button yesBtn = ButtonGenerator.generate(true, quitBtns, "Yes", UIColours.GREEN, 15);
     yesBtn.setOnAction(event -> {
       client.closeGame();
+      quitContainer.setVisible(false);
+      quit.setVisible(true);
     });
     Button noBtn = ButtonGenerator.generate(true, quitBtns, "No", UIColours.RED, 15);
     noBtn.setOnAction(event -> {

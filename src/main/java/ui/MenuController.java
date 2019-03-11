@@ -208,7 +208,7 @@ public class MenuController {
         }
         socket.close();
       } catch (SocketTimeoutException e) {
-        System.out.println("Server has disconnected");
+        System.out.println("Server stopped sending lobby updates.");
         client.leaveLobby();
         Platform.runLater(() -> {
           lobbyStatusLbl.setText("Host left the game");

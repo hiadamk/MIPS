@@ -52,5 +52,8 @@ public class PacketReceiver extends Thread {
 
   public void shutdown() {
     this.running = false;
+    if (ds != null && !ds.isClosed()) {
+      ds.close();
+    }
   }
 }

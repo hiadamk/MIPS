@@ -217,14 +217,6 @@ public class ServerLobby {
   }
 
   /**
-   * Stops the game for clients.
-   */
-  public void gameStop() {
-    s.close();
-
-  }
-
-  /**
    * Gets the current number of players in the lobby
    * @return the number of players in the lobby
    */
