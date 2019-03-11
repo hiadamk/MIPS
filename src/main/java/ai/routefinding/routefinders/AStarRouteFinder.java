@@ -17,7 +17,7 @@ import utils.enums.Direction;
  */
 public class AStarRouteFinder implements RouteFinder {
 
-  private static final boolean COMPLETE = true;
+  private static final boolean COMPLETE = false;
 
   private final JunctionSet junctions;
   private final HashMap<Point, HashSet<Point>> edges;
