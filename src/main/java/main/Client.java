@@ -9,7 +9,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -24,6 +23,7 @@ import server.ServerLobby;
 import server.telemeters.DumbTelemetry;
 import server.telemeters.HostTelemetry;
 import server.telemeters.Telemetry;
+import ui.GameSceneController;
 import ui.MenuController;
 import utils.Input;
 import utils.Map;
@@ -67,6 +67,9 @@ public class Client extends Application {
   private Canvas canvas = new Canvas();
   private boolean colliding = false;
   private AnimationTimer inputRenderLoop;
+  private GameSceneController gameSceneController;
+  private Boolean gameStarted = false;
+  private Scene mainMenu;
 
   public int getId() {
     return id;
@@ -83,7 +86,6 @@ public class Client extends Application {
 
   public void setPlayerNames(String[] names) {
     this.playerNames = names;
-
   }
 
   public void setScreenRes(ScreenResolution s) {
@@ -108,23 +110,29 @@ public class Client extends Application {
     //    audioController.playMusic(Sounds.intro);
     menuController =
         new MenuController(audioController, primaryStage, this, resourceLoader);
-    StackPane root = (StackPane) menuController.createMainMenu();
-    root.getStylesheets().add(getClass().getResource("/ui/stylesheet.css").toExternalForm());
-    Scene scene = new Scene(root, xRes, yRes);
+    StackPane menuController = (StackPane) this.menuController.createMainMenu();
+    menuController.getStylesheets()
+        .add(getClass().getResource("/ui/stylesheet.css").toExternalForm());
+    mainMenu = new Scene(menuController, xRes, yRes);
     canvas = new Canvas(xRes, yRes);
-    Group gameRoot = new Group();
-    gameRoot.getChildren().add(canvas);
-    this.gameScene = new Scene(gameRoot);
+    this.gameSceneController = new GameSceneController(canvas, this);
+//
+//    Group gameRoot = new Group();
+//    gameRoot.getChildren().add(canvas);
+//    this.gameScene = new Scene(gameRoot);
+    this.gameScene = new Scene(gameSceneController.getGameRoot());
+    this.gameScene.getStylesheets()
+        .add(getClass().getResource("/ui/stylesheet.css").toExternalForm());
     GraphicsContext gc = canvas.getGraphicsContext2D();
     renderer = new Renderer(gc, xRes, yRes, resourceLoader);
-    primaryStage.setScene(scene);
+    primaryStage.setScene(mainMenu);
     primaryStage.setMinWidth(1366);
     primaryStage.setMinHeight(768);
     primaryStage
         .widthProperty()
         .addListener(
             (obs, oldVal, newVal) -> {
-              menuController.scaleImages((double) newVal, (double) oldVal);
+              this.menuController.scaleImages((double) newVal, (double) oldVal);
             });
 
     primaryStage.show();
@@ -168,22 +176,9 @@ public class Client extends Application {
     BlockingQueue<String> clientIn = new LinkedBlockingQueue<String>();
     keypressQueue = new LinkedBlockingQueue<Input>();
     try {
-
       clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this, name);
       this.telemetry = new DumbTelemetry(clientIn, this);
       this.telemetry.setMipID(MIPID);
-      // waits for game to start
-//      while (!clientLobbySession.isGameStarted()) {
-//        try {
-//          Thread.sleep(250);
-//        } catch (InterruptedException e) {
-//          e.printStackTrace();
-//        }
-//      }
-//      this.primaryStage.setScene(gameScene);
-//      gameScene.setOnKeyPressed(keyController);
-//      startGame();
-
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -195,18 +190,15 @@ public class Client extends Application {
       server.shutDown();
       setId(0);
       this.telemetry = null;
-//      this.clientLobbySession = null;
       this.keypressQueue = null;
       isHost = false;
     }else{
       clientLobbySession.leaveLobby();
       setId(0);
       this.telemetry = null;
-//      this.clientLobbySession = null;
       this.keypressQueue = null;
       isHost = false;
     }
-
   }
 
   public void startMultiplayerGame() {
@@ -307,8 +299,25 @@ public class Client extends Application {
     renderer.initMapTraversal(map);
     map = resourceLoader.getMap();
     this.primaryStage.setScene(gameScene);
+    gameStarted = true;
     // AnimationTimer started once game has started
 
+  }
+
+  public void closeGame() {
+    if (singlePlayer) {
+      this.telemetry.stopGame();
+      singlePlayer = false;
+      incomingQueue = null;
+      menuController.reset();
+      primaryStage.setScene(mainMenu);
+    } else {
+      if (isHost) {
+
+      } else {
+
+      }
+    }
   }
 
   /**
