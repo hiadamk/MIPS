@@ -399,7 +399,8 @@ public class Renderer {
   private void renderEntity(Entity e, HashMap<PowerUp, PowerUp> selfPowerUps, long timeElapsed) {
     // choose correct animation
     ArrayList<Image> currentSprites = e.getImage();
-    if (secondInNanoseconds / e.getAnimationSpeed() < e.getTimeSinceLastFrame()) {
+    if (secondInNanoseconds / e.getAnimationSpeed() < e.getTimeSinceLastFrame()
+        && timeElapsed > 0) {
       e.setTimeSinceLastFrame(0);
       e.nextFrame();
       for (PowerUp p : selfPowerUps.values()) {
