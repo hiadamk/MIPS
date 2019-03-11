@@ -107,5 +107,7 @@ public class Pellet implements Renderable {
     this.active = true;
   }
 
-
+  public boolean isPowerPellet() {
+    return false;
+  }
 }

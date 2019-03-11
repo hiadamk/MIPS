@@ -57,4 +57,9 @@ public class PowerUpBox extends Pellet {
     entity.giveItem(newPowerUp);
     this.setActive(false);
   }
+
+  @Override
+  public boolean isPowerPellet() {
+    return true;
+  }
 }

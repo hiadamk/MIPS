@@ -107,11 +107,11 @@ public class AILoopControl extends Thread {
         for (int i = 0; i < gameAgents.length; i++) {
             RouteFinder routeFinder;
             switch (i) {
-                case 0: {
+                case 1: {
                     routeFinder = new AStarRouteFinder(junctions, edges, map);
                     break;
                 }
-                case 1: {
+                case 0: {
                     routeFinder = new NextJunctionRouteFinder();
                     break;
                 }
@@ -124,7 +124,7 @@ public class AILoopControl extends Thread {
                     break;
                 }
                 case 4: {
-                    routeFinder = new MipsManRouteFinder();
+                    routeFinder = new MipsManRouteFinder(pellets, gameAgents);
                     break;
                 }
                 default: {

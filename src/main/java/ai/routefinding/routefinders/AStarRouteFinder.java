@@ -17,7 +17,7 @@ import utils.enums.Direction;
  */
 public class AStarRouteFinder implements RouteFinder {
 
-  private static final boolean COMPLETE = false;
+  private static final boolean COMPLETE = true;
 
   private final JunctionSet junctions;
   private final HashMap<Point, HashSet<Point>> edges;
@@ -42,9 +42,11 @@ public class AStarRouteFinder implements RouteFinder {
        */
   @Override
   public Direction getRoute(Point myLocPointDouble, Point targetLocPointDouble) {
+
     if (!COMPLETE) {
       return new RandomRouteFinder().getRoute(myLocPointDouble,targetLocPointDouble);
     }
+    System.out.println("A");
     if (myLocPointDouble == null || targetLocPointDouble == null) {
       throw new NullPointerException("One or both positions are null.");
     }
