@@ -1,5 +1,6 @@
 package utils;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class MapGenerator {
@@ -68,36 +69,39 @@ public class MapGenerator {
     if (validateMap(test3)) {
       System.out.println("test three true");
     }
-    long[] diff = new long[1000];
+    long[] diff = new long[10];
     long t2;
     long t1;
-    for (int c = 0; c < 1000; c++) {
+    for (int c = 0; c < 10; c++) {
       t1 = System.nanoTime();
-      int[][] map = generateNewMap();
+      int[][] map = newRandomMap(2, 2);
       t2 = System.nanoTime();
       diff[c] = t2 - t1;
-      //System.out.println("****************");
-      //for (int[] bit : map) {
-      //  System.out.println(Arrays.toString(bit));
-      //}
+      System.out.println("****************");
+      for (int[] bit : map) {
+        System.out.println(Arrays.toString(bit));
+      }
     }
     long avg = 0;
     for (long i : diff) {
       avg = avg + i;
     }
-    avg = avg / 1000;
-    System.out.println(avg);
+    avg = avg / 10;
+    System.out.println(avg / 100000000);
   }
 
-  public static int[][] generateNewMap() {
+  public static int[][] newRandomMap(int x_factor, int y_factor) {
+    //Run it on a new thread
+    return generateNewMap(14 + 3 * x_factor, 14 + 3 * y_factor);
+  }
+
+  public static int[][] generateNewMap(int x, int y) {
     int[][] map = null;
     int c = 0;
+    int half = (y + 1) / 2;
     while (!validateMap(map)) {
       //System.out.println("attempt " + c++);
       Random r = new Random();
-      int x = 14 + r.nextInt(5) * 3;
-      int half = 7 + r.nextInt(9) * 3;
-      int y = half * 2 - 1;
       map = new int[x][y];
       for (int i = 0; i < x; i++) {
         for (int j = 0; j < y; j++) {
@@ -105,7 +109,7 @@ public class MapGenerator {
         }
       }
       for (int i = 1; i < x - 3; i += 3) {
-        for (int j = 1; j < half - 2; j += 3) {
+        for (int j = 1; j < half + 1; j += 3) {
           map = apply(MapParts.getRandom(), map, i, j);
         }
       }

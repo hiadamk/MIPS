@@ -25,6 +25,7 @@ import utils.Point;
 import utils.ResourceLoader;
 import utils.UpDownIterator;
 import utils.enums.MapElement;
+import utils.enums.PowerUp;
 import utils.enums.RenderingMode;
 
 public class Renderer {
@@ -33,6 +34,7 @@ public class Renderer {
   private final GraphicsContext gc;
   private final long secondInNanoseconds = (long) Math.pow(10, 9);
   private final HeadsUpDisplay hudRender;
+  private Map map;
   private ResourceLoader r;
   private int xResolution;
   private int yResolution;
@@ -62,6 +64,7 @@ public class Renderer {
    */
   public Renderer(GraphicsContext _gc, int _xResolution, int _yResolution, ResourceLoader r) {
     this.r = r;
+    this.map = r.getMap();
     this.gc = _gc;
     this.xResolution = _xResolution;
     this.yResolution = _yResolution;
@@ -71,6 +74,32 @@ public class Renderer {
     this.hudRender = new HeadsUpDisplay(gc, _xResolution, _yResolution, r);
 
     this.initMapTraversal(r.getMap());
+  }
+
+  /**
+   * @param map Game Map
+   * @param entityArr Playable objects
+   * @param now Current game time in nanoseconds
+   * @param pellets Consumable objects
+   */
+  public void render(Map map, Entity[] entityArr, long now, HashMap<String, Pellet> pellets,
+      ArrayList<PowerUp> activePowerUps,
+      int gameTime) {
+    if (clientEntity == null) {
+      this.clientEntity = getClientEntity(new ArrayList<>(Arrays.asList(entityArr)));
+    }
+    long timeElapsed = now - lastFrame;
+    //clear screen
+    gc.clearRect(0, 0, xResolution, yResolution);
+    renderBackground(map);
+    renderGameOnly(map, entityArr, now, pellets, activePowerUps);
+    hudRender.renderHUD(entityArr, gameTime);
+    hudRender
+        .renderInventory(getClientEntity(new ArrayList<>(Arrays.asList(entityArr))), timeElapsed);
+    //showFPS(timeElapsed);
+
+    lastFrame = now;
+
   }
 
   /**
@@ -130,7 +159,7 @@ public class Renderer {
   }
 
   public void renderGameOnly(Map map, Entity[] entityArr, long now,
-      HashMap<String, Pellet> pellets) {
+      HashMap<String, Pellet> pellets, ArrayList<PowerUp> activePowerUps) {
 
     int[][] rawMap = map.raw();
     ArrayList<Entity> entities = new ArrayList<>(Arrays.asList(entityArr));
@@ -144,6 +173,16 @@ public class Renderer {
 
     int x;
     int y;
+
+    HashMap<Entity, HashMap<PowerUp, PowerUp>> entityPowerUps = new HashMap<>();
+    for (Entity e : entityArr) {
+      entityPowerUps.put(e, new HashMap<>());
+    }
+    if (activePowerUps != null) {
+      for (PowerUp p : activePowerUps) {
+        entityPowerUps.get(p.getUser()).put(p, p);
+      }
+    }
 
     // Render floor first (floors will never be on a higher layer than anything apart form the background
     for (Double coord : traversalOrder) {
@@ -220,10 +259,11 @@ public class Renderer {
           && spriteCoord.getX() > x) {
 
         if (now == 0) {
-          renderEntity(entities.get(entityCounter), 0);
+          renderEntity(entities.get(entityCounter), null, 0);
           entityCounter++;
         } else {
-          renderEntity(entities.get(entityCounter), now - lastFrame);
+          Entity entityToRender = entities.get(entityCounter);
+          renderEntity(entityToRender, entityPowerUps.get(entityToRender), now - lastFrame);
           entityCounter++;
         }
 
@@ -245,37 +285,13 @@ public class Renderer {
     return null;
   }
 
-  /**
-   * @param map Game Map
-   * @param entityArr Playable objects
-   * @param now Current game time in nanoseconds
-   * @param pellets Consumable objects
-   */
-  public void render(Map map, Entity[] entityArr, long now, HashMap<String, Pellet> pellets) {
-    if (clientEntity == null) {
-      this.clientEntity = getClientEntity(new ArrayList<Entity>(Arrays.asList(entityArr)));
-    }
-    long timeElapsed = now - lastFrame;
-    //clear screen
-    gc.clearRect(0, 0, xResolution, yResolution);
-    renderBackground(map);
-    renderGameOnly(map, entityArr, now, pellets);
-    hudRender.renderHUD(entityArr, 0);
-    hudRender
-        .renderInventory(getClientEntity(new ArrayList<>(Arrays.asList(entityArr))), timeElapsed);
-    //showFPS(timeElapsed);
-
-    lastFrame = now;
-
-  }
-
   private void renderCollision(Entity newMipsMan, Entity[] entities, Map map,
       UpDownIterator<java.lang.Double> entitySize,
       UpDownIterator<java.lang.Double> backgroundOpacity,
       Image currentSprite) {
     gc.setTextAlign(TextAlignment.CENTER);
     renderBackground(map);
-    renderGameOnly(map, entities, 0, new HashMap<String, Pellet>());
+    renderGameOnly(map, entities, 0, new HashMap<String, Pellet>(), null);
     gc.setFill(new Color(0, 0, 0, backgroundOpacity.next()));
     gc.fillRect(0, 0, xResolution, yResolution);
 
@@ -340,6 +356,7 @@ public class Renderer {
     final double frameTime = renderAnimationTime / frames;
     new AnimationTimer() {
       double currentTime = System.nanoTime();
+
       @Override
       public void handle(long now) {
         if (now - startTime > renderAnimationTime) {
@@ -379,12 +396,16 @@ public class Renderer {
    * @param e entitiy to render
    * @param timeElapsed time since last frame to decide whether to move to next animation frame
    */
-  private void renderEntity(Entity e, long timeElapsed) {
+  private void renderEntity(Entity e, HashMap<PowerUp, PowerUp> selfPowerUps, long timeElapsed) {
     // choose correct animation
     ArrayList<Image> currentSprites = e.getImage();
-    if (secondInNanoseconds / e.getAnimationSpeed() < e.getTimeSinceLastFrame()) {
+    if (secondInNanoseconds / e.getAnimationSpeed() < e.getTimeSinceLastFrame()
+        && timeElapsed > 0) {
       e.setTimeSinceLastFrame(0);
       e.nextFrame();
+      for (PowerUp p : selfPowerUps.values()) {
+        p.incrementFrame();
+      }
     } else {
       e.setTimeSinceLastFrame(e.getTimeSinceLastFrame() + timeElapsed);
     }
@@ -396,6 +417,9 @@ public class Renderer {
         getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
     gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
 
+    if (selfPowerUps != null) {
+      renderPowerUpEffects(e, selfPowerUps, rendCoord);
+    }
     // render marker for entity
     if (e.getClientId() != clientID && !e.isMipsman()) {
       return;
@@ -406,6 +430,26 @@ public class Renderer {
         getIsoCoord(x, y, marker.getHeight() + currentSprite.getHeight(), marker.getWidth());
 
     gc.drawImage(marker, coord.getX(), coord.getY());
+  }
+
+  private void renderPowerUpEffects(Entity e, HashMap<PowerUp, PowerUp> selfPowerUps,
+      Double rendCoord) {
+    if (e.isSpeeding()) {
+      PowerUp speed = selfPowerUps.get(PowerUp.SPEED);
+      gc.drawImage(r.getPowerUps().get(PowerUp.SPEED)
+              .get(speed.getCurrentFrame() % r.getPowerUps().get(PowerUp.SPEED).size()),
+          rendCoord.getX(), rendCoord.getY());
+    }
+    if (e.isInvincible()) {
+      PowerUp invincible = selfPowerUps.get(PowerUp.INVINCIBLE);
+      gc.drawImage(r.getPowerUps().get(PowerUp.INVINCIBLE)
+              .get(invincible.getCurrentFrame() % r.getPowerUps().get(PowerUp.INVINCIBLE).size()),
+          rendCoord.getX(), rendCoord.getY());
+    }
+    //is the entity stunned?
+    if (e.isStunned()) {
+      gc.drawImage(r.getPowerUps().get(PowerUp.WEB).get(0), rendCoord.getX(), rendCoord.getY());
+    }
   }
 
   /**
@@ -546,8 +590,12 @@ public class Renderer {
    * @return The top right corner coordinate to start rendering game map from
    */
   private Point2D.Double getMapRenderingCorner() {
-    return new Point2D.Double(this.xResolution / (double) 2, this.yResolution / (double) 5);
-    // return new Point2D.Double(getIsoCoord(0,map),getIsoCoord(0,0,tileSizeY).getY())
+
+    double bottomLeftX = -map.getMaxY() * (this.tileSizeX / (double) 2);
+    double topRightX = map.getMaxX() * (this.tileSizeX / (double) 2);
+    double mapMidPointX = bottomLeftX + 0.5 * Math.abs(topRightX - bottomLeftX);
+    System.out.println("offset: " + mapMidPointX);
+    return new Point2D.Double((this.xResolution / (double) 2) - mapMidPointX, yResolution / 6);
   }
 
   /**
@@ -562,7 +610,8 @@ public class Renderer {
     hudRender.setResolution(x, y);
     this.xResolution = x;
     this.yResolution = y;
+    this.map = r.getMap();
+    this.initMapTraversal(this.map);
     this.mapRenderingCorner = getMapRenderingCorner();
-    this.initMapTraversal(r.getMap());
   }
 }

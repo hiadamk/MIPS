@@ -22,6 +22,7 @@ public class Entity implements Renderable {
   private final int animationSpeed = 5;
   private Point location;
   private double velocity; // The velocity of the entity currently
+  private double bonusSpeed;
   private Direction direction;
   private int score;
   private int clientId;
@@ -39,12 +40,53 @@ public class Entity implements Renderable {
   private boolean directionSet;
   private boolean stunned;
   private boolean dead;
+  private boolean speeding;
+  private boolean invincible;
+
+  public boolean isSpeeding() {
+    return speeding;
+  }
+
+  /**
+   * Constructor
+   *
+   * @param mipsman true if Entity should be MIPS upon creation
+   * @param clientId id of client (user or AI) controlling this entity
+   * @param location starting position of entity
+   */
+  public Entity(Boolean mipsman, int clientId, Point location) {
+    this.mipsman = mipsman;
+    this.clientId = clientId;
+    this.location = location;
+    this.score = 0;
+    resetVelocity();
+    this.direction = Direction.UP;
+    this.items = new LinkedList<PowerUp>();
+    this.directionSet = false;
+    this.name = "Player" + clientId;
+    this.bonusSpeed = 0;
+    // updateImages();
+  }
+
+  public void setSpeeding(boolean speeding) {
+    this.speeding = speeding;
+    resetVelocity();
+  }
+
+  public boolean isInvincible() {
+    return invincible;
+  }
+
+  public void setInvincible(boolean invincible) {
+    this.invincible = invincible;
+  }
 
   public boolean isStunned() {
     return stunned;
   }
 
   public void setStunned(boolean stunned) {
+    System.out.println("entity " + clientId + " is " + stunned + " stunned");
     this.stunned = stunned;
     if (stunned) {
       velocity = 0;
@@ -66,24 +108,8 @@ public class Entity implements Renderable {
     }
   }
 
-  /**
-   * Constructor
-   *
-   * @param mipsman true if Entity should be MIPS upon creation
-   * @param clientId id of client (user or AI) controlling this entity
-   * @param location starting position of entity
-   */
-  public Entity(Boolean mipsman, int clientId, Point location) {
-    this.mipsman = mipsman;
-    this.clientId = clientId;
-    this.location = location;
-    this.score = 0;
-    resetVelocity();
-    this.direction = Direction.UP;
-    this.items = new LinkedList<PowerUp>();
-    this.directionSet = false;
-    this.name = "Player" + clientId;
-    // updateImages();
+  public void changeBonusSpeed(double i) {
+    bonusSpeed += i;
   }
 
   /**
@@ -99,11 +125,14 @@ public class Entity implements Renderable {
   }
 
   public PowerUp getFirstItem() {
+    if (items.size() < 1) {
+      return null;
+    }
     return items.pop();
   }
 
   public void giveItem(PowerUp powerUp) {
-    if (items.size() <= 2) {
+    if (items.size() < 2) {
       items.add(powerUp);
     }
   }
@@ -156,7 +185,9 @@ public class Entity implements Renderable {
    * @see #getMoveInDirection(double, Direction...)
    */
   public void move() {
-    this.location = getMoveInDirection(this.velocity);
+    if (!stunned && !dead) {
+      this.location = getMoveInDirection(this.velocity);
+    }
   }
 
   /**
@@ -190,7 +221,7 @@ public class Entity implements Renderable {
    */
   @Override
   public ArrayList<Image> getImage() {
-    if (direction != null) {
+    if (direction.toInt() < 4) {
       return images.get(direction.toInt());
     }
     return currentImage == null ? images.get(0) : currentImage;
@@ -226,7 +257,7 @@ public class Entity implements Renderable {
   public void setDirection(Direction direction) {
     if (this.direction != direction) {
       this.direction = direction;
-      if (direction != null) {
+      if (direction != Direction.STOP) {
         currentImage = images.get(direction.toInt());
       }
     }
@@ -370,6 +401,10 @@ public class Entity implements Renderable {
     }
   }
 
+  public void setName(String s) {
+    this.name = s;
+  }
+
   public String getName() {
     return name;
   }
@@ -383,6 +418,6 @@ public class Entity implements Renderable {
   }
 
   public void resetVelocity() {
-    this.velocity = mipsman ? MIPS_SPEED : GHOUL_SPEED;
+    this.velocity = (mipsman ? MIPS_SPEED : GHOUL_SPEED) + bonusSpeed;
   }
 }

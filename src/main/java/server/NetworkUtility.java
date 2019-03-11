@@ -22,6 +22,9 @@ import utils.enums.PowerUp;
  */
 public class NetworkUtility {
 
+  /**
+   * Networking constants
+   */
   public static final int SERVER_M_PORT = 4446;
   public static final int CLIENT_M_PORT = 4445;
   public static final int SERVER_DGRAM_PORT = 3000;
@@ -30,12 +33,16 @@ public class NetworkUtility {
   public static final String PREFIX = "SMSG";
   public static final String SUFFIX = "EMSG";
   public static final String POSITION_CODE = "POS";
-  public static final String SCORE_CODE = "SCORE";
+  public static final String SCORE_CODE = "SCOR";
   public static final String COLLISIONS_CODE = "COL";
   public static final String POWERUP_CODE = "POW";
   public static final String STOP_CODE = "EXIT";
+  public static final String GAME_START = "START GAME";
+  public static final String DISCONNECT_HOST = "DISCONNECT_HOST";
+  public static final String DISCONNECT_NON_HOST = "DISCONNECT_NON_HOST";
   public static final int STRING_LIMIT = 128;
   public static final Charset CHARSET = StandardCharsets.US_ASCII;
+  public static final int LOBBY_TIMEOUT = 3500;
 
   public static InetAddress GROUP;
   private static DecimalFormat coordFormat = new DecimalFormat("000.000");
@@ -243,7 +250,7 @@ public class NetworkUtility {
    * @return The string packet.
    */
   public static String makeScorePacket(Entity[] agents) {
-    String s = "SCORE";
+    String s = SCORE_CODE;
         for (Entity agent: agents){
           s+= "|" + agent.getScore();
         }

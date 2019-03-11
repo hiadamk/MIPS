@@ -52,7 +52,7 @@ public class HeadsUpDisplay {
     this.yResolution = yResolution;
     this.playerColours = r.getPlayerPalette();
     this.inventory = r.getInventory(id);
-    this.powerUpsIcon = r.getPowerUps();
+    this.powerUpsIcon = r.getPowerUpIcons();
 
     Integer[] powerupIDs = new Integer[PowerUp.values().length];
     for (int i = 0; i < powerupIDs.length; i++) {
@@ -102,6 +102,7 @@ public class HeadsUpDisplay {
   public void renderHUD(Entity[] entities, int time) {
     Entity[] entities_ = entities.clone();
     Arrays.sort(entities_, (o1, o2) -> -Integer.compare(o1.getScore(), o2.getScore()));
+
     gc.setFill(new Color(1, 1, 1, 0.8));
     gc.setStroke(Color.BLACK);
     int rowGap = (int) (0.06 * yResolution);
@@ -124,8 +125,10 @@ public class HeadsUpDisplay {
       gc.fillText(place, xResolution * 0.78, 40 + rowGap * i);
       gc.setFont(geoLarge);
       gc.setTextAlign(TextAlignment.CENTER);
-      gc.fillText(Integer.toString(time), xResolution * 0.5, yResolution * 0.1);
+
     }
+
+    gc.fillText(Integer.toString(time), xResolution * 0.5, yResolution * 0.1);
   }
 
   public void renderInventory(Entity clientEntity, long timeElapsed) {

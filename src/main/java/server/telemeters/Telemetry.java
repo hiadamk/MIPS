@@ -21,9 +21,15 @@ import utils.enums.PowerUp;
  */
 public abstract class Telemetry {
 
-  static final int AGENT_COUNT = 2;
-  static final int GAME_TIME = 30 * 100; // Number of seconds *100
-  static int gameTimer = 0;
+
+  static final int AGENT_COUNT = 5;
+  static final int GAME_TIME = 150 * 100; // Number of seconds *100
+
+  public static int getGameTimer() {
+    return gameTimer;
+  }
+
+  static int gameTimer = GAME_TIME;
   Map map;
   Entity[] agents;
   HashMap<String, Pellet> pellets;
@@ -78,7 +84,7 @@ public abstract class Telemetry {
     agents = new Entity[AGENT_COUNT];
     switch (AGENT_COUNT) {
       default: {
-        for (int i = AGENT_COUNT-1; i>=5; i--) {
+        for (int i = AGENT_COUNT - 1; i >= 5; i--) {
           agents[i] = new Entity(false, i, new Point(1.5, 1.5));
         }
       }
@@ -130,15 +136,15 @@ public abstract class Telemetry {
       ArrayList<PowerUp> activePowerUps) {
 
     for (int i = 0; i < AGENT_COUNT; i++) {
-      if (agents[i].getDirection() != null) {
+      if (agents[i].getDirection() != Direction.STOP) {
         Point prevLocation = agents[i].getLocation();
         agents[i].move();
         Point faceLocation = agents[i].getFaceLocation();
 
         if (m.isWall(faceLocation)) {
-	        //System.out.println("~Player" + i + " drove into a wall");
+          // System.out.println("~Player" + i + " drove into a wall");
           agents[i].setLocation(prevLocation.centralise());
-          agents[i].setDirection(null);
+          agents[i].setDirection(Direction.STOP);
         }
       }
     }
@@ -148,11 +154,11 @@ public abstract class Telemetry {
     for (int i = 0; i < AGENT_COUNT; i++) {
       for (int j = (i + 1); j < AGENT_COUNT; j++) {
 
-        if (agents[i].isMipsman() && !agents[j].isMipsman()) {
+        if (agents[i].isMipsman() && !agents[j].isMipsman() && !agents[i].isInvincible()) {
           detectEntityCollision(agents[i], agents[j], resourceLoader);
         }
 
-        if (agents[j].isMipsman() && !agents[i].isMipsman()) {
+        if (agents[j].isMipsman() && !agents[i].isMipsman() && !agents[j].isInvincible()) {
           detectEntityCollision(agents[j], agents[i], resourceLoader);
         }
       }
@@ -162,13 +168,15 @@ public abstract class Telemetry {
     for (Pellet p : pellets.values()) {
       p.incrementRespawn();
     }
+    ArrayList<PowerUp> toRemove = new ArrayList<>();
     for (PowerUp p : activePowerUps) {
       if (p.incrementTime()) {
-        activePowerUps.remove(p);
+        toRemove.add(p);
       }
     }
-    gameTimer++;
-    if (gameTimer == GAME_TIME) {
+    activePowerUps.removeAll(toRemove);
+    gameTimer--;
+    if (gameTimer == 0) {
       System.out.println("GAME HAS ENDED ITS OVER");
       System.out.println("GAME HAS ENDED ITS OVER");
       System.out.println("GAME HAS ENDED ITS OVER");
@@ -197,7 +205,7 @@ public abstract class Telemetry {
     Point mipsmanCenter = mipsman.getLocation();
     Point ghoulFace = ghoul.getFaceLocation();
 
-    if (mipsmanCenter.inRange(ghoulFace)) { //check temporary invincibility here
+    if (mipsmanCenter.inRange(ghoulFace)) { // check temporary invincibility here
       client.collisionDetected(ghoul);
       mipsman.setMipsman(false);
       ghoul.setMipsman(true);
@@ -218,20 +226,24 @@ public abstract class Telemetry {
    * @param pellets The pellets
    * @author Matthew Jones
    */
-  private static void pelletCollision(Entity[] agents, HashMap<String, Pellet> pellets,
-      ArrayList<PowerUp> activePowerUps) {
+  private static void pelletCollision(
+      Entity[] agents, HashMap<String, Pellet> pellets, ArrayList<PowerUp> activePowerUps) {
     for (Entity agent : agents) {
       Point p = agent.getLocation();
       int x = (int) p.getX();
       int y = (int) p.getY();
       Pellet pellet = pellets.get(x + "," + y);
       if (pellet != null) {
-        pellet.interact(agent, activePowerUps);
+        pellet.interact(agent, agents, activePowerUps);
       }
     }
   }
 
   public GameLoop getInputProcessor() {
     return inputProcessor;
+  }
+
+  public ArrayList<PowerUp> getActivePowerUps() {
+    return activePowerUps;
   }
 }

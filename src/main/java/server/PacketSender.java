@@ -4,15 +4,11 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.MulticastSocket;
 import java.util.ArrayList;
 import java.util.Queue;
 
 public class PacketSender extends Thread {
 
-  private InetAddress group;
-  private MulticastSocket socket;
-  private String networkInterface;
   private int port;
   private boolean running = true;
   private Queue<String> feedQueue;
@@ -21,28 +17,11 @@ public class PacketSender extends Thread {
   /**
    * Constructs a Packet Sender object
    *
-   * @param group The group we want to bind to
-   * @param port The port we want to listen to
-   * @param feedQueue The queue we want to send items from.
-   * @throws IOException Thrown by the multicast socket
-   */
-  public PacketSender(InetAddress group, int port, Queue<String> feedQueue) throws IOException {
-    this.group = group;
-    this.socket = new MulticastSocket();
-    this.networkInterface = NetworkUtility.getInterface();
-    this.port = port;
-    this.feedQueue = feedQueue;
-  }
-
-  /**
-   * Constructs a Packet Sender object
-   *
    * @param port the port we want to send to
    * @param feedQueue the queue which we are constantly reading from to send messages from.
    * @param ips The list of IP addresses which are listening on the port for a message.
    */
-  public PacketSender(int port, Queue<String> feedQueue, ArrayList<InetAddress> ips)
-      throws IOException {
+  public PacketSender(int port, Queue<String> feedQueue, ArrayList<InetAddress> ips) {
     this.port = port;
     this.feedQueue = feedQueue;
     this.ipStore = ips;
@@ -69,7 +48,6 @@ public class PacketSender extends Thread {
     } catch (IOException e) {
       running = false;
       System.out.println("ServerGameplayHandler closed");
-      socket.close();
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
@@ -108,6 +86,5 @@ public class PacketSender extends Thread {
   /** Stops thread execution. */
   public void shutdown() {
     this.running = false;
-    socket.close();
   }
 }
