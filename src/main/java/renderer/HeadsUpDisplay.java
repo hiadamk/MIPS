@@ -82,6 +82,13 @@ public class HeadsUpDisplay {
     return String.format("%-" + n + "s", s);
   }
 
+  public static String padLeft(String s, int n) {
+    if (s.length() > n) {
+      return s.substring(0, n);
+    }
+    return String.format("%1$" + n + "s", s);
+  }
+
   public static String integerToOrdinal(int n) {
     String[] ords = new String[]{"st", "nd", "rd"};
     int remainder = n % 100;
@@ -110,24 +117,25 @@ public class HeadsUpDisplay {
     for (int i = 0; i < entities_.length; i++) {
 
       Entity e = entities_[i];
-      gc.setTextAlign(TextAlignment.RIGHT);
+
       gc.setFill(Renderer.intRGBtoColour(playerColours.getRGB(0, e.getClientId())));
 
       String place = padRight(integerToOrdinal(i + 1), 4);
       String name = padRight(e.getName(), 10);
-      String score = padRight(Integer.toString(e.getScore()), 5);
+      String score = padLeft(Integer.toString(e.getScore()), 4);
       String currentPlayerScoreLine = name + " " + score;
 
       gc.setFont(geoSmall);
-      gc.fillText(currentPlayerScoreLine, xResolution * 0.99, 40 + rowGap * i);
-      gc.strokeText(currentPlayerScoreLine, xResolution * 0.99, 40 + rowGap * i);
+      gc.setTextAlign(TextAlignment.LEFT);
+      gc.fillText(currentPlayerScoreLine, xResolution * 0.75, 40 + rowGap * i);
+      gc.strokeText(currentPlayerScoreLine, xResolution * 0.75, 40 + rowGap * i);
       gc.setFill(Color.WHITE);
-      gc.fillText(place, xResolution * 0.78, 40 + rowGap * i);
-      gc.setFont(geoLarge);
-      gc.setTextAlign(TextAlignment.CENTER);
+      gc.setTextAlign(TextAlignment.RIGHT);
+      gc.fillText(place, xResolution * 0.75, 40 + rowGap * i);
 
     }
-
+    gc.setFont(geoLarge);
+    gc.setTextAlign(TextAlignment.CENTER);
     gc.fillText(Integer.toString(time), xResolution * 0.5, yResolution * 0.1);
   }
 
