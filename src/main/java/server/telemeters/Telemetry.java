@@ -159,11 +159,9 @@ public abstract class Telemetry {
         toRemove.add(p.id);
       }
     }
-    System.out.println(activePowerUps.size() + "  -  " + toRemove.size());
     for (UUID id : toRemove) {
       activePowerUps.remove(id);
     }
-    System.out.println("size: " + activePowerUps.size());
     gameTimer--;
     if (gameTimer == 0) {
       System.out.println("GAME HAS ENDED ITS OVER");

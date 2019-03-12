@@ -30,7 +30,7 @@ public class Speed extends PowerUp {
   public boolean incrementTime() {
     super.incrementTime();
     if (counter == EFFECTTIME) {
-      effected.setStunned(false);
+      user.changeBonusSpeed(-0.03);
       return true;
     }
     return false;
