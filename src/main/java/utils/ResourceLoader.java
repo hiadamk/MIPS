@@ -56,7 +56,7 @@ public class ResourceLoader {
    */
   public ResourceLoader(String baseDir) {
     BASE_DIR = baseDir;
-    this.loadMap(DEFAULT_THEME);
+    this.loadMap("default");
     //this.loadMap("six_exits");
     this.init();
   }
