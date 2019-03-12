@@ -60,6 +60,7 @@ public class ResourceLoader {
     this.loadMap("default");
     //this.loadMap("six_exits");
     this.init();
+    getThemes();
   }
 
   private void init() {
@@ -75,10 +76,19 @@ public class ResourceLoader {
     this.loadPowerUps();
   }
 
-
-  public String[] getThemes() {
+  /**
+   * @return returns the hashmap<name of themes, preview image for theme> found in the resources
+   * folder
+   */
+  public HashMap<String, Image> getThemes() {
     File[] themeFolders = new File(BASE_DIR + "sprites/").listFiles(File::isDirectory);
-    return getFileNames(themeFolders);
+    HashMap<String, Image> themes = new HashMap<>();
+    for (File f : themeFolders) {
+      String previewURI = new File(f.toString(), "preview.png").toURI().toString();
+      Image preview = new Image(previewURI);
+      themes.put(f.getName().substring(0, f.getName().length() - 4), preview);
+    }
+    return themes;
   }
 
   public BufferedImage getPlayerPalette() {
