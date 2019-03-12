@@ -110,7 +110,7 @@ public class Client extends Application {
 
     primaryStage.show();
     primaryStage.setOnCloseRequest(e -> System.exit(0));
-
+    this.menuController.scaleImages(1100, 1920);
     updateResolution();
   }
 
