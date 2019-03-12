@@ -31,6 +31,7 @@ public class Methods {
     for (Entity e : agents) {
       if (e.getScore() > maxScore) {
         winner = e.getClientId();
+        maxScore = e.getScore();
       }
     }
     return winner;
