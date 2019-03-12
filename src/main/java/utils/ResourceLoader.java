@@ -499,7 +499,7 @@ public class ResourceLoader {
     //add speedup powerup
     BufferedImage speedAnimation = transparentizeSprite(
         loadImageFile("sprites/" + theme + "/powerups/", "speed"));
-    powerUps.put(PowerUp.WEB, splitSpriteSheet(39, 36, speedAnimation).get(0));
+    powerUps.put(PowerUp.SPEED, splitSpriteSheet(39, 36, speedAnimation).get(0));
 
     //add invincible powerup
     BufferedImage invincibleAnimation = transparentizeSprite(
