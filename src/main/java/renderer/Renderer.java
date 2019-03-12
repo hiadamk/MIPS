@@ -30,7 +30,6 @@ import utils.enums.RenderingMode;
 
 public class Renderer {
 
-  private static final double MAP_BORDER = 10;
   private final GraphicsContext gc;
   private final long secondInNanoseconds = (long) Math.pow(10, 9);
   private final HeadsUpDisplay hudRender;
@@ -459,18 +458,19 @@ public class Renderer {
    */
   private void renderBackground(Map map) {
     // render backing image
+    final double MAP_BORDER = xResolution * 0.005;
     gc.drawImage(background, 0, 0, xResolution, yResolution);
 
     // Render map base
-    Point2D.Double tmpCoord = getIsoCoord(0, 0, tileSizeY, tileSizeX);
+    Point2D.Double tmpCoord = getIsoCoord(-1, -1, tileSizeY, tileSizeX);
     Point2D.Double topLeft =
         new Double(tmpCoord.getX() + 0.5 * tileSizeX, tmpCoord.getY() - 0.5 * MAP_BORDER);
 
-    tmpCoord = getIsoCoord(map.getMaxX(), 0, tileSizeY, tileSizeX);
+    tmpCoord = getIsoCoord(map.getMaxX(), -1, tileSizeY, tileSizeX);
     Point2D.Double topRight =
         new Double(tmpCoord.getX() + MAP_BORDER + tileSizeX, tmpCoord.getY() + 0.5 * tileSizeY);
 
-    tmpCoord = getIsoCoord(0, map.getMaxY(), tileSizeY, tileSizeX);
+    tmpCoord = getIsoCoord(-1, map.getMaxY(), tileSizeY, tileSizeX);
     Point2D.Double bottomLeft =
         new Double(tmpCoord.getX() - 0.5 * MAP_BORDER, tmpCoord.getY() + 0.5 * tileSizeY);
 
