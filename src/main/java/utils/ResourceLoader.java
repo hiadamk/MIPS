@@ -28,7 +28,6 @@ public class ResourceLoader {
 
   private final int spriteWidth = 39;
   private final int spriteHeight = 36;
-  private final String DEFAULT_THEME = "default";
   private Map map;
   private ArrayList<ArrayList<BufferedImage>> mipSprites;
   private ArrayList<ArrayList<BufferedImage>> mipOutlineSprites;
@@ -64,16 +63,16 @@ public class ResourceLoader {
   }
 
   private void init() {
-    this.loadPlayableMip(DEFAULT_THEME);
-    this.loadPlayableGhoul(DEFAULT_THEME);
-    this.loadMapTiles(DEFAULT_THEME);
-    this.loadBackground(DEFAULT_THEME);
-    this.loadClientMarker(DEFAULT_THEME);
-    this.loadMipMarker(DEFAULT_THEME);
-    this.loadPellet(DEFAULT_THEME);
-    this.loadInventory(DEFAULT_THEME);
-    this.loadPowerUpIcons(DEFAULT_THEME);
-    this.loadPowerUps(DEFAULT_THEME);
+    this.loadPlayableMip();
+    this.loadPlayableGhoul();
+    this.loadMapTiles();
+    this.loadBackground();
+    this.loadClientMarker();
+    this.loadMipMarker();
+    this.loadPellet();
+    this.loadInventory();
+    this.loadPowerUpIcons();
+    this.loadPowerUps();
   }
 
 
@@ -213,13 +212,15 @@ public class ResourceLoader {
     this.xResolution = Settings.getxResolution();
     this.yResolution = Settings.getyResolution();
     this.renderingMode = Settings.getRenderingMode();
+    this.theme = Settings.getTheme();
     setResolution();
   }
 
-  public void refreshSettings(int x, int y, RenderingMode r) {
+  public void refreshSettings(int x, int y, RenderingMode r, String theme) {
     this.xResolution = x;
     this.yResolution = y;
     this.renderingMode = r;
+    this.theme = theme;
     setResolution();
   }
 
@@ -321,9 +322,8 @@ public class ResourceLoader {
   }
 
   /**
-   * @param theme name of folder which contains the assets for that theme
    */
-  public void loadPlayableMip(String theme) {
+  public void loadPlayableMip() {
     BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "mip");
     BufferedImage sprites = extractColour(spriteSheet, getOutlineColour(spriteSheet), true);
     BufferedImage outlineSprites = extractColour(spriteSheet, getOutlineColour(spriteSheet), false);
@@ -355,9 +355,8 @@ public class ResourceLoader {
   }
 
   /**
-   * @param theme name of folder which contains the assets for that theme
    */
-  public void loadPlayableGhoul(String theme) {
+  public void loadPlayableGhoul() {
     BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "ghoul");
     BufferedImage sprites = extractColour(spriteSheet, getOutlineColour(spriteSheet), true);
     BufferedImage outlineSprites = extractColour(spriteSheet, getOutlineColour(spriteSheet), false);
@@ -388,7 +387,7 @@ public class ResourceLoader {
     return bufferedToJavaFxImage2D(recolouredSprites);
   }
 
-  public void loadPellet(String theme) {
+  public void loadPellet() {
     // this.pellets = splitSpriteSheet(14,34,loadImageFile("sprites/" + theme +
     // "/consumable/","pellet")).get(0);
     this.pellets =
@@ -413,9 +412,8 @@ public class ResourceLoader {
   }
 
   /**
-   * @param theme name of folder which contains the assets for that theme
    */
-  public void loadMapTiles(String theme) {
+  public void loadMapTiles() {
     ArrayList<BufferedImage> _mapTiles = new ArrayList<>();
     for (MapElement m : MapElement.values()) {
       _mapTiles.add(loadImageFile("sprites/" + theme + "/tiles/", m.toString()));
@@ -427,7 +425,7 @@ public class ResourceLoader {
     return bufferedToJavaFxImage(this.mapTiles);
   }
 
-  public void loadBackground(String theme) {
+  public void loadBackground() {
     this.background = loadImageFile("sprites/" + theme + "/backgrounds/", theme);
     this.backgroundPalette =
         loadImageFile("sprites/" + theme + "/backgrounds/", theme + "_palette");
@@ -441,7 +439,7 @@ public class ResourceLoader {
     return this.backgroundPalette;
   }
 
-  public void loadMipMarker(String theme) {
+  public void loadMipMarker() {
     this.mipMarker = loadImageFile("sprites/" + theme + "/misc/", "mip_marker");
   }
 
@@ -449,7 +447,7 @@ public class ResourceLoader {
     return SwingFXUtils.toFXImage(this.mipMarker, null);
   }
 
-  public void loadClientMarker(String theme) {
+  public void loadClientMarker() {
     this.clientMarker = loadImageFile("sprites/" + theme + "/misc/", "client_marker");
   }
 
@@ -457,7 +455,7 @@ public class ResourceLoader {
     return SwingFXUtils.toFXImage(this.clientMarker, null);
   }
 
-  public void loadInventory(String theme) {
+  public void loadInventory() {
     this.inventory = loadImageFile("sprites/" + theme + "/HUD/", "inventory");
     this.inventoryColourID = 0;
   }
@@ -471,7 +469,7 @@ public class ResourceLoader {
     return recolouredInventory;
   }
 
-  public void loadPowerUpIcons(String theme) {
+  public void loadPowerUpIcons() {
     ArrayList<BufferedImage> powerUps = new ArrayList<>();
     for (PowerUp powerUp : PowerUp.values()) {
       powerUps.add(loadImageFile("sprites/" + theme + "/misc/icon/", powerUp.toString()));
@@ -483,7 +481,7 @@ public class ResourceLoader {
     return bufferedToJavaFxImage(this.powerUpIcons);
   }
 
-  public void loadPowerUps(String theme) {
+  public void loadPowerUps() {
     HashMap<PowerUp, ArrayList<BufferedImage>> powerUps = new HashMap<>();
 
     //add web powerup
