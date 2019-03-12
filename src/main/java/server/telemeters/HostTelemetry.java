@@ -183,6 +183,7 @@ public class HostTelemetry extends Telemetry {
     inputProcessor.close();
     positionUpdater.close();
     scoreUpdater.close();
+    ai.killAI();
   }
 
   private void informPowerup(int id, PowerUp powerup, Point location) {

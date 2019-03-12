@@ -1,6 +1,7 @@
 package ai;
 
-import ai.mapping.PointSet;
+import utils.PointMap;
+import utils.PointSet;
 import ai.mapping.Mapping;
 import ai.routefinding.RouteFinder;
 import ai.routefinding.routefinders.AStarRouteFinder;
@@ -35,7 +36,7 @@ public class AILoopControl extends Thread {
     private static final long SLEEP_TIME = 1;
     private final Entity[] controlAgents;
     private final PointSet junctions;
-    private final HashMap<Point, HashSet<Point>> edges;
+    private final PointMap<PointSet> edges;
     private final BlockingQueue<Input> directionsOut;
     private final Map map;
     private final Entity[] gameAgents;
@@ -106,24 +107,20 @@ public class AILoopControl extends Thread {
         for (int i = 0; i < gameAgents.length; i++) {
             RouteFinder routeFinder;
             switch (i) {
+                case 0: {
+                    routeFinder = new MipsManRouteFinder(pellets, gameAgents);
+                    break;
+                }
                 case 1: {
                     routeFinder = new AStarRouteFinder(junctions, edges, map);
                     break;
                 }
-                case 0: {
+                case 2: {
                     routeFinder = new NextJunctionRouteFinder(gameAgents, map, junctions, edges);
                     break;
                 }
-                case 2: {
-                    routeFinder = new PowerPelletPatrolRouteFinder();
-                    break;
-                }
                 case 3: {
-                    routeFinder = new RandomRouteFinder();
-                    break;
-                }
-                case 4: {
-                    routeFinder = new MipsManRouteFinder(pellets, gameAgents);
+                    routeFinder = new PowerPelletPatrolRouteFinder();
                     break;
                 }
                 default: {
@@ -228,6 +225,9 @@ public class AILoopControl extends Thread {
         RouteFinder r = ent.getRouteFinder();
         Point mipsManLoc = gameAgents[mipsmanID].getLocation();
         Direction direction = r.getRoute(currentLocation, mipsManLoc);
+        if (direction==Direction.STOP) {
+            System.err.println("DEFAULT VALUE USED");
+        }
         direction = confirmOrReplaceDirection(ent.getDirection(), currentLocation, direction);
         setDirection(direction, ent);
     }
