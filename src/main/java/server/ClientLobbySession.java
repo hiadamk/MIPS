@@ -176,6 +176,9 @@ public class ClientLobbySession {
     shutdownTCP();
     joiner.interrupt();
     gameStarter.interrupt();
+    if (handler != null) {
+      handler.close();
+    }
 
   }
 

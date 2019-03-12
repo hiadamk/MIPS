@@ -13,6 +13,7 @@ public class PacketSender extends Thread {
   private boolean running = true;
   private Queue<String> feedQueue;
   private ArrayList<InetAddress> ipStore = new ArrayList<>();
+  private DatagramSocket ds;
 
   /**
    * Constructs a Packet Sender object
@@ -25,6 +26,12 @@ public class PacketSender extends Thread {
     this.port = port;
     this.feedQueue = feedQueue;
     this.ipStore = ips;
+    try {
+      ds = new DatagramSocket();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
   }
 
   /**
@@ -86,5 +93,8 @@ public class PacketSender extends Thread {
   /** Stops thread execution. */
   public void shutdown() {
     this.running = false;
+    if (ds != null && !ds.isClosed()) {
+      ds.close();
+    }
   }
 }

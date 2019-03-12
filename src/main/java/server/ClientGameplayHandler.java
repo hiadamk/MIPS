@@ -108,7 +108,7 @@ public class ClientGameplayHandler {
   /**
    * Closes the class' threads
    */
-  private void close(){
+  public void close() {
     receiver.shutdown();
     sender.shutdown();
     running = false;
