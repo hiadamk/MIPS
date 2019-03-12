@@ -42,7 +42,7 @@ public class ImageTester extends Application {
     Entity[] entities = new Entity[]{ghoul};
     Methods.updateImages(entities, resourceLoader);
 
-    r.render(map, entities, 0l, null);
+    r.render(map, entities, 0l, null, null, 0);
     stage.setScene(new Scene(new Group(canvas)));
     stage.show();
   }
