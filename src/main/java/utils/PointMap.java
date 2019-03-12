@@ -1,17 +1,15 @@
 package utils;
 
-import utils.Map;
-import utils.Point;
 import java.util.*;
 
+/**A class that can be used with {@link Point} to allow it to have the same functionality as {@link java.util.Map Map}<{@link Point}, K>. K is the data that is mapped to by a given {@link Point}. This will treat each {@link Point} as the grid coordinate {@link Point} as given by {@link Point#getGridCoord()}.
+ * @author Lewis Ackroyd*/
 public class PointMap<K> {
     private final int MAX_X;
-    private final int MAX_Y;
     private final HashMap<Integer, K> map;
 
     public PointMap (Map map) {
         this.MAX_X = map.getMaxX();
-        this.MAX_Y = map.getMaxY();
         this.map = new HashMap<Integer, K>();
     }
 

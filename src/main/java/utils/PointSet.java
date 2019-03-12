@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+/**A class that can be used with {@link Point} to allow it to have the same functionality as {@link java.util.Set Set}<{@link Point}>. This will treat each {@link Point} as the grid coordinate {@link Point} as given by {@link Point#getGridCoord()}.
+ * @author Lewis Ackroyd*/
 public class PointSet implements Iterable, Set, Collection {
     private HashSet<Integer> points;
     private final int MAX_X;
