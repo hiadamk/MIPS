@@ -35,17 +35,23 @@ public class GameSceneController {
       quitContainer.setVisible(true);
     });
 
+    quit.setFocusTraversable(false);
+
     Button yesBtn = ButtonGenerator.generate(true, quitBtns, "Yes", UIColours.GREEN, 15);
     yesBtn.setOnAction(event -> {
       client.closeGame();
       quitContainer.setVisible(false);
       quit.setVisible(true);
     });
+
+    yesBtn.setFocusTraversable(false);
     Button noBtn = ButtonGenerator.generate(true, quitBtns, "No", UIColours.RED, 15);
     noBtn.setOnAction(event -> {
       quit.setVisible(true);
       quitContainer.setVisible(false);
     });
+
+    noBtn.setFocusTraversable(false);
     Label confirmLbl = LabelGenerator
         .generate(true, quitContainer, "Are you sure?", UIColours.WHITE, 15);
     quitContainer.getChildren().add(quitBtns);
@@ -54,7 +60,7 @@ public class GameSceneController {
     StackPane.setMargin(quitContainer, new Insets(30, 0, 0, 50));
     quitContainer.setVisible(false);
     root.setLayoutY(20);
-
+    root.requestFocus();
   }
 
   public StackPane getGameRoot() {
