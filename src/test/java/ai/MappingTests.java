@@ -1,6 +1,6 @@
 package ai;
 
-import ai.mapping.JunctionSet;
+import ai.mapping.PointSet;
 import ai.mapping.Mapping;
 import org.junit.jupiter.api.Test;
 import utils.Map;
@@ -40,7 +40,7 @@ class MappingTests {
 	@Test
 	void testGetJunctions() {
 		Point[] pointsArr1 = {new Point(1, 1), new Point(1, 3), new Point(3, 1), new Point(3, 3)};
-		JunctionSet result = Mapping.getJunctions(testMap1);
+		PointSet result = Mapping.getJunctions(testMap1);
 		for (Point p : pointsArr1) {
 			assertTrue(result.contains(p));
 		}
@@ -101,7 +101,7 @@ class MappingTests {
 		nextPoint.add(new Point(1, 4));
 		nextPoint.add(new Point(3, 1));
 		testEdges.put(new Point(3, 4), nextPoint);
-		JunctionSet junctions = Mapping.getJunctions(testMap2);
+		PointSet junctions = Mapping.getJunctions(testMap2);
 		HashMap<Point, HashSet<Point>> result = Mapping.getEdges(testMap2, junctions);
 		assertEquals(result, testEdges);
 	}

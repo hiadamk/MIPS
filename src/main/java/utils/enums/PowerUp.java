@@ -112,7 +112,7 @@ public enum PowerUp {
     switch (this) {
       case WEB:
         this.onMap = true;
-        Point loc = user.getMoveInDirection(1.5, user.getDirection().getInverse());
+        Point loc = user.getMoveInDirection(1.1, user.getFacing().getInverse());
         int x = (int) loc.getX();
         int y = (int) loc.getY();
         PowerUpBox box = new PowerUpBox(x + 0.5, y + 0.5);

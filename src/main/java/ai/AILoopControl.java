@@ -1,6 +1,6 @@
 package ai;
 
-import ai.mapping.JunctionSet;
+import ai.mapping.PointSet;
 import ai.mapping.Mapping;
 import ai.routefinding.RouteFinder;
 import ai.routefinding.routefinders.AStarRouteFinder;
@@ -11,7 +11,6 @@ import ai.routefinding.routefinders.RandomRouteFinder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import objects.Entity;
@@ -35,7 +34,7 @@ public class AILoopControl extends Thread {
     private static final int OPPOSITE_DIRECTION_DIVISOR = 4;
     private static final long SLEEP_TIME = 1;
     private final Entity[] controlAgents;
-    private final JunctionSet junctions;
+    private final PointSet junctions;
     private final HashMap<Point, HashSet<Point>> edges;
     private final BlockingQueue<Input> directionsOut;
     private final Map map;
@@ -112,7 +111,7 @@ public class AILoopControl extends Thread {
                     break;
                 }
                 case 0: {
-                    routeFinder = new NextJunctionRouteFinder();
+                    routeFinder = new NextJunctionRouteFinder(gameAgents, map, junctions, edges);
                     break;
                 }
                 case 2: {
@@ -186,7 +185,7 @@ public class AILoopControl extends Thread {
                 Point currentGridLocation = currentLocation.getGridCoord();
                 if (currentLocation.isCentered()) {
                   boolean atLastCoord = atPreviousCoordinate(ent, currentGridLocation);
-                    if (!isMovementDirection(ent.getDirection())
+                    if (!ent.getDirection().isMovementDirection()
                         || !Methods.validateDirection(ent.getDirection(), currentLocation, map) || (
                         junctions.contains(currentGridLocation) && !atLastCoord)) {
                       if (atLastCoord) {
@@ -251,16 +250,6 @@ public class AILoopControl extends Thread {
             return false;
         }
         return ent.getLastGridCoord().equals(currentLocation);
-    }
-
-    private boolean isMovementDirection(Direction d) {
-        switch (d) {
-            case RIGHT: return true;
-            case LEFT: return true;
-            case UP: return true;
-            case DOWN: return true;
-            default: return false;
-        }
     }
 
     private Direction confirmOrReplaceDirection(Direction oldDirection, Point currentLocation, Direction dir) {
