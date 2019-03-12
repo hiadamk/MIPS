@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.UUID;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -83,7 +84,7 @@ public class Renderer {
    * @param pellets Consumable objects
    */
   public void render(Map map, Entity[] entityArr, long now, HashMap<String, Pellet> pellets,
-      ArrayList<PowerUp> activePowerUps,
+      HashMap<UUID, PowerUp> activePowerUps,
       int gameTime) {
     if (clientEntity == null) {
       this.clientEntity = getClientEntity(new ArrayList<>(Arrays.asList(entityArr)));
@@ -159,7 +160,7 @@ public class Renderer {
   }
 
   public void renderGameOnly(Map map, Entity[] entityArr, long now,
-      HashMap<String, Pellet> pellets, ArrayList<PowerUp> activePowerUps) {
+      HashMap<String, Pellet> pellets, HashMap<UUID, PowerUp> activePowerUps) {
 
     int[][] rawMap = map.raw();
     ArrayList<Entity> entities = new ArrayList<>(Arrays.asList(entityArr));
@@ -179,7 +180,7 @@ public class Renderer {
       entityPowerUps.put(e, new HashMap<>());
     }
     if (activePowerUps != null) {
-      for (PowerUp p : activePowerUps) {
+      for (PowerUp p : activePowerUps.values()) {
         entityPowerUps.get(p.getUser()).put(p, p);
       }
     }

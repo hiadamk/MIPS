@@ -1,6 +1,5 @@
 package utils.enums;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 import objects.Entity;
@@ -61,11 +60,11 @@ public enum PowerUp {
    * @param victim The entity effected by the powerUp
    * @param activePowerUps All active powerUps in the game
    */
-  public void trigger(Entity victim, ArrayList<PowerUp> activePowerUps) {
+  public void trigger(Entity victim, HashMap<UUID, PowerUp> activePowerUps) {
     switch (this) {
       case WEB:
         victim.setStunned(true);
-        activePowerUps.add(this);
+        activePowerUps.put(id, this);
         this.effected = victim;
         counter = 0;
         break;
@@ -108,7 +107,8 @@ public enum PowerUp {
    * @param user The entity that used the powerUp
    * @param activePowerUps All active powerUps in the game
    */
-  public void use(Entity user, ArrayList<PowerUp> activePowerUps, HashMap<String, Pellet> pellets,
+  public void use(Entity user, HashMap<UUID, PowerUp> activePowerUps,
+      HashMap<String, Pellet> pellets,
       Entity[] agents) {
     this.user = user;
     switch (this) {
@@ -123,7 +123,7 @@ public enum PowerUp {
         break;
       case SPEED:
         user.changeBonusSpeed(0.03);
-        activePowerUps.add(this);
+        activePowerUps.put(id, this);
         this.effected = user;
         counter = 0;
         break;
@@ -134,7 +134,7 @@ public enum PowerUp {
 
         break;
       case INVINCIBLE:
-        activePowerUps.add(this);
+        activePowerUps.put(id, this);
         this.effected = user;
         user.setInvincible(true);
         counter = 0;

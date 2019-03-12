@@ -114,6 +114,7 @@ public class Entity implements Renderable {
     bonusSpeed += i;
     System.out.println("speed changed by " + i);
     resetVelocity();
+    System.out.println("bonus speed is " + bonusSpeed + "  t/f: " + (bonusSpeed > 0));
   }
 
   /**

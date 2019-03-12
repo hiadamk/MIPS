@@ -47,7 +47,7 @@ public abstract class Telemetry {
     this.agents = client.getAgents();
   }
 
-  ArrayList<PowerUp> activePowerUps = new ArrayList<>();
+  HashMap<UUID, PowerUp> activePowerUps = new HashMap<>();
   // abstract methods
 
   abstract void startAI();
@@ -117,7 +117,7 @@ public abstract class Telemetry {
       Map m,
       ResourceLoader resourceLoader,
       HashMap<String, Pellet> pellets,
-      ArrayList<PowerUp> activePowerUps) {
+      HashMap<UUID, PowerUp> activePowerUps) {
 
     for (int i = 0; i < AGENT_COUNT; i++) {
       if (agents[i].getDirection() != Direction.STOP) {
@@ -153,12 +153,14 @@ public abstract class Telemetry {
       p.incrementRespawn();
     }
     ArrayList<UUID> toRemove = new ArrayList<>();
-    for (PowerUp p : activePowerUps) {
+    for (PowerUp p : activePowerUps.values()) {
       if (p.incrementTime()) {
-        activePowerUps.remove(p);
+        toRemove.add(p.id);
       }
     }
-    //activePowerUps.removeAll(toRemove);
+    for (UUID id : toRemove) {
+      activePowerUps.remove(id);
+    }
 
     gameTimer--;
     if (gameTimer == 0) {
@@ -229,7 +231,7 @@ public abstract class Telemetry {
    * @author Matthew Jones
    */
   private static void pelletCollision(
-      Entity[] agents, HashMap<String, Pellet> pellets, ArrayList<PowerUp> activePowerUps) {
+      Entity[] agents, HashMap<String, Pellet> pellets, HashMap<UUID, PowerUp> activePowerUps) {
     for (Entity agent : agents) {
       Point p = agent.getLocation();
       int x = (int) p.getX();
@@ -245,7 +247,7 @@ public abstract class Telemetry {
     return inputProcessor;
   }
 
-  public ArrayList<PowerUp> getActivePowerUps() {
+  public HashMap<UUID, PowerUp> getActivePowerUps() {
     return activePowerUps;
   }
 }

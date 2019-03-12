@@ -1,6 +1,8 @@
 package objects;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 import javafx.scene.image.Image;
 import utils.Point;
 import utils.Renderable;
@@ -73,7 +75,7 @@ public class Pellet implements Renderable {
     currentImage = r.getPellet();
   }
 
-  public void interact(Entity entity, Entity[] agents, ArrayList<PowerUp> activePowerUps) {
+  public void interact(Entity entity, Entity[] agents, HashMap<UUID, PowerUp> activePowerUps) {
     if (isTrap) {
       trap.trigger(entity, activePowerUps);
       isTrap = false;

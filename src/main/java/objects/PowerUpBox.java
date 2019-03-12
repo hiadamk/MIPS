@@ -1,10 +1,10 @@
 package objects;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
+import java.util.UUID;
 import utils.Point;
 import utils.ResourceLoader;
 import utils.enums.PowerUp;
@@ -118,7 +118,7 @@ public class PowerUpBox extends Pellet {
   }
 
   @Override
-  public void interact(Entity entity, Entity[] agents, ArrayList<PowerUp> activePowerUps) {
+  public void interact(Entity entity, Entity[] agents, HashMap<UUID, PowerUp> activePowerUps) {
     if (isTrap) {
       trap.trigger(entity, activePowerUps);
       isTrap = false;
