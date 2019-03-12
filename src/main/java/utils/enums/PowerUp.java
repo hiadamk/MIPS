@@ -2,6 +2,7 @@ package utils.enums;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 import objects.Entity;
 import objects.Pellet;
 import objects.PowerUpBox;
@@ -23,6 +24,7 @@ public enum PowerUp {
   private Boolean onMap = false;
   private Entity user;
   private int currentFrame = 0;
+  public UUID id;
 
   public Boolean getOnMap() {
     return onMap;
@@ -31,6 +33,7 @@ public enum PowerUp {
   PowerUp(int effectTime, String name) {
     this.EFFECTTIME = effectTime;
     this.NAME = name;
+    id = UUID.randomUUID();
   }
 
   /**
@@ -89,7 +92,6 @@ public enum PowerUp {
           break;
         case SPEED:
           effected.changeBonusSpeed(-0.03);
-          effected.setSpeeding(false);
           break;
         case INVINCIBLE:
           effected.setInvincible(false);
@@ -123,7 +125,6 @@ public enum PowerUp {
         user.changeBonusSpeed(0.03);
         activePowerUps.add(this);
         this.effected = user;
-        user.setSpeeding(true);
         counter = 0;
         break;
 

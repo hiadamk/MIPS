@@ -3,6 +3,7 @@ package server.telemeters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.UUID;
 import main.Client;
 import objects.Entity;
 import objects.Pellet;
@@ -103,23 +104,6 @@ public abstract class Telemetry {
     Methods.updateImages(agents, resourceLoader);
   }
 
-  void initialisePellets() {
-    Random r = new Random();
-    pellets = new HashMap<>();
-    for (int i = 0; i < map.getMaxX(); i++) {
-      for (int j = 0; j < map.getMaxY(); j++) {
-        Point point = new Point(i + 0.5, j + 0.5);
-        if (!map.isWall(point)) {
-          Pellet pellet = r.nextInt(50) == 1 ? new PowerUpBox(point) : new Pellet(point);
-          pellet.updateImages(resourceLoader);
-          pellets.put(i + "," + j, pellet);
-        }
-      }
-    }
-  }
-
-  // physics engine
-
   /**
    * Static method for updating game state increments positions if valid, increments points, and
    * detects and treats entity collisions
@@ -168,13 +152,14 @@ public abstract class Telemetry {
     for (Pellet p : pellets.values()) {
       p.incrementRespawn();
     }
-    ArrayList<PowerUp> toRemove = new ArrayList<>();
+    ArrayList<UUID> toRemove = new ArrayList<>();
     for (PowerUp p : activePowerUps) {
       if (p.incrementTime()) {
-        toRemove.add(p);
+        activePowerUps.remove(p);
       }
     }
-    activePowerUps.removeAll(toRemove);
+    //activePowerUps.removeAll(toRemove);
+
     gameTimer--;
     if (gameTimer == 0) {
       System.out.println("GAME HAS ENDED ITS OVER");
@@ -190,6 +175,23 @@ public abstract class Telemetry {
       System.out.println("Player " + winner + " won the game");
       System.out.println("Player " + winner + " won the game");
       System.out.println("Player " + winner + " won the game");
+    }
+  }
+
+  // physics engine
+
+  void initialisePellets() {
+    Random r = new Random();
+    pellets = new HashMap<>();
+    for (int i = 0; i < map.getMaxX(); i++) {
+      for (int j = 0; j < map.getMaxY(); j++) {
+        Point point = new Point(i + 0.5, j + 0.5);
+        if (!map.isWall(point)) {
+          Pellet pellet = r.nextInt(30) == 1 ? new PowerUpBox(point) : new Pellet(point);
+          pellet.updateImages(resourceLoader);
+          pellets.put(i + "," + j, pellet);
+        }
+      }
     }
   }
 

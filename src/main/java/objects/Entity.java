@@ -68,16 +68,11 @@ public class Entity implements Renderable {
   private boolean invincible;
 
   public boolean isSpeeding() {
-    return speeding;
+    return bonusSpeed > 0;
   }
 
   public Direction getOldDirection() {
     return oldDirection;
-  }
-
-  public void setSpeeding(boolean speeding) {
-    this.speeding = speeding;
-    resetVelocity();
   }
 
   public boolean isInvincible() {
@@ -117,6 +112,8 @@ public class Entity implements Renderable {
 
   public void changeBonusSpeed(double i) {
     bonusSpeed += i;
+    System.out.println("speed changed by " + i);
+    resetVelocity();
   }
 
   /**
