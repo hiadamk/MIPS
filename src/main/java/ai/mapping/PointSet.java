@@ -4,11 +4,11 @@ import utils.Point;
 
 import java.util.*;
 
-public class JunctionSet implements Iterable, Set, Collection {
+public class PointSet implements Iterable, Set, Collection {
     private HashMap<Integer, HashSet<Integer>> points;
     private int size;
 
-    public JunctionSet(){
+    public PointSet(){
         points = new HashMap<>();
         size = 0;
     }
@@ -170,8 +170,8 @@ public class JunctionSet implements Iterable, Set, Collection {
     }
 
     @Override
-    public JunctionSet clone() {
-        JunctionSet outSet = new JunctionSet();
+    public PointSet clone() {
+        PointSet outSet = new PointSet();
         for (int x : points.keySet()) {
             HashSet<Integer> ys = points.get(x);
             for (int y : ys) {
@@ -191,7 +191,7 @@ public class JunctionSet implements Iterable, Set, Collection {
         private final Point[] points;
         private int currentIndex;
 
-        public JunctionSetIterator(JunctionSet js) {
+        public JunctionSetIterator(PointSet js) {
             points = js.toArray();
             currentIndex = 0;
         }

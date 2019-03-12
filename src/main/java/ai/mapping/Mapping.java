@@ -63,9 +63,9 @@ public abstract class Mapping {
     return junctions;
   }
 
-    public static JunctionSet getJunctions(Map map) {
+    public static PointSet getJunctions(Map map) {
 
-        JunctionSet junctions = new JunctionSet();
+        PointSet junctions = new PointSet();
         for (int x = 0; x < map.getMaxX(); x++) {
             for (int y = 0; y < map.getMaxY(); y++) {
                 // left right down up
@@ -178,7 +178,7 @@ public abstract class Mapping {
     return edgeMap;
   }
 
-  public static HashMap<Point, HashSet<Point>> getEdges(Map map, JunctionSet junctions) {
+  public static HashMap<Point, HashSet<Point>> getEdges(Map map, PointSet junctions) {
         HashMap<Point, HashSet<Point>> edgeMap = new HashMap<Point, HashSet<Point>>();
         // generates links for every junction
         Iterator<Point> iterator = junctions.iterator();
@@ -248,7 +248,7 @@ public abstract class Mapping {
     }
   }
 
-  public static Point findNearestJunction(Point position, Map map, JunctionSet junctions) {
+  public static Point findNearestJunction(Point position, Map map, PointSet junctions) {
     Point output = new Point(Math.floor(position.getX()), Math.floor(position.getY()));
     double vertical = costVertical(output, map, junctions);
     double horizontal = costHorizontal(output, map, junctions);
@@ -264,13 +264,28 @@ public abstract class Mapping {
     return position;
   }
 
-  private static double costVertical(Point position, Map map, JunctionSet junctions) {
+  public static Point findNextJunction(Point position, Direction direction, Map map, PointSet junctions) {
+      position = position.getGridCoord();
+      if (!direction.isMovementDirection()) {
+          return position;
+      }
+      Point testPosition = position.getCopy();
+      while (withinBounds(map, testPosition) && !map.isWall(testPosition)) {
+          if (junctions.contains(testPosition)) {
+              return testPosition;
+          }
+          testPosition = testPosition.moveInDirection(1, direction);
+      }
+      return position;
+  }
+
+  private static double costVertical(Point position, Map map, PointSet junctions) {
     Point up = new Point(position.getX(), position.getY());
     Point down = new Point(position.getX(), position.getY());
     boolean upWall = false;
     boolean downWall = false;
-    while ((withinBounds(map.getMaxX(), map.getMaxY(), up) && !map.isWall(up))
-        || (withinBounds(map.getMaxX(), map.getMaxY(), down) && !map.isWall(down))) {
+    while ((withinBounds(map, up) && !map.isWall(up))
+        || (withinBounds(map, down) && !map.isWall(down))) {
       if (!map.isWall(up) && !upWall) {
         if (junctions.contains(up.getGridCoord())) {
           return up.getY() - position.getY();
@@ -291,13 +306,13 @@ public abstract class Mapping {
     return Double.MAX_VALUE;
   }
 
-  private static double costHorizontal(Point position, Map map, JunctionSet junctions) {
+  private static double costHorizontal(Point position, Map map, PointSet junctions) {
     Point left = new Point(position.getX(), position.getY());
     Point right = new Point(position.getX(), position.getY());
     boolean leftWall = false;
     boolean rightWall = false;
-    while ((withinBounds(map.getMaxX(), map.getMaxY(), left) && !map.isWall(left))
-        || (withinBounds(map.getMaxX(), map.getMaxY(), right) && !map.isWall(right))) {
+    while ((withinBounds(map, left) && !map.isWall(left))
+        || (withinBounds(map, right) && !map.isWall(right))) {
       if (!map.isWall(left) && !leftWall) {
         if (junctions.contains(left.getGridCoord())) {
           return left.getY() - position.getY();
@@ -316,6 +331,10 @@ public abstract class Mapping {
       right.setLocation(right.getX() + 1, right.getY());
     }
     return Double.MAX_VALUE;
+  }
+
+  private static boolean withinBounds(Map map, Point point) {
+      return withinBounds(map.getMaxX(), map.getMaxY(), point);
   }
 
   private static boolean withinBounds(int maxX, int maxY, Point point) {

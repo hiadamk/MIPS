@@ -1,6 +1,6 @@
 package ai.routefinding.routefinders;
 
-import ai.mapping.JunctionSet;
+import ai.mapping.PointSet;
 import ai.mapping.Mapping;
 import ai.routefinding.AStarData;
 import ai.routefinding.RouteFinder;
@@ -19,14 +19,14 @@ public class AStarRouteFinder implements RouteFinder {
 
   private static final boolean COMPLETE = false;
 
-  private final JunctionSet junctions;
+  private final PointSet junctions;
   private final HashMap<Point, HashSet<Point>> edges;
   private final Map map;
 
   /**
    * Creates an instance of this routeFinder.
    */
-  public AStarRouteFinder(JunctionSet junctions, HashMap<Point, HashSet<Point>> edges, Map map) {
+  public AStarRouteFinder(PointSet junctions, HashMap<Point, HashSet<Point>> edges, Map map) {
     this.junctions = junctions;
     this.edges = edges;
     this.map = map;

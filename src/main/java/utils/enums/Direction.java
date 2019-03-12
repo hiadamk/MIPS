@@ -62,6 +62,21 @@ public enum Direction {
     return null;
   }
 
+  public boolean isMovementDirection() {
+    switch (this) {
+      case UP:
+        return true;
+      case DOWN:
+        return true;
+      case LEFT:
+        return true;
+      case RIGHT:
+        return true;
+      default:
+        return false;
+    }
+  }
+
   public Direction getInverse() {
     switch (this) {
       case UP:
