@@ -88,8 +88,8 @@ public enum PowerUp {
           effected.setDead(false);
           break;
         case SPEED:
-          effected.setSpeeding(false);
           effected.changeBonusSpeed(-0.03);
+          effected.setSpeeding(false);
           break;
         case INVINCIBLE:
           effected.setInvincible(false);
