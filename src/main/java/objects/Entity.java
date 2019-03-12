@@ -24,6 +24,30 @@ public class Entity implements Renderable {
   private double velocity; // The velocity of the entity currently
   private double bonusSpeed;
   private Direction direction;
+
+  private Direction oldDirection;
+
+  /**
+   * Constructor
+   *
+   * @param mipsman true if Entity should be MIPS upon creation
+   * @param clientId id of client (user or AI) controlling this entity
+   * @param location starting position of entity
+   */
+  public Entity(Boolean mipsman, int clientId, Point location) {
+    this.mipsman = mipsman;
+    this.clientId = clientId;
+    this.location = location;
+    this.score = 0;
+    resetVelocity();
+    this.direction = Direction.UP;
+    this.oldDirection = Direction.UP;
+    this.items = new LinkedList<PowerUp>();
+    this.directionSet = false;
+    this.name = "Player" + clientId;
+    this.bonusSpeed = 0;
+    // updateImages();
+  }
   private int score;
   private int clientId;
   private String name;
@@ -47,25 +71,8 @@ public class Entity implements Renderable {
     return speeding;
   }
 
-  /**
-   * Constructor
-   *
-   * @param mipsman true if Entity should be MIPS upon creation
-   * @param clientId id of client (user or AI) controlling this entity
-   * @param location starting position of entity
-   */
-  public Entity(Boolean mipsman, int clientId, Point location) {
-    this.mipsman = mipsman;
-    this.clientId = clientId;
-    this.location = location;
-    this.score = 0;
-    resetVelocity();
-    this.direction = Direction.UP;
-    this.items = new LinkedList<PowerUp>();
-    this.directionSet = false;
-    this.name = "Player" + clientId;
-    this.bonusSpeed = 0;
-    // updateImages();
+  public Direction getOldDirection() {
+    return oldDirection;
   }
 
   public void setSpeeding(boolean speeding) {
@@ -256,11 +263,26 @@ public class Entity implements Renderable {
    */
   public void setDirection(Direction direction) {
     if (this.direction != direction) {
-      this.direction = direction;
       if (direction != Direction.STOP) {
         currentImage = images.get(direction.toInt());
+      } else {
+        oldDirection = this.direction;
       }
+      this.direction = direction;
     }
+  }
+
+  /**
+   * Gets the direction the entity is facing
+   *
+   * @return the direction it is facing using old diretion if the diretion is some how null or is
+   * set to stop
+   */
+  public Direction getFacing() {
+    if (direction == null || direction == Direction.STOP || direction == Direction.USE) {
+      return oldDirection;
+    }
+    return direction;
   }
 
   /**

@@ -73,6 +73,8 @@ public class MenuController {
   private ArrayList<Node> itemsOnScreen = new ArrayList<>();
   private ResourceLoader resourceLoader;
 
+  private ImageView bg;
+
   private Button startGameBtn;
   private Button backBtn;
   private Button startMGameBtn;
@@ -417,13 +419,11 @@ public class MenuController {
    * and does not rise above the original image size.
    */
   public void scaleImages(double newVal, double oldVal) {
-
     for (int i = 0; i < imageViews.size(); i++) {
       ImageView currentView = imageViews.get(i);
       double currentWidth = currentView.getBoundsInLocal().getWidth();
       currentView.setPreserveRatio(true);
       currentView.setSmooth(true);
-
       double proposedWidth = Math.floor(currentWidth * (newVal / oldVal));
       if (proposedWidth > originalViewWidths.get(i)) {
         currentView.setFitWidth(originalViewWidths.get(i));
@@ -459,11 +459,10 @@ public class MenuController {
     StackPane root = new StackPane();
     root.setPrefSize(1920, 1080);
 
-    ImageView bg = new ImageView("sprites/default/backgrounds/default.png");
+    bg = new ImageView("sprites/neon/backgrounds/neon.png");
+    bg.fitWidthProperty().bind(this.primaryStage.widthProperty());
+    bg.fitHeightProperty().bind(this.primaryStage.heightProperty());
 
-    //bg.fitWidthProperty().bind(this.primaryStage.widthProperty());
-    bg.setPreserveRatio(true);
-    bg.setFitWidth(Settings.getxResolution());
     root.getChildren().add(bg);
     StackPane.setAlignment(bg, Pos.CENTER);
 

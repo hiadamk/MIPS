@@ -604,7 +604,7 @@ public class Renderer {
    * use to override settings given by the settings class
    */
   public void setResolution(int x, int y) {
-    r.refreshSettings(x, y, RenderingMode.SMOOTH_SCALING);
+    r.refreshSettings(x, y, RenderingMode.SMOOTH_SCALING, Settings.getTheme());
     hudRender.setResolution(x, y);
     this.xResolution = x;
     this.yResolution = y;
@@ -613,6 +613,8 @@ public class Renderer {
     this.tileSizeX = r.getMapTiles().get(0).getWidth();
     this.tileSizeY = r.getMapTiles().get(0).getHeight();
     this.mapRenderingCorner = getMapRenderingCorner();
+    this.background = r.getBackground();
+    this.palette = r.getBackgroundPalette();
   }
 
 
@@ -624,5 +626,7 @@ public class Renderer {
     this.map = r.getMap();
     this.initMapTraversal(this.map);
     this.mapRenderingCorner = getMapRenderingCorner();
+    this.background = r.getBackground();
+    this.palette = r.getBackgroundPalette();
   }
 }
