@@ -1,11 +1,11 @@
 package ai.routefinding.routefinders;
 
-import ai.mapping.PointMap;
-import ai.mapping.PointSet;
+import utils.PointMap;
+import utils.PointSet;
 import ai.mapping.Mapping;
 import ai.routefinding.AStarData;
 import ai.routefinding.RouteFinder;
-import java.util.HashMap;
+
 import java.util.Iterator;
 
 import utils.Map;

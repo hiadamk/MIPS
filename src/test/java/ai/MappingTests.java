@@ -1,7 +1,7 @@
 package ai;
 
-import ai.mapping.PointMap;
-import ai.mapping.PointSet;
+import utils.PointMap;
+import utils.PointSet;
 import ai.mapping.Mapping;
 import org.junit.jupiter.api.Test;
 import utils.Map;

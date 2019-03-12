@@ -1,4 +1,4 @@
-package ai.mapping;
+package utils;
 
 import utils.Map;
 import utils.Point;

@@ -1,7 +1,5 @@
-package ai.mapping;
+package utils;
 
-import utils.Map;
-import utils.Point;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;

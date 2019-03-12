@@ -1,15 +1,13 @@
 package ai.routefinding.routefinders;
 
 import ai.mapping.Mapping;
-import ai.mapping.PointMap;
-import ai.mapping.PointSet;
+import utils.PointMap;
+import utils.PointSet;
 import ai.routefinding.RouteFinder;
 import objects.Entity;
 import utils.Map;
 import utils.Point;
 import utils.enums.Direction;
-import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * Route finding algorithm that will aim to reach the junction that will next be reached by Mipsman.
