@@ -7,13 +7,13 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import main.Client;
 import objects.Entity;
+import objects.powerUps.PowerUp;
 import server.NetworkUtility;
 import utils.GameLoop;
 import utils.Input;
 import utils.Methods;
 import utils.Point;
 import utils.enums.Direction;
-import utils.enums.PowerUp;
 
 public class HostTelemetry extends Telemetry {
 

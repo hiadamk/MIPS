@@ -20,6 +20,7 @@ import javafx.scene.text.TextAlignment;
 import objects.Entity;
 import objects.Pellet;
 import objects.PowerUpBox;
+import objects.powerUps.PowerUp;
 import utils.GameLoop;
 import utils.Map;
 import utils.Point;
@@ -27,7 +28,6 @@ import utils.ResourceLoader;
 import utils.Settings;
 import utils.UpDownIterator;
 import utils.enums.MapElement;
-import utils.enums.PowerUp;
 import utils.enums.RenderingMode;
 
 public class Renderer {
@@ -175,13 +175,13 @@ public class Renderer {
     int x;
     int y;
 
-    HashMap<Entity, HashMap<PowerUp, PowerUp>> entityPowerUps = new HashMap<>();
+    HashMap<Entity, HashMap<utils.enums.PowerUp, PowerUp>> entityPowerUps = new HashMap<>();
     for (Entity e : entityArr) {
       entityPowerUps.put(e, new HashMap<>());
     }
     if (activePowerUps != null) {
       for (PowerUp p : activePowerUps.values()) {
-        entityPowerUps.get(p.getUser()).put(p, p);
+        entityPowerUps.get(p.getUser()).put(p.getType(), p);
       }
     }
 
@@ -397,7 +397,8 @@ public class Renderer {
    * @param e entitiy to render
    * @param timeElapsed time since last frame to decide whether to move to next animation frame
    */
-  private void renderEntity(Entity e, HashMap<PowerUp, PowerUp> selfPowerUps, long timeElapsed) {
+  private void renderEntity(Entity e, HashMap<utils.enums.PowerUp, PowerUp> selfPowerUps,
+      long timeElapsed) {
     // choose correct animation
     ArrayList<Image> currentSprites = e.getImage();
     if (secondInNanoseconds / e.getAnimationSpeed() < e.getTimeSinceLastFrame()
@@ -433,23 +434,25 @@ public class Renderer {
     gc.drawImage(marker, coord.getX(), coord.getY());
   }
 
-  private void renderPowerUpEffects(Entity e, HashMap<PowerUp, PowerUp> selfPowerUps,
+  private void renderPowerUpEffects(Entity e, HashMap<utils.enums.PowerUp, PowerUp> selfPowerUps,
       Double rendCoord) {
     if (e.isSpeeding()) {
-      PowerUp speed = selfPowerUps.get(PowerUp.SPEED);
-      gc.drawImage(r.getPowerUps().get(PowerUp.SPEED)
-              .get(speed.getCurrentFrame() % r.getPowerUps().get(PowerUp.SPEED).size()),
+      PowerUp speed = selfPowerUps.get(utils.enums.PowerUp.SPEED);
+      gc.drawImage(r.getPowerUps().get(utils.enums.PowerUp.SPEED)
+              .get(speed.getCurrentFrame() % r.getPowerUps().get(utils.enums.PowerUp.SPEED).size()),
           rendCoord.getX(), rendCoord.getY());
     }
     if (e.isInvincible()) {
-      PowerUp invincible = selfPowerUps.get(PowerUp.INVINCIBLE);
-      gc.drawImage(r.getPowerUps().get(PowerUp.INVINCIBLE)
-              .get(invincible.getCurrentFrame() % r.getPowerUps().get(PowerUp.INVINCIBLE).size()),
+      PowerUp invincible = selfPowerUps.get(utils.enums.PowerUp.INVINCIBLE);
+      gc.drawImage(r.getPowerUps().get(utils.enums.PowerUp.INVINCIBLE)
+              .get(invincible.getCurrentFrame() % r.getPowerUps().get(utils.enums.PowerUp.INVINCIBLE)
+                  .size()),
           rendCoord.getX(), rendCoord.getY());
     }
     //is the entity stunned?
     if (e.isStunned()) {
-      gc.drawImage(r.getPowerUps().get(PowerUp.WEB).get(0), rendCoord.getX(), rendCoord.getY());
+      gc.drawImage(r.getPowerUps().get(utils.enums.PowerUp.WEB).get(0), rendCoord.getX(),
+          rendCoord.getY());
     }
   }
 

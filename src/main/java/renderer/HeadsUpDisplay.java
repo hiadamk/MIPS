@@ -31,7 +31,7 @@ public class HeadsUpDisplay {
   private Font geoSmall = null;
   private BufferedImage playerColours;
   private final double secondaryInventoryRatio = 0.7;
-  LinkedList<PowerUp> items = null;
+  LinkedList<objects.powerUps.PowerUp> items = null;
   private Image inventory;
   private int id = 0;
   private boolean randomPrimary = false;
@@ -154,7 +154,7 @@ public class HeadsUpDisplay {
 
     //find if new item has been picked up
     if (items == null) {
-      items = (LinkedList<PowerUp>) currentItems.clone();
+      items = (LinkedList<objects.powerUps.PowerUp>) currentItems.clone();
     } else if (items.size() != currentItems.size()) {
       if (items.size() == 1 && currentItems.size() == 2) {
         randomSecondary = true;
@@ -167,7 +167,7 @@ public class HeadsUpDisplay {
         randomPrimary = false;
         randomSecondary = false;
       }
-      items = (LinkedList<PowerUp>) currentItems.clone();
+      items = (LinkedList<objects.powerUps.PowerUp>) currentItems.clone();
     }
 
     currentTime += timeElapsed;

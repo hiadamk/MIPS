@@ -8,6 +8,7 @@ import main.Client;
 import objects.Entity;
 import objects.Pellet;
 import objects.PowerUpBox;
+import objects.powerUps.PowerUp;
 import utils.GameLoop;
 import utils.Input;
 import utils.Map;
@@ -15,7 +16,7 @@ import utils.Methods;
 import utils.Point;
 import utils.ResourceLoader;
 import utils.enums.Direction;
-import utils.enums.PowerUp;
+
 
 /**
  * Parent class for DumbTelemetry and HostTelemetry
@@ -158,10 +159,11 @@ public abstract class Telemetry {
         toRemove.add(p.id);
       }
     }
+    System.out.println(activePowerUps.size() + "  -  " + toRemove.size());
     for (UUID id : toRemove) {
       activePowerUps.remove(id);
     }
-
+    System.out.println("size: " + activePowerUps.size());
     gameTimer--;
     if (gameTimer == 0) {
       System.out.println("GAME HAS ENDED ITS OVER");

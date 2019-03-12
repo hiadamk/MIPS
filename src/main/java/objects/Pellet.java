@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 import javafx.scene.image.Image;
+import objects.powerUps.PowerUp;
 import utils.Point;
 import utils.Renderable;
 import utils.ResourceLoader;
 import utils.enums.Direction;
-import utils.enums.PowerUp;
 
 /**
  * Class for the pellet items and base class for all items
@@ -22,9 +22,9 @@ public class Pellet implements Renderable {
   protected int respawntime = 5000;
   protected boolean active; // Weather or not the item is visible and able to be interacted with\
   protected int value = 1;
-  private int respawnCount = 0;
-  protected PowerUp trap;
+  protected objects.powerUps.PowerUp trap;
   protected boolean isTrap = false;
+  private int respawnCount = 0;
 
   public Pellet(double x, double y) {
     this.location = new Point(x, y);
@@ -88,6 +88,7 @@ public class Pellet implements Renderable {
     entity.incrementScore(this.value);
     setActive(false);
   }
+
   @Override
   public String toString() {
     String a = active ? "active" : "not active";
@@ -110,7 +111,7 @@ public class Pellet implements Renderable {
     return isTrap;
   }
 
-  public void setTrap(PowerUp p) {
+  public void setTrap(objects.powerUps.PowerUp p) {
     this.trap = p;
     this.active = true;
     this.isTrap = true;

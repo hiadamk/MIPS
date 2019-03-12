@@ -12,10 +12,10 @@ import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.Enumeration;
 import objects.Entity;
+import objects.powerUps.PowerUp;
 import utils.Input;
 import utils.Point;
 import utils.enums.Direction;
-import utils.enums.PowerUp;
 
 /**
  * Class which will holds shared utility data for classes.

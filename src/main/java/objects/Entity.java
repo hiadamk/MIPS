@@ -4,11 +4,11 @@ import ai.routefinding.RouteFinder;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import javafx.scene.image.Image;
+import objects.powerUps.PowerUp;
 import utils.Point;
 import utils.Renderable;
 import utils.ResourceLoader;
 import utils.enums.Direction;
-import utils.enums.PowerUp;
 
 /**
  * Encapsulation of agent on map Represents both MIPS and Ghouls, as they are interchangeable. Can
@@ -18,14 +18,31 @@ import utils.enums.PowerUp;
  */
 public class Entity implements Renderable {
 
+  private static final double MIPS_SPEED = 0.08;
+  private static final double GHOUL_SPEED = 0.06;
   // animation variables
   private final int animationSpeed = 5;
   private Point location;
   private double velocity; // The velocity of the entity currently
   private double bonusSpeed;
   private Direction direction;
-
   private Direction oldDirection;
+  private int score;
+  private int clientId;
+  private String name;
+  private Boolean mipsman;
+  private ArrayList<ArrayList<Image>> images;
+  private ArrayList<Image> currentImage;
+  private RouteFinder routeFinder;
+  private Point lastGridCoord;
+  private LinkedList<PowerUp> items;
+  private long timeSinceLastFrame = 0;
+  private int currentFrame = 0;
+  private boolean directionSet;
+  private boolean stunned;
+  private boolean dead;
+  private boolean speeding;
+  private boolean invincible;
 
   /**
    * Constructor
@@ -42,30 +59,12 @@ public class Entity implements Renderable {
     resetVelocity();
     this.direction = Direction.UP;
     this.oldDirection = Direction.UP;
-    this.items = new LinkedList<PowerUp>();
+    this.items = new LinkedList<>();
     this.directionSet = false;
     this.name = "Player" + clientId;
     this.bonusSpeed = 0;
     // updateImages();
   }
-  private int score;
-  private int clientId;
-  private String name;
-  private Boolean mipsman;
-  private ArrayList<ArrayList<Image>> images;
-  private ArrayList<Image> currentImage;
-  private RouteFinder routeFinder;
-  private Point lastGridCoord;
-  private LinkedList<PowerUp> items;
-  private long timeSinceLastFrame = 0;
-  private int currentFrame = 0;
-  private static final double MIPS_SPEED = 0.08;
-  private static final double GHOUL_SPEED = 0.06;
-  private boolean directionSet;
-  private boolean stunned;
-  private boolean dead;
-  private boolean speeding;
-  private boolean invincible;
 
   public boolean isSpeeding() {
     return bonusSpeed > 0;
@@ -125,6 +124,14 @@ public class Entity implements Renderable {
     return routeFinder;
   }
 
+  /**
+   * @param routeFinder routeFinder for this instance
+   * @author Lewis Ackroyd
+   */
+  public void setRouteFinder(RouteFinder routeFinder) {
+    this.routeFinder = routeFinder;
+  }
+
   public LinkedList<PowerUp> getItems() {
     return items;
   }
@@ -140,14 +147,6 @@ public class Entity implements Renderable {
     if (items.size() < 2) {
       items.add(powerUp);
     }
-  }
-
-  /**
-   * @param routeFinder routeFinder for this instance
-   * @author Lewis Ackroyd
-   */
-  public void setRouteFinder(RouteFinder routeFinder) {
-    this.routeFinder = routeFinder;
   }
 
   /**
@@ -232,23 +231,17 @@ public class Entity implements Renderable {
     return currentImage == null ? images.get(0) : currentImage;
   }
 
-  /**
-   * @return velocity
-   */
+  /** @return velocity */
   public double getVelocity() {
     return velocity;
   }
 
-  /**
-   * @param velocity new velocity
-   */
+  /** @param velocity new velocity */
   public void setVelocity(double velocity) {
     this.velocity = velocity;
   }
 
-  /**
-   * @return direction
-   */
+  /** @return direction */
   public Direction getDirection() {
     return direction;
   }
@@ -274,7 +267,7 @@ public class Entity implements Renderable {
    * Gets the direction the entity is facing
    *
    * @return the direction it is facing using old diretion if the diretion is some how null or is
-   * set to stop
+   *     set to stop
    */
   public Direction getFacing() {
     if (direction == null || direction == Direction.STOP || direction == Direction.USE) {
@@ -322,16 +315,12 @@ public class Entity implements Renderable {
     return clientId;
   }
 
-  /**
-   * @return true if MIPS
-   */
+  /** @return true if MIPS */
   public Boolean isMipsman() {
     return mipsman;
   }
 
-  /**
-   * @param mips if true then now MIPS, if false then Ghoul
-   */
+  /** @param mips if true then now MIPS, if false then Ghoul */
   public void setMipsman(Boolean mips) {
     this.currentFrame = 0;
     this.mipsman = mips;
@@ -372,30 +361,22 @@ public class Entity implements Renderable {
     return outStr;
   }
 
-  /**
-   * @return time since last frame
-   */
+  /** @return time since last frame */
   public long getTimeSinceLastFrame() {
     return timeSinceLastFrame;
   }
 
-  /**
-   * @param n time since last frame
-   */
+  /** @param n time since last frame */
   public void setTimeSinceLastFrame(long n) {
     this.timeSinceLastFrame = n;
   }
 
-  /**
-   * @return animation speed
-   */
+  /** @return animation speed */
   public int getAnimationSpeed() {
     return animationSpeed;
   }
 
-  /**
-   * @return current frame
-   */
+  /** @return current frame */
   public int getCurrentFrame() {
     if (this.currentFrame >= getImage().size()) {
       this.currentFrame = 0;
@@ -421,12 +402,12 @@ public class Entity implements Renderable {
     }
   }
 
-  public void setName(String s) {
-    this.name = s;
-  }
-
   public String getName() {
     return name;
+  }
+
+  public void setName(String s) {
+    this.name = s;
   }
 
   public boolean isDirectionSet() {

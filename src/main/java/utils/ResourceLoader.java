@@ -50,7 +50,7 @@ public class ResourceLoader {
   private BufferedImage inventory;
   private ArrayList<BufferedImage> powerUpIcons;
   private int inventoryColourID;
-  private HashMap<PowerUp, ArrayList<BufferedImage>> powerUps;
+  private HashMap<utils.enums.PowerUp, ArrayList<BufferedImage>> powerUps;
 
   /**
    * @param baseDir path to the resources folder
@@ -481,7 +481,7 @@ public class ResourceLoader {
 
   public void loadPowerUpIcons() {
     ArrayList<BufferedImage> powerUps = new ArrayList<>();
-    for (PowerUp powerUp : PowerUp.values()) {
+    for (utils.enums.PowerUp powerUp : utils.enums.PowerUp.values()) {
       powerUps.add(loadImageFile("sprites/" + theme + "/misc/icon/", powerUp.toString()));
     }
     this.powerUpIcons = powerUps;
@@ -501,7 +501,7 @@ public class ResourceLoader {
     //add speedup powerup
     BufferedImage speedAnimation = transparentizeSprite(
         loadImageFile("sprites/" + theme + "/powerups/", "speed"));
-    powerUps.put(PowerUp.SPEED, splitSpriteSheet(39, 36, speedAnimation).get(0));
+    powerUps.put(PowerUp.WEB, splitSpriteSheet(39, 36, speedAnimation).get(0));
 
     //add invincible powerup
     BufferedImage invincibleAnimation = transparentizeSprite(
@@ -511,10 +511,10 @@ public class ResourceLoader {
     this.powerUps = powerUps;
   }
 
-  public HashMap<PowerUp, ArrayList<Image>> getPowerUps() {
-    HashMap<PowerUp, ArrayList<Image>> convertedSprites = new HashMap<>();
+  public HashMap<utils.enums.PowerUp, ArrayList<Image>> getPowerUps() {
+    HashMap<utils.enums.PowerUp, ArrayList<Image>> convertedSprites = new HashMap<>();
 
-    for (PowerUp key : this.powerUps.keySet()) {
+    for (utils.enums.PowerUp key : this.powerUps.keySet()) {
       convertedSprites.put(key, bufferedToJavaFxImage(this.powerUps.get(key)));
     }
 

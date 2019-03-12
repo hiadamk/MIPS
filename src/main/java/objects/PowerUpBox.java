@@ -5,17 +5,24 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.UUID;
+import objects.powerUps.Blueshell;
+import objects.powerUps.Invincible;
+import objects.powerUps.Mine;
+import objects.powerUps.Speed;
+import objects.powerUps.Web;
 import utils.Point;
 import utils.ResourceLoader;
 import utils.enums.PowerUp;
 
 public class PowerUpBox extends Pellet {
 
-	private static PowerUp[] powerUps = {PowerUp.BLUESHELL, PowerUp.SPEED, PowerUp.WEB,
-			PowerUp.INVINCIBLE};
+  private static PowerUp[] powerUps = {
+      PowerUp.BLUESHELL, PowerUp.SPEED, PowerUp.WEB, PowerUp.INVINCIBLE
+  };
 
   private final HashMap<Integer, PowerUp>[] ghostWeights = new HashMap[5];
   private final HashMap<Integer, PowerUp>[] pacmanWeights = new HashMap[5];
+
   public PowerUpBox(double x, double y) {
     super(x, y);
     init();
@@ -29,7 +36,7 @@ public class PowerUpBox extends Pellet {
   private void init() {
     this.respawntime = 300;
     this.value = 0;
-    //Init ghost item weights
+    // Init ghost item weights
     HashMap<Integer, PowerUp> map = new HashMap<>();
     map.put(50, PowerUp.WEB);
     map.put(51, PowerUp.SPEED);
@@ -54,7 +61,7 @@ public class PowerUpBox extends Pellet {
     map.put(25, PowerUp.WEB);
     map.put(40, PowerUp.BLUESHELL);
     ghostWeights[4] = map;
-    //Init PacMan weights
+    // Init PacMan weights
     map = new HashMap<>();
     map.put(10, PowerUp.INVINCIBLE);
     map.put(50, PowerUp.WEB);
@@ -88,10 +95,11 @@ public class PowerUpBox extends Pellet {
 
   /**
    * Gets a random PowerUp
+   *
    * @author Matthew Jones
    * @return the PowerUp
    */
-  public PowerUp getPowerUp(Entity entity, Entity[] agents) {
+  public objects.powerUps.PowerUp getPowerUp(Entity entity, Entity[] agents) {
     int rank = getRank(entity, agents);
     HashMap<Integer, PowerUp> baseWeights =
         entity.isMipsman() ? pacmanWeights[rank] : ghostWeights[rank];
@@ -104,7 +112,21 @@ public class PowerUpBox extends Pellet {
     Random r = new Random();
     int i = (int) ((1 - r.nextDouble()) * totalWeights);
     this.setActive(false);
-    return weights.floorEntry(i).getValue();
+    switch (weights.floorEntry(i).getValue()) {
+      case INVINCIBLE:
+        return new Invincible();
+      case SPEED:
+        return new Speed();
+      case WEB:
+        return new Web();
+      case BLUESHELL:
+        return new Blueshell();
+      case MINE:
+        return new Mine();
+      default:
+        return null;
+    }
+
   }
 
   @Override
@@ -118,7 +140,8 @@ public class PowerUpBox extends Pellet {
   }
 
   @Override
-  public void interact(Entity entity, Entity[] agents, HashMap<UUID, PowerUp> activePowerUps) {
+  public void interact(Entity entity, Entity[] agents,
+      HashMap<UUID, objects.powerUps.PowerUp> activePowerUps) {
     if (isTrap) {
       trap.trigger(entity, activePowerUps);
       isTrap = false;
@@ -128,7 +151,7 @@ public class PowerUpBox extends Pellet {
     if (!active) {
       return;
     }
-    PowerUp newPowerUp = getPowerUp(entity, agents);
+    objects.powerUps.PowerUp newPowerUp = getPowerUp(entity, agents);
     entity.giveItem(newPowerUp);
     this.setActive(false);
   }
@@ -137,6 +160,7 @@ public class PowerUpBox extends Pellet {
   public boolean isPowerPellet() {
     return true;
   }
+
   private int getRank(Entity entity, Entity[] agents) {
     int score = entity.getScore();
     int rank = 0;
