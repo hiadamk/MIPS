@@ -6,12 +6,14 @@ public class AStarData {
 
   private final Point myPosition;
   private final Point parent;
-  private final double cost;
+  private final double moveCost;
+  private final double estimatedCost;
 
-  public AStarData(Point myPosition, Point parent, double cost) {
+  public AStarData(Point myPosition, Point parent, double moveCost, double estimatedCost) {
     this.myPosition = myPosition;
     this.parent = parent;
-    this.cost = cost;
+    this.moveCost = moveCost;
+    this.estimatedCost = estimatedCost;
   }
 
   public Point getMyPosition() {
@@ -22,7 +24,11 @@ public class AStarData {
     return parent;
   }
 
-  public double getCost() {
-    return cost;
+  public double getMoveCost() {
+    return moveCost;
+  }
+
+  public double getEstimatedCost() {
+    return estimatedCost;
   }
 }

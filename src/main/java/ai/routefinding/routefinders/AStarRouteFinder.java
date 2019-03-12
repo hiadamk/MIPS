@@ -1,11 +1,13 @@
 package ai.routefinding.routefinders;
 
+import ai.mapping.PointMap;
 import ai.mapping.PointSet;
 import ai.mapping.Mapping;
 import ai.routefinding.AStarData;
 import ai.routefinding.RouteFinder;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
+
 import utils.Map;
 import utils.Point;
 import utils.enums.Direction;
@@ -17,16 +19,14 @@ import utils.enums.Direction;
  */
 public class AStarRouteFinder implements RouteFinder {
 
-  private static final boolean COMPLETE = false;
-
   private final PointSet junctions;
-  private final HashMap<Point, HashSet<Point>> edges;
+  private final PointMap<PointSet> edges;
   private final Map map;
 
   /**
    * Creates an instance of this routeFinder.
    */
-  public AStarRouteFinder(PointSet junctions, HashMap<Point, HashSet<Point>> edges, Map map) {
+  public AStarRouteFinder(PointSet junctions, PointMap<PointSet> edges, Map map) {
     this.junctions = junctions;
     this.edges = edges;
     this.map = map;
@@ -42,11 +42,6 @@ public class AStarRouteFinder implements RouteFinder {
        */
   @Override
   public Direction getRoute(Point myLocPointDouble, Point targetLocPointDouble) {
-
-    if (!COMPLETE) {
-      return new RandomRouteFinder().getRoute(myLocPointDouble,targetLocPointDouble);
-    }
-    System.out.println("A");
     if (myLocPointDouble == null || targetLocPointDouble == null) {
       throw new NullPointerException("One or both positions are null.");
     }
@@ -63,43 +58,44 @@ public class AStarRouteFinder implements RouteFinder {
       targetJunction =
           Mapping.findNearestJunction(targetLocPointDouble, map, junctions).getGridCoord();
     }
-    HashMap<Point, AStarData> visited = new HashMap<Point, AStarData>();
-    HashMap<Point, AStarData> unVisited = new HashMap<Point, AStarData>();
-    visited.put(myLocation, new AStarData(myLocation, myLocation, 0));
-    Direction outDirection = Direction.UP; // default
+    PointMap<AStarData> visited = new PointMap<>(map);
+    PointMap<AStarData> unVisited = new PointMap<>(map);
+    visited.put(myLocation, new AStarData(myLocation, myLocation, 0, heuristicCost(myLocation, targetJunction)));
+    Direction outDirection = Direction.STOP; // default
     Point currentPoint = myLocation;
     while (!visited.containsKey(targetJunction) && (visited.size() < junctions.size())) {
-      HashSet<Point> connections = edges.get(currentPoint);
-      for (Point connection : connections) {
+      PointSet connections = edges.get(currentPoint);
+      Iterator<Point> iterator = connections.iterator();
+      while (iterator.hasNext()) {
+        Point connection = iterator.next();
         if (!visited.containsKey(connection)) {
-          double cost =
-              visited.get(currentPoint).getCost()
-                  + movementCost(currentPoint, connection)
-                  + heuristicCost(connection, targetJunction);
-          unVisited.put(connection, new AStarData(currentPoint, connection, cost));
+          double moveCost =
+              visited.get(currentPoint).getMoveCost()
+                  + movementCost(currentPoint, connection);
+          double estimatedCost = moveCost + heuristicCost(connection, targetJunction);
+          unVisited.put(connection, new AStarData(connection, currentPoint, moveCost, estimatedCost));
         }
       }
       double lowestCost = Double.MAX_VALUE;
       for (Point key : unVisited.keySet()) {
         AStarData data = unVisited.get(key);
-        if (data.getCost() < lowestCost) {
+        if (data.getEstimatedCost() < lowestCost) {
           currentPoint = key;
-          lowestCost = data.getCost();
+          lowestCost = data.getEstimatedCost();
         }
       }
-      AStarData data = unVisited.get(currentPoint); //
+      AStarData data = unVisited.get(currentPoint);
       unVisited.remove(currentPoint);
       visited.put(currentPoint, data);
     }
-    for (Point key : visited.keySet()) {
-      AStarData data = visited.get(key);
-      if (myLocation.equals(data.getParentPosition()) && !myLocation.equals(data.getMyPosition())) {
-        outDirection =
-            Mapping.directionBetweenPoints(data.getMyPosition(), data.getParentPosition());
-        break;
-      }
+    AStarData data = visited.get(currentPoint);
+    while (!data.getMyPosition().equals(data.getParentPosition())) {
+        if (data.getParentPosition().equals(myLocation)) {
+          outDirection = Mapping.directionBetweenPoints(myLocation, data.getMyPosition());
+          break;
+        }
+        data = visited.get(data.getParentPosition());
     }
-
     return outDirection;
   }
 

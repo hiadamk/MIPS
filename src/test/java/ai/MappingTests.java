@@ -1,5 +1,6 @@
 package ai;
 
+import ai.mapping.PointMap;
 import ai.mapping.PointSet;
 import ai.mapping.Mapping;
 import org.junit.jupiter.api.Test;
@@ -74,7 +75,7 @@ class MappingTests {
 		nextPoint.add(new Point(3, 1));
 		testEdges.put(new Point(3, 4), nextPoint);
 
-		HashMap<Point, HashSet<Point>> result = Mapping.getEdges(testMap2);
+		PointMap<PointSet> result = Mapping.getEdges(testMap2);
 
 		assertEquals(result, testEdges);
 	}
@@ -102,7 +103,7 @@ class MappingTests {
 		nextPoint.add(new Point(3, 1));
 		testEdges.put(new Point(3, 4), nextPoint);
 		PointSet junctions = Mapping.getJunctions(testMap2);
-		HashMap<Point, HashSet<Point>> result = Mapping.getEdges(testMap2, junctions);
+		PointMap<PointSet> result = Mapping.getEdges(testMap2, junctions);
 		assertEquals(result, testEdges);
 	}
 }

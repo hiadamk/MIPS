@@ -1,6 +1,7 @@
 package ai.routefinding.routefinders;
 
 import ai.mapping.Mapping;
+import ai.mapping.PointMap;
 import ai.mapping.PointSet;
 import ai.routefinding.RouteFinder;
 import objects.Entity;
@@ -20,9 +21,9 @@ public class NextJunctionRouteFinder implements RouteFinder {
     private final Entity[] allAgents;
     private final Map map;
     private final PointSet junctions;
-    private final HashMap<Point, HashSet<Point>> edges;
+    private final PointMap<PointSet> edges;
 
-    public NextJunctionRouteFinder(Entity[] allAgents, Map map, PointSet junctions, HashMap<Point, HashSet<Point>> edges) {
+    public NextJunctionRouteFinder(Entity[] allAgents, Map map, PointSet junctions, PointMap<PointSet> edges) {
         this.allAgents = allAgents;
         this.map = map;
         this.junctions = junctions;

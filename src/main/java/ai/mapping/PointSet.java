@@ -1,27 +1,31 @@
 package ai.mapping;
 
+import utils.Map;
 import utils.Point;
-
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class PointSet implements Iterable, Set, Collection {
-    private HashMap<Integer, HashSet<Integer>> points;
-    private int size;
+    private HashSet<Integer> points;
+    private final int MAX_X;
 
-    public PointSet(){
-        points = new HashMap<>();
-        size = 0;
+    public PointSet(Map map){
+        this.MAX_X = map.getMaxX();
+        points = new HashSet<>();
+    }
+
+    private PointSet(int maxX) {
+        this.MAX_X = maxX;
+        points = new HashSet<>();
     }
 
     @Override
     public boolean contains(Object o) {
         if (o instanceof Point) {
             Point p = (Point) o;
-            Point point = p.getCopy();
-            if (points.containsKey((int) point.getX())) {
-                HashSet<Integer> ys = points.get((int) point.getX());
-                return ys.contains((int) point.getY());
-            }
+            return points.contains(getKeyValue(p));
         }
         return false;
     }
@@ -30,20 +34,8 @@ public class PointSet implements Iterable, Set, Collection {
     public boolean add(Object o) {
         if (o instanceof Point) {
             Point p = (Point) o;
-            Point point = p.getCopy();
-            HashSet<Integer> ys;
-            if (points.containsKey((int) point.getX())) {
-                ys = points.get((int) point.getX());
-            }
-            else {
-                ys = new HashSet<>();
-            }
-            if (!ys.contains((int) point.getY())) {
-                ys.add((int)point.getY());
-                points.put((int)point.getX(), ys);
-                size++;
-                return true;
-            }
+            int key = getKeyValue(p);
+            return points.add(key);
         }
         return false;
     }
@@ -52,16 +44,8 @@ public class PointSet implements Iterable, Set, Collection {
     public boolean remove(Object o) {
         if (o instanceof Point) {
             Point p = (Point) o;
-            Point point = p.getCopy();
-            if (contains(point)) {
-                HashSet<Integer> ys = points.get((int)point.getX());
-                ys.remove((int)point.getY());
-                if (ys.size()==0) {
-                    points.remove((int)point.getX());
-                }
-                size--;
-                return true;
-            }
+            int key = getKeyValue(p);
+            return remove(key);
         }
         return false;
     }
@@ -121,9 +105,6 @@ public class PointSet implements Iterable, Set, Collection {
         }
         Point[] ps = (Point[]) objects;
         for (Point p : ps) {
-            if (!(p instanceof Point)) {
-                return false;
-            }
             if (!contains(p)) {
                 return false;
             }
@@ -141,58 +122,50 @@ public class PointSet implements Iterable, Set, Collection {
 
     @Override
     public Point[] toArray() {
-        Point[] pointsArray = new Point[size];
+        Point[] pointsArray = new Point[points.size()];
         int index = 0;
-        for (int x : points.keySet()) {
-            HashSet<Integer> ys = points.get(x);
-            for (int y : ys) {
-                pointsArray[index] = new Point((double) x, (double) y);
-                index++;
-            }
+        for (int key : points) {
+            pointsArray[index] = getPointFromKey(key);
+            index++;
         }
         return pointsArray;
     }
 
     @Override
     public int size() {
-        return size;
+        return points.size();
     }
 
     @Override
     public void clear() {
         points.clear();
-        size = 0;
     }
 
     @Override
     public boolean isEmpty() {
-        return size==0;
+        return points.isEmpty();
     }
 
     @Override
     public PointSet clone() {
-        PointSet outSet = new PointSet();
-        for (int x : points.keySet()) {
-            HashSet<Integer> ys = points.get(x);
-            for (int y : ys) {
-                outSet.add(new Point((double) x, (double) y));
-            }
+        PointSet outSet = new PointSet(MAX_X);
+        for (int key : points) {
+            outSet.add(getPointFromKey(key));
         }
         return outSet;
     }
 
     @Override
     public Iterator iterator() {
-        final JunctionSetIterator junctionSetIterator = new JunctionSetIterator(this);
-        return junctionSetIterator;
+        return new PointSetIterator(this);
     }
 
-    private class JunctionSetIterator implements Iterator {
+    private class PointSetIterator implements Iterator {
         private final Point[] points;
         private int currentIndex;
 
-        public JunctionSetIterator(PointSet js) {
-            points = js.toArray();
+        public PointSetIterator(PointSet ps) {
+            points = ps.toArray();
             currentIndex = 0;
         }
 
@@ -207,5 +180,16 @@ public class PointSet implements Iterable, Set, Collection {
             currentIndex++;
             return nextPoint;
         }
+    }
+
+    private int getKeyValue(Point p) {
+        p = p.getGridCoord();
+        return (((int) p.getY()) * MAX_X) + (int) p.getX();
+    }
+
+    private Point getPointFromKey(int key) {
+        int xVal = key % MAX_X;
+        int yVal = (key-xVal)/MAX_X;
+        return new Point(xVal, yVal);
     }
 }
