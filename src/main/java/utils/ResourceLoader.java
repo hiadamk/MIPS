@@ -58,9 +58,7 @@ public class ResourceLoader {
   public ResourceLoader(String baseDir) {
     BASE_DIR = baseDir;
     this.loadMap("default");
-    //this.loadMap("six_exits");
     this.init();
-    getThemes();
   }
 
   private void init() {
@@ -86,7 +84,7 @@ public class ResourceLoader {
     for (File f : themeFolders) {
       String previewURI = new File(f.toString(), "preview.png").toURI().toString();
       Image preview = new Image(previewURI);
-      themes.put(f.getName().substring(0, f.getName().length() - 4), preview);
+      themes.put(f.getName(), preview);
     }
     return themes;
   }
