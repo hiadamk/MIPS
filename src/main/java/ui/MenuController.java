@@ -57,7 +57,6 @@ import utils.ResourceLoader;
 import utils.Settings;
 import utils.enums.InputKey;
 import utils.enums.RenderingMode;
-import utils.enums.ScreenResolution;
 
 /**
  * @author Adam Kona Class which handles the creation and functionality of components in the main
@@ -462,7 +461,9 @@ public class MenuController {
 
     ImageView bg = new ImageView("sprites/default/backgrounds/default.png");
 
-    bg.fitWidthProperty().bind(this.primaryStage.widthProperty());
+    //bg.fitWidthProperty().bind(this.primaryStage.widthProperty());
+    bg.setPreserveRatio(true);
+    bg.setFitWidth(Settings.getxResolution());
     root.getChildren().add(bg);
     StackPane.setAlignment(bg, Pos.CENTER);
 
@@ -586,8 +587,6 @@ public class MenuController {
               itemsOnScreen.add(gameModeOptions);
               showItemsOnScreen();
             });
-
-    client.setRenderingMode(RenderingMode.SMOOTH_SCALING);
 
     ImageView creditsView = new ImageView("ui/Credits.png");
     Button creditsBtn = ButtonGenerator.generate(false, root, creditsView);
@@ -799,17 +798,21 @@ public class MenuController {
       audioController.playSound(Sounds.click);
       switch (resolutionCombo.getValue()) {
         case "1366x768":
-          client.updateResolution(ScreenResolution.LOW);
+          Settings.setxResolution(1366);
+          Settings.setyResolution(768);
           break;
         case "1920x1080":
-          client.updateResolution(ScreenResolution.MEDIUM);
+          Settings.setxResolution(1920);
+          Settings.setyResolution(1080);
           break;
         case "2560x1440":
-          client.updateResolution(ScreenResolution.HIGH);
+          Settings.setxResolution(2560);
+          Settings.setyResolution(1440);
           break;
         default:
           System.out.println("FAILED");
       }
+      client.updateResolution();
     });
 
     // Provide our own ListCells for the ComboBox
@@ -835,16 +838,16 @@ public class MenuController {
     scalingCombo.setOnAction(event -> {
       switch (scalingCombo.getValue()) {
         case "None":
-          client.setRenderingMode(RenderingMode.NO_SCALING);
+          Settings.setRenderingMode(RenderingMode.NO_SCALING);
           break;
         case "Standard":
-          client.setRenderingMode(RenderingMode.STANDARD_SCALING);
+          Settings.setRenderingMode(RenderingMode.STANDARD_SCALING);
           break;
         case "Smooth":
-          client.setRenderingMode(RenderingMode.SMOOTH_SCALING);
+          Settings.setRenderingMode(RenderingMode.SMOOTH_SCALING);
           break;
         case "Integer":
-          client.setRenderingMode(RenderingMode.INTEGER_SCALING);
+          Settings.setRenderingMode(RenderingMode.INTEGER_SCALING);
           break;
         default:
           System.out.println("Setting rendering mode failed.");

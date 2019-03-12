@@ -29,9 +29,8 @@ import utils.Input;
 import utils.Map;
 import utils.Methods;
 import utils.ResourceLoader;
+import utils.Settings;
 import utils.enums.Direction;
-import utils.enums.RenderingMode;
-import utils.enums.ScreenResolution;
 
 public class Client extends Application {
 
@@ -46,10 +45,6 @@ public class Client extends Application {
   private Scene gameScene;
   private Stage primaryStage;
   private Renderer renderer;
-  private int xRes = 1920;
-  private int yRes = 1080;
-  private ScreenResolution screenRes = ScreenResolution.LOW;
-  private RenderingMode renderingMode = RenderingMode.STANDARD_SCALING;
   private ResourceLoader resourceLoader;
   private Entity[] agents;
   private Queue<Input> inputs;
@@ -83,10 +78,6 @@ public class Client extends Application {
     this.playerNames = names;
   }
 
-  public void setRenderingMode(RenderingMode rm) {
-    this.renderingMode = rm;
-  }
-
   @Override
   public void start(Stage primaryStage) {
     audioController = new AudioController();
@@ -99,14 +90,15 @@ public class Client extends Application {
     StackPane menuController = (StackPane) this.menuController.createMainMenu();
     menuController.getStylesheets()
         .add(getClass().getResource("/ui/stylesheet.css").toExternalForm());
-    mainMenu = new Scene(menuController, xRes, yRes);
-    canvas = new Canvas(xRes, yRes);
+    mainMenu = new Scene(menuController, Settings.getxResolution(), Settings.getyResolution());
+    canvas = new Canvas(Settings.getxResolution(), Settings.getyResolution());
     this.gameSceneController = new GameSceneController(canvas, this);
     this.gameScene = new Scene(gameSceneController.getGameRoot());
     this.gameScene.getStylesheets()
         .add(getClass().getResource("/ui/stylesheet.css").toExternalForm());
     GraphicsContext gc = canvas.getGraphicsContext2D();
-    renderer = new Renderer(gc, xRes, yRes, resourceLoader);
+    renderer = new Renderer(gc, Settings.getxResolution(), Settings.getyResolution(),
+        resourceLoader);
     primaryStage.setScene(mainMenu);
     primaryStage.setMinWidth(1366);
     primaryStage.setMinHeight(768);
@@ -119,7 +111,7 @@ public class Client extends Application {
     primaryStage.show();
     primaryStage.setOnCloseRequest(e -> System.exit(0));
 
-    updateResolution(this.screenRes);
+    updateResolution();
   }
 
   /**
@@ -234,34 +226,18 @@ public class Client extends Application {
 
   /**
    * Updates the current screen resolution
-   * @param s the desired resolution
    */
-  public void updateResolution(ScreenResolution s) {
-    this.screenRes = s;
-    switch (s) {
-      case LOW:
-        primaryStage.setWidth(1366);
-        primaryStage.setHeight(768);
-        xRes = 1366;
-        yRes = 768;
-        break;
-      case MEDIUM:
-        primaryStage.setWidth(1920);
-        primaryStage.setHeight(1080);
-        xRes = 1920;
-        yRes = 1080;
-        break;
-      case HIGH:
-        primaryStage.setWidth(2650);
-        primaryStage.setHeight(1440);
-        xRes = 2650;
-        yRes = 1440;
-        break;
-    }
+  public void updateResolution() {
+    primaryStage.setWidth(Settings.getxResolution());
+    primaryStage.setHeight(Settings.getyResolution());
 
-    canvas.setWidth(xRes);
-    canvas.setHeight(yRes);
-    renderer.setResolution(xRes, yRes, this.renderingMode);
+    canvas.setWidth(Settings.getxResolution());
+    canvas.setHeight(Settings.getyResolution());
+
+    //old method to change resolution
+    //renderer.setResolution(xRes, yRes, this.renderingMode);
+
+    renderer.refreshSettings();
   }
 
   /**
@@ -269,7 +245,8 @@ public class Client extends Application {
    * @param n the name of the client
    */
   public void setName(String n) {
-    updateResolution(this.screenRes);
+    //not sure why this updateResolution is here
+    //updateResolution(this.screenRes);
     if (n.matches(".*[a-zA-Z]+.*")) {
       this.name = n;
     } else {
@@ -289,7 +266,7 @@ public class Client extends Application {
    * Handles starting the game for all clients
    */
   private void startGame() {
-    updateResolution(this.screenRes);
+    updateResolution();
     if (telemetry != null) {
       agents = telemetry.getAgents();
       map = telemetry.getMap();

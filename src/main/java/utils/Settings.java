@@ -2,6 +2,7 @@ package utils;
 
 import javafx.scene.input.KeyCode;
 import utils.enums.InputKey;
+import utils.enums.RenderingMode;
 
 public class Settings {
 
@@ -10,6 +11,12 @@ public class Settings {
   private static KeyCode left = KeyCode.LEFT;
   private static KeyCode right = KeyCode.RIGHT;
   private static KeyCode useItem = KeyCode.SPACE;
+
+  private static int xResolution = 1366;
+  private static int yResolution = 768;
+  private static RenderingMode renderingMode = RenderingMode.SMOOTH_SCALING;
+  private static String theme = "default";
+
 
   public static KeyCode getKey(InputKey key) {
     switch (key) {
@@ -44,5 +51,37 @@ public class Settings {
         useItem = keyCode;
     }
     System.err.println("Invalid key to be bound");
+  }
+
+  public static int getxResolution() {
+    return xResolution;
+  }
+
+  public static void setxResolution(int xResolution) {
+    Settings.xResolution = xResolution;
+  }
+
+  public static int getyResolution() {
+    return yResolution;
+  }
+
+  public static void setyResolution(int yResolution) {
+    Settings.yResolution = yResolution;
+  }
+
+  public static RenderingMode getRenderingMode() {
+    return renderingMode;
+  }
+
+  public static void setRenderingMode(RenderingMode renderingMode) {
+    Settings.renderingMode = renderingMode;
+  }
+
+  public static String getTheme() {
+    return theme;
+  }
+
+  public static void setTheme(String theme) {
+    Settings.theme = theme;
   }
 }

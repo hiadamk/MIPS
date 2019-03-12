@@ -12,7 +12,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import objects.Entity;
 import renderer.Renderer;
-import utils.enums.RenderingMode;
 
 /**
  * @author Tim Cheung
@@ -24,7 +23,7 @@ public class MapPreview {
   private int yRes;
 
   /**
-   * @param x x resoltion of previews
+   * @param x x resolution of previews
    * @param y y resolution of previews
    */
   public MapPreview(int x, int y) {
@@ -65,8 +64,8 @@ public class MapPreview {
     GraphicsContext gc = canvas.getGraphicsContext2D();
 
     Renderer renderer = new Renderer(gc, xRes, yRes, resourceLoader);
+    renderer.setResolution(this.xRes, this.yRes);
 
-    renderer.setResolution(xRes, yRes, RenderingMode.SMOOTH_SCALING);
     gc.setFill(Color.TRANSPARENT);
     gc.fillRect(0, 0, xRes, yRes);
     renderer.renderGameOnly(map, new Entity[]{}, 0, new HashMap<>(), null);

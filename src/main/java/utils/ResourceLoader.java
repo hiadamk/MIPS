@@ -21,6 +21,10 @@ import utils.enums.RenderingMode;
 public class ResourceLoader {
 
   private final String BASE_DIR;
+  private RenderingMode renderingMode = Settings.getRenderingMode();
+  private int xResolution = Settings.getxResolution();
+  private int yResolution = Settings.getyResolution();
+  private String theme = Settings.getTheme();
 
   private final int spriteWidth = 39;
   private final int spriteHeight = 36;
@@ -29,12 +33,10 @@ public class ResourceLoader {
   private ArrayList<ArrayList<BufferedImage>> mipSprites;
   private ArrayList<ArrayList<BufferedImage>> mipOutlineSprites;
   private BufferedImage mipPalette;
-  private int mipColourID;
 
   private ArrayList<ArrayList<BufferedImage>> ghoulSprites;
   private ArrayList<ArrayList<BufferedImage>> ghoulOutlineSprites;
   private BufferedImage ghoulPalette;
-  private int ghoulColourID;
 
   private ArrayList<BufferedImage> pellets;
   private ArrayList<BufferedImage> translucentPellets;
@@ -207,14 +209,29 @@ public class ResourceLoader {
     return resizedSprite;
   }
 
+  public void refreshSettings() {
+    this.xResolution = Settings.getxResolution();
+    this.yResolution = Settings.getyResolution();
+    this.renderingMode = Settings.getRenderingMode();
+    setResolution();
+  }
+
+  public void refreshSettings(int x, int y, RenderingMode r) {
+    this.xResolution = x;
+    this.yResolution = y;
+    this.renderingMode = r;
+    setResolution();
+  }
+
   /**
-   * @param x new x resolution
-   * @param y new y resolution
-   * @param mode tells ResourceLoader how to scale sprites
+   *
    */
-  public void setResolution(int x, int y, RenderingMode mode) {
+  private void setResolution() {
     init();
     double mapToScreenRatio = 0.7;
+    int x = this.xResolution;
+    int y = this.yResolution;
+    RenderingMode mode = this.renderingMode;
 
     // find dimensions of rendered map we want based on mapToScreenRatio
     int targetX = (int) (x * mapToScreenRatio);
@@ -313,7 +330,6 @@ public class ResourceLoader {
     this.mipSprites = splitSpriteSheet(spriteWidth, spriteHeight, sprites);
     this.mipOutlineSprites = splitSpriteSheet(spriteWidth, spriteHeight, outlineSprites);
     this.mipPalette = loadImageFile("sprites/" + theme + "/playable/", "mip_palette");
-    this.mipColourID = 0;
   }
 
   /**
@@ -348,7 +364,6 @@ public class ResourceLoader {
     this.ghoulSprites = splitSpriteSheet(spriteWidth, spriteHeight, sprites);
     this.ghoulOutlineSprites = splitSpriteSheet(spriteWidth, spriteHeight, outlineSprites);
     this.ghoulPalette = loadImageFile("sprites/" + theme + "/playable/", "ghoul_palette");
-    this.ghoulColourID = 0;
   }
 
   /**

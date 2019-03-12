@@ -23,6 +23,7 @@ import utils.GameLoop;
 import utils.Map;
 import utils.Point;
 import utils.ResourceLoader;
+import utils.Settings;
 import utils.UpDownIterator;
 import utils.enums.MapElement;
 import utils.enums.PowerUp;
@@ -598,18 +599,28 @@ public class Renderer {
     return new Point2D.Double((this.xResolution / (double) 2) - mapMidPointX, yResolution / 6);
   }
 
+
   /**
-   * sets new resolution for the renderer and re initialises assets with the new resolution
-   *
-   * @param x new x resolution
-   * @param y new y resolution
-   * @param mode scaling mode
+   * use to override settings given by the settings class
    */
-  public void setResolution(int x, int y, RenderingMode mode) {
-    r.setResolution(x, y, mode);
+  public void setResolution(int x, int y) {
+    r.refreshSettings(x, y, RenderingMode.SMOOTH_SCALING);
     hudRender.setResolution(x, y);
     this.xResolution = x;
     this.yResolution = y;
+    this.map = r.getMap();
+    this.initMapTraversal(this.map);
+    this.tileSizeX = r.getMapTiles().get(0).getWidth();
+    this.tileSizeY = r.getMapTiles().get(0).getHeight();
+    this.mapRenderingCorner = getMapRenderingCorner();
+  }
+
+
+  public void refreshSettings() {
+    r.refreshSettings();
+    hudRender.setResolution(Settings.getxResolution(), Settings.getyResolution());
+    this.xResolution = Settings.getxResolution();
+    this.yResolution = Settings.getyResolution();
     this.map = r.getMap();
     this.initMapTraversal(this.map);
     this.mapRenderingCorner = getMapRenderingCorner();
