@@ -186,7 +186,7 @@ public class AILoopControl extends Thread {
                 Point currentGridLocation = currentLocation.getGridCoord();
                 if (currentLocation.isCentered()) {
                   boolean atLastCoord = atPreviousCoordinate(ent, currentGridLocation);
-                    if (ent.getDirection() == null
+                    if (!isMovementDirection(ent.getDirection())
                         || !Methods.validateDirection(ent.getDirection(), currentLocation, map) || (
                         junctions.contains(currentGridLocation) && !atLastCoord)) {
                       if (atLastCoord) {
@@ -251,6 +251,16 @@ public class AILoopControl extends Thread {
             return false;
         }
         return ent.getLastGridCoord().equals(currentLocation);
+    }
+
+    private boolean isMovementDirection(Direction d) {
+        switch (d) {
+            case RIGHT: return true;
+            case LEFT: return true;
+            case UP: return true;
+            case DOWN: return true;
+            default: return false;
+        }
     }
 
     private Direction confirmOrReplaceDirection(Direction oldDirection, Point currentLocation, Direction dir) {
