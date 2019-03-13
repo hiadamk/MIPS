@@ -438,9 +438,9 @@ public class Renderer {
       Double rendCoord) {
     if (e.isSpeeding()) {
       PowerUp speed = selfPowerUps.get(utils.enums.PowerUp.SPEED);
-      gc.drawImage(r.getPowerUps().get(utils.enums.PowerUp.SPEED)
-              .get(speed.getCurrentFrame() % r.getPowerUps().get(utils.enums.PowerUp.SPEED).size()),
-          rendCoord.getX(), rendCoord.getY());
+      ArrayList<Image> sprites = r.getPowerUps().get(utils.enums.PowerUp.SPEED);
+      gc.drawImage(sprites.get(speed.getCurrentFrame() % sprites.size()), rendCoord.getX(),
+          rendCoord.getY());
     }
     if (e.isInvincible()) {
       PowerUp invincible = selfPowerUps.get(utils.enums.PowerUp.INVINCIBLE);
