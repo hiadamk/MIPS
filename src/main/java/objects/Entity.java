@@ -8,6 +8,7 @@ import objects.powerUps.PowerUp;
 import utils.Point;
 import utils.Renderable;
 import utils.ResourceLoader;
+import utils.StatsTracker;
 import utils.enums.Direction;
 
 /**
@@ -44,6 +45,8 @@ public class Entity implements Renderable {
   private boolean speeding;
   private boolean invincible;
 
+  private StatsTracker statsTracker;
+
   /**
    * Constructor
    *
@@ -63,7 +66,12 @@ public class Entity implements Renderable {
     this.directionSet = false;
     this.name = "Player" + clientId;
     this.bonusSpeed = 0;
+    this.statsTracker = new StatsTracker();
     // updateImages();
+  }
+
+  public StatsTracker getStatsTracker() {
+    return statsTracker;
   }
 
   public boolean isSpeeding() {
@@ -103,10 +111,15 @@ public class Entity implements Renderable {
   public void setDead(boolean dead) {
     this.dead = dead;
     if (dead) {
+      statsTracker.increaseDeaths();
       velocity = 0;
     } else {
       resetVelocity();
     }
+  }
+
+  public void increaseKills() {
+    statsTracker.increaseKills();
   }
 
   public void changeBonusSpeed(double i) {
@@ -140,6 +153,7 @@ public class Entity implements Renderable {
     if (items.size() < 1) {
       return null;
     }
+    statsTracker.increaseItemsUsed();
     return items.pop();
   }
 
@@ -301,8 +315,14 @@ public class Entity implements Renderable {
   public void incrementScore(int... i) {
     if (i.length > 0) {
       score = score + i[0];
+      if (i[0] > 0) {
+        statsTracker.increasePointsGained(i[0]);
+      } else {
+        statsTracker.increasePointsLost(-i[0]);
+      }
     } else {
       score++;
+      statsTracker.increasePointsGained();
     }
   }
 

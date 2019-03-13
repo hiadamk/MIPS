@@ -31,8 +31,8 @@ public class Blueshell extends PowerUp {
   public boolean incrementTime() {
     super.incrementTime();
     if (counter == EFFECTTIME) {
-      PowerUp stun = new Web();
-      stun.trigger(effected, activePowerUps);
+      PowerUp killer = new Mine();
+      killer.trigger(effected, activePowerUps);
       return true;
     }
     return false;

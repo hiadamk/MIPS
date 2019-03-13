@@ -141,10 +141,12 @@ public abstract class Telemetry {
 
         if (agents[i].isMipsman() && !agents[j].isMipsman() && !agents[i].isInvincible()) {
           detectEntityCollision(agents[i], agents[j], resourceLoader);
+          agents[j].increaseKills();
         }
 
         if (agents[j].isMipsman() && !agents[i].isMipsman() && !agents[j].isInvincible()) {
           detectEntityCollision(agents[j], agents[i], resourceLoader);
+          agents[i].increaseKills();
         }
       }
     }
