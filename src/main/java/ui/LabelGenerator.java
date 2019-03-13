@@ -10,7 +10,7 @@ public class LabelGenerator {
     Label newLabel = new Label(text);
     newLabel.setVisible(visible);
     root.getChildren().add(newLabel);
-    newLabel.setStyle(" -fx-font-size:" + fontSize + "pt ; -fx-text-inner-color: " + colour + ";");
+    newLabel.setStyle(" -fx-font-size:" + fontSize + "pt ; -fx-text-fill: " + colour + ";");
     return newLabel;
   }
 }

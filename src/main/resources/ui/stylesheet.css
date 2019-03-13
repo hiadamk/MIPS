@@ -215,14 +215,6 @@
   -fx-text-alignment: center;
 }
 
-.combo-box-base:hover {
-  -fx-color: PINK;
-}
-
-.combo-box-base:showing {
-  -fx-color: PINK;
-}
-
 .combo-box-base:focused {
   -fx-background-color: silver;
   -jfx-focus-color: rgba(255, 255, 255, .5);

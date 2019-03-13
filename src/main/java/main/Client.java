@@ -240,6 +240,12 @@ public class Client extends Application {
     renderer.refreshSettings();
   }
 
+  public void updateTheme(String themeName) {
+    Settings.setTheme(themeName);
+    renderer.refreshSettings();
+    resourceLoader.refreshSettings();
+  }
+
   /**
    * Sets the name for the current client and checks that it contains letters
    * @param n the name of the client
