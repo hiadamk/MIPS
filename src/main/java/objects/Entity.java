@@ -42,8 +42,10 @@ public class Entity implements Renderable {
   private boolean directionSet;
   private boolean stunned;
   private boolean dead;
-  private boolean speeding;
+  private final int DEATHTIME = 30;
+  private int deathCounter;
   private boolean invincible;
+
 
   private StatsTracker statsTracker;
 
@@ -113,6 +115,7 @@ public class Entity implements Renderable {
     if (dead) {
       statsTracker.increaseDeaths();
       velocity = 0;
+      deathCounter = 0;
     } else {
       resetVelocity();
     }
@@ -422,6 +425,11 @@ public class Entity implements Renderable {
     }
   }
 
+  public void countRespawn() {
+    if (deathCounter++ == DEATHTIME) {
+      setDead(false);
+    }
+  }
   public String getName() {
     return name;
   }

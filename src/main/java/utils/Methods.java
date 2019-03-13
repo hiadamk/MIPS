@@ -11,6 +11,17 @@ public class Methods {
     }
   }
 
+  public static void kill(Entity killer, Entity victim) {
+    killer.increaseKills();
+    victim.setDead(true);
+    if (victim.getScore() > 0) {
+      int points = (int) (victim.getScore() * 0.1);
+      points = points < 1 ? 1 : points;
+      victim.incrementScore(-points);
+      killer.incrementScore(points);
+    }
+  }
+
   /**
    * checks whether a movement in a certain direction is valid
    *

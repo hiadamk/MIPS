@@ -132,6 +132,7 @@ public abstract class Telemetry {
           agents[i].setDirection(Direction.STOP);
         }
       }
+      agents[i].countRespawn();
     }
 
     // separate loop for checking collision after iteration
@@ -141,12 +142,10 @@ public abstract class Telemetry {
 
         if (agents[i].isMipsman() && !agents[j].isMipsman() && !agents[i].isInvincible()) {
           detectEntityCollision(agents[i], agents[j], resourceLoader);
-          agents[j].increaseKills();
         }
 
         if (agents[j].isMipsman() && !agents[i].isMipsman() && !agents[j].isInvincible()) {
           detectEntityCollision(agents[j], agents[i], resourceLoader);
-          agents[i].increaseKills();
         }
       }
     }
@@ -155,6 +154,7 @@ public abstract class Telemetry {
     for (Pellet p : pellets.values()) {
       p.incrementRespawn();
     }
+
     ArrayList<UUID> toRemove = new ArrayList<>();
     for (PowerUp p : activePowerUps.values()) {
       if (p.incrementTime()) {
@@ -215,6 +215,7 @@ public abstract class Telemetry {
       client.collisionDetected(ghoul);
       mipsman.setMipsman(false);
       ghoul.setMipsman(true);
+      Methods.kill(ghoul, mipsman);
       mipsman.setLocation(resourceLoader.getMap().getRandomSpawnPoint());
       mipsman.setDirection(Direction.UP);
       mipsman.updateImages(resourceLoader);

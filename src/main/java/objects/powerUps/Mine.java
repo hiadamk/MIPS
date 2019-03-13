@@ -5,6 +5,7 @@ import java.util.UUID;
 import objects.Entity;
 import objects.Pellet;
 import objects.PowerUpBox;
+import utils.Methods;
 import utils.Point;
 
 public class Mine extends PowerUp {
@@ -32,7 +33,7 @@ public class Mine extends PowerUp {
 
   @Override
   public void trigger(Entity victim, HashMap<UUID, PowerUp> activePowerUps) {
-    victim.setDead(true);
+    Methods.kill(user, victim);
     activePowerUps.put(id, this);
     this.effected = victim;
     counter = 0;

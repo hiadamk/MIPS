@@ -33,6 +33,8 @@ public class Blueshell extends PowerUp {
     if (counter == EFFECTTIME) {
       PowerUp killer = new Mine();
       killer.trigger(effected, activePowerUps);
+      killer.user = user;
+      user.increaseKills();
       return true;
     }
     return false;
