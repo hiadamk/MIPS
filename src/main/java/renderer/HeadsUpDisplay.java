@@ -181,27 +181,26 @@ public class HeadsUpDisplay {
       renderPrimaryInventoryBox(primaryInventoryCoord.getX(), primaryInventoryCoord.getY(),
           powerUpsIcon.get(currentRandomFrame));
       primaryFrameCounter++;
-    } else {
-      if (items.size() > 0) {
-        renderPrimaryInventoryBox(primaryInventoryCoord.getX(), primaryInventoryCoord.getY(),
-            powerUpsIcon.get(items.get(0).toInt()));
-      } else {
-        renderPrimaryInventoryBox(primaryInventoryCoord.getX(), primaryInventoryCoord.getY(), null);
-      }
+    } else if (items.size() > 0) {
+      renderPrimaryInventoryBox(primaryInventoryCoord.getX(), primaryInventoryCoord.getY(),
+          powerUpsIcon.get(items.get(0).toInt()));
+
     }
 
     if (randomSecondary) {
       renderSecondaryInventoryBox(secondaryInventoryCoord.getX(), secondaryInventoryCoord.getY(),
           powerUpsIcon.get(currentRandomFrame));
       secondaryFrameCounter++;
-    } else {
-      if (items.size() > 1) {
-        renderSecondaryInventoryBox(secondaryInventoryCoord.getX(), secondaryInventoryCoord.getY(),
-            powerUpsIcon.get(items.get(1).toInt()));
-      } else {
-        renderSecondaryInventoryBox(secondaryInventoryCoord.getX(), secondaryInventoryCoord.getY(),
-            null);
-      }
+    } else if (items.size() > 1) {
+      renderSecondaryInventoryBox(secondaryInventoryCoord.getX(), secondaryInventoryCoord.getY(),
+          powerUpsIcon.get(items.get(1).toInt()));
+    }
+    if (items.size() <= 1) {
+      renderSecondaryInventoryBox(secondaryInventoryCoord.getX(), secondaryInventoryCoord.getY(),
+          null);
+    }
+    if (items.size() <= 0) {
+      renderPrimaryInventoryBox(primaryInventoryCoord.getX(), primaryInventoryCoord.getY(), null);
     }
 
     if (primaryFrameCounter > randomFrames) {
