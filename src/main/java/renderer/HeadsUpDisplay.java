@@ -243,5 +243,6 @@ public class HeadsUpDisplay {
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
+    this.playerColours = resourceLoader.getPlayerPalette();
   }
 }
