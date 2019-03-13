@@ -74,7 +74,7 @@ public class MapGenerator {
     long t1;
     for (int c = 0; c < 10; c++) {
       t1 = System.nanoTime();
-      int[][] map = newRandomMap(4, 4);
+      int[][] map = newRandomMap(2, 2);
       t2 = System.nanoTime();
       diff[c] = t2 - t1;
       System.out.println("****************");
