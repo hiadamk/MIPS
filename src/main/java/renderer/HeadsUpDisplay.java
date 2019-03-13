@@ -59,20 +59,7 @@ public class HeadsUpDisplay {
       powerupIDs[i] = i;
     }
     this.iconIterator = new CircularIterator<Integer>(powerupIDs);
-
-    final double fontRatio = 0.07;
-    try {
-      this.geoLarge =
-          Font.loadFont(
-              new FileInputStream(new File("src/main/resources/font/Geo-Regular.ttf")),
-              xResolution * fontRatio);
-      this.geoSmall =
-          Font.loadFont(
-              new FileInputStream(new File("src/main/resources/font/Geo-Regular.ttf")),
-              0.4 * xResolution * fontRatio);
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
+    setResolution(xResolution, yResolution);
   }
 
   public static String padRight(String s, int n) {
@@ -112,7 +99,10 @@ public class HeadsUpDisplay {
 
     gc.setFill(new Color(1, 1, 1, 0.8));
     gc.setStroke(Color.BLACK);
+
     int rowGap = (int) (0.06 * yResolution);
+    double hudCoordX = xResolution * 0.82;
+    double hudCoordY = 0.07 * yResolution;
 
     for (int i = 0; i < entities_.length; i++) {
 
@@ -120,18 +110,18 @@ public class HeadsUpDisplay {
 
       gc.setFill(Renderer.intRGBtoColour(playerColours.getRGB(0, e.getClientId())));
 
-      String place = padRight(integerToOrdinal(i + 1), 4);
+      String place = padRight(integerToOrdinal(i + 1), 5);
       String name = padRight(e.getName(), 10);
       String score = padLeft(Integer.toString(e.getScore()), 4);
       String currentPlayerScoreLine = name + " " + score;
 
       gc.setFont(geoSmall);
       gc.setTextAlign(TextAlignment.LEFT);
-      gc.fillText(currentPlayerScoreLine, xResolution * 0.75, 40 + rowGap * i);
-      gc.strokeText(currentPlayerScoreLine, xResolution * 0.75, 40 + rowGap * i);
+      gc.fillText(currentPlayerScoreLine, hudCoordX, hudCoordY + rowGap * i);
+      gc.strokeText(currentPlayerScoreLine, hudCoordX, hudCoordY + rowGap * i);
       gc.setFill(Color.WHITE);
       gc.setTextAlign(TextAlignment.RIGHT);
-      gc.fillText(place, xResolution * 0.75, 40 + rowGap * i);
+      gc.fillText(place, hudCoordX, hudCoordY + rowGap * i);
 
     }
     gc.setFont(geoLarge);
@@ -239,5 +229,19 @@ public class HeadsUpDisplay {
     this.xResolution = x;
     this.yResolution = y;
     this.inventory = resourceLoader.getInventory(id);
+
+    final double fontRatio = 0.07;
+    try {
+      this.geoLarge =
+          Font.loadFont(
+              new FileInputStream(new File("src/main/resources/font/Geo-Regular.ttf")),
+              xResolution * fontRatio);
+      this.geoSmall =
+          Font.loadFont(
+              new FileInputStream(new File("src/main/resources/font/Geo-Regular.ttf")),
+              0.4 * xResolution * fontRatio);
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
   }
 }
