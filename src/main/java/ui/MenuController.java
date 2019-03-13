@@ -487,6 +487,7 @@ public class MenuController {
     itemsOnScreen.add(logo);
     itemsOnScreen.add(quitBtn);
     itemsOnScreen.add(settingsBtn);
+    isHome = true;
     backBtn.setVisible(false);
     showItemsOnScreen();
 
@@ -571,6 +572,7 @@ public class MenuController {
 
     HBox mapSizeBtns = new HBox(20);
     mapSizeBtns.setVisible(false);
+    StackPane.setAlignment(mapSizeBtns, Pos.CENTER);
 
     smallMapBtn = ButtonGenerator.generate(true, mapSizeBtns, "Small", UIColours.GREEN, 35);
     smallMapBtn.setOnAction(event -> {
@@ -584,9 +586,8 @@ public class MenuController {
       mapView.setImage(mapImages.get(mapsIndex));
       moveMapsRightBtn.setVisible(false);
       moveMapsLeftBtn.setVisible(true);
-      mapSelectionBtns.getChildren().removeAll(smallMapBtn, bigMapBtn);
-      mapSelectionBtns.getChildren().remove(generateMapBtn);
-      mapSelectionBtns.getChildren().addAll(generateMapBtn, mapConfirmationBtn);
+      mapSizeBtns.setVisible(false);
+      mapSelectionView.setVisible(true);
 
     });
     bigMapBtn = ButtonGenerator.generate(true, mapSizeBtns, "Big", UIColours.RED, 35);
@@ -601,36 +602,21 @@ public class MenuController {
       mapView.setImage(mapImages.get(mapsIndex));
       moveMapsRightBtn.setVisible(false);
       moveMapsLeftBtn.setVisible(true);
-      mapSelectionBtns.getChildren().removeAll(smallMapBtn, bigMapBtn);
-      mapSelectionBtns.getChildren().remove(generateMapBtn);
-      mapSelectionBtns.getChildren().addAll(generateMapBtn, mapConfirmationBtn);
+      mapSizeBtns.setVisible(false);
+      mapSelectionView.setVisible(true);
 
     });
     mapSizeBtns.setAlignment(Pos.CENTER);
-
+    root.getChildren().addAll(mapSizeBtns);
 
     generateMapBtn.setOnAction(event -> {
-//      int[][] newMap = MapGenerator.newRandomMap(2, 2);
-//      Map generatedMap = new Map(newMap);
       mapSizeBtns.setVisible(true);
-      mapSelectionBtns.getChildren().remove(mapConfirmationBtn);
-      mapSelectionBtns.getChildren().remove(generateMapBtn);
-      mapSelectionBtns.getChildren().addAll(smallMapBtn, bigMapBtn);
-//      Map generatedMap = mapGenerationHandler.getBigMap();
-//      validMaps.add(generatedMap);
-//      Image generatedPreview = mapPreview.getMapPreview(generatedMap);
-//      mapImages.add(generatedPreview);
-//      numberOfMaps++;
-//      mapsIndex = numberOfMaps - 1;
-//      currentMap = validMaps.get(mapsIndex);
-//      mapView.setImage(mapImages.get(mapsIndex));
-//      moveMapsRightBtn.setVisible(false);
-//      moveMapsLeftBtn.setVisible(true);
+      mapSelectionView.setVisible(false);
     });
 
     HBox mapSelectionBox = new HBox(30, moveMapsLeftBtn, mapView, moveMapsRightBtn);
 
-    mapSelectionView.getChildren().addAll(mapSelectionBox, mapSelectionBtns, mapSizeBtns);
+    mapSelectionView.getChildren().addAll(mapSelectionBox, mapSelectionBtns);
     mapSelectionBtns.setAlignment(Pos.CENTER);
     mapSelectionBox.setAlignment(Pos.CENTER);
     mapSelectionView.setAlignment(Pos.CENTER);
@@ -790,9 +776,9 @@ public class MenuController {
     nameEntryOptions.setVisible(false);
     root.getChildren().add(nameEntryOptions);
 
-    quitBtn = ButtonGenerator.generate(true, root, "quit", UIColours.QUIT_RED, 30);
-    StackPane.setAlignment(quitBtn, Pos.TOP_RIGHT);
-    StackPane.setMargin(quitBtn, new Insets(50, 50, 0, 0));
+    quitBtn = ButtonGenerator.generate(true, root, "quit", UIColours.QUIT_RED, 25);
+    StackPane.setAlignment(quitBtn, Pos.TOP_LEFT);
+    StackPane.setMargin(quitBtn, new Insets(50, 0, 0, 50));
     quitBtn.setOnAction(
             event -> {
               audioController.playSound(Sounds.click);
@@ -1065,6 +1051,10 @@ public class MenuController {
     selectThemeBtn.setOnAction(event -> {
       client.updateTheme(currentTheme);
       bg.setImage(resourceLoader.getBackground());
+      for (int i = 0; i < validMaps.size(); i++) {
+        mapImages.add(i, mapPreview.getMapPreview(validMaps.get(i)));
+      }
+      mapView.setImage(mapImages.get(mapsIndex));
     });
 
     themesContainer.setVisible(true);
@@ -1088,8 +1078,8 @@ public class MenuController {
 
     ImageView settingsView = new ImageView("ui/settings.png");
     settingsBtn = ButtonGenerator.generate(true, root, settingsView);
-    StackPane.setAlignment(settingsBtn, Pos.TOP_LEFT);
-    StackPane.setMargin(settingsBtn, new Insets(50, 0, 0, 50));
+    StackPane.setAlignment(settingsBtn, Pos.TOP_RIGHT);
+    StackPane.setMargin(settingsBtn, new Insets(50, 50, 0, 0));
     settingsView.setFitHeight(50);
     settingsView.setFitWidth(50);
     settingsBtn.setOnAction(
