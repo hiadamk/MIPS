@@ -2,6 +2,7 @@ package objects;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.UUID;
 import javafx.scene.image.Image;
 import objects.powerUps.PowerUp;
@@ -19,7 +20,7 @@ public class Pellet implements Renderable {
 
   protected Point location;
   protected ArrayList<Image> currentImage;
-  protected int respawntime = 5000;
+  protected int respawntime = 4500;
   protected boolean active; // Weather or not the item is visible and able to be interacted with\
   protected int value = 1;
   protected objects.powerUps.PowerUp trap;
@@ -29,11 +30,15 @@ public class Pellet implements Renderable {
   public Pellet(double x, double y) {
     this.location = new Point(x, y);
     active = true;
+    Random r = new Random();
+    respawntime += r.nextInt(500);
   }
 
   public Pellet(Point p) {
     this.location = p;
     active = true;
+    Random r = new Random();
+    respawntime += r.nextInt(500);
   }
 
   public boolean canUse(Entity e) {
