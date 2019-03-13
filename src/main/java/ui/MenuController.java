@@ -790,7 +790,7 @@ public class MenuController {
     nameEntryOptions.setVisible(false);
     root.getChildren().add(nameEntryOptions);
 
-    quitBtn = ButtonGenerator.generate(true, root, "quit", UIColours.QUIT_RED, 30);
+    quitBtn = ButtonGenerator.generate(true, root, "quit", UIColours.QUIT_RED, 25);
     StackPane.setAlignment(quitBtn, Pos.TOP_LEFT);
     StackPane.setMargin(quitBtn, new Insets(50, 0, 0, 50));
     quitBtn.setOnAction(
@@ -1065,6 +1065,12 @@ public class MenuController {
     selectThemeBtn.setOnAction(event -> {
       client.updateTheme(currentTheme);
       bg.setImage(resourceLoader.getBackground());
+      for (int i = 0; i < validMaps.size(); i++) {
+        mapImages.add(i, mapPreview.getMapPreview(validMaps.get(i)));
+      }
+
+      mapView.setImage(mapImages.get(mapsIndex));
+
     });
 
     themesContainer.setVisible(true);
