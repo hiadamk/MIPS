@@ -64,30 +64,30 @@ public class PowerUpBox extends Pellet {
     // Init PacMan weights
     map = new HashMap<>();
     map.put(10, PowerUp.INVINCIBLE);
-    map.put(50, PowerUp.WEB);
+    map.put(30, PowerUp.WEB);
     map.put(20, PowerUp.SPEED);
     pacmanWeights[0] = map;
     map = new HashMap<>();
     map.put(5, PowerUp.BLUESHELL);
-    map.put(15, PowerUp.INVINCIBLE);
+    map.put(150, PowerUp.INVINCIBLE); //15
     map.put(40, PowerUp.WEB);
     map.put(30, PowerUp.SPEED);
     pacmanWeights[1] = map;
     map = new HashMap<>();
     map.put(10, PowerUp.BLUESHELL);
-    map.put(20, PowerUp.INVINCIBLE);
+    map.put(200, PowerUp.INVINCIBLE); //10
     map.put(30, PowerUp.WEB);
     map.put(40, PowerUp.SPEED);
     pacmanWeights[2] = map;
     map = new HashMap<>();
     map.put(15, PowerUp.BLUESHELL);
-    map.put(25, PowerUp.INVINCIBLE);
+    map.put(250, PowerUp.INVINCIBLE); //25
     map.put(30, PowerUp.WEB);
     map.put(40, PowerUp.SPEED);
     pacmanWeights[3] = map;
     map = new HashMap<>();
     map.put(20, PowerUp.BLUESHELL);
-    map.put(40, PowerUp.INVINCIBLE);
+    map.put(400, PowerUp.INVINCIBLE); //40
     map.put(21, PowerUp.WEB);
     map.put(41, PowerUp.SPEED);
     pacmanWeights[4] = map;
@@ -101,8 +101,8 @@ public class PowerUpBox extends Pellet {
    */
   public objects.powerUps.PowerUp getPowerUp(Entity entity, Entity[] agents) {
     int rank = getRank(entity, agents);
-    HashMap<Integer, PowerUp> baseWeights =
-        entity.isMipsman() ? pacmanWeights[rank] : ghostWeights[rank];
+    HashMap<Integer, PowerUp> baseWeights = pacmanWeights[rank];
+    //   entity.isMipsman() ? pacmanWeights[rank] : ghostWeights[rank];
     int totalWeights = 0;
     TreeMap<Integer, PowerUp> weights = new TreeMap<>();
     for (Entry<Integer, PowerUp> entry : baseWeights.entrySet()) {

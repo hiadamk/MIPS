@@ -97,7 +97,6 @@ public class Entity implements Renderable {
   }
 
   public void setStunned(boolean stunned) {
-    System.out.println("entity " + clientId + " is " + stunned + " stunned");
     this.stunned = stunned;
     if (stunned) {
       velocity = 0;
@@ -127,9 +126,7 @@ public class Entity implements Renderable {
 
   public void changeBonusSpeed(double i) {
     bonusSpeed += i;
-    System.out.println("speed changed by " + i);
     resetVelocity();
-    System.out.println("bonus speed is " + bonusSpeed + "  t/f: " + (bonusSpeed > 0));
   }
 
   /**
