@@ -487,6 +487,7 @@ public class MenuController {
     itemsOnScreen.add(logo);
     itemsOnScreen.add(quitBtn);
     itemsOnScreen.add(settingsBtn);
+    isHome = true;
     backBtn.setVisible(false);
     showItemsOnScreen();
 
@@ -1068,9 +1069,7 @@ public class MenuController {
       for (int i = 0; i < validMaps.size(); i++) {
         mapImages.add(i, mapPreview.getMapPreview(validMaps.get(i)));
       }
-
       mapView.setImage(mapImages.get(mapsIndex));
-
     });
 
     themesContainer.setVisible(true);
