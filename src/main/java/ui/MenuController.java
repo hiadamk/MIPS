@@ -52,7 +52,7 @@ import main.Client;
 import server.NetworkUtility;
 import utils.KeyRemapping;
 import utils.Map;
-import utils.MapGenerator;
+import utils.MapGenerationHandler;
 import utils.MapPreview;
 import utils.ResourceLoader;
 import utils.Settings;
@@ -128,6 +128,8 @@ public class MenuController {
   private Button moveMapsRightBtn;
   private Map currentMap;
   private ArrayList<Map> validMaps = new ArrayList<>();
+  private Button bigMapBtn;
+  private Button smallMapBtn;
 
   private ImageView themePreview;
   private int themeIndex = 0;
@@ -139,12 +141,13 @@ public class MenuController {
   private Label themeName;
   private Button selectThemeBtn;
   private String currentTheme;
-  public boolean darkTheme;
   private boolean isHome = true;
   private boolean isInstructions = false;
   private boolean inLobby;
   private Thread playerNumberDiscovery;
   private MulticastSocket socket;
+
+  private MapGenerationHandler mapGenerationHandler;
 
   /**
    * @param audio Global audio controller which is passed around the system
@@ -157,6 +160,7 @@ public class MenuController {
     this.primaryStage = stage;
     this.client = client;
     this.resourceLoader = resourceLoader;
+    this.mapGenerationHandler = new MapGenerationHandler();
   }
 
   /**
@@ -530,7 +534,7 @@ public class MenuController {
       mapImages.add(mapPreview.getMapPreview(map));
     }
 
-    VBox mapSelectionView = new VBox(40);
+    VBox mapSelectionView = new VBox(25);
     Label selectMapLbl = LabelGenerator
         .generate(true, mapSelectionView, "Select a map: ", UIColours.WHITE, 14);
     moveMapsLeftBtn = ButtonGenerator.generate(true, root, "<", UIColours.WHITE, 40);
@@ -543,6 +547,8 @@ public class MenuController {
     }
     moveMapsLeftBtn.setOnAction(event -> showPreviousMap());
     moveMapsRightBtn.setOnAction(event -> showNextMap());
+    moveMapsLeftBtn.setFocusTraversable(false);
+    moveMapsRightBtn.setFocusTraversable(false);
 
     mapView = new ImageView(mapImages.get(0));
     currentMap = validMaps.get(0);
@@ -561,9 +567,14 @@ public class MenuController {
       showItemsOnScreen();
     });
 
-    generateMapBtn.setOnAction(event -> {
-      int[][] newMap = MapGenerator.newRandomMap(1, 1);
-      Map generatedMap = new Map(newMap);
+    HBox mapSelectionBtns = new HBox(20, generateMapBtn, mapConfirmationBtn);
+
+    HBox mapSizeBtns = new HBox(20);
+    mapSizeBtns.setVisible(false);
+
+    smallMapBtn = ButtonGenerator.generate(true, mapSizeBtns, "Small", UIColours.GREEN, 35);
+    smallMapBtn.setOnAction(event -> {
+      Map generatedMap = mapGenerationHandler.getSmallMap();
       validMaps.add(generatedMap);
       Image generatedPreview = mapPreview.getMapPreview(generatedMap);
       mapImages.add(generatedPreview);
@@ -573,15 +584,57 @@ public class MenuController {
       mapView.setImage(mapImages.get(mapsIndex));
       moveMapsRightBtn.setVisible(false);
       moveMapsLeftBtn.setVisible(true);
+      mapSelectionBtns.getChildren().removeAll(smallMapBtn, bigMapBtn);
+      mapSelectionBtns.getChildren().remove(generateMapBtn);
+      mapSelectionBtns.getChildren().addAll(generateMapBtn, mapConfirmationBtn);
+
+    });
+    bigMapBtn = ButtonGenerator.generate(true, mapSizeBtns, "Big", UIColours.RED, 35);
+    bigMapBtn.setOnAction(event -> {
+      Map generatedMap = mapGenerationHandler.getBigMap();
+      validMaps.add(generatedMap);
+      Image generatedPreview = mapPreview.getMapPreview(generatedMap);
+      mapImages.add(generatedPreview);
+      numberOfMaps++;
+      mapsIndex = numberOfMaps - 1;
+      currentMap = validMaps.get(mapsIndex);
+      mapView.setImage(mapImages.get(mapsIndex));
+      moveMapsRightBtn.setVisible(false);
+      moveMapsLeftBtn.setVisible(true);
+      mapSelectionBtns.getChildren().removeAll(smallMapBtn, bigMapBtn);
+      mapSelectionBtns.getChildren().remove(generateMapBtn);
+      mapSelectionBtns.getChildren().addAll(generateMapBtn, mapConfirmationBtn);
+
+    });
+    mapSizeBtns.setAlignment(Pos.CENTER);
+
+
+    generateMapBtn.setOnAction(event -> {
+//      int[][] newMap = MapGenerator.newRandomMap(2, 2);
+//      Map generatedMap = new Map(newMap);
+      mapSizeBtns.setVisible(true);
+      mapSelectionBtns.getChildren().remove(mapConfirmationBtn);
+      mapSelectionBtns.getChildren().remove(generateMapBtn);
+      mapSelectionBtns.getChildren().addAll(smallMapBtn, bigMapBtn);
+//      Map generatedMap = mapGenerationHandler.getBigMap();
+//      validMaps.add(generatedMap);
+//      Image generatedPreview = mapPreview.getMapPreview(generatedMap);
+//      mapImages.add(generatedPreview);
+//      numberOfMaps++;
+//      mapsIndex = numberOfMaps - 1;
+//      currentMap = validMaps.get(mapsIndex);
+//      mapView.setImage(mapImages.get(mapsIndex));
+//      moveMapsRightBtn.setVisible(false);
+//      moveMapsLeftBtn.setVisible(true);
     });
 
     HBox mapSelectionBox = new HBox(30, moveMapsLeftBtn, mapView, moveMapsRightBtn);
-    HBox mapSelectionBtns = new HBox(20, generateMapBtn, mapConfirmationBtn);
-    mapSelectionView.getChildren().addAll(mapSelectionBox, mapSelectionBtns);
+
+    mapSelectionView.getChildren().addAll(mapSelectionBox, mapSelectionBtns, mapSizeBtns);
     mapSelectionBtns.setAlignment(Pos.CENTER);
     mapSelectionBox.setAlignment(Pos.CENTER);
     mapSelectionView.setAlignment(Pos.CENTER);
-    StackPane.setMargin(mapSelectionView, new Insets(0, 0, 150, 0));
+    StackPane.setMargin(mapSelectionView, new Insets(0, 0, 100, 0));
     mapSelectionView.setVisible(false);
     root.getChildren().add(mapSelectionView);
 
