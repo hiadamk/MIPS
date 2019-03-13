@@ -42,7 +42,7 @@ public class Entity implements Renderable {
   private boolean directionSet;
   private boolean stunned;
   private boolean dead;
-  private final int DEATHTIME = 30;
+  private final int DEATHTIME = 200;
   private int deathCounter;
   private boolean invincible;
 
