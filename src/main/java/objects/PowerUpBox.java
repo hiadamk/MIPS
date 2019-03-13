@@ -63,33 +63,38 @@ public class PowerUpBox extends Pellet {
     ghostWeights[4] = map;
     // Init PacMan weights
     map = new HashMap<>();
-    map.put(10, PowerUp.INVINCIBLE);
+    map.put(5, PowerUp.INVINCIBLE);
     map.put(30, PowerUp.WEB);
     map.put(20, PowerUp.SPEED);
+    map.put(20, PowerUp.MINE);
     pacmanWeights[0] = map;
     map = new HashMap<>();
     map.put(5, PowerUp.BLUESHELL);
-    map.put(150, PowerUp.INVINCIBLE); //15
+    map.put(10, PowerUp.INVINCIBLE); //15
     map.put(40, PowerUp.WEB);
+    map.put(30, PowerUp.MINE);
     map.put(30, PowerUp.SPEED);
     pacmanWeights[1] = map;
     map = new HashMap<>();
     map.put(10, PowerUp.BLUESHELL);
-    map.put(200, PowerUp.INVINCIBLE); //10
+    map.put(10, PowerUp.INVINCIBLE); //10
     map.put(30, PowerUp.WEB);
     map.put(40, PowerUp.SPEED);
+    map.put(35, PowerUp.MINE);
     pacmanWeights[2] = map;
     map = new HashMap<>();
     map.put(15, PowerUp.BLUESHELL);
-    map.put(250, PowerUp.INVINCIBLE); //25
+    map.put(16, PowerUp.INVINCIBLE); //25
     map.put(30, PowerUp.WEB);
     map.put(40, PowerUp.SPEED);
+    map.put(35, PowerUp.MINE);
     pacmanWeights[3] = map;
     map = new HashMap<>();
     map.put(20, PowerUp.BLUESHELL);
-    map.put(400, PowerUp.INVINCIBLE); //40
-    map.put(21, PowerUp.WEB);
-    map.put(41, PowerUp.SPEED);
+    map.put(21, PowerUp.INVINCIBLE); //40
+    map.put(30, PowerUp.WEB);
+    map.put(31, PowerUp.MINE);
+    map.put(36, PowerUp.SPEED);
     pacmanWeights[4] = map;
   }
 
