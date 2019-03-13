@@ -791,8 +791,8 @@ public class MenuController {
     root.getChildren().add(nameEntryOptions);
 
     quitBtn = ButtonGenerator.generate(true, root, "quit", UIColours.QUIT_RED, 30);
-    StackPane.setAlignment(quitBtn, Pos.TOP_RIGHT);
-    StackPane.setMargin(quitBtn, new Insets(50, 50, 0, 0));
+    StackPane.setAlignment(quitBtn, Pos.TOP_LEFT);
+    StackPane.setMargin(quitBtn, new Insets(50, 0, 0, 50));
     quitBtn.setOnAction(
             event -> {
               audioController.playSound(Sounds.click);
@@ -1088,8 +1088,8 @@ public class MenuController {
 
     ImageView settingsView = new ImageView("ui/settings.png");
     settingsBtn = ButtonGenerator.generate(true, root, settingsView);
-    StackPane.setAlignment(settingsBtn, Pos.TOP_LEFT);
-    StackPane.setMargin(settingsBtn, new Insets(50, 0, 0, 50));
+    StackPane.setAlignment(settingsBtn, Pos.TOP_RIGHT);
+    StackPane.setMargin(settingsBtn, new Insets(50, 50, 0, 0));
     settingsView.setFitHeight(50);
     settingsView.setFitWidth(50);
     settingsBtn.setOnAction(
