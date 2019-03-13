@@ -142,10 +142,13 @@ public abstract class Telemetry {
 
         if (agents[i].isMipsman() && !agents[j].isMipsman() && !agents[i].isInvincible()) {
           detectEntityCollision(agents[i], agents[j], resourceLoader);
+        } else if (agents[i].isInvincible() && !agents[j].isInvincible()) {
+          invincibleCollision(agents[i], agents[j], resourceLoader);
         }
-
         if (agents[j].isMipsman() && !agents[i].isMipsman() && !agents[j].isInvincible()) {
           detectEntityCollision(agents[j], agents[i], resourceLoader);
+        } else if (agents[j].isInvincible() && !agents[i].isInvincible()) {
+          invincibleCollision(agents[j], agents[i], resourceLoader);
         }
       }
     }
@@ -199,6 +202,14 @@ public abstract class Telemetry {
     }
   }
 
+  static void invincibleCollision(Entity killer, Entity victim, ResourceLoader r) {
+    Point killerLocation = killer.getFaceLocation();
+    Point victimLocation = victim.getLocation();
+    if (victimLocation.inRange(killerLocation)) {
+      Methods.kill(killer, victim);
+      victim.setLocation(r.getMap().getRandomSpawnPoint());
+    }
+  }
   /**
    * Static method for 'swapping' a mipsman and ghoul if they occupy the same area.
    *
