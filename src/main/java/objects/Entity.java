@@ -42,9 +42,10 @@ public class Entity implements Renderable {
   private boolean directionSet;
   private boolean stunned;
   private boolean dead;
-  private final int DEATHTIME = 30;
+  private final int DEATHTIME = 300;
   private int deathCounter;
   private boolean invincible;
+  private boolean hidden;
 
 
   private StatsTracker statsTracker;
@@ -445,5 +446,21 @@ public class Entity implements Renderable {
 
   public void resetVelocity() {
     this.velocity = (mipsman ? MIPS_SPEED : GHOUL_SPEED) + bonusSpeed;
+  }
+
+  public int getDeathCounter() {
+    return this.deathCounter;
+  }
+
+  public int getDeathTime() {
+    return this.DEATHTIME;
+  }
+
+  public void toggleHidden() {
+    hidden = !hidden;
+  }
+
+  public boolean getHidden() {
+    return hidden;
   }
 }

@@ -417,6 +417,21 @@ public class Renderer {
     double y = e.getLocation().getY() - 0.5;
     Point2D.Double rendCoord =
         getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
+
+    if (e.isDead() && e.getDeathCounter() > e.getDeathTime() * 0.5) {
+      if (secondInNanoseconds / e.getAnimationSpeed() < e.getTimeSinceLastFrame()
+          && timeElapsed > 0) {
+        e.toggleHidden();
+      }
+      if (!e.getHidden()) {
+        gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
+      }
+      return;
+    }
+    if (e.isDead()) {
+      return;
+    }
+
     gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
 
     if (selfPowerUps != null) {
