@@ -3,7 +3,7 @@ package com.lordsofmidnight.ai.routefinding.routefinders;
 import com.lordsofmidnight.ai.mapping.Mapping;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.gamestate.points.PointSet;
-import com.lordsofmidnight.ai.routefinding.AStarData;
+import com.lordsofmidnight.ai.routefinding.routefinderdata.AStarData;
 import com.lordsofmidnight.ai.routefinding.RouteFinder;
 
 import java.util.Iterator;

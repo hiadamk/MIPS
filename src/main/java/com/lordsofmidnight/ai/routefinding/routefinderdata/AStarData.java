@@ -1,4 +1,4 @@
-package com.lordsofmidnight.ai.routefinding;
+package com.lordsofmidnight.ai.routefinding.routefinderdata;
 
 import com.lordsofmidnight.gamestate.points.Point;
 

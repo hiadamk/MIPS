@@ -3,6 +3,7 @@ package com.lordsofmidnight.ai;
 import com.lordsofmidnight.ai.mapping.Mapping;
 import com.lordsofmidnight.ai.routefinding.RouteFinder;
 import com.lordsofmidnight.ai.routefinding.routefinders.*;
+import com.lordsofmidnight.ai.routefinding.routefinders.condition.ConditionalInterface;
 import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.gamestate.points.PointMap;
@@ -226,6 +227,25 @@ public class AILoopControl extends Thread {
     }
 
     private Direction accountForPowerUps(Direction direction) {
+        class InvincibleAgentCondition implements ConditionalInterface {
+            private final Entity[] agents;
+
+            public InvincibleAgentCondition(Entity[] agents) {
+                this.agents = agents;
+            }
+
+            @Override
+            public boolean condition(Point position) {
+                for (Entity ent : agents) {
+                    if (ent.getLocation().getGridCoord().equals(position.getGridCoord())) {
+                        if (ent.isInvincible()) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
         /*TODO Implement route adjustment for powerups
 
          */
