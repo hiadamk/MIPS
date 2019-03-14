@@ -76,6 +76,9 @@ public class AStarRouteFinder implements RouteFinder {
           unVisited.put(connection, new AStarData(connection, currentPoint, moveCost, estimatedCost));
         }
       }
+      if (unVisited.size()==0) {  //target location is not reachable
+        return DEFAULT;
+      }
       double lowestCost = Double.MAX_VALUE;
       for (Point key : unVisited.keySet()) {
         AStarData data = unVisited.get(key);
@@ -87,6 +90,7 @@ public class AStarRouteFinder implements RouteFinder {
       AStarData data = unVisited.get(currentPoint);
       unVisited.remove(currentPoint);
       visited.put(currentPoint, data);
+
     }
     AStarData data = visited.get(currentPoint);
     while (!data.getMyPosition().equals(data.getParentPosition())) {
