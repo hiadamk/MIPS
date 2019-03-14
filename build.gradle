@@ -12,10 +12,10 @@ repositories {
 }
 
 application{
-    mainClassName='main.Client'
+    mainClassName='com.lordsofmidnight.main.Client'
 }
 
-group 'ui'
+group 'com.lordsofmidnight.ui'
 dependencies {
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.1'
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.1'
@@ -28,7 +28,7 @@ dependencies {
 }
 
 task(runMain, dependsOn: 'classes', type: JavaExec) {
-    main = 'main.Client'
+    main = 'com.lordsofmidnight.main.Client'
     classpath = sourceSets.main.runtimeClasspath
     applicationDefaultJvmArgs = ["-Djava.net.preferIPv4Stack=true"]
 }
