@@ -8,14 +8,16 @@ import com.lordsofmidnight.utils.ResourceLoader;
 public class ExplosionFX {
 
   private final GraphicsContext gc;
-  private final int animationSpeed = 10;
+  private final int animationSpeed = 14;
   private final long secondInNanoseconds = (long) Math.pow(10, 9);
   private final long animationInterval = secondInNanoseconds / animationSpeed;
+  private final ResourceLoader r;
   private ArrayList<ExplosionInstance> explosions;
   private ArrayList<Image> explosionImages;
   private long timeSinceLastFrame = 0;
 
   public ExplosionFX(GraphicsContext gc, ResourceLoader r) {
+    this.r = r;
     this.gc = gc;
     this.explosions = new ArrayList<>();
     this.explosionImages = r.getExplosion();
@@ -55,6 +57,9 @@ public class ExplosionFX {
     }
   }
 
+  public void refreshSettings(){
+    this.explosionImages = r.getExplosion();
+  }
 
   private class ExplosionInstance {
 
@@ -84,6 +89,7 @@ public class ExplosionFX {
     public int getCurrentFrame() {
       return currentFrame;
     }
+
 
   }
 }
