@@ -107,7 +107,7 @@ public class Renderer {
       int timeUntilRespawn = Math
           .round((clientEntity.getDeathTime() - clientEntity.getDeathCounter()) / 100);
       hudRender
-          .renderDeathScreen(timeUntilRespawn);
+          .renderDeathScreen(timeUntilRespawn,clientEntity);
     }
 
   }
@@ -392,6 +392,10 @@ public class Renderer {
     gc.setFill(intRGBtoColour(playerColours.getRGB(1, newMipsMan.getClientId())));
     gc.fillText(newMipsMan.getName(), xResolution / 2, yResolution * 0.2);
     gc.fillText("CAPTURED MIPS", xResolution / 2, yResolution * 0.45);
+    gc.setStroke(Color.WHITE);
+    gc.setLineWidth(2*(yResolution/768));
+    gc.strokeText(newMipsMan.getName(), xResolution / 2, yResolution * 0.2);
+    gc.strokeText("CAPTURED MIPS", xResolution / 2, yResolution * 0.45);
   }
 
   /**

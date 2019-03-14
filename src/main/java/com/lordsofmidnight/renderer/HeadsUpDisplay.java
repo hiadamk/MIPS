@@ -130,6 +130,7 @@ public class HeadsUpDisplay {
   }
 
   public void renderInventory(Entity clientEntity, long timeElapsed) {
+    gc.setLineWidth(1);
     if (clientEntity.getClientId() != id) {
       this.inventory = resourceLoader.getInventory(clientEntity.getClientId());
       this.id = clientEntity.getClientId();
@@ -248,12 +249,22 @@ public class HeadsUpDisplay {
     this.playerColours = resourceLoader.getPlayerPalette();
   }
 
-  public void renderDeathScreen(int timeUntilRespawn) {
-    gc.setFill(new Color(0, 0, 0, 0.5));
+  public void renderDeathScreen(int timeUntilRespawn,Entity clientEntity) {
+    gc.setStroke(Color.BLACK);
+    gc.setFill(new Color(0, 0, 0, 0.65));
     gc.fillRect(0, 0, xResolution, yResolution);
     gc.setFont(geoLarge);
     gc.setFill(Color.WHITE);
     gc.setTextAlign(TextAlignment.CENTER);
     gc.fillText("RESPAWNING IN: " + timeUntilRespawn, xResolution / 2, yResolution / 2);
+
+    String killer = clientEntity.getKilledBy();
+    int killerID = Integer.parseInt(killer.substring(killer.length()-1));
+    killer = killer.substring(0,killer.length()-1);
+    gc.setFill(Renderer.intRGBtoColour(playerColours.getRGB(1,killerID)));
+    gc.fillText("KILLED BY " + killer,xResolution/2,yResolution*0.4);
+    gc.setStroke(Color.WHITE);
+    gc.setLineWidth(2*(yResolution/768));
+    gc.strokeText("KILLED BY " + killer,xResolution/2,yResolution*0.4);
   }
 }

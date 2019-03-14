@@ -49,6 +49,7 @@ public class Entity implements Renderable {
   private int deathCounter;
   private boolean invincible;
   private boolean hidden;
+  private String killedBy = "";
 
 
   private StatsTracker statsTracker;
@@ -503,5 +504,13 @@ public class Entity implements Renderable {
 
   public boolean getHidden() {
     return hidden;
+  }
+
+  public void setKilledBy(String name){
+    this.killedBy = name;
+  }
+
+  public String getKilledBy(){
+    return this.killedBy;
   }
 }
