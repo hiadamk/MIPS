@@ -107,7 +107,7 @@ public class Renderer {
       int timeUntilRespawn = Math
           .round((clientEntity.getDeathTime() - clientEntity.getDeathCounter()) / 100);
       hudRender
-          .renderDeathScreen(timeUntilRespawn);
+          .renderDeathScreen(timeUntilRespawn,clientEntity);
     }
 
   }
@@ -301,30 +301,6 @@ public class Renderer {
     return null;
   }
 
-  private void renderCollision(Entity newMipsMan, Entity[] entities, Map map,
-      UpDownIterator<java.lang.Double> entitySize,
-      UpDownIterator<java.lang.Double> backgroundOpacity,
-      Image currentSprite) {
-    gc.setTextAlign(TextAlignment.CENTER);
-    renderBackground(map);
-    renderGameOnly(map, entities, 0, new HashMap<String, Pellet>(), null);
-    gc.setFill(new Color(0, 0, 0, backgroundOpacity.next()));
-    gc.fillRect(0, 0, xResolution, yResolution);
-
-    double x = newMipsMan.getLocation().getX() - 0.5;
-    double y = newMipsMan.getLocation().getY() - 0.5;
-    java.lang.Double multiplier = entitySize.next();
-    Double rendCoord =
-        getIsoCoord(x, y, currentSprite.getHeight() * multiplier,
-            currentSprite.getWidth() * multiplier);
-
-    gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY(),
-        currentSprite.getWidth() * multiplier, currentSprite.getHeight() * multiplier);
-    gc.setFill(intRGBtoColour(playerColours.getRGB(1, newMipsMan.getClientId())));
-    gc.fillText(newMipsMan.getName(), xResolution / 2, yResolution * 0.2);
-    gc.fillText("CAPTURED MIPS", xResolution / 2, yResolution * 0.45);
-  }
-
 
   /**
    * @param timeElapsed current time in nanoseconds
@@ -372,23 +348,54 @@ public class Renderer {
     final double frameTime = renderAnimationTime / frames;
     new AnimationTimer() {
       double currentTime = System.nanoTime();
+      double multiplier = entitySize.next();
+      double opacity = backgroundOpacity.next();
 
       @Override
       public void handle(long now) {
         if (now - startTime > renderAnimationTime) {
-          this.stop();
           renderingLoop.start();
           inputProcessor.unpause();
+          this.stop();
         } else {
           if (System.nanoTime() - currentTime > frameTime) {
-            renderCollision(newMipsMan, entities, map, entitySize, backgroundOpacity,
-                currentSprite);
+            multiplier = entitySize.next();
+            opacity = backgroundOpacity.next();
             currentTime = System.nanoTime();
           }
+          renderCollision(newMipsMan, entities, map, multiplier, opacity,
+              currentSprite);
         }
       }
     }.start();
 
+  }
+
+  private void renderCollision(Entity newMipsMan, Entity[] entities, Map map,
+      double sizeMultiplier,
+      double backgroundOpacity,
+      Image currentSprite) {
+    gc.setTextAlign(TextAlignment.CENTER);
+    renderBackground(map);
+    renderGameOnly(map, entities, 0, new HashMap<>(), null);
+    gc.setFill(new Color(0, 0, 0, backgroundOpacity));
+    gc.fillRect(0, 0, xResolution, yResolution);
+
+    double x = newMipsMan.getLocation().getX() - 0.5;
+    double y = newMipsMan.getLocation().getY() - 0.5;
+    Double rendCoord =
+        getIsoCoord(x, y, currentSprite.getHeight() * sizeMultiplier,
+            currentSprite.getWidth() * sizeMultiplier);
+
+    gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY(),
+        currentSprite.getWidth() * sizeMultiplier, currentSprite.getHeight() * sizeMultiplier);
+    gc.setFill(intRGBtoColour(playerColours.getRGB(1, newMipsMan.getClientId())));
+    gc.fillText(newMipsMan.getName(), xResolution / 2, yResolution * 0.2);
+    gc.fillText("CAPTURED MIPS", xResolution / 2, yResolution * 0.45);
+    gc.setStroke(Color.WHITE);
+    gc.setLineWidth(2*(yResolution/768));
+    gc.strokeText(newMipsMan.getName(), xResolution / 2, yResolution * 0.2);
+    gc.strokeText("CAPTURED MIPS", xResolution / 2, yResolution * 0.45);
   }
 
   /**
@@ -661,6 +668,7 @@ public class Renderer {
     this.mapRenderingCorner = getMapRenderingCorner();
     this.background = r.getBackground();
     this.palette = r.getBackgroundPalette();
+    this.explosionManager.refreshSettings();
   }
 
 
@@ -674,5 +682,6 @@ public class Renderer {
     this.mapRenderingCorner = getMapRenderingCorner();
     this.background = r.getBackground();
     this.palette = r.getBackgroundPalette();
+    this.explosionManager.refreshSettings();
   }
 }

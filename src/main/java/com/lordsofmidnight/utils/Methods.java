@@ -16,6 +16,7 @@ public class Methods {
   public static void kill(Entity killer, Entity victim) {
     killer.increaseKills();
     victim.setDead(true);
+    victim.setKilledBy(killer.getName()+killer.getClientId());
     if (victim.getScore() > 0) {
       int points = (int) (victim.getScore() * 0.1);
       points = points < 1 ? 1 : points;
