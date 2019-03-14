@@ -54,6 +54,7 @@ public class Renderer {
   private long timeSum;
   private Entity clientEntity = null;
   private BufferedImage playerColours;
+  private ExplosionFX explosionManager;
 
   private ArrayList<Point2D.Double> traversalOrder = new ArrayList<>();
 
@@ -73,6 +74,7 @@ public class Renderer {
     this.palette = r.getBackgroundPalette();
     this.playerColours = r.getPlayerPalette();
     this.hudRender = new HeadsUpDisplay(gc, _xResolution, _yResolution, r);
+    this.explosionManager = new ExplosionFX(gc, r);
 
     this.initMapTraversal(r.getMap());
   }
@@ -281,6 +283,10 @@ public class Renderer {
         }
       }
     }
+    if (now != 0) {
+      explosionManager.render(now - lastFrame);
+    }
+
   }
 
   private Entity getClientEntity(ArrayList<Entity> entities) {
@@ -447,6 +453,14 @@ public class Renderer {
     // render marker for entity
     if (e.getClientId() != clientID && !e.isMipsman()) {
       return;
+    }
+
+    Point deathLocation = e.getDeathLocation();
+    if (deathLocation != null) {
+      Point loc = e.getLocation();
+      Point2D.Double coord = getIsoCoord(loc.getX(), loc.getY(), currentSprite.getWidth(),
+          currentSprite.getHeight());
+      explosionManager.addExplosion(coord.getX(), coord.getY());
     }
 
     Image marker = (e.isMipsman()) ? r.getMipMarker() : r.getMClientMarker();

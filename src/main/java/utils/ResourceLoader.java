@@ -51,6 +51,7 @@ public class ResourceLoader {
   private ArrayList<BufferedImage> powerUpIcons;
   private int inventoryColourID;
   private HashMap<utils.enums.PowerUp, ArrayList<BufferedImage>> powerUps;
+  private ArrayList<BufferedImage> explosions;
 
   /**
    * @param baseDir path to the resources folder
@@ -72,6 +73,7 @@ public class ResourceLoader {
     this.loadInventory();
     this.loadPowerUpIcons();
     this.loadPowerUps();
+    this.loadExplosion();
   }
 
   /**
@@ -301,6 +303,7 @@ public class ResourceLoader {
       resizeSpritesSmooth(pellets, ratio);
       resizeSpritesSmooth(powerUpBox, ratio);
       resizeSpritesSmooth(translucentPellets, ratio);
+      resizeSpritesSmooth(explosions, ratio);
       for (ArrayList<BufferedImage> powerUp : powerUps.values()) {
         resizeSpritesSmooth(powerUp, ratio);
       }
@@ -318,6 +321,7 @@ public class ResourceLoader {
       resizeSprites(pellets, ratio);
       resizeSprites(powerUpBox, ratio);
       resizeSprites(translucentPellets, ratio);
+      resizeSprites(explosions, ratio);
       for (ArrayList<BufferedImage> powerUp : powerUps.values()) {
         resizeSprites(powerUp, ratio);
       }
@@ -330,6 +334,7 @@ public class ResourceLoader {
   }
 
   /**
+   *
    */
   public void loadPlayableMip() {
     BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "mip");
@@ -363,6 +368,7 @@ public class ResourceLoader {
   }
 
   /**
+   *
    */
   public void loadPlayableGhoul() {
     BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "ghoul");
@@ -420,6 +426,7 @@ public class ResourceLoader {
   }
 
   /**
+   *
    */
   public void loadMapTiles() {
     ArrayList<BufferedImage> _mapTiles = new ArrayList<>();
@@ -517,6 +524,15 @@ public class ResourceLoader {
     }
 
     return convertedSprites;
+  }
+
+  public void loadExplosion() {
+    this.explosions = splitSpriteSheet(39, 36,
+        loadImageFile("sprites/" + theme + "/fx/", "explosion")).get(0);
+  }
+
+  public ArrayList<Image> getExplosion() {
+    return bufferedToJavaFxImage(this.explosions);
   }
 
   /**

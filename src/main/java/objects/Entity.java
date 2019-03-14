@@ -3,6 +3,8 @@ package objects;
 import ai.routefinding.RouteFinder;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import javafx.scene.image.Image;
 import objects.powerUps.PowerUp;
 import utils.Point;
@@ -49,6 +51,7 @@ public class Entity implements Renderable {
 
 
   private StatsTracker statsTracker;
+  private Queue<Point> deathLocation = new ConcurrentLinkedQueue();
 
   /**
    * Constructor
@@ -112,6 +115,7 @@ public class Entity implements Renderable {
 
   public void setDead(boolean dead) {
     this.dead = dead;
+    deathLocation.add(new Point(location.getX(), location.getY()));
     if (dead) {
       statsTracker.increaseDeaths();
       velocity = 0;
@@ -119,6 +123,11 @@ public class Entity implements Renderable {
     } else {
       resetVelocity();
     }
+
+  }
+
+  public Point getDeathLocation() {
+    return deathLocation.poll();
   }
 
   public void increaseKills() {
