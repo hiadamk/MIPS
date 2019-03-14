@@ -14,7 +14,6 @@ import utils.enums.Direction;
 public class RandomRouteFinder implements RouteFinder {
 
   private static final Random R = new Random();
-  private static final Direction DEFAULT = Direction.UP;
 
   /**
    * Creates an instance of this routeFinder.

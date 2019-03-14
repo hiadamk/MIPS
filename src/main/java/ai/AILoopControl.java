@@ -225,9 +225,6 @@ public class AILoopControl extends Thread {
         RouteFinder r = ent.getRouteFinder();
         Point mipsManLoc = gameAgents[mipsmanID].getLocation();
         Direction direction = r.getRoute(currentLocation, mipsManLoc);
-        if (direction==Direction.STOP) {
-            System.err.println("DEFAULT VALUE USED");
-        }
         direction = confirmOrReplaceDirection(ent.getDirection(), currentLocation, direction);
         setDirection(direction, ent);
     }

@@ -42,7 +42,7 @@ public class NextJunctionRouteFinder implements RouteFinder {
             }
         }
         if (mipsmanLocation==null || mipsmanDirection==null) {
-            return null;
+            return DEFAULT;
         }
         targetLocation = Mapping.findNextJunction(mipsmanLocation, mipsmanDirection, map, junctions);
         return new AStarRouteFinder(junctions, edges, map).getRoute(myLocation, targetLocation);

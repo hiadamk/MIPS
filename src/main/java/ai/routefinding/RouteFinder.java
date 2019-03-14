@@ -10,6 +10,7 @@ import utils.enums.Direction;
  */
 public interface RouteFinder {
 
+  Direction DEFAULT = Direction.STOP;
   /**
    * Returns the direction to travel in until the next junction is reached.
    *

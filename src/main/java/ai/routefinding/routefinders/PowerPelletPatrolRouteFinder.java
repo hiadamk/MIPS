@@ -17,6 +17,6 @@ public class PowerPelletPatrolRouteFinder implements RouteFinder {
         if (!COMPLETE) {
             return new RandomRouteFinder().getRoute(myLocation, targetLocation);
         }
-        return null;
+        return DEFAULT;
     }
 }
