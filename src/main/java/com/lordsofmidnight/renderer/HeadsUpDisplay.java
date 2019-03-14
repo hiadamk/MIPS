@@ -235,12 +235,12 @@ public class HeadsUpDisplay {
       this.geoLarge =
           Font.loadFont(
               new FileInputStream(
-                  new File("src/com.lordsofmidnight.main/resources/font/Geo-Regular.ttf")),
+                  new File("src/main/resources/font/Geo-Regular.ttf")),
               xResolution * fontRatio);
       this.geoSmall =
           Font.loadFont(
               new FileInputStream(
-                  new File("src/com.lordsofmidnight.main/resources/font/Geo-Regular.ttf")),
+                  new File("src/main/resources/font/Geo-Regular.ttf")),
               0.4 * xResolution * fontRatio);
     } catch (FileNotFoundException e) {
       e.printStackTrace();

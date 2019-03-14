@@ -2,16 +2,15 @@ package com.lordsofmidnight.ai.routefinding.routefinders;
 
 import com.lordsofmidnight.ai.mapping.Mapping;
 import com.lordsofmidnight.ai.routefinding.RouteFinder;
+import com.lordsofmidnight.gamestate.maps.Map;
+import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.gamestate.points.PointSet;
 import com.lordsofmidnight.objects.Entity;
-import com.lordsofmidnight.gamestate.maps.Map;
-import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.utils.enums.Direction;
 
 /**
- * Route finding algorithm that will aim to reach the junction that will next be reached by
- * Mipsman.
+ * Route finding algorithm that will aim to reach the junction that will next be reached by Mipsman.
  *
  * @author Lewis Ackroyd
  */
@@ -31,8 +30,7 @@ public class NextJunctionRouteFinder implements RouteFinder {
   }
 
   /**
-   *
-   */
+   * */
   @Override
   public Direction getRoute(Point myLocation, Point targetLocation) {
     Point mipsmanLocation = null;
@@ -45,7 +43,7 @@ public class NextJunctionRouteFinder implements RouteFinder {
       }
     }
     if (mipsmanLocation == null || mipsmanDirection == null) {
-      return null;
+      return DEFAULT;
     }
     targetLocation = Mapping.findNextJunction(mipsmanLocation, mipsmanDirection, map, junctions);
     return new AStarRouteFinder(junctions, edges, map).getRoute(myLocation, targetLocation);

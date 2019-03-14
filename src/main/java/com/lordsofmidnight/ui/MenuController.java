@@ -741,7 +741,7 @@ public class MenuController {
       nameEntryFont =
           Font.loadFont(
               new FileInputStream(new File(
-                  "src/com.lordsofmidnight.main/resources/com.lordsofmidnight.ui/PressStart2P.ttf")),
+                  "src/main/resources/ui/PressStart2P.ttf")),
               16);
     } catch (FileNotFoundException e) {
       e.printStackTrace();

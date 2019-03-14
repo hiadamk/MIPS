@@ -30,7 +30,7 @@ public class MapPreview {
   public MapPreview(int x, int y) {
     this.xRes = x;
     this.yRes = y;
-    this.resourceLoader = new ResourceLoader("src/com.lordsofmidnight.main/resources/");
+    this.resourceLoader = new ResourceLoader("src/main/resources/");
   }
 
   /**

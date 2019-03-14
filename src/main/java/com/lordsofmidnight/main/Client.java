@@ -82,7 +82,7 @@ public class Client extends Application {
   public void start(Stage primaryStage) {
     audioController = new AudioController();
     keyController = new KeyController();
-    resourceLoader = new ResourceLoader("src/com.lordsofmidnight.main/resources/");
+    resourceLoader = new ResourceLoader("src/main/resources/");
     this.primaryStage = primaryStage;
     //    audioController.playMusic(Sounds.intro);
     menuController =
