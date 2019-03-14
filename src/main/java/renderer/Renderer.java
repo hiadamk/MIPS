@@ -101,6 +101,13 @@ public class Renderer {
 
     lastFrame = now;
 
+    if (clientEntity.isDead()) {
+      int timeUntilRespawn = Math
+          .round((clientEntity.getDeathTime() - clientEntity.getDeathCounter()) / 100);
+      hudRender
+          .renderDeathScreen(timeUntilRespawn);
+    }
+
   }
 
   /**
