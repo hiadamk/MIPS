@@ -32,6 +32,6 @@ public class MipsManRouteFinder implements RouteFinder {
       return new RandomRouteFinder().getRoute(myLocation, targetLocation);
     }
     //BlockingQueue<Point>
-    return null;
+    return DEFAULT;
   }
 }

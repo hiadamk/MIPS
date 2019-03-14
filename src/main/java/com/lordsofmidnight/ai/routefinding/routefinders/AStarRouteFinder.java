@@ -60,9 +60,8 @@ public class AStarRouteFinder implements RouteFinder {
     }
     PointMap<AStarData> visited = new PointMap<>(map);
     PointMap<AStarData> unVisited = new PointMap<>(map);
-    visited.put(myLocation,
-        new AStarData(myLocation, myLocation, 0, heuristicCost(myLocation, targetJunction)));
-    Direction outDirection = Direction.STOP; // default
+    visited.put(myLocation, new AStarData(myLocation, myLocation, 0, heuristicCost(myLocation, targetJunction)));
+    Direction outDirection = DEFAULT;
     Point currentPoint = myLocation;
     while (!visited.containsKey(targetJunction) && (visited.size() < junctions.size())) {
       PointSet connections = edges.get(currentPoint);
@@ -78,6 +77,9 @@ public class AStarRouteFinder implements RouteFinder {
               .put(connection, new AStarData(connection, currentPoint, moveCost, estimatedCost));
         }
       }
+      if (unVisited.size()==0) {  //target location is not reachable
+        return DEFAULT;
+      }
       double lowestCost = Double.MAX_VALUE;
       for (Point key : unVisited.keySet()) {
         AStarData data = unVisited.get(key);
@@ -89,6 +91,7 @@ public class AStarRouteFinder implements RouteFinder {
       AStarData data = unVisited.get(currentPoint);
       unVisited.remove(currentPoint);
       visited.put(currentPoint, data);
+
     }
     AStarData data = visited.get(currentPoint);
     while (!data.getMyPosition().equals(data.getParentPosition())) {
