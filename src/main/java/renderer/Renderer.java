@@ -431,6 +431,14 @@ public class Renderer {
     Point2D.Double rendCoord =
         getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
 
+    Point deathLocation = e.getDeathLocation();
+    if (deathLocation != null) {
+      Point loc = e.getLocation();
+      Point2D.Double coord = getIsoCoord(loc.getX(), loc.getY(), currentSprite.getWidth(),
+          currentSprite.getHeight());
+      explosionManager.addExplosion(coord.getX(), coord.getY());
+    }
+
     if (e.isDead() && e.getDeathCounter() > e.getDeathTime() * 0.5) {
       if (secondInNanoseconds / e.getAnimationSpeed() < e.getTimeSinceLastFrame()
           && timeElapsed > 0) {
@@ -455,13 +463,6 @@ public class Renderer {
       return;
     }
 
-    Point deathLocation = e.getDeathLocation();
-    if (deathLocation != null) {
-      Point loc = e.getLocation();
-      Point2D.Double coord = getIsoCoord(loc.getX(), loc.getY(), currentSprite.getWidth(),
-          currentSprite.getHeight());
-      explosionManager.addExplosion(coord.getX(), coord.getY());
-    }
 
     Image marker = (e.isMipsman()) ? r.getMipMarker() : r.getMClientMarker();
     Point2D.Double coord =
