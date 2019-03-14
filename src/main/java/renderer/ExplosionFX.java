@@ -42,13 +42,11 @@ public class ExplosionFX {
     }
 
     if (animationInterval < timeSinceLastFrame) {
-      System.out.println("NEXT");
       timeSinceLastFrame = 0;
       for (ExplosionInstance e : explosions) {
         e.nextFrame();
       }
     } else {
-      System.out.println("TIME" + timeElapsed);
       timeSinceLastFrame += timeElapsed;
     }
 
