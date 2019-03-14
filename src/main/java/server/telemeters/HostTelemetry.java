@@ -138,6 +138,8 @@ public class HostTelemetry extends Telemetry {
       int id = input.getClientID();
       Direction d = input.getMove();
       if (d.equals(Direction.USE)) {
+        agents[id].setPowerUpUsedFlag(false);
+        agents[id].setDirectionSetFlag(false);
         usePowerUp(id);
       } else {
         agents[id].setDirectionSetFlag(false);

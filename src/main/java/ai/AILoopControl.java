@@ -1,5 +1,6 @@
 package ai;
 
+import objects.powerUps.PowerUp;
 import utils.PointMap;
 import utils.PointSet;
 import ai.mapping.Mapping;
@@ -9,10 +10,8 @@ import ai.routefinding.routefinders.MipsManRouteFinder;
 import ai.routefinding.routefinders.NextJunctionRouteFinder;
 import ai.routefinding.routefinders.PowerPelletPatrolRouteFinder;
 import ai.routefinding.routefinders.RandomRouteFinder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Random;
+
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import objects.Entity;
 import objects.Pellet;
@@ -187,7 +186,6 @@ public class AILoopControl extends Thread {
                         junctions.contains(currentGridLocation) && !atLastCoord)) {
                       if (atLastCoord) {
                             Point nearestJunction = Mapping.findNearestJunction(currentLocation, map, junctions);
-
                             Direction dir;
                             if (!nearestJunction.equals(currentGridLocation)) {
                                 dir = Mapping.directionBetweenPoints(currentLocation, nearestJunction);
@@ -208,6 +206,7 @@ public class AILoopControl extends Thread {
                         }
                     }
                 }
+                processPowerUps(ent);
             }
 
             correctMipsmanRouteFinder();
@@ -225,8 +224,24 @@ public class AILoopControl extends Thread {
         RouteFinder r = ent.getRouteFinder();
         Point mipsManLoc = gameAgents[mipsmanID].getLocation();
         Direction direction = r.getRoute(currentLocation, mipsManLoc);
+        direction = accountForPowerUps(direction);
         direction = confirmOrReplaceDirection(ent.getDirection(), currentLocation, direction);
         setDirection(direction, ent);
+    }
+
+    private Direction accountForPowerUps(Direction direction) {
+        /*TODO Implement route adjustment for powerups
+
+         */
+        return direction;
+    }
+
+    private void processPowerUps(Entity ent) {
+        List<PowerUp> powerUpList = ent.getItems();
+        if (!powerUpList.isEmpty()&&!ent.isPowerUpUsed()) {
+            ent.setPowerUpUsedFlag(true);
+            setDirection(Direction.USE, ent);
+        }
     }
 
     private void setDirection(Direction direction, Entity ent) {
