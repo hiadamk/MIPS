@@ -2,6 +2,7 @@ package com.lordsofmidnight.ai;
 
 import com.lordsofmidnight.ai.mapping.Mapping;
 import com.lordsofmidnight.ai.routefinding.RouteFinder;
+import com.lordsofmidnight.ai.routefinding.SampleSearch;
 import com.lordsofmidnight.ai.routefinding.routefinders.*;
 import com.lordsofmidnight.ai.routefinding.routefinders.condition.ConditionalInterface;
 import com.lordsofmidnight.gamestate.maps.Map;
@@ -14,8 +15,11 @@ import com.lordsofmidnight.objects.powerUps.PowerUp;
 import com.lordsofmidnight.utils.Input;
 import com.lordsofmidnight.utils.Methods;
 import com.lordsofmidnight.utils.enums.Direction;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -28,6 +32,8 @@ public class AILoopControl extends Thread {
     private static final boolean DEBUG = false;
     private int counter = 0;
 
+    private static final int INVINCIBILITY_AVOID_DISTANCE = 20;
+    private static final int INVINCIBILITY_PREFER_MULTIPLIER = 2;
     private static final int OPPOSITE_DIRECTION_DIVISOR = 4;
     private static final long SLEEP_TIME = 1;
     private final Entity[] controlAgents;
@@ -203,7 +209,7 @@ public class AILoopControl extends Thread {
                         }
                     }
                 }
-                processPowerUps(ent);
+                //processPowerUps(ent);
             }
 
             correctMipsmanRouteFinder();
@@ -221,12 +227,18 @@ public class AILoopControl extends Thread {
         RouteFinder r = ent.getRouteFinder();
         Point mipsManLoc = gameAgents[mipsmanID].getLocation();
         Direction direction = r.getRoute(currentLocation, mipsManLoc);
-        direction = accountForPowerUps(direction);
+        direction = accountForPowerUps(currentLocation, direction);
         direction = confirmOrReplaceDirection(ent.getDirection(), currentLocation, direction);
         setDirection(direction, ent);
     }
 
-    private Direction accountForPowerUps(Direction direction) {
+    private Direction accountForPowerUps(Point position, Direction direction) {
+        Direction previousDirection = direction;
+        direction = invincibilityAdjust(position, direction);
+        return direction;
+    }
+
+    private Direction invincibilityAdjust(Point position, Direction direction) {
         class InvincibleAgentCondition implements ConditionalInterface {
             private final Entity[] agents;
 
@@ -246,10 +258,45 @@ public class AILoopControl extends Thread {
                 return false;
             }
         }
-        /*TODO Implement route adjustment for powerups
-
-         */
+        int[] directionValues = new SampleSearch(INVINCIBILITY_AVOID_DISTANCE, map).getDirectionCounts(position, new InvincibleAgentCondition(gameAgents));
+        Random r = new Random();
+        int total = 0;
+        for (int i : directionValues) { total += i; }
+        if (total>0) {
+            int probability = r.nextInt(total);
+            probability -= directionValues[Direction.UP.toInt()];
+            if (probability<=0) {
+                direction = reRoll(Direction.UP, direction, position);
+            }
+            probability -= directionValues[Direction.DOWN.toInt()];
+            if (probability<=0) {
+                direction = reRoll(Direction.DOWN, direction, position);
+            }
+            probability -= directionValues[Direction.LEFT.toInt()];
+            if (probability<=0) {
+                direction = reRoll(Direction.LEFT, direction, position);
+            }
+            probability -= directionValues[Direction.RIGHT.toInt()];
+            if (probability<=0) {
+                direction = reRoll(Direction.RIGHT, direction, position);
+            }
+        }
         return direction;
+    }
+
+    private Direction reRoll(Direction avoidDirection, Direction preferDirection, Point currentLoc) {
+        ArrayList<Direction> validDirections = getValidDirections(currentLoc, map);
+        if (validDirections.contains(avoidDirection)&&validDirections.size()>1) {
+            validDirections.remove(avoidDirection);
+        }
+        if (validDirections.contains(preferDirection)) {
+            for (int i = 1; i<INVINCIBILITY_PREFER_MULTIPLIER; i++) {
+                validDirections.add(preferDirection);
+            }
+        }
+        Random r = new Random();
+        int val = r.nextInt(validDirections.size());
+        return validDirections.get(val);
     }
 
     private void processPowerUps(Entity ent) {

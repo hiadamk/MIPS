@@ -38,13 +38,15 @@ public enum Direction {
     }
   };
 
+  public static final Direction[] MOVEMENT_DIRECTIONS = {UP, DOWN, LEFT, RIGHT};
+
   private int id;
 
   Direction(int id) {
     this.id = id;
   }
 
-  public static Direction fromInt(int n) {
+  public static final Direction fromInt(int n) {
     switch (n) {
       case 0:
         return UP;

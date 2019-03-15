@@ -3,7 +3,6 @@ package com.lordsofmidnight.ai.routefinding.routefinders;
 import com.lordsofmidnight.ai.mapping.Mapping;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.gamestate.points.PointSet;
-import com.lordsofmidnight.ai.routefinding.routefinderdata.AStarData;
 import com.lordsofmidnight.ai.routefinding.RouteFinder;
 
 import java.util.Iterator;
@@ -111,4 +110,36 @@ public class AStarRouteFinder implements RouteFinder {
   private double heuristicCost(Point start, Point target) {
     return start.distance(target);
   }
+
+  private class AStarData {
+
+    private final Point myPosition;
+    private final Point parent;
+    private final double moveCost;
+    private final double estimatedCost;
+
+    public AStarData(Point myPosition, Point parent, double moveCost, double estimatedCost) {
+      this.myPosition = myPosition;
+      this.parent = parent;
+      this.moveCost = moveCost;
+      this.estimatedCost = estimatedCost;
+    }
+
+    public Point getMyPosition() {
+      return myPosition;
+    }
+
+    public Point getParentPosition() {
+      return parent;
+    }
+
+    public double getMoveCost() {
+      return moveCost;
+    }
+
+    public double getEstimatedCost() {
+      return estimatedCost;
+    }
+  }
+
 }
