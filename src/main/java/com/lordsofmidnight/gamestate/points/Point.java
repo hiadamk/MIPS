@@ -3,6 +3,7 @@ package com.lordsofmidnight.gamestate.points;
 import static java.lang.Math.abs;
 
 import com.lordsofmidnight.gamestate.maps.Map;
+import com.lordsofmidnight.main.Client;
 import com.lordsofmidnight.utils.enums.Direction;
 
 /**
@@ -11,6 +12,10 @@ import com.lordsofmidnight.utils.enums.Direction;
  * @author Alex Banks, Matthew Jones
  */
 public class Point {
+
+  private static int defaultMaxX = -1;
+  private static int defaultMaxY = -1;
+  private static boolean hasDefault = false;
 
   private final double EQUALITY_TOLERANCE = 0.001;
   private final double CENTER_TOLERANCE = 0.1;
@@ -30,9 +35,19 @@ public class Point {
   public Point(double x, double y) {
     this.x = x;
     this.y = y;
-    this.MAX_Y = 0;
-    this.MAX_X = 0;
-    this.MAPPED = false;
+
+    if (hasDefault) {
+      this.MAX_X = defaultMaxX;
+      this.MAX_Y = defaultMaxY;
+      this.MAPPED = true;
+    } else {
+      System.err.println("Warning: Point has no reference to map");
+      this.MAX_X = 0;
+      this.MAX_Y = 0;
+      this.MAPPED = false;
+    }
+
+    mod();
   }
 
   /**
@@ -84,6 +99,19 @@ public class Point {
     this.MAX_X = max_x;
     this.MAX_Y = max_y;
     this.MAPPED = mapped;
+  }
+
+  /**
+   * Sets a default map for unmapped points to be generated from.
+   *
+   * @param m map to extract maxX and maxY from
+   * @author Alex Banks
+   * @see Client#setMap(Map)
+   */
+  public static void setMap(Map m) {
+    hasDefault = true;
+    defaultMaxX = m.getMaxX();
+    defaultMaxY = m.getMaxY();
   }
 
   /**
