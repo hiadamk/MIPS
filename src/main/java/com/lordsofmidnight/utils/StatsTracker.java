@@ -1,5 +1,7 @@
 package com.lordsofmidnight.utils;
 
+import com.lordsofmidnight.utils.enums.Awards;
+
 public class StatsTracker {
 
   int kills;
@@ -12,28 +14,22 @@ public class StatsTracker {
   public StatsTracker() {
   }
 
-  public int getKills() {
-    return kills;
-  }
-
-  public int getDeaths() {
-    return deaths;
-  }
-
-  public int getPointsGained() {
-    return pointsGained;
-  }
-
-  public int getPointsStolen() {
-    return pointsStolen;
-  }
-
-  public int getPointsLost() {
-    return pointsLost;
-  }
-
-  public int getItemsUsed() {
-    return itemsUsed;
+  public int getStat(Awards award){
+    switch (award){
+      case MOST_KILLS:
+        return kills;
+      case MOST_DEATHS:
+        return deaths;
+      case MOST_POINTS:
+        return pointsGained;
+      case MOST_POINTS_STOLEN:
+        return  pointsStolen;
+      case MOST_POINTS_LOST:
+        return pointsStolen;
+      case MOST_ITEMS_USED:
+        return itemsUsed;
+    }
+    return -1;
   }
 
   public void increaseKills(int... i) {
