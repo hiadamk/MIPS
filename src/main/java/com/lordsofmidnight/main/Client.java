@@ -1,6 +1,24 @@
 package com.lordsofmidnight.main;
 
 import com.lordsofmidnight.audio.AudioController;
+import com.lordsofmidnight.gamestate.maps.Map;
+import com.lordsofmidnight.gamestate.points.Point;
+import com.lordsofmidnight.objects.Entity;
+import com.lordsofmidnight.objects.Pellet;
+import com.lordsofmidnight.renderer.Renderer;
+import com.lordsofmidnight.server.ClientLobbySession;
+import com.lordsofmidnight.server.ServerGameplayHandler;
+import com.lordsofmidnight.server.ServerLobby;
+import com.lordsofmidnight.server.telemeters.DumbTelemetry;
+import com.lordsofmidnight.server.telemeters.HostTelemetry;
+import com.lordsofmidnight.server.telemeters.Telemetry;
+import com.lordsofmidnight.ui.GameSceneController;
+import com.lordsofmidnight.ui.MenuController;
+import com.lordsofmidnight.utils.Input;
+import com.lordsofmidnight.utils.Methods;
+import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.utils.Settings;
+import com.lordsofmidnight.utils.enums.Direction;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -14,23 +32,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import com.lordsofmidnight.objects.Entity;
-import com.lordsofmidnight.objects.Pellet;
-import com.lordsofmidnight.renderer.Renderer;
-import com.lordsofmidnight.server.ClientLobbySession;
-import com.lordsofmidnight.server.ServerGameplayHandler;
-import com.lordsofmidnight.server.ServerLobby;
-import com.lordsofmidnight.server.telemeters.DumbTelemetry;
-import com.lordsofmidnight.server.telemeters.HostTelemetry;
-import com.lordsofmidnight.server.telemeters.Telemetry;
-import com.lordsofmidnight.ui.GameSceneController;
-import com.lordsofmidnight.ui.MenuController;
-import com.lordsofmidnight.utils.Input;
-import com.lordsofmidnight.gamestate.maps.Map;
-import com.lordsofmidnight.utils.Methods;
-import com.lordsofmidnight.utils.ResourceLoader;
-import com.lordsofmidnight.utils.Settings;
-import com.lordsofmidnight.utils.enums.Direction;
 
 public class Client extends Application {
 
@@ -222,6 +223,7 @@ public class Client extends Application {
    */
   public void setMap(Map m) {
     this.map = m;
+    Point.setMap(m);
   }
 
   /**
