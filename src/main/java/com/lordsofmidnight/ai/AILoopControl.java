@@ -209,7 +209,7 @@ public class AILoopControl extends Thread {
                         }
                     }
                 }
-                //processPowerUps(ent);
+                processPowerUps(ent);
             }
 
             correctMipsmanRouteFinder();
