@@ -44,7 +44,7 @@ public class AILoopControl extends Thread {
     private final Entity[] gameAgents;
     private boolean runAILoop;
     private int mipsmanID;
-    private HashMap<String, Pellet> pellets;
+    private PointMap<Pellet> pellets;
 
 
     /**Initialises the object prior to the AI loop being executed.
@@ -57,7 +57,7 @@ public class AILoopControl extends Thread {
      * @throws IllegalStateException The control ID does not match an agent main ID.
      * @author Lewis Ackroyd*/
     public AILoopControl(
-            Entity[] gameAgents, int[] controlIds, Map map, BlockingQueue<Input> directionsOut, HashMap<String, Pellet> pellets) {
+            Entity[] gameAgents, int[] controlIds, Map map, BlockingQueue<Input> directionsOut, PointMap<Pellet> pellets) {
         validateAgents(gameAgents);
         if (DEBUG) {
             for (int i : controlIds) {
@@ -110,7 +110,7 @@ public class AILoopControl extends Thread {
             RouteFinder routeFinder;
             switch (i) {
                 case 0: {
-                    routeFinder = new MipsManRouteFinder(pellets, gameAgents);
+                    routeFinder = new MipsManRouteFinder(pellets, gameAgents, map);
                     break;
                 }
                 case 1: {
@@ -233,22 +233,15 @@ public class AILoopControl extends Thread {
     }
 
     private Direction accountForPowerUps(Point position, Direction direction) {
-        Direction previousDirection = direction;
         direction = invincibilityAdjust(position, direction);
         return direction;
     }
 
     private Direction invincibilityAdjust(Point position, Direction direction) {
         class InvincibleAgentCondition implements ConditionalInterface {
-            private final Entity[] agents;
-
-            public InvincibleAgentCondition(Entity[] agents) {
-                this.agents = agents;
-            }
-
             @Override
             public boolean condition(Point position) {
-                for (Entity ent : agents) {
+                for (Entity ent : gameAgents) {
                     if (ent.getLocation().getGridCoord().equals(position.getGridCoord())) {
                         if (ent.isInvincible()) {
                             return true;
@@ -258,7 +251,7 @@ public class AILoopControl extends Thread {
                 return false;
             }
         }
-        int[] directionValues = new SampleSearch(INVINCIBILITY_AVOID_DISTANCE, map).getDirectionCounts(position, new InvincibleAgentCondition(gameAgents));
+        int[] directionValues = new SampleSearch(INVINCIBILITY_AVOID_DISTANCE, map).getDirectionCounts(position, new InvincibleAgentCondition());
         Random r = new Random();
         int total = 0;
         for (int i : directionValues) { total += i; }

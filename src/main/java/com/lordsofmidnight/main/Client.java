@@ -3,6 +3,7 @@ package com.lordsofmidnight.main;
 import com.lordsofmidnight.audio.AudioController;
 import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.gamestate.points.Point;
+import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
 import com.lordsofmidnight.renderer.Renderer;
@@ -58,7 +59,7 @@ public class Client extends Application {
   public boolean isHost;
   private boolean singlePlayer = false;
   private BlockingQueue<Input> incomingQueue; // only used in singleplayer
-  private HashMap<String, Pellet> pellets;
+  private PointMap<Pellet> pellets;
   private int MIPID;
   private Canvas canvas = new Canvas();
   private AnimationTimer inputRenderLoop;

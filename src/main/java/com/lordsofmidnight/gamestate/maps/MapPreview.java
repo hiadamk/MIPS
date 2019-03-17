@@ -1,6 +1,8 @@
 package com.lordsofmidnight.gamestate.maps;
 
 import java.util.HashMap;
+
+import com.lordsofmidnight.gamestate.points.PointMap;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
@@ -69,7 +71,7 @@ public class MapPreview {
 
     gc.setFill(Color.TRANSPARENT);
     gc.fillRect(0, 0, xRes, yRes);
-    renderer.renderGameOnly(map, new Entity[]{}, 0, new HashMap<>(), null);
+    renderer.renderGameOnly(map, new Entity[]{}, 0, new PointMap<>(map), null);
 
     SnapshotParameters parameters = new SnapshotParameters();
     parameters.setFill(Color.TRANSPARENT);

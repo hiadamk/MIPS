@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.UUID;
+
+import com.lordsofmidnight.gamestate.points.PointMap;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -85,7 +87,7 @@ public class Renderer {
    * @param now Current game time in nanoseconds
    * @param pellets Consumable com.lordsofmidnight.objects
    */
-  public void render(Map map, Entity[] entityArr, long now, HashMap<String, Pellet> pellets,
+  public void render(Map map, Entity[] entityArr, long now, PointMap<Pellet> pellets,
       HashMap<UUID, PowerUp> activePowerUps,
       int gameTime) {
     if (clientEntity == null) {
@@ -171,7 +173,7 @@ public class Renderer {
   }
 
   public void renderGameOnly(Map map, Entity[] entityArr, long now,
-      HashMap<String, Pellet> pellets, HashMap<UUID, PowerUp> activePowerUps) {
+      PointMap<Pellet> pellets, HashMap<UUID, PowerUp> activePowerUps) {
 
     int[][] rawMap = map.raw();
     ArrayList<Entity> entities = new ArrayList<>(Arrays.asList(entityArr));
@@ -221,11 +223,9 @@ public class Renderer {
 
     // Loop through grid in diagonal traversal to render walls and entities by depth
     for (Double coord : traversalOrder) {
-      x = (int) coord.getX();
-      y = (int) coord.getY();
 
       // render consumable com.lordsofmidnight.objects on top
-      Pellet currentPellet = pellets.get(x + "," + y);
+      Pellet currentPellet = pellets.get(new Point(coord.getX(), coord.getY(), map));
       if (currentPellet != null && currentPellet.isActive()) {
 
         //TODO use better way of finding if client is mipsman
@@ -251,6 +251,10 @@ public class Renderer {
         rendCoord = getIsoCoord(x_, y_, currentSprite.getHeight(), currentSprite.getWidth());
         gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
       }
+
+
+      x = (int) coord.getX();
+      y = (int) coord.getY();
 
       currentSprite = mapTiles.get(rawMap[x][y]);
       rendCoord = getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
@@ -377,7 +381,7 @@ public class Renderer {
       Image currentSprite) {
     gc.setTextAlign(TextAlignment.CENTER);
     renderBackground(map);
-    renderGameOnly(map, entities, 0, new HashMap<>(), null);
+    renderGameOnly(map, entities, 0, new PointMap<>(map), null);
     gc.setFill(new Color(0, 0, 0, backgroundOpacity));
     gc.fillRect(0, 0, xResolution, yResolution);
 

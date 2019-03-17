@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
+
+import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.main.Client;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
@@ -34,7 +36,7 @@ public abstract class Telemetry {
   static int gameTimer = GAME_TIME;
   Map map;
   Entity[] agents;
-  HashMap<String, Pellet> pellets;
+  PointMap<Pellet> pellets;
   ResourceLoader resourceLoader;
   static Client client;
   protected GameLoop inputProcessor;
@@ -71,7 +73,7 @@ public abstract class Telemetry {
     return map;
   }
 
-  public HashMap<String, Pellet> getPellets() {
+  public PointMap<Pellet> getPellets() {
     return pellets;
   }
 
@@ -117,7 +119,7 @@ public abstract class Telemetry {
       Entity[] agents,
       Map m,
       ResourceLoader resourceLoader,
-      HashMap<String, Pellet> pellets,
+      PointMap<Pellet> pellets,
       HashMap<UUID, PowerUp> activePowerUps) {
 
     for (int i = 0; i < AGENT_COUNT; i++) {
@@ -189,14 +191,14 @@ public abstract class Telemetry {
 
   void initialisePellets() {
     Random r = new Random();
-    pellets = new HashMap<>();
+    pellets = new PointMap<>(map);
     for (int i = 0; i < map.getMaxX(); i++) {
       for (int j = 0; j < map.getMaxY(); j++) {
         Point point = new Point(i + 0.5, j + 0.5);
         if (!map.isWall(point)) {
           Pellet pellet = r.nextInt(30) == 1 ? new PowerUpBox(point) : new Pellet(point);
           pellet.updateImages(resourceLoader);
-          pellets.put(i + "," + j, pellet);
+          pellets.put(new Point(i, j), pellet);
         }
       }
     }
@@ -246,12 +248,10 @@ public abstract class Telemetry {
    * @author Matthew Jones
    */
   private static void pelletCollision(
-      Entity[] agents, HashMap<String, Pellet> pellets, HashMap<UUID, PowerUp> activePowerUps) {
+      Entity[] agents, PointMap<Pellet> pellets, HashMap<UUID, PowerUp> activePowerUps) {
     for (Entity agent : agents) {
       Point p = agent.getLocation();
-      int x = (int) p.getX();
-      int y = (int) p.getY();
-      Pellet pellet = pellets.get(x + "," + y);
+      Pellet pellet = pellets.get(p);
       if (pellet != null) {
         pellet.interact(agent, agents, activePowerUps);
       }

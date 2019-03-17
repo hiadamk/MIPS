@@ -2,6 +2,8 @@ package com.lordsofmidnight.objects.powerUps;
 
 import java.util.HashMap;
 import java.util.UUID;
+
+import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
 import com.lordsofmidnight.objects.PowerUpBox;
@@ -18,7 +20,7 @@ public class Web extends PowerUp {
   public void use(
       Entity user,
       HashMap<UUID, PowerUp> activePowerUps,
-      HashMap<String, Pellet> pellets,
+      PointMap<Pellet> pellets,
       Entity[] agents) {
     this.user = user;
     this.onMap = true;
@@ -27,7 +29,7 @@ public class Web extends PowerUp {
     int y = (int) loc.getY();
     PowerUpBox box = new PowerUpBox(x + 0.5, y + 0.5);
     box.setTrap(this);
-    pellets.put(x + "," + y, box);
+    pellets.put(loc, box);
   }
 
   @Override
