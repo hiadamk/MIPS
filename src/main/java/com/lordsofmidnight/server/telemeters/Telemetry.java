@@ -182,6 +182,7 @@ public abstract class Telemetry {
       System.out.println("Player " + winner + " won the game");
       System.out.println("Player " + winner + " won the game");
       System.out.println("Player " + winner + " won the game");
+      client.finishGame();
     }
   }
 

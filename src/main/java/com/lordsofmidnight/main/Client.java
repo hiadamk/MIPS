@@ -5,6 +5,7 @@ import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
+import com.lordsofmidnight.renderer.EndGameScreen;
 import com.lordsofmidnight.renderer.Renderer;
 import com.lordsofmidnight.server.ClientLobbySession;
 import com.lordsofmidnight.server.ServerGameplayHandler;
@@ -65,6 +66,7 @@ public class Client extends Application {
   private GameSceneController gameSceneController;
   private Scene mainMenu;
   private boolean gameStarted = false;
+  private EndGameScreen endGameScreen;
 
   public int getId() {
     return id;
@@ -100,6 +102,7 @@ public class Client extends Application {
     GraphicsContext gc = canvas.getGraphicsContext2D();
     renderer = new Renderer(gc, Settings.getxResolution(), Settings.getyResolution(),
         resourceLoader);
+    endGameScreen = new EndGameScreen(gc,resourceLoader.getBackground());
     primaryStage.setScene(mainMenu);
     primaryStage.setMinWidth(1366);
     primaryStage.setMinHeight(768);
@@ -327,6 +330,12 @@ public class Client extends Application {
       }
       clientLobbySession.leaveLobby();
     }
+  }
+
+  public void finishGame(){
+    this.telemetry.stopGame();
+    inputRenderLoop.stop();
+    endGameScreen.showEndSequence(agents);
   }
 
   /**
