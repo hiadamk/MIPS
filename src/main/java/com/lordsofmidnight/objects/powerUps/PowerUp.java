@@ -2,6 +2,8 @@ package com.lordsofmidnight.objects.powerUps;
 
 import java.util.HashMap;
 import java.util.UUID;
+
+import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
 
@@ -80,7 +82,7 @@ public abstract class PowerUp {
   public void use(
       Entity user,
       HashMap<UUID, PowerUp> activePowerUps,
-      HashMap<String, Pellet> pellets,
+      PointMap<Pellet> pellets,
       Entity[] agents) {
   }
 
