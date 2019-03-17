@@ -10,8 +10,6 @@ import com.lordsofmidnight.objects.Pellet;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.utils.enums.Direction;
 
-import java.util.HashMap;
-
 /**
  * Route finding algorithm that controls Mipsman. Will aim to reach the nearest pellet whilst
  * avoiding any ghouls.
@@ -20,8 +18,7 @@ import java.util.HashMap;
  */
 public class MipsManRouteFinder implements RouteFinder {
 
-  private static final boolean COMPLETE = false;
-
+  private static final int GHOUL_NEGATIVE_MULTIPLIER = 3;
   private static final int DEPTH = 20;
   private PointMap<Pellet> pellets;
   private Entity[] gameAgents;
@@ -35,9 +32,6 @@ public class MipsManRouteFinder implements RouteFinder {
 
   @Override
   public Direction getRoute(Point myLocation, Point targetLocation) {
-    if (!COMPLETE) {
-      return new RandomRouteFinder().getRoute(myLocation, targetLocation);
-    }
     SampleSearch sampleSearch = new SampleSearch(DEPTH, map);
     class GhoulCountCondition implements ConditionalInterface {
       @Override
@@ -66,6 +60,36 @@ public class MipsManRouteFinder implements RouteFinder {
         return false;
       }
     }
-    return DEFAULT;
+    int[] powerPelletCounts = sampleSearch.getDirectionCounts(myLocation, new PowerPelletCountCondition());
+
+    int[] totals = {0, 0, 0, 0};
+    for (int i = 0; i<ghoulCounts.length; i++) {
+        totals[i] = powerPelletCounts[i]-(ghoulCounts[i]*GHOUL_NEGATIVE_MULTIPLIER);
+    }
+
+    return maxDirection(totals);
+  }
+
+  private Direction maxDirection(int[] totals) {
+      int firstTwoIndex;
+      if (totals[0]>totals[1]) {
+          firstTwoIndex = 0;
+      }
+      else {
+          firstTwoIndex = 1;
+      }
+      int secondTwoIndex;
+      if (totals[2]>totals[3]) {
+          secondTwoIndex = 2;
+      }
+      else {
+          secondTwoIndex = 3;
+      }
+      if (totals[firstTwoIndex]>totals[secondTwoIndex]) {
+          return Direction.fromInt(firstTwoIndex);
+      }
+      else {
+          return Direction.fromInt(secondTwoIndex);
+      }
   }
 }

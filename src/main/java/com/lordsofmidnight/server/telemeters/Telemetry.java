@@ -1,9 +1,6 @@
 package com.lordsofmidnight.server.telemeters;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.main.Client;
@@ -156,9 +153,11 @@ public abstract class Telemetry {
     }
 
     pelletCollision(agents, pellets, activePowerUps);
+
     for (Pellet p : pellets.values()) {
       p.incrementRespawn();
     }
+
 
     ArrayList<UUID> toRemove = new ArrayList<>();
     for (PowerUp p : activePowerUps.values()) {
