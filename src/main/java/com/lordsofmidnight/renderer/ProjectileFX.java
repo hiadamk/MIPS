@@ -84,7 +84,7 @@ public class ProjectileFX {
       double launchX = r.getStartLocation().getX();
       double currentTime = r.getTime()/(r.getMaxTime()*launchDuration);
       double launchY = r.getStartLocation().getY()-r.getStartLocation().getY()*currentTime;
-      System.out.println("UP:"+currentTime);
+      //System.out.println("UP:"+currentTime);
       gc.drawImage(upwardRocketImages.get(r.getCurrentFrame()%upwardRocketImages.size()),launchX,launchY);
     }
     else if(r.getTime() > r.getMaxTime()-(r.getMaxTime()*hitDuration)){
@@ -98,7 +98,7 @@ public class ProjectileFX {
       double launchX = r.getEndLocation().getX();
       double currentTime = (r.getTime()-(r.getMaxTime()-r.getMaxTime()*hitDuration))/(r.getMaxTime()*hitDuration);
       double launchY = r.getEndLocation().getY()*currentTime;
-      System.out.println("DOWN:"+currentTime);
+      //System.out.println("DOWN:"+currentTime);
       gc.drawImage(downwardRocketImages.get(r.getCurrentFrame()%downwardRocketImages.size()),launchX,launchY);
     }
   }
