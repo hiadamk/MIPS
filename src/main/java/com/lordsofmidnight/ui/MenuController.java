@@ -1,11 +1,20 @@
 package com.lordsofmidnight.ui;
 
-import com.lordsofmidnight.audio.AudioController;
-import com.lordsofmidnight.audio.Sounds;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTabPane;
-import com.jfoenix.controls.JFXToggleButton;
+import com.lordsofmidnight.audio.AudioController;
+import com.lordsofmidnight.audio.Sounds;
+import com.lordsofmidnight.gamestate.maps.Map;
+import com.lordsofmidnight.gamestate.maps.MapGenerationHandler;
+import com.lordsofmidnight.gamestate.maps.MapPreview;
+import com.lordsofmidnight.main.Client;
+import com.lordsofmidnight.server.NetworkUtility;
+import com.lordsofmidnight.utils.KeyRemapping;
+import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.utils.Settings;
+import com.lordsofmidnight.utils.enums.InputKey;
+import com.lordsofmidnight.utils.enums.RenderingMode;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -48,16 +57,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import com.lordsofmidnight.main.Client;
-import com.lordsofmidnight.server.NetworkUtility;
-import com.lordsofmidnight.utils.KeyRemapping;
-import com.lordsofmidnight.gamestate.maps.Map;
-import com.lordsofmidnight.gamestate.maps.MapGenerationHandler;
-import com.lordsofmidnight.gamestate.maps.MapPreview;
-import com.lordsofmidnight.utils.ResourceLoader;
-import com.lordsofmidnight.utils.Settings;
-import com.lordsofmidnight.utils.enums.InputKey;
-import com.lordsofmidnight.utils.enums.RenderingMode;
 
 /**
  * @author Adam Kona Class which handles the creation and functionality of components in the
@@ -801,60 +800,36 @@ public class MenuController {
     StackPane soundTabLayout = new StackPane();
 
     Label musicLbl = LabelGenerator.generate(true, soundTabLayout, "Music:", UIColours.WHITE, 16);
-    JFXToggleButton musicToggle = new JFXToggleButton();
-    musicToggle.setSelected(true);
-    musicToggle.setOnAction(event -> {
-      audioController.playSound(Sounds.click);
-      if (musicToggle.isSelected()) {
-        audioController.setMusicVolume(0.5);
-      } else {
-        audioController.setMusicVolume(0);
-      }
+
+    JFXSlider musicVolumeSlider = new JFXSlider(0, 1, 0.5);
+    musicVolumeSlider.valueProperty().addListener((ov, old_val, new_val) -> {
+      audioController.setMusicVolume(new_val.doubleValue());
     });
+
+    musicVolumeSlider.setMaxWidth(200);
 
     StackPane.setAlignment(musicLbl, Pos.TOP_CENTER);
     StackPane.setMargin(musicLbl, new Insets(150, 200, 0, 0));
 
-    StackPane.setAlignment(musicToggle, Pos.TOP_CENTER);
-    StackPane.setMargin(musicToggle, new Insets(128, 0, 0, 200));
+    StackPane.setAlignment(musicVolumeSlider, Pos.TOP_CENTER);
+    StackPane.setMargin(musicVolumeSlider, new Insets(150, 0, 0, 200));
 
     Label soundFXLbl = LabelGenerator
         .generate(true, soundTabLayout, "SoundFX:", UIColours.WHITE, 16);
-    JFXToggleButton soundFXToggle = new JFXToggleButton();
-    soundFXToggle.setSelected(true);
-    soundFXToggle.setOnAction(event -> {
-      audioController.playSound(Sounds.click);
-      if (soundFXToggle.isSelected()) {
-        audioController.setSoundVolume(0.5);
-      } else {
-        audioController.setSoundVolume(0);
-      }
+    JFXSlider soundFXSlider = new JFXSlider(0, 1, 0.5);
+    soundFXSlider.valueProperty().addListener((ov, old_val, new_val) -> {
+      audioController.setSoundVolume(new_val.doubleValue());
     });
 
+    soundFXSlider.setMaxWidth(200);
     StackPane.setAlignment(soundFXLbl, Pos.CENTER);
     StackPane.setMargin(soundFXLbl, new Insets(0, 200, 0, 0));
 
-    StackPane.setAlignment(soundFXToggle, Pos.CENTER);
-    StackPane.setMargin(soundFXToggle, new Insets(0, 0, 0, 200));
-
-    Label volumeLbl = LabelGenerator.generate(true, soundTabLayout, "Volume:", UIColours.WHITE, 16);
-
-    JFXSlider volumeSlider = new JFXSlider(0, 1, 0.5);
-
-    volumeSlider.valueProperty().addListener((ov, old_val, new_val) -> {
-      audioController.setSoundVolume(new_val.doubleValue());
-      audioController.setMusicVolume(new_val.doubleValue());
-    });
-    volumeSlider.setMaxWidth(200);
-    volumeSlider.setMaxWidth(200);
-    StackPane.setAlignment(volumeSlider, Pos.BOTTOM_CENTER);
-    StackPane.setMargin(volumeSlider, new Insets(0, 0, 155, 220));
-
-    StackPane.setAlignment(volumeLbl, Pos.BOTTOM_CENTER);
-    StackPane.setMargin(volumeLbl, new Insets(0, 200, 150, 0));
+    StackPane.setAlignment(soundFXSlider, Pos.CENTER);
+    StackPane.setMargin(soundFXSlider, new Insets(0, 0, 0, 200));
 
     soundTabLayout.getChildren()
-        .addAll(musicToggle, soundFXToggle, volumeSlider);
+        .addAll(musicVolumeSlider, soundFXSlider);
     soundTab.setContent(soundTabLayout);
 
     //Creates the tab for graphics

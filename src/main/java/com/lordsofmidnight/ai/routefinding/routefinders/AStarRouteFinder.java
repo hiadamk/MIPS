@@ -4,9 +4,7 @@ import com.lordsofmidnight.ai.mapping.Mapping;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.gamestate.points.PointSet;
 import com.lordsofmidnight.ai.routefinding.RouteFinder;
-
 import java.util.Iterator;
-
 import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.utils.enums.Direction;

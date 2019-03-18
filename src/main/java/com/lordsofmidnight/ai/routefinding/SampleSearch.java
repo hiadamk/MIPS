@@ -51,7 +51,7 @@ public class SampleSearch {
         if (!map.isWall(nextPos) && !visited.contains(nextPos)) {
             unVisited.add(new SampleSearchData(nextPos, data.getCost() + 1, d2));
             if (condition.condition(nextPos)) {
-                outArray[d2.toInt()]++;
+                outArray[d2.toInt()] += (sampleDepth-data.getCost());
             }
         }
     }

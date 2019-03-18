@@ -22,7 +22,7 @@ public class Pellet implements Renderable {
   protected Point location;
   protected ArrayList<Image> currentImage;
   protected int respawntime = 4500;
-  protected boolean active; // Weather or not the item is visible and able to be interacted with\
+  protected boolean active; // Whether or not the item is visible and able to be interacted with\
   protected int value = 1;
   protected com.lordsofmidnight.objects.powerUps.PowerUp trap;
   protected boolean isTrap = false;

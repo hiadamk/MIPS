@@ -1,9 +1,8 @@
 package com.lordsofmidnight.gamestate.points;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.*;
+
 import com.lordsofmidnight.gamestate.maps.Map;
 
 /**
@@ -13,7 +12,7 @@ import com.lordsofmidnight.gamestate.maps.Map;
  *
  * @author Lewis Ackroyd
  */
-public class PointSet implements Iterable, Set, Collection {
+public class PointSet extends AbstractSet<Point> implements Set<Point>, Cloneable, Serializable {
 
   private HashSet<Integer> points;
   private final int MAX_X;
@@ -28,6 +27,10 @@ public class PointSet implements Iterable, Set, Collection {
     points = new HashSet<>();
   }
 
+  public PointSet getShallowClone() {
+    return new PointSet(MAX_X);
+  }
+
   @Override
   public boolean contains(Object o) {
     if (o instanceof Point) {
@@ -38,13 +41,9 @@ public class PointSet implements Iterable, Set, Collection {
   }
 
   @Override
-  public boolean add(Object o) {
-    if (o instanceof Point) {
-      Point p = (Point) o;
+  public boolean add(Point p) {
       int key = getKeyValue(p);
       return points.add(key);
-    }
-    return false;
   }
 
   @Override

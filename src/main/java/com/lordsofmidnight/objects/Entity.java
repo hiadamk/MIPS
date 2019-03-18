@@ -43,6 +43,7 @@ public class Entity implements Renderable {
   private int currentFrame = 0;
   private boolean directionSet;
   private boolean powerUpUsed;
+  private int powerUpUseAttempts = 0;
   private boolean stunned;
   private boolean dead;
   private final int DEATHTIME = 400;
@@ -73,6 +74,7 @@ public class Entity implements Renderable {
     this.items = new LinkedList<>();
     this.directionSet = false;
     this.powerUpUsed = false;
+    this.powerUpUseAttempts = 0;
     this.name = "Player" + clientId;
     this.bonusSpeed = 0;
     this.statsTracker = new StatsTracker();
@@ -484,6 +486,15 @@ public class Entity implements Renderable {
 
   public void setPowerUpUsedFlag(boolean b) {
     this.powerUpUsed = b;
+    this.powerUpUseAttempts = 0;
+  }
+
+  public void incrementPowerUpUseChance() {
+    this.powerUpUseAttempts++;
+  }
+
+  public int powerUpUseAttempts() {
+    return powerUpUseAttempts;
   }
 
   public void resetVelocity() {
