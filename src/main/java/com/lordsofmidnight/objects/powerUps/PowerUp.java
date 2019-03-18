@@ -6,6 +6,7 @@ import java.util.UUID;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class PowerUp {
 
@@ -60,7 +61,7 @@ public abstract class PowerUp {
    * @param victim The entity effected by the powerUp
    * @param activePowerUps All active powerUps in the game
    */
-  public void trigger(Entity victim, HashMap<UUID, PowerUp> activePowerUps) {
+  public void trigger(Entity victim, ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
   }
 
   /**
@@ -81,7 +82,7 @@ public abstract class PowerUp {
    */
   public void use(
       Entity user,
-      HashMap<UUID, PowerUp> activePowerUps,
+      ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       PointMap<Pellet> pellets,
       Entity[] agents) {
   }

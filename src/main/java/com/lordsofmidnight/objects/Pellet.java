@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import javafx.scene.image.Image;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
 import com.lordsofmidnight.gamestate.points.Point;
@@ -80,7 +81,7 @@ public class Pellet implements Renderable {
     currentImage = r.getPellet();
   }
 
-  public void interact(Entity entity, Entity[] agents, HashMap<UUID, PowerUp> activePowerUps) {
+  public void interact(Entity entity, Entity[] agents, ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
     if (isTrap) {
       trap.trigger(entity, activePowerUps);
       isTrap = false;
