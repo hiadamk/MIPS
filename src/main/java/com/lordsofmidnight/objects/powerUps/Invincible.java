@@ -6,6 +6,7 @@ import java.util.UUID;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Invincible extends PowerUp {
 
@@ -17,7 +18,7 @@ public class Invincible extends PowerUp {
   @Override
   public void use(
       Entity user,
-      HashMap<UUID, PowerUp> activePowerUps,
+      ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       PointMap<Pellet> pellets,
       Entity[] agents) {
     this.user = user;

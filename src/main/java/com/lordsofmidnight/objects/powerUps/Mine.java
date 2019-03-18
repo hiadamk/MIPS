@@ -9,6 +9,7 @@ import com.lordsofmidnight.objects.Pellet;
 import com.lordsofmidnight.objects.PowerUpBox;
 import com.lordsofmidnight.utils.Methods;
 import com.lordsofmidnight.gamestate.points.Point;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Mine extends PowerUp {
 
@@ -20,7 +21,7 @@ public class Mine extends PowerUp {
   @Override
   public void use(
       Entity user,
-      HashMap<UUID, PowerUp> activePowerUps,
+      ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       PointMap<Pellet> pellets,
       Entity[] agents) {
     this.user = user;
@@ -34,7 +35,7 @@ public class Mine extends PowerUp {
   }
 
   @Override
-  public void trigger(Entity victim, HashMap<UUID, PowerUp> activePowerUps) {
+  public void trigger(Entity victim, ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
     Methods.kill(user, victim);
     activePowerUps.put(id, this);
     this.effected = victim;

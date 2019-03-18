@@ -13,6 +13,7 @@ import com.lordsofmidnight.objects.powerUps.Web;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.utils.ResourceLoader;
 import com.lordsofmidnight.utils.enums.PowerUp;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PowerUpBox extends Pellet {
 
@@ -146,7 +147,7 @@ public class PowerUpBox extends Pellet {
 
   @Override
   public void interact(Entity entity, Entity[] agents,
-      HashMap<UUID, com.lordsofmidnight.objects.powerUps.PowerUp> activePowerUps) {
+      ConcurrentHashMap<UUID, com.lordsofmidnight.objects.powerUps.PowerUp> activePowerUps) {
     if (isTrap) {
       trap.trigger(entity, activePowerUps);
       isTrap = false;

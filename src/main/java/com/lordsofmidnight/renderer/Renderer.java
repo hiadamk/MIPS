@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import com.lordsofmidnight.gamestate.points.PointMap;
+import java.util.concurrent.ConcurrentHashMap;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -37,6 +38,7 @@ public class Renderer {
   private final GraphicsContext gc;
   private final long secondInNanoseconds = (long) Math.pow(10, 9);
   private final HeadsUpDisplay hudRender;
+  private final ProjectileFX projectileManager;
   private Map map;
   private ResourceLoader r;
   private int xResolution;
@@ -77,7 +79,7 @@ public class Renderer {
     this.playerColours = r.getPlayerPalette();
     this.hudRender = new HeadsUpDisplay(gc, _xResolution, _yResolution, r);
     this.explosionManager = new ExplosionFX(gc, r);
-
+    this.projectileManager = new ProjectileFX(gc, r, this);
     this.initMapTraversal(r.getMap());
   }
 
@@ -88,7 +90,7 @@ public class Renderer {
    * @param pellets Consumable com.lordsofmidnight.objects
    */
   public void render(Map map, Entity[] entityArr, long now, PointMap<Pellet> pellets,
-      HashMap<UUID, PowerUp> activePowerUps,
+      ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       int gameTime) {
     if (clientEntity == null) {
       this.clientEntity = getClientEntity(new ArrayList<>(Arrays.asList(entityArr)));
@@ -173,7 +175,7 @@ public class Renderer {
   }
 
   public void renderGameOnly(Map map, Entity[] entityArr, long now,
-      PointMap<Pellet> pellets, HashMap<UUID, PowerUp> activePowerUps) {
+      PointMap<Pellet> pellets, ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
 
     int[][] rawMap = map.raw();
     ArrayList<Entity> entities = new ArrayList<>(Arrays.asList(entityArr));
@@ -291,6 +293,8 @@ public class Renderer {
     }
     if (now != 0) {
       explosionManager.render(now - lastFrame);
+      projectileManager.render(now-lastFrame,activePowerUps);
+
     }
 
   }
@@ -407,7 +411,7 @@ public class Renderer {
    * @param y cartesian Y coordinate
    * @param spriteHeight vertical offset
    */
-  private Point2D.Double getIsoCoord(double x, double y, double spriteHeight, double spriteWidth) {
+  public Point2D.Double getIsoCoord(double x, double y, double spriteHeight, double spriteWidth) {
     double isoX =
         mapRenderingCorner.getX()
             - (y - x) * (this.tileSizeX / (double) 2)

@@ -11,13 +11,14 @@ public class ExplosionFX {
   private final int animationSpeed = 14;
   private final long secondInNanoseconds = (long) Math.pow(10, 9);
   private final long animationInterval = secondInNanoseconds / animationSpeed;
-  private final ResourceLoader r;
+  private long timeSinceLastFrame = 0;
+  private final ResourceLoader resourceLoader;
   private ArrayList<ExplosionInstance> explosions;
   private ArrayList<Image> explosionImages;
-  private long timeSinceLastFrame = 0;
+
 
   public ExplosionFX(GraphicsContext gc, ResourceLoader r) {
-    this.r = r;
+    this.resourceLoader = r;
     this.gc = gc;
     this.explosions = new ArrayList<>();
     this.explosionImages = r.getExplosion();
@@ -58,7 +59,7 @@ public class ExplosionFX {
   }
 
   public void refreshSettings(){
-    this.explosionImages = r.getExplosion();
+    this.explosionImages = resourceLoader.getExplosion();
   }
 
   private class ExplosionInstance {
