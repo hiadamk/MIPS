@@ -875,7 +875,7 @@ public class MenuController {
     StackPane.setAlignment(resolutionLbl, Pos.CENTER);
     StackPane.setAlignment(resolutionCombo, Pos.CENTER);
 
-    StackPane.setMargin(resolutionLbl, new Insets(0, 300, 200, 0));
+    StackPane.setMargin(resolutionLbl, new Insets(0, 270, 200, 0));
     StackPane.setMargin(resolutionCombo, new Insets(0, 0, 200, 300));
 
     //Adding resolution label and combo box

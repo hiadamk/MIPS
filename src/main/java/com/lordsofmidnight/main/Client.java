@@ -22,7 +22,6 @@ import com.lordsofmidnight.utils.ResourceLoader;
 import com.lordsofmidnight.utils.Settings;
 import com.lordsofmidnight.utils.enums.Direction;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
@@ -68,7 +67,6 @@ public class Client extends Application {
   private Scene mainMenu;
   private boolean gameStarted = false;
   private EndGameScreen endGameScreen;
-
   public int getId() {
     return id;
   }
@@ -248,9 +246,13 @@ public class Client extends Application {
 
   public void updateTheme(String themeName) {
     Settings.setTheme(themeName);
-    renderer.refreshSettings();
-    resourceLoader.refreshSettings();
+    refresh();
   }
+
+  public void refresh() {
+    renderer.refreshSettings();
+  }
+
 
   /**
    * Sets the name for the current client and checks that it contains letters
