@@ -24,7 +24,7 @@ public class Blueshell extends PowerUp {
   private Point2D.Double endLocation;
 
   public Blueshell() {
-    super(500, "blueshell");
+    super(600, "blueshell");
     this.type = com.lordsofmidnight.utils.enums.PowerUp.BLUESHELL;
   }
 
@@ -44,10 +44,11 @@ public class Blueshell extends PowerUp {
   @Override
   public boolean incrementTime() {
     super.incrementTime();
+    System.out.println("ROCKET TIME:" + counter);
     if (counter == EFFECTTIME) {
       PowerUp killer = new Mine();
-      killer.trigger(effected, activePowerUps);
       killer.user = user;
+      killer.trigger(effected, activePowerUps);
       user.increaseKills();
       return true;
     }

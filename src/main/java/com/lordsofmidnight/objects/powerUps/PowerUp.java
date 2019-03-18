@@ -14,7 +14,7 @@ public abstract class PowerUp {
   protected final int EFFECTTIME;
   public UUID id;
   protected Entity effected;
-  protected int counter = 500;
+  protected int counter = 0;
   protected Boolean onMap = false;
   protected Entity user;
   protected int currentFrame = 0;

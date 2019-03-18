@@ -26,8 +26,8 @@ public class ProjectileFX {
   private ArrayList<Image> downwardRocketImages;
   private final Renderer renderer;
 
-  private final double launchDuration = 0.2;
-  private final double hitDuration = 0.1;
+  private final double launchDuration = 0.3;
+  private final double hitDuration = 0.03;
   private double rocketSpriteHeight;
   private double rocketSpriteWidth;
 
@@ -46,10 +46,12 @@ public class ProjectileFX {
         rockets.add((Blueshell) p);
       }
     }
-
+    //System.out.println(rockets.size());
     if (rockets.size() == 0) {
       return;
     }
+
+
 
     for (Blueshell r : rockets) {
       renderRocket(r);
@@ -77,13 +79,13 @@ public class ProjectileFX {
       if(!r.isLaunched()){
         Point entityLoc = r.getUser().getLocation();
         Point2D.Double renderCoord = renderer.getIsoCoord(entityLoc.getX(),entityLoc.getY(),rocketSpriteWidth,rocketSpriteHeight);
-        r.setEndLocation(renderCoord);
+        r.setStartLocation(renderCoord);
 
         r.setLaunched(true);
       }
       double launchX = r.getStartLocation().getX();
       double currentTime = r.getTime()/(r.getMaxTime()*launchDuration);
-      double launchY = r.getStartLocation().getY()-r.getStartLocation().getY()*currentTime;
+      double launchY = r.getStartLocation().getY()-(r.getStartLocation().getY()*currentTime);
       //System.out.println("UP:"+currentTime);
       gc.drawImage(upwardRocketImages.get(r.getCurrentFrame()%upwardRocketImages.size()),launchX,launchY);
     }
