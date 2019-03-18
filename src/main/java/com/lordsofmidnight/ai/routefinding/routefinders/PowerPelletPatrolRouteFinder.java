@@ -1,7 +1,6 @@
 package com.lordsofmidnight.ai.routefinding.routefinders;
 
 import com.lordsofmidnight.ai.routefinding.RouteFinder;
-
 import com.lordsofmidnight.ai.routefinding.SampleSearch;
 import com.lordsofmidnight.ai.routefinding.routefinders.condition.ConditionalInterface;
 import com.lordsofmidnight.gamestate.maps.Map;
@@ -9,7 +8,6 @@ import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Pellet;
 import com.lordsofmidnight.utils.enums.Direction;
-import sun.awt.X11.Depth;
 
 /**
  * Route finding algorithm that will locate the nearest power pellet and patrol around it, but not collect it.
