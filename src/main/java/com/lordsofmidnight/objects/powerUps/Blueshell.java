@@ -44,7 +44,6 @@ public class Blueshell extends PowerUp {
   @Override
   public boolean incrementTime() {
     super.incrementTime();
-    System.out.println("ROCKET TIME:" + counter);
     if (counter == EFFECTTIME) {
       PowerUp killer = new Mine();
       killer.user = user;
