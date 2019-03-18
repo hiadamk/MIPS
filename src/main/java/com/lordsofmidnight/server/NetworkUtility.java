@@ -1,5 +1,10 @@
 package com.lordsofmidnight.server;
 
+import com.lordsofmidnight.gamestate.points.Point;
+import com.lordsofmidnight.objects.Entity;
+import com.lordsofmidnight.objects.powerUps.PowerUp;
+import com.lordsofmidnight.utils.Input;
+import com.lordsofmidnight.utils.enums.Direction;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -11,11 +16,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.Enumeration;
-import com.lordsofmidnight.objects.Entity;
-import com.lordsofmidnight.objects.powerUps.PowerUp;
-import com.lordsofmidnight.utils.Input;
-import com.lordsofmidnight.gamestate.points.Point;
-import com.lordsofmidnight.utils.enums.Direction;
 
 /**
  * Class which will holds shared utility data for classes.
@@ -25,23 +25,22 @@ public class NetworkUtility {
   /**
    * Networking constants
    */
-  public static final int SERVER_M_PORT = 4446;
   public static final int CLIENT_M_PORT = 4445;
-  public static final int SERVER_DGRAM_PORT = 3000;
-  public static final int CLIENT_DGRAM_PORT = 3001;
+  static final int SERVER_DGRAM_PORT = 3000;
+  static final int CLIENT_DGRAM_PORT = 3001;
 
-  public static final String PREFIX = "SMSG";
-  public static final String SUFFIX = "EMSG";
-  public static final String POSITION_CODE = "POS";
-  public static final String SCORE_CODE = "SCOR";
-  public static final String COLLISIONS_CODE = "COL";
-  public static final String POWERUP_CODE = "POW";
+  static final String PREFIX = "SMSG";
+  static final String SUFFIX = "EMSG";
+  static final String POSITION_CODE = "POS";
+  static final String SCORE_CODE = "SCOR";
+  static final String COLLISIONS_CODE = "COL";
+  static final String POWERUP_CODE = "POW";
   public static final String STOP_CODE = "EXIT";
-  public static final String GAME_START = "START GAME";
-  public static final String DISCONNECT_HOST = "DISCONNECT_HOST";
-  public static final String DISCONNECT_NON_HOST = "DISCONNECT_NON_HOST";
-  public static final int STRING_LIMIT = 128;
-  public static final Charset CHARSET = StandardCharsets.US_ASCII;
+  static final String GAME_START = "START GAME";
+  static final String DISCONNECT_HOST = "DISCONNECT_HOST";
+  static final String DISCONNECT_NON_HOST = "DISCONNECT_NON_HOST";
+  static final int STRING_LIMIT = 128;
+  static final Charset CHARSET = StandardCharsets.US_ASCII;
   public static final int LOBBY_TIMEOUT = 3500;
 
   public static InetAddress GROUP;
@@ -108,7 +107,6 @@ public class NetworkUtility {
     byte[] buf = new byte[256];
     DatagramPacket packet = new DatagramPacket(buf, buf.length);
     socket.receive(packet);
-    System.out.printf("Server Address: " + packet.getAddress());
     return packet.getAddress();
   }
 
