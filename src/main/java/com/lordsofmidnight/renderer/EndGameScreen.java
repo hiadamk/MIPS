@@ -63,7 +63,7 @@ public class EndGameScreen {
           Font.loadFont(
               new FileInputStream(
                   new File("src/main/resources/font/Geo-Regular.ttf")),
-              0.2 * xResolution * fontRatio);
+              0.25 * xResolution * fontRatio);
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
@@ -138,6 +138,7 @@ public class EndGameScreen {
         }
         gc.setFill(new Color(0,0,0,opacity));
         gc.fillRect(0,0,xResolution,yResolution);
+        gc.setFont(geoLarge);
         gc.setFill(Color.RED);
         gc.fillText("GAME OVER",xResolution/2,yResolution/2);
         gc.setStroke(Color.WHITE);
