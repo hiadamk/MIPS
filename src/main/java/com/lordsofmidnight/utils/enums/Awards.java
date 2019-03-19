@@ -8,8 +8,8 @@ public enum Awards {
   MOST_KILLS("Killmonger","killed","players"),
   MOST_DEATHS("Punching Bag","died","times"),
   MOST_POINTS("Money Maker","collected","points"),
-  MOST_POINTS_STOLEN("Aspiring Thief","killed","players"),
-  MOST_POINTS_LOST("Everyone's Prey","lost","to other players"),
+  MOST_POINTS_STOLEN("Aspiring Thief","stole","points"),
+  MOST_POINTS_LOST("Everyone's Prey","lost","pts to other players"),
   MOST_ITEMS_USED("Shop Keeper","used","items");
 
   String name;

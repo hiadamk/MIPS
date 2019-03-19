@@ -384,6 +384,7 @@ public class Renderer {
       double backgroundOpacity,
       Image currentSprite) {
     gc.setTextAlign(TextAlignment.CENTER);
+    gc.setFont(geoLarge);
     renderBackground(map);
     renderGameOnly(map, entities, 0, new PointMap<>(map), null);
     gc.setFill(new Color(0, 0, 0, backgroundOpacity));

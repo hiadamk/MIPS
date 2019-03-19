@@ -40,6 +40,7 @@ public class DumbTelemetry extends Telemetry {
 
   public void startGame() {
     System.out.println("Started dumb telemetry");
+    gameTimer = GAME_TIME;
     final long DELAY = (long) Math.pow(10, 7);
     inputProcessor =
         new GameLoop(DELAY) {

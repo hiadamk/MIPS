@@ -295,12 +295,13 @@ public class Client extends Application {
       }
 
     }
+    renderer.setClientID(id);
     this.inputRenderLoop = new AnimationTimer() {
       @Override
       public void handle(long now) {
         processInput();
         renderer.render(map, agents, now, pellets, telemetry.getActivePowerUps(),
-            Telemetry.getGameTimer() / 100);
+            telemetry.getGameTimer() / 100);
 
       }
     };

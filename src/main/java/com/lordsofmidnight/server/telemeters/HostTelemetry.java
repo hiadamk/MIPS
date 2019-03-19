@@ -89,6 +89,7 @@ public class HostTelemetry extends Telemetry {
     updateClients(agents); // set starting positions
     startAI();
 
+    gameTimer = GAME_TIME;
     final long DELAY = (long) Math.pow(10, 7);
     final long positionDELAY = (long) Math.pow(10, 9) / 2;
     final long scoreDELAY = (long) Math.pow(10, 9);
