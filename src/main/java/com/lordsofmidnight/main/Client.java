@@ -295,7 +295,6 @@ public class Client extends Application {
       }
 
     }
-    renderer.setClientID(id);
     this.inputRenderLoop = new AnimationTimer() {
       @Override
       public void handle(long now) {
@@ -308,7 +307,7 @@ public class Client extends Application {
     inputRenderLoop.start();
     this.telemetry.startGame();
     Methods.updateImages(agents, resourceLoader);
-
+    renderer.setClientID(id);
     renderer.initMapTraversal(map);
     map = resourceLoader.getMap();
     this.primaryStage.setScene(gameScene);
