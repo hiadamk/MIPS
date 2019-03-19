@@ -1,5 +1,6 @@
 package com.lordsofmidnight.renderer;
 
+import com.lordsofmidnight.utils.ResourceLoader;
 import com.lordsofmidnight.utils.enums.Awards;
 import com.lordsofmidnight.utils.enums.Direction;
 import java.awt.geom.Point2D;
@@ -24,6 +25,7 @@ public class EndGameScreen {
 
   private final Image background;
   private final int TARGET_FALL_FRAMES = 120;
+  private final ResourceLoader resourceLoader;
   private Font geoVerySmall = null;
   private Font geoLarge = null;
   private Font geoSmall = null;
@@ -40,12 +42,16 @@ public class EndGameScreen {
   private Double winnerSize;
   private Double awardSize;
   private AnimationTimer fallingAnimation;
+  private ArrayList<Image> gameWinnerImages;
+  private ArrayList<Image> awardWinner1Images;
+  private ArrayList<Image> awardWinner2Images;
 
-  public EndGameScreen(GraphicsContext gc, Image bg) {
+  public EndGameScreen(GraphicsContext gc, ResourceLoader r) {
     this.gc = gc;
     this.xResolution = Settings.getxResolution();
     this.yResolution = Settings.getyResolution();
-    this.background = bg;
+    this.background = r.getBackground();
+    this.resourceLoader = r;
 
     final double fontRatio = 0.1;
     try {
@@ -85,9 +91,9 @@ public class EndGameScreen {
         Collections.max(
             entityArr, Comparator.comparingInt(o -> o.getStatsTracker().getStat(awards[1])));
 
-    gameWinner.setDirection(Direction.DOWN);
-    awardWinner1.setDirection(Direction.DOWN);
-    awardWinner2.setDirection(Direction.DOWN);
+    this.gameWinnerImages = resourceLoader.getEndScreenMip(gameWinner.getClientId(),gameWinner.isMipsman());
+    this.awardWinner1Images = resourceLoader.getEndScreenMip(awardWinner1.getClientId(),awardWinner1.isMipsman());
+    this.awardWinner2Images = resourceLoader.getEndScreenMip(awardWinner2.getClientId(),awardWinner2.isMipsman());
 
     this.winnerSize = getSpriteSize(0.4, gameWinner);
     this.awardSize = getSpriteSize(0.3, awardWinner1);
@@ -119,19 +125,21 @@ public class EndGameScreen {
       }
     };
 
-    long startTime = System.nanoTime();
+
 
     new AnimationTimer(){
       double opacity = 0;
       double opacityIncrement = 0.001;
       long gameOverTime = (long)(3 * Math.pow(10,9));
+      int currentFrame = 0;
       @Override
       public void handle(long now) {
-        if(now > startTime + gameOverTime){
+        if(TARGET_FALL_FRAMES <= currentFrame){
+          gc.clearRect(0,0,xResolution,yResolution);
           this.stop();
           fallingAnimation.start();
         }
-
+        currentFrame++;
         gc.setFill(new Color(1,1,1,0.5));
         if(opacity+opacityIncrement < 1){
           opacity += opacityIncrement;
@@ -152,19 +160,19 @@ public class EndGameScreen {
   private void renderFallFrame(int currentFrame) {
     gc.drawImage(background, 0, 0, xResolution, yResolution);
     gc.drawImage(
-        gameWinner.getImage().get(gameWinner.getCurrentFrame()),
+        gameWinnerImages.get(gameWinner.getCurrentFrame()%gameWinnerImages.size()),
         winnerLocation.getX(),
         winnerLocation.getY() * ((double)currentFrame / TARGET_FALL_FRAMES),
         winnerSize.getX(),
         winnerSize.getY());
     gc.drawImage(
-        awardWinner1.getImage().get(awardWinner1.getCurrentFrame()),
+        awardWinner1Images.get(awardWinner1.getCurrentFrame()%awardWinner1Images.size()),
         award1Location.getX(),
         award1Location.getY() * ((double)currentFrame / TARGET_FALL_FRAMES),
         awardSize.getX(),
         awardSize.getY());
     gc.drawImage(
-        awardWinner2.getImage().get(awardWinner2.getCurrentFrame()),
+        awardWinner2Images.get(awardWinner2.getCurrentFrame()%awardWinner2Images.size()),
         award2Location.getX(),
         award2Location.getY() * ((double)currentFrame / TARGET_FALL_FRAMES),
         awardSize.getX(),

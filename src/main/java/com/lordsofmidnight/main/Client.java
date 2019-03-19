@@ -102,7 +102,7 @@ public class Client extends Application {
     GraphicsContext gc = canvas.getGraphicsContext2D();
     renderer = new Renderer(gc, Settings.getxResolution(), Settings.getyResolution(),
         resourceLoader);
-    endGameScreen = new EndGameScreen(gc,resourceLoader.getBackground());
+    endGameScreen = new EndGameScreen(gc,resourceLoader);
     primaryStage.setScene(mainMenu);
     primaryStage.setMinWidth(1366);
     primaryStage.setMinHeight(768);
