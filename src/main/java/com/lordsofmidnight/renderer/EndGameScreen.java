@@ -39,6 +39,7 @@ public class EndGameScreen {
   private Double award2Location;
   private Double winnerSize;
   private Double awardSize;
+  private AnimationTimer fallingAnimation;
 
   public EndGameScreen(GraphicsContext gc, Image bg) {
     this.gc = gc;
@@ -98,7 +99,7 @@ public class EndGameScreen {
     this.award2Location =
         new Point2D.Double((xResolution * 0.85) - (awardSize.getX() / 2), yResolution * 0.45);
 
-    new AnimationTimer() {
+    this.fallingAnimation = new AnimationTimer() {
       int currentFrame = 0;
 
       @Override
@@ -116,7 +117,35 @@ public class EndGameScreen {
         renderFallFrame(currentFrame);
         currentFrame += 1;
       }
+    };
+
+    long startTime = System.nanoTime();
+
+    new AnimationTimer(){
+      double opacity = 0;
+      double opacityIncrement = 0.001;
+      long gameOverTime = (long)(3 * Math.pow(10,9));
+      @Override
+      public void handle(long now) {
+        if(now > startTime + gameOverTime){
+          this.stop();
+          fallingAnimation.start();
+        }
+
+        gc.setFill(new Color(1,1,1,0.5));
+        if(opacity+opacityIncrement < 1){
+          opacity += opacityIncrement;
+        }
+        gc.setFill(new Color(0,0,0,opacity));
+        gc.fillRect(0,0,xResolution,yResolution);
+        gc.setFill(Color.RED);
+        gc.fillText("GAME OVER",xResolution/2,yResolution/2);
+        gc.setStroke(Color.WHITE);
+        gc.strokeText("GAME OVER",xResolution/2,yResolution/2);
+
+      }
     }.start();
+
   }
 
   private void renderFallFrame(int currentFrame) {
@@ -141,10 +170,15 @@ public class EndGameScreen {
         awardSize.getY());
   }
 
+
+
   private void showAwards(Awards[] awards) {
+
     new AnimationTimer() {
       @Override
       public void handle(long now) {
+        gc.drawImage(background, 0, 0, xResolution, yResolution);
+        renderFallFrame(TARGET_FALL_FRAMES);
         gc.setFill(Color.WHITE);
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setFont(geoLarge);
