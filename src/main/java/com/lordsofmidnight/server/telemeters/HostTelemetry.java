@@ -3,11 +3,6 @@ package com.lordsofmidnight.server.telemeters;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Pellet;
 import com.lordsofmidnight.objects.PowerUpBox;
-import java.util.Queue;
-import java.util.Random;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import com.lordsofmidnight.ai.AILoopControl;
 import com.lordsofmidnight.main.Client;
 import com.lordsofmidnight.objects.Entity;
@@ -18,6 +13,10 @@ import com.lordsofmidnight.utils.Input;
 import com.lordsofmidnight.utils.Methods;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.utils.enums.Direction;
+import java.util.Queue;
+import java.util.Random;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class HostTelemetry extends Telemetry {
 
@@ -170,6 +169,9 @@ public class HostTelemetry extends Telemetry {
       int id = input.getClientID();
       Direction d = input.getMove();
       if (d.equals(Direction.USE)) {
+        if (agents[id].isDead()) {
+          return;
+        }
         agents[id].setPowerUpUsedFlag(false);
         agents[id].setDirectionSetFlag(false);
         usePowerUp(id);
@@ -195,7 +197,6 @@ public class HostTelemetry extends Telemetry {
       informPowerup(id, item, agents[id].getLocation());
     }
   }
-
 
   private int getMipID() {
     for (Entity e : agents) {
