@@ -18,8 +18,9 @@ import com.lordsofmidnight.utils.enums.Direction;
  */
 public class MipsManRouteFinder implements RouteFinder {
 
-  private static final int GHOUL_NEGATIVE_MULTIPLIER = 3;
-  private static final int DEPTH = 20;
+  private static final int GHOUL_NEGATIVE_MULTIPLIER = 2;
+  private static final int PELLET_SEARCH_DEPTH = 25;
+  private static final int GHOUL_SEARCH_DEPTH = 8;
   private PointMap<Pellet> pellets;
   private Entity[] gameAgents;
   private final Map map;
@@ -32,7 +33,7 @@ public class MipsManRouteFinder implements RouteFinder {
 
   @Override
   public Direction getRoute(Point myLocation, Point targetLocation) {
-    SampleSearch sampleSearch = new SampleSearch(DEPTH, map);
+    SampleSearch sampleSearch = new SampleSearch(PELLET_SEARCH_DEPTH, map);
     class GhoulCountCondition implements ConditionalInterface {
       @Override
       public boolean condition(Point position) {
@@ -60,11 +61,12 @@ public class MipsManRouteFinder implements RouteFinder {
         return false;
       }
     }
+    sampleSearch = new SampleSearch(GHOUL_SEARCH_DEPTH, map);
     int[] powerPelletCounts = sampleSearch.getDirectionCounts(myLocation, new PowerPelletCountCondition());
 
-    int[] totals = {0, 0, 0, 0};
-    for (int i = 0; i<ghoulCounts.length; i++) {
-        totals[i] = powerPelletCounts[i]-(ghoulCounts[i]*GHOUL_NEGATIVE_MULTIPLIER);
+    int[] totals = {1, 1, 1, 1};
+    for (int i = 0; i<totals.length; i++) {
+        totals[i] += powerPelletCounts[i]-(ghoulCounts[i]*GHOUL_NEGATIVE_MULTIPLIER);
     }
 
     return maxDirection(totals);
@@ -72,18 +74,18 @@ public class MipsManRouteFinder implements RouteFinder {
 
   private Direction maxDirection(int[] totals) {
       int firstTwoIndex;
-      if (totals[0]>totals[1]) {
-          firstTwoIndex = 0;
+      if (totals[Direction.UP.toInt()]>totals[Direction.DOWN.toInt()]) {
+          firstTwoIndex = Direction.UP.toInt();
       }
       else {
-          firstTwoIndex = 1;
+          firstTwoIndex = Direction.DOWN.toInt();
       }
       int secondTwoIndex;
-      if (totals[2]>totals[3]) {
-          secondTwoIndex = 2;
+      if (totals[Direction.LEFT.toInt()]>totals[Direction.RIGHT.toInt()]) {
+          secondTwoIndex = Direction.LEFT.toInt();
       }
       else {
-          secondTwoIndex = 3;
+          secondTwoIndex = Direction.RIGHT.toInt();
       }
       if (totals[firstTwoIndex]>totals[secondTwoIndex]) {
           return Direction.fromInt(firstTwoIndex);

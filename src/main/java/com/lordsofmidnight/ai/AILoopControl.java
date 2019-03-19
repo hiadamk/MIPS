@@ -28,10 +28,8 @@ import java.util.concurrent.BlockingQueue;
  */
 public class AILoopControl extends Thread {
 
-    //private static final boolean DEBUG = false;
-
-    private static final int POWER_UP_USE_PROBABILITY = 10;
-    private static final int SPEED_POWER_UP_ACTIVATE_DEPTH = 20;
+    private static final int POWER_UP_USE_PROBABILITY = 10;         //chance that a powerUp is used
+    private static final int SPEED_POWER_UP_ACTIVATE_DEPTH = 20;    //distance at which the AI will use a speed boost when in proximity to MIPSMan
     private static final int INVINCIBILITY_AVOID_DISTANCE = 20;
     private static final int INVINCIBILITY_PREFER_MULTIPLIER = 2;
     private static final int OPPOSITE_DIRECTION_DIVISOR = 4;
@@ -71,11 +69,14 @@ public class AILoopControl extends Thread {
         this.map = map;
         this.pellets = pellets;
 
+        //generateEasyRouteFinders();
+        //generateHardRouteFinders();
         generateRouteFinders();
         correctMipsmanRouteFinder();
         assignControlEntities(controlIds);
     }
 
+    /**The main AI loop*/
     @Override
     public void run() {
         System.out.println("Starting AI loop...");
@@ -178,6 +179,36 @@ public class AILoopControl extends Thread {
                 }
                 default: {
                     routeFinder = new RandomRouteFinder();
+                    break;
+                }
+            }
+            gameAgents[i].setRouteFinder(routeFinder);
+        }
+    }
+
+    private void generateEasyRouteFinders() {
+        for (int i = 0; i < gameAgents.length; i++) {
+            RouteFinder routeFinder;
+            switch (i) {
+                default: {
+                    routeFinder = new RandomRouteFinder();
+                    break;
+                }
+            }
+            gameAgents[i].setRouteFinder(routeFinder);
+        }
+    }
+
+    private void generateHardRouteFinders() {
+        for (int i = 0; i < gameAgents.length; i++) {
+            RouteFinder routeFinder;
+            switch (i) {
+                case 0: {
+                    routeFinder = new MipsManRouteFinder(pellets, gameAgents, map);
+                    break;
+                }
+                default: {
+                    routeFinder = new AStarRouteFinder(junctions, edges, map);
                     break;
                 }
             }
@@ -361,7 +392,7 @@ public class AILoopControl extends Thread {
         }
         if ((oldDirection==null ||oldDirection.getInverse()==dir) && validDirections.size()>1) {
             int randI = r.nextInt(OPPOSITE_DIRECTION_DIVISOR);
-            if (randI==0) {
+            if (randI == 0) {
                 return dir;
             }
             validDirections.remove(dir);
