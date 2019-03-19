@@ -2,6 +2,8 @@ package com.lordsofmidnight.server;
 
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.objects.Entity;
+import com.lordsofmidnight.objects.Pellet;
+import com.lordsofmidnight.objects.PowerUpBox;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
 import com.lordsofmidnight.utils.Input;
 import com.lordsofmidnight.utils.enums.Direction;
@@ -135,7 +137,7 @@ public class NetworkUtility {
    * @return The string packet.
    */
   public static String makeEntitiyMovementPacket(Input input, Point position, int mipID) {
-    return "POS1"
+    return POSITION_CODE+1
         + input.toString()
         + "|"
         + coordFormat.format(position.getX())
@@ -168,7 +170,7 @@ public class NetworkUtility {
    * @return The string packet.
    */
   public static String makeEntitiesPositionPacket(Entity[] agents) {
-    String s = "POS3"; // id:X:Y|id:X:Y|id:X:Y...
+    String s = POSITION_CODE+3; // id:X:Y|id:X:Y|id:X:Y...
     for (int i = 0; i < agents.length; i++) {
       s +=
           i
@@ -221,6 +223,28 @@ public class NetworkUtility {
         + coordFormat.format(position.getY());
   }
 
+
+
+  /**
+   * Makes the packet of all the clients's inventory contents
+   *
+   * @param agents the list of players
+   * * @return The string packet.
+   */
+  public static String makeInventoryPacket(Entity[] agents) {
+    String s = POWERUP_CODE+0; // |0:2|.
+    for (int i = 0; i < agents.length; i++) {
+      s += "|"
+          +i
+          + ":"
+          + agents[i].getItems().peek().toInt();
+    }
+    return s;
+  }
+
+
+
+
   /**
    * Makes the packet to send to the client that a powerup has been used
    *
@@ -230,7 +254,7 @@ public class NetworkUtility {
    * @return The string packet.
    */
   public static String makePowerUpPacket(int id, PowerUp powerup, Point position) {
-    return "POW1"
+    return POWERUP_CODE + 1
         + id
         + "|"
         + powerup.toInt()
@@ -239,6 +263,21 @@ public class NetworkUtility {
         + "|"
         + coordFormat.format(position.getY());
   }
+
+
+  /**
+   * Makes the packet to send to the client that a powerup box exists somewhere
+   *
+   * @param position the powerup box location
+   * @return The string packet.
+   */
+  public static String makePowerUpBoxPacket(Point position) {
+    return POWERUP_CODE + 2
+        + coordFormat.format(position.getX())
+        + "|"
+        + coordFormat.format(position.getY());
+  }
+
 
   /**
    * Makes the packet to send to the clients of the current scoreboard

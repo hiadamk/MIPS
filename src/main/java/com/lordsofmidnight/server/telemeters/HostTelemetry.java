@@ -1,5 +1,8 @@
 package com.lordsofmidnight.server.telemeters;
 
+import com.lordsofmidnight.gamestate.points.PointMap;
+import com.lordsofmidnight.objects.Pellet;
+import com.lordsofmidnight.objects.PowerUpBox;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
@@ -39,6 +42,32 @@ public class HostTelemetry extends Telemetry {
     initialise();
     //    startGame();
   }
+  @Override
+   void initialisePellets() {
+     Pellet pellet;
+     Random r = new Random();
+     pellets = new PointMap<>(map);
+     for (int i = 0; i < map.getMaxX(); i++) {
+       for (int j = 0; j < map.getMaxY(); j++) {
+         Point point = new Point(i + 0.5, j + 0.5);
+         if (!map.isWall(point)) {
+           if (r.nextInt(30) == 1)  {
+             pellet =  new PowerUpBox(point);
+             informPowerupBox(point);
+           }
+           else{
+             pellet = new Pellet(point);
+           }
+           pellet.updateImages(resourceLoader);
+           pellets.put(new Point(i, j), pellet);
+         }
+       }
+     }
+   }
+
+
+
+
 
   /**
    * Single Player Constructor
@@ -108,6 +137,7 @@ public class HostTelemetry extends Telemetry {
         new GameLoop(positionDELAY) {
           @Override
           public void handle() {
+            updateInventories(agents);
             updateClients(agents);
           }
         };
@@ -158,19 +188,14 @@ public class HostTelemetry extends Telemetry {
   }
 
   private void usePowerUp(int id) {
-    // TODO : implement
     System.out.println("POWERUP USED PLAYER: " + id);
     PowerUp item;
     if ((item = agents[id].getFirstItem()) != null) {
       item.use(agents[id], activePowerUps, pellets, agents);
+      informPowerup(id, item, agents[id].getLocation());
     }
-    // TODO if player has powerup, do this:
-    //   informPowerup(id, powerup, com.lordsofmidnight.gamestate);
   }
 
-  private void informClients(Input input, Point location) {
-    outputs.add(NetworkUtility.makeEntitiyMovementPacket(input, location, getMipID()));
-  }
 
   private int getMipID() {
     for (Entity e : agents) {
@@ -194,6 +219,14 @@ public class HostTelemetry extends Telemetry {
     outputs.add(NetworkUtility.makePowerUpPacket(id, powerup, location));
   }
 
+  private void informPowerupBox(Point point) {
+    outputs.add(NetworkUtility.makePowerUpBoxPacket(point));
+  }
+
+  private void updateInventories(Entity[] agents){
+    outputs.add(NetworkUtility.makeInventoryPacket(agents));
+  }
+
   private void updateScores(Entity[] agents) {
     outputs.add(NetworkUtility.makeScorePacket(agents));
   }
@@ -201,4 +234,9 @@ public class HostTelemetry extends Telemetry {
   private void updateClients(Entity[] agents) {
     outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents) + getMipID());
   }
+
+  private void informClients(Input input, Point location) {
+    outputs.add(NetworkUtility.makeEntitiyMovementPacket(input, location, getMipID()));
+  }
+
 }

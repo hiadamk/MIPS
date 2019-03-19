@@ -73,6 +73,7 @@ public class Client extends Application {
 
   public void setId(int id) {
     this.id = id;
+    this.telemetry.setClientID(id);
     this.renderer.setClientID(id);
   }
 

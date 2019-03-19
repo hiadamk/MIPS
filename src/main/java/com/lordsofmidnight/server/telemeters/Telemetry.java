@@ -33,7 +33,8 @@ public abstract class Telemetry {
   }
 
   protected int gameTimer = GAME_TIME;
-  Map map;
+  protected int clientID;
+  protected Map map;
   Entity[] agents;
   PointMap<Pellet> pellets;
   ResourceLoader resourceLoader;
@@ -59,6 +60,8 @@ public abstract class Telemetry {
   public abstract void startGame();
 
   abstract void processInputs();
+
+  abstract void initialisePellets();
 
   public abstract void stopGame();
 
@@ -196,20 +199,6 @@ public abstract class Telemetry {
 
   // physics engine
 
-  void initialisePellets() {
-    Random r = new Random();
-    pellets = new PointMap<>(map);
-    for (int i = 0; i < map.getMaxX(); i++) {
-      for (int j = 0; j < map.getMaxY(); j++) {
-        Point point = new Point(i + 0.5, j + 0.5);
-        if (!map.isWall(point)) {
-          Pellet pellet = r.nextInt(30) == 1 ? new PowerUpBox(point) : new Pellet(point);
-          pellet.updateImages(resourceLoader);
-          pellets.put(new Point(i, j), pellet);
-        }
-      }
-    }
-  }
 
   static void invincibleCollision(Entity killer, Entity victim, ResourceLoader r) {
     if (killer.isDead() || victim.isDead()) {
@@ -277,5 +266,9 @@ public abstract class Telemetry {
 
   public ConcurrentHashMap<UUID, PowerUp> getActivePowerUps() {
     return activePowerUps;
+  }
+
+  public void setClientID(int clientID) {
+    this.clientID = clientID;
   }
 }
