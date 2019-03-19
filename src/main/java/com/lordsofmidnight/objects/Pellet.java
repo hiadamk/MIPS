@@ -21,7 +21,7 @@ public class Pellet implements Renderable {
 
   protected Point location;
   protected ArrayList<Image> currentImage;
-  protected int respawntime = 4500;
+  protected int respawntime = 2000;
   protected boolean active; // Whether or not the item is visible and able to be interacted with\
   protected int value = 1;
   protected com.lordsofmidnight.objects.powerUps.PowerUp trap;
@@ -104,13 +104,14 @@ public class Pellet implements Renderable {
   /**
    * Called every physics update to increment the counter for respawn
    */
-  public void incrementRespawn() {
+  public boolean incrementRespawn() {
     if (!active) {
       respawnCount++;
     }
     if (respawnCount == respawntime) {
-      this.active = true;
+      return true;
     }
+    return false;
   }
 
   public boolean isTrap() {
