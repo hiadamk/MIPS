@@ -25,7 +25,7 @@ public abstract class Telemetry {
 
 
   static final int AGENT_COUNT = 5;
-  static final int GAME_TIME = 5 * 100; // Number of seconds *100
+  static final int GAME_TIME = 150 * 100; // Number of seconds *100
 
   public int getGameTimer() {
     return gameTimer;

@@ -1,5 +1,7 @@
 package com.lordsofmidnight.utils;
 
+import com.lordsofmidnight.renderer.SpriteSheetData;
+import com.lordsofmidnight.renderer.SpriteSheetData.SpriteDimensions;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -28,8 +30,6 @@ public class ResourceLoader {
   private int yResolution = Settings.getyResolution();
   private String theme = Settings.getTheme();
 
-  private final int spriteWidth = 39;
-  private final int spriteHeight = 36;
   private Map map;
   private ArrayList<ArrayList<BufferedImage>> mipSprites;
   private ArrayList<ArrayList<BufferedImage>> mipOutlineSprites;
@@ -233,6 +233,7 @@ public class ResourceLoader {
     this.yResolution = y;
     this.renderingMode = r;
     this.theme = theme;
+    SpriteSheetData.updateSpriteDimensions(new File(BASE_DIR +"sprites/" + theme + "/SHEET_DATA.txt"));
     setResolution();
   }
 
@@ -344,6 +345,8 @@ public class ResourceLoader {
     BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "mip");
     BufferedImage sprites = extractColour(spriteSheet, getOutlineColour(spriteSheet), true);
     BufferedImage outlineSprites = extractColour(spriteSheet, getOutlineColour(spriteSheet), false);
+    int spriteWidth = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_WIDTH);
+    int spriteHeight = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_HEIGHT);
     this.mipSprites = splitSpriteSheet(spriteWidth, spriteHeight, sprites);
     this.mipOutlineSprites = splitSpriteSheet(spriteWidth, spriteHeight, outlineSprites);
     this.mipPalette = loadImageFile("sprites/" + theme + "/playable/", "mip_palette");
@@ -376,6 +379,8 @@ public class ResourceLoader {
     BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "ghoul");
     BufferedImage sprites = extractColour(spriteSheet, getOutlineColour(spriteSheet), true);
     BufferedImage outlineSprites = extractColour(spriteSheet, getOutlineColour(spriteSheet), false);
+    int spriteWidth = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_WIDTH);
+    int spriteHeight = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_HEIGHT);
     this.ghoulSprites = splitSpriteSheet(spriteWidth, spriteHeight, sprites);
     this.ghoulOutlineSprites = splitSpriteSheet(spriteWidth, spriteHeight, outlineSprites);
     this.ghoulPalette = loadImageFile("sprites/" + theme + "/playable/", "ghoul_palette");
@@ -502,19 +507,23 @@ public class ResourceLoader {
     HashMap<PowerUp, ArrayList<BufferedImage>> powerUps = new HashMap<>();
 
     // add web powerup
+    int webWidth = SpriteSheetData.getDimension(SpriteDimensions.POWERUP_WEB_WIDTH);
+    int webHeight = SpriteSheetData.getDimension(SpriteDimensions.POWERUP_WEB_HEIGHT);
     powerUps.put(
         PowerUp.WEB,
-        splitSpriteSheet(39, 37, loadImageFile("sprites/" + theme + "/powerups/", "web")).get(0));
+        splitSpriteSheet(webWidth, webHeight, loadImageFile("sprites/" + theme + "/powerups/", "web")).get(0));
 
     // add speedup powerup
+    int spriteWidth = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_WIDTH);
+    int spriteHeight = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_HEIGHT);
     BufferedImage speedAnimation =
         transparentizeSprite(loadImageFile("sprites/" + theme + "/powerups/", "speed"));
-    powerUps.put(PowerUp.SPEED, splitSpriteSheet(39, 36, speedAnimation).get(0));
+    powerUps.put(PowerUp.SPEED, splitSpriteSheet(spriteWidth, spriteHeight, speedAnimation).get(0));
 
     // add invincible powerup
     BufferedImage invincibleAnimation =
         transparentizeSprite(loadImageFile("sprites/" + theme + "/powerups/", "invincible"));
-    powerUps.put(PowerUp.INVINCIBLE, splitSpriteSheet(39, 36, invincibleAnimation).get(0));
+    powerUps.put(PowerUp.INVINCIBLE, splitSpriteSheet(spriteWidth, spriteHeight, invincibleAnimation).get(0));
 
     this.powerUps = powerUps;
   }
@@ -541,8 +550,10 @@ public class ResourceLoader {
 
   public void loadRocketImages(){
     BufferedImage rockets = loadImageFile("sprites/" + theme + "/fx/", "rocket");
-    this.upRockets = splitSpriteSheet(20,30,rockets).get(0);
-    this.downRockets = splitSpriteSheet(20,30,flipImage(rockets)).get(0);
+    int rocketWidth = SpriteSheetData.getDimension(SpriteDimensions.POWERUP_ROCKET_WIDTH);
+    int rocketHeight = SpriteSheetData.getDimension(SpriteDimensions.POWERUP_ROCKET_HEIGHT);
+    this.upRockets = splitSpriteSheet(rocketWidth,rocketHeight,rockets).get(0);
+    this.downRockets = splitSpriteSheet(rocketWidth,rocketHeight,flipImage(rockets)).get(0);
   }
 
   public ArrayList<Image> getRocketImages(boolean flipped) {
