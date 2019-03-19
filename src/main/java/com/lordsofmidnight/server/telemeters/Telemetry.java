@@ -1,7 +1,7 @@
 package com.lordsofmidnight.server.telemeters;
 
-import java.util.*;
-
+import com.lordsofmidnight.gamestate.maps.Map;
+import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.main.Client;
 import com.lordsofmidnight.objects.Entity;
@@ -10,11 +10,12 @@ import com.lordsofmidnight.objects.PowerUpBox;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
 import com.lordsofmidnight.utils.GameLoop;
 import com.lordsofmidnight.utils.Input;
-import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.utils.Methods;
-import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.utils.ResourceLoader;
 import com.lordsofmidnight.utils.enums.Direction;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -206,6 +207,9 @@ public abstract class Telemetry {
   }
 
   static void invincibleCollision(Entity killer, Entity victim, ResourceLoader r) {
+    if (killer.isDead() || victim.isDead()) {
+      return;
+    }
     Point killerLocation = killer.getFaceLocation();
     Point victimLocation = victim.getLocation();
     if (victimLocation.inRange(killerLocation)) {
@@ -223,6 +227,9 @@ public abstract class Telemetry {
    */
   private static void detectEntityCollision(
       Entity mipsman, Entity ghoul, ResourceLoader resourceLoader) {
+    if (mipsman.isDead() || ghoul.isDead()) {
+      return;
+    }
     Point mipsmanCenter = mipsman.getLocation();
     Point ghoulFace = ghoul.getFaceLocation();
 
