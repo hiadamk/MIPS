@@ -35,7 +35,7 @@ public class PowerUpBox extends Pellet {
   }
 
   private void init() {
-    this.respawntime = 300;
+    //this.respawntime = 300;
     this.value = 0;
     // Init ghost item weights
     HashMap<Integer, PowerUp> map = new HashMap<>();

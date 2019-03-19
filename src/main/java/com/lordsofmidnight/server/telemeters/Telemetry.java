@@ -154,9 +154,14 @@ public abstract class Telemetry {
     }
 
     pelletCollision(agents, pellets, activePowerUps);
-
-    for (Pellet p : pellets.values()) {
-      p.incrementRespawn();
+    Random r = new Random();
+    for (Point p : pellets.keySet()) {
+      Pellet currentPellet = pellets.get(p);
+      if(currentPellet.incrementRespawn()){
+        Point point = new Point(p.getX()+0.5,p.getY()+0.5);
+        Pellet pellet = r.nextInt(30) == 1 ? new PowerUpBox(point) : new Pellet(point);
+        pellets.put(p,pellet);
+      }
     }
 
 
