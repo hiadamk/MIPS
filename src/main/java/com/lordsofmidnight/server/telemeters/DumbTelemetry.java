@@ -1,11 +1,14 @@
 package com.lordsofmidnight.server.telemeters;
 
+import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.EmptyPowerUpBox;
 import com.lordsofmidnight.objects.Pellet;
 import com.lordsofmidnight.objects.PowerUpBox;
+import com.lordsofmidnight.utils.ResourceLoader;
 import java.util.Queue;
 import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import com.lordsofmidnight.main.Client;
 import com.lordsofmidnight.objects.Entity;
@@ -15,6 +18,7 @@ import com.lordsofmidnight.utils.GameLoop;
 import com.lordsofmidnight.utils.Input;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.utils.enums.Direction;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DumbTelemetry extends Telemetry {
 
@@ -39,6 +43,7 @@ public class DumbTelemetry extends Telemetry {
   }
 
   //populates the map with pellets
+  @Override
    void initialisePellets() {
       Pellet pellet;
       pellets = new PointMap<>(map);
@@ -53,6 +58,26 @@ public class DumbTelemetry extends Telemetry {
         }
       }
     }
+
+
+  @Override
+  void processPhysics(
+      Entity[] agents,
+      Map m,
+      ResourceLoader resourceLoader,
+      PointMap<Pellet> pellets,
+      ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
+
+    super.processPhysics(agents, m,resourceLoader, pellets, activePowerUps);
+
+    for (Point p : pellets.keySet()) {
+      Pellet currentPellet = pellets.get(p);
+      if(currentPellet.incrementRespawn()){
+        Point point = new Point(p.getX()+0.5,p.getY()+0.5);
+          pellets.put(p,new Pellet(point));
+      }
+    }
+  }
 
   // Not needed as the only input received is from com.lordsofmidnight.server and not from client.
   public void addInput(Input in) {
@@ -202,6 +227,8 @@ public class DumbTelemetry extends Telemetry {
     String[] ls = s.split("\\|");
     double x = Double.valueOf(ls[0]);
     double y = Double.valueOf(ls[1]);
+    //remove pellet if one is there
+    pellets.remove(new Point(x,y));
     new EmptyPowerUpBox(new Point(x,y));
   }
 

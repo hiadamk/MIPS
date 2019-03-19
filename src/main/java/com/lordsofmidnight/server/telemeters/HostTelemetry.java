@@ -1,5 +1,6 @@
 package com.lordsofmidnight.server.telemeters;
 
+import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Pellet;
 import com.lordsofmidnight.objects.PowerUpBox;
@@ -12,10 +13,13 @@ import com.lordsofmidnight.utils.GameLoop;
 import com.lordsofmidnight.utils.Input;
 import com.lordsofmidnight.utils.Methods;
 import com.lordsofmidnight.gamestate.points.Point;
+import com.lordsofmidnight.utils.ResourceLoader;
 import com.lordsofmidnight.utils.enums.Direction;
 import java.util.Queue;
 import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class HostTelemetry extends Telemetry {
@@ -41,32 +45,6 @@ public class HostTelemetry extends Telemetry {
     initialise();
     //    startGame();
   }
-  @Override
-   void initialisePellets() {
-     Pellet pellet;
-     Random r = new Random();
-     pellets = new PointMap<>(map);
-     for (int i = 0; i < map.getMaxX(); i++) {
-       for (int j = 0; j < map.getMaxY(); j++) {
-         Point point = new Point(i + 0.5, j + 0.5);
-         if (!map.isWall(point)) {
-           if (r.nextInt(30) == 1)  {
-             pellet =  new PowerUpBox(point);
-             informPowerupBox(point);
-           }
-           else{
-             pellet = new Pellet(point);
-           }
-           pellet.updateImages(resourceLoader);
-           pellets.put(new Point(i, j), pellet);
-         }
-       }
-     }
-   }
-
-
-
-
 
   /**
    * Single Player Constructor
@@ -188,6 +166,57 @@ public class HostTelemetry extends Telemetry {
       }
     }
   }
+
+  @Override
+      void processPhysics(
+  Entity[] agents,
+  Map m,
+  ResourceLoader resourceLoader,
+  PointMap<Pellet> pellets,
+  ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
+
+    super.processPhysics(agents, m,resourceLoader, pellets, activePowerUps);
+
+    Random r = new Random();
+    Pellet pellet;
+    for (Point p : pellets.keySet()) {
+      Pellet currentPellet = pellets.get(p);
+      if(currentPellet.incrementRespawn()){
+        Point point = new Point(p.getX()+0.5,p.getY()+0.5);
+        if (r.nextInt(30) == 1 ){
+          pellet = new PowerUpBox(point);
+          informPowerupBox(point);
+        }else{
+          pellet = new Pellet(point);
+        }
+        pellets.put(p,pellet);
+      }
+    }
+  }
+
+  @Override
+  void initialisePellets() {
+    Pellet pellet;
+    Random r = new Random();
+    pellets = new PointMap<>(map);
+    for (int i = 0; i < map.getMaxX(); i++) {
+      for (int j = 0; j < map.getMaxY(); j++) {
+        Point point = new Point(i + 0.5, j + 0.5);
+        if (!map.isWall(point)) {
+          if (r.nextInt(30) == 1)  {
+            pellet =  new PowerUpBox(point);
+            informPowerupBox(point);
+          }
+          else{
+            pellet = new Pellet(point);
+          }
+          pellet.updateImages(resourceLoader);
+          pellets.put(new Point(i, j), pellet);
+        }
+      }
+    }
+  }
+
 
   private void usePowerUp(int id) {
     System.out.println("POWERUP USED PLAYER: " + id);
