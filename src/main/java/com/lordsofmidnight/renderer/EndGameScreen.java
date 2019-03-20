@@ -45,6 +45,7 @@ public class EndGameScreen {
   private ArrayList<Image> gameWinnerImages;
   private ArrayList<Image> awardWinner1Images;
   private ArrayList<Image> awardWinner2Images;
+  private AnimationTimer awardScreen;
 
   public EndGameScreen(GraphicsContext gc, ResourceLoader r) {
     this.gc = gc;
@@ -183,7 +184,7 @@ public class EndGameScreen {
 
   private void showAwards(Awards[] awards) {
 
-    new AnimationTimer() {
+    this.awardScreen = new AnimationTimer() {
       @Override
       public void handle(long now) {
         gc.drawImage(background, 0, 0, xResolution, yResolution);
@@ -211,9 +212,14 @@ public class EndGameScreen {
         gc.fillText(Awards.MOST_POINTS.getMessage(gameWinner.getScore()),winnerLocation.getX()+winnerSize.getX()/2,winnerY+0.2*yResolution);
         gc.fillText(awards[0].getMessage(awardWinner1.getStatsTracker().getStat(awards[0])),award1Location.getX()+awardSize.getX()/2,winnerY+0.2*yResolution);
       }
-    }.start();
+    };
+    awardScreen.start();
 
 
+  }
+
+  public void StopEndScreen(){
+    this.awardScreen.stop();
   }
 
   private Point2D.Double getSpriteSize(double ratio, Entity e) {
