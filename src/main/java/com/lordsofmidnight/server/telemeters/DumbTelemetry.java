@@ -59,26 +59,6 @@ public class DumbTelemetry extends Telemetry {
       }
     }
 
-
-  @Override
-  void processPhysics(
-      Entity[] agents,
-      Map m,
-      ResourceLoader resourceLoader,
-      PointMap<Pellet> pellets,
-      ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
-
-    super.processPhysics(agents, m,resourceLoader, pellets, activePowerUps);
-
-    for (Point p : pellets.keySet()) {
-      Pellet currentPellet = pellets.get(p);
-      if(currentPellet.incrementRespawn()){
-        Point point = new Point(p.getX()+0.5,p.getY()+0.5);
-          pellets.put(p,new Pellet(point));
-      }
-    }
-  }
-
   // Not needed as the only input received is from com.lordsofmidnight.server and not from client.
   public void addInput(Input in) {
     System.err.println("DumbTelemetry receiving inputs");
@@ -215,9 +195,18 @@ public class DumbTelemetry extends Telemetry {
     for (String inventory : inventories) {
       String[] ls = inventory.split(":");
       int id = Integer.parseInt(ls[0]);
-      int pint = Integer.parseInt(ls[1]);
-      if (id == clientID) {
-        agents[id].giveItem(PowerUp.fromInt(pint));
+      switch (ls.length) {
+        case 1:
+          agents[id].setItems();
+          break;
+        case 2:
+          agents[id].setItems(Integer.parseInt(ls[1]));
+          break;
+        case 3:
+          agents[id].setItems(Integer.parseInt(ls[1]), Integer.parseInt(ls[2]));
+          break;
+        default:
+          throw new IndexOutOfBoundsException();
       }
     }
   }
@@ -227,16 +216,17 @@ public class DumbTelemetry extends Telemetry {
     String[] ls = s.split("\\|");
     double x = Double.valueOf(ls[0]);
     double y = Double.valueOf(ls[1]);
-    //remove pellet if one is there
-    pellets.remove(new Point(x,y));
-    new EmptyPowerUpBox(new Point(x,y));
+    Point point = new Point(x,y);
+    pellets.remove(point);
+    EmptyPowerUpBox pellet = new EmptyPowerUpBox(point);
+    pellet.updateImages(resourceLoader);
+    pellets.put(point, pellet);
   }
 
   // takes a packet string as defined in
   // NetworkUtility.makePowerUPPacket(Input, Point)
   // without the starting POW1 code
   private void activatePowerup(String s) {
-    System.out.println("Powerup String to handle: " + s);
     String[] ls = s.split("\\|");
 
     int id = Integer.parseInt(ls[0]);

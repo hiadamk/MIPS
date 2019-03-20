@@ -158,6 +158,10 @@ public abstract class Telemetry {
     }
 
     pelletCollision(agents, pellets, activePowerUps);
+    for (Pellet p : pellets.values()) {
+      p.incrementRespawn();
+
+    }
 
 
     ArrayList<UUID> toRemove = new ArrayList<>();

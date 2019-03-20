@@ -41,7 +41,7 @@ public class Point {
       this.MAX_Y = defaultMaxY;
       this.MAPPED = true;
     } else {
-      System.err.println("Warning: Point has no reference to map");
+      //System.err.println("Warning: Point has no reference to map");
       this.MAX_X = 0;
       this.MAX_Y = 0;
       this.MAPPED = false;

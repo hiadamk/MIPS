@@ -30,6 +30,7 @@ public class HostTelemetry extends Telemetry {
   private boolean singlePlayer;
   private AILoopControl ai;
   private boolean aiRunning;
+  private GameLoop inventoryUpdater;
   // GameLoop inputProcessor;
 
   /**
@@ -114,11 +115,19 @@ public class HostTelemetry extends Telemetry {
         new GameLoop(positionDELAY) {
           @Override
           public void handle() {
-            updateInventories(agents);
             updateClients(agents);
           }
         };
     positionUpdater.start();
+
+    inventoryUpdater =
+        new GameLoop(positionDELAY) {
+          @Override
+          public void handle() {
+            updateInventories(agents);
+          }
+        };
+    inventoryUpdater.start();
 
     scoreUpdater =
         new GameLoop(scoreDELAY) {
@@ -167,32 +176,7 @@ public class HostTelemetry extends Telemetry {
     }
   }
 
-  @Override
-      void processPhysics(
-  Entity[] agents,
-  Map m,
-  ResourceLoader resourceLoader,
-  PointMap<Pellet> pellets,
-  ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
 
-    super.processPhysics(agents, m,resourceLoader, pellets, activePowerUps);
-
-    Random r = new Random();
-    Pellet pellet;
-    for (Point p : pellets.keySet()) {
-      Pellet currentPellet = pellets.get(p);
-      if(currentPellet.incrementRespawn()){
-        Point point = new Point(p.getX()+0.5,p.getY()+0.5);
-        if (r.nextInt(30) == 1 ){
-          pellet = new PowerUpBox(point);
-          informPowerupBox(point);
-        }else{
-          pellet = new Pellet(point);
-        }
-        pellets.put(p,pellet);
-      }
-    }
-  }
 
   @Override
   void initialisePellets() {
@@ -242,6 +226,7 @@ public class HostTelemetry extends Telemetry {
     inputProcessor.close();
     positionUpdater.close();
     scoreUpdater.close();
+    inventoryUpdater.close();
     ai.killAI();
   }
 
