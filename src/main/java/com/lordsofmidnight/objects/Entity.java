@@ -1,17 +1,17 @@
 package com.lordsofmidnight.objects;
 
 import com.lordsofmidnight.ai.routefinding.RouteFinder;
+import com.lordsofmidnight.gamestate.points.Point;
+import com.lordsofmidnight.objects.powerUps.PowerUp;
+import com.lordsofmidnight.utils.Renderable;
+import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.utils.StatsTracker;
+import com.lordsofmidnight.utils.enums.Direction;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javafx.scene.image.Image;
-import com.lordsofmidnight.objects.powerUps.PowerUp;
-import com.lordsofmidnight.gamestate.points.Point;
-import com.lordsofmidnight.utils.Renderable;
-import com.lordsofmidnight.utils.ResourceLoader;
-import com.lordsofmidnight.utils.StatsTracker;
-import com.lordsofmidnight.utils.enums.Direction;
 
 /**
  * Encapsulation of agent on map Represents both MIPS and Ghouls, as they are interchangeable. Can
@@ -464,6 +464,9 @@ public class Entity implements Renderable {
     }
   }
 
+  public void increasePointsStolen(int i) {
+    statsTracker.increasePointsStolen(i);
+  }
   public String getName() {
     return name;
   }
