@@ -11,6 +11,8 @@ public class SpriteSheetData {
   public enum SpriteDimensions{
     PLAYABLE_SPRITE_WIDTH("PLAYABLE_SPRITE_WIDTH"),
     PLAYABLE_SPRITE_HEIGHT("PLAYABLE_SPRITE_HEIGHT"),
+    END_SPRITE_WIDTH("END_SPRITE_WIDTH"),
+    END_SPRITE_HEIGHT("END_SPRITE_HEIGHT"),
     POWERUP_WEB_WIDTH("POWERUP_WEB_WIDTH"),
     POWERUP_WEB_HEIGHT("POWERUP_WEB_HEIGHT"),
     POWERUP_ROCKET_WIDTH("POWERUP_ROCKET_WIDTH"),
@@ -31,6 +33,8 @@ public class SpriteSheetData {
   private static HashMap<String,Integer> spriteSheetDimensions = new HashMap<String,Integer>() {{
     put(SpriteDimensions.PLAYABLE_SPRITE_WIDTH.getIdentifier(), 39);
     put(SpriteDimensions.PLAYABLE_SPRITE_HEIGHT.getIdentifier(), 36);
+    put(SpriteDimensions.END_SPRITE_WIDTH.getIdentifier(), 156);
+    put(SpriteDimensions.END_SPRITE_HEIGHT.getIdentifier(), 144);
     put(SpriteDimensions.POWERUP_WEB_WIDTH.getIdentifier(),39);
     put(SpriteDimensions.POWERUP_WEB_HEIGHT.getIdentifier(),37);
     put(SpriteDimensions.POWERUP_ROCKET_WIDTH.getIdentifier(),20);
@@ -48,7 +52,6 @@ public class SpriteSheetData {
       reader = new BufferedReader(new FileReader(dimensionsFile));
       String line = reader.readLine();
       while (line != null) {
-        System.out.println(line);
         String key = line.substring(0,line.indexOf("="));
         if(dimensionKeys.contains(key)){
           String value = line.substring(line.indexOf("=")+1,line.length());

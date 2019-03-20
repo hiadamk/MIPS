@@ -1,6 +1,14 @@
 package com.lordsofmidnight.server.telemeters;
 
+import com.lordsofmidnight.gamestate.maps.Map;
+import com.lordsofmidnight.gamestate.points.PointMap;
+import com.lordsofmidnight.objects.EmptyPowerUpBox;
+import com.lordsofmidnight.objects.Pellet;
+import com.lordsofmidnight.objects.PowerUpBox;
+import com.lordsofmidnight.utils.ResourceLoader;
 import java.util.Queue;
+import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import com.lordsofmidnight.main.Client;
 import com.lordsofmidnight.objects.Entity;
@@ -10,6 +18,7 @@ import com.lordsofmidnight.utils.GameLoop;
 import com.lordsofmidnight.utils.Input;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.utils.enums.Direction;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DumbTelemetry extends Telemetry {
 
@@ -32,6 +41,23 @@ public class DumbTelemetry extends Telemetry {
     initialiseEntities();
     initialisePellets();
   }
+
+  //populates the map with pellets
+  @Override
+   void initialisePellets() {
+      Pellet pellet;
+      pellets = new PointMap<>(map);
+      for (int i = 0; i < map.getMaxX(); i++) {
+        for (int j = 0; j < map.getMaxY(); j++) {
+          Point point = new Point(i + 0.5, j + 0.5);
+          if (!map.isWall(point)) {
+            pellet = new Pellet(point);
+            pellet.updateImages(resourceLoader);
+            pellets.put(new Point(i, j), pellet);
+          }
+        }
+      }
+    }
 
   // Not needed as the only input received is from com.lordsofmidnight.server and not from client.
   public void addInput(Input in) {
@@ -66,8 +92,14 @@ public class DumbTelemetry extends Telemetry {
         case "POS3":
           setEntityPositions(input.substring(4));
           break;
+        case "POW0":
+          updateInventory(input.substring(5));
+        break;
         case "POW1":
           activatePowerup(input.substring(4));
+          break;
+        case "POW2":
+          setPowerupBox(input.substring(4));
           break;
         case "SCOR":
           setScore(input.substring(5));
@@ -80,6 +112,8 @@ public class DumbTelemetry extends Telemetry {
       }
     }
   }
+
+
 
   @Override
   public void stopGame() {
@@ -156,11 +190,43 @@ public class DumbTelemetry extends Telemetry {
     }
   }
 
+  private void updateInventory(String s) {
+    String[] inventories = s.split("\\|");
+    for (String inventory : inventories) {
+      String[] ls = inventory.split(":");
+      int id = Integer.parseInt(ls[0]);
+      switch (ls.length) {
+        case 1:
+          agents[id].setItems();
+          break;
+        case 2:
+          agents[id].setItems(Integer.parseInt(ls[1]));
+          break;
+        case 3:
+          agents[id].setItems(Integer.parseInt(ls[1]), Integer.parseInt(ls[2]));
+          break;
+        default:
+          throw new IndexOutOfBoundsException();
+      }
+    }
+  }
+
+
+  private void setPowerupBox(String s) {
+    String[] ls = s.split("\\|");
+    double x = Double.valueOf(ls[0]);
+    double y = Double.valueOf(ls[1]);
+    Point point = new Point(x,y);
+    pellets.remove(point);
+    EmptyPowerUpBox pellet = new EmptyPowerUpBox(point);
+    pellet.updateImages(resourceLoader);
+    pellets.put(point, pellet);
+  }
+
   // takes a packet string as defined in
   // NetworkUtility.makePowerUPPacket(Input, Point)
   // without the starting POW1 code
   private void activatePowerup(String s) {
-    System.out.println("Powerup String to handle: " + s);
     String[] ls = s.split("\\|");
 
     int id = Integer.parseInt(ls[0]);
@@ -170,9 +236,7 @@ public class DumbTelemetry extends Telemetry {
 
     agents[id].setLocation(new Point(x, y, map));
     PowerUp powerup = PowerUp.fromInt(powerint);
-    // TODO nullpointer when powerup tries to calculate com.lordsofmidnight.gamestate, one for @alex & @matty
-
-    //   powerup.use(agents[id], activePowerUps);
+    powerup.use(agents[id], activePowerUps, pellets, agents);
   }
 
   public void startAI() {
@@ -180,4 +244,5 @@ public class DumbTelemetry extends Telemetry {
     // shouldn't actually be called from client if this object exists
     System.err.println("DumbTelemetry startAI");
   }
+
 }

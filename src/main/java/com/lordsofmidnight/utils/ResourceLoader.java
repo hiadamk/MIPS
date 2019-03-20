@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Queue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
@@ -225,6 +226,9 @@ public class ResourceLoader {
     this.yResolution = Settings.getyResolution();
     this.renderingMode = Settings.getRenderingMode();
     this.theme = Settings.getTheme();
+    SpriteSheetData.updateSpriteDimensions(
+        new File(BASE_DIR + "sprites/" + theme + "/SHEET_DATA.txt"));
+    setResolution();
     setResolution();
   }
 
@@ -233,7 +237,8 @@ public class ResourceLoader {
     this.yResolution = y;
     this.renderingMode = r;
     this.theme = theme;
-    SpriteSheetData.updateSpriteDimensions(new File(BASE_DIR +"sprites/" + theme + "/SHEET_DATA.txt"));
+    SpriteSheetData.updateSpriteDimensions(
+        new File(BASE_DIR + "sprites/" + theme + "/SHEET_DATA.txt"));
     setResolution();
   }
 
@@ -374,6 +379,32 @@ public class ResourceLoader {
     return bufferedToJavaFxImage2D(recolouredSprites);
   }
 
+  public ArrayList<Image> getEndScreenMip(int id, boolean isMip) {
+
+    BufferedImage spriteSheet;
+    ArrayList<BufferedImage> playerSprites;
+    if (isMip) {
+      spriteSheet = recolourSprite(loadImageFile("sprites/" + theme + "/misc/GameEnd/", "mip"),this.mipPalette,0,id);
+      playerSprites =
+          splitSpriteSheet(
+                  SpriteSheetData.getDimension(SpriteDimensions.END_SPRITE_WIDTH),
+                  SpriteSheetData.getDimension(SpriteDimensions.END_SPRITE_HEIGHT),
+                  spriteSheet)
+              .get(0);
+      System.out.println(playerSprites.size());
+    } else {
+      spriteSheet = recolourSprite(loadImageFile("sprites/" + theme + "/misc/GameEnd/", "ghoul"),this.ghoulPalette,0,id);
+      playerSprites =
+          splitSpriteSheet(
+              SpriteSheetData.getDimension(SpriteDimensions.END_SPRITE_WIDTH),
+              SpriteSheetData.getDimension(SpriteDimensions.END_SPRITE_HEIGHT),
+              spriteSheet)
+              .get(0);
+    }
+
+    return bufferedToJavaFxImage(playerSprites);
+  }
+
   /** */
   public void loadPlayableGhoul() {
     BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "ghoul");
@@ -511,7 +542,9 @@ public class ResourceLoader {
     int webHeight = SpriteSheetData.getDimension(SpriteDimensions.POWERUP_WEB_HEIGHT);
     powerUps.put(
         PowerUp.WEB,
-        splitSpriteSheet(webWidth, webHeight, loadImageFile("sprites/" + theme + "/powerups/", "web")).get(0));
+        splitSpriteSheet(
+                webWidth, webHeight, loadImageFile("sprites/" + theme + "/powerups/", "web"))
+            .get(0));
 
     // add speedup powerup
     int spriteWidth = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_WIDTH);
@@ -523,7 +556,9 @@ public class ResourceLoader {
     // add invincible powerup
     BufferedImage invincibleAnimation =
         transparentizeSprite(loadImageFile("sprites/" + theme + "/powerups/", "invincible"));
-    powerUps.put(PowerUp.INVINCIBLE, splitSpriteSheet(spriteWidth, spriteHeight, invincibleAnimation).get(0));
+    powerUps.put(
+        PowerUp.INVINCIBLE,
+        splitSpriteSheet(spriteWidth, spriteHeight, invincibleAnimation).get(0));
 
     this.powerUps = powerUps;
   }
@@ -541,23 +576,23 @@ public class ResourceLoader {
 
   public void loadExplosion() {
     this.explosions =
-        splitSpriteSheet(39, 36, loadImageFile("sprites/" + theme + "/fx/", "explosion")).get(0);
+        splitSpriteSheet(SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_WIDTH), SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_HEIGHT), loadImageFile("sprites/" + theme + "/fx/", "explosion")).get(0);
   }
 
   public ArrayList<Image> getExplosion() {
     return bufferedToJavaFxImage(this.explosions);
   }
 
-  public void loadRocketImages(){
+  public void loadRocketImages() {
     BufferedImage rockets = loadImageFile("sprites/" + theme + "/fx/", "rocket");
     int rocketWidth = SpriteSheetData.getDimension(SpriteDimensions.POWERUP_ROCKET_WIDTH);
     int rocketHeight = SpriteSheetData.getDimension(SpriteDimensions.POWERUP_ROCKET_HEIGHT);
-    this.upRockets = splitSpriteSheet(rocketWidth,rocketHeight,rockets).get(0);
-    this.downRockets = splitSpriteSheet(rocketWidth,rocketHeight,flipImage(rockets)).get(0);
+    this.upRockets = splitSpriteSheet(rocketWidth, rocketHeight, rockets).get(0);
+    this.downRockets = splitSpriteSheet(rocketWidth, rocketHeight, flipImage(rockets)).get(0);
   }
 
   public ArrayList<Image> getRocketImages(boolean flipped) {
-    if(flipped){
+    if (flipped) {
       return bufferedToJavaFxImage(this.downRockets);
     }
     return bufferedToJavaFxImage(this.upRockets);
@@ -726,5 +761,4 @@ public class ResourceLoader {
   private int getOutlineColour(BufferedImage sprite) {
     return -16777216;
   }
-
 }
