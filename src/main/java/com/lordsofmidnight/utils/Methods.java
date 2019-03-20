@@ -22,6 +22,7 @@ public class Methods {
       points = points < 1 ? 1 : points;
       victim.incrementScore(-points);
       killer.incrementScore(points);
+      killer.increasePointsStolen(points);
     }
   }
 

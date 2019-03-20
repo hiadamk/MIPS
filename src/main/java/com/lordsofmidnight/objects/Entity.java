@@ -14,6 +14,7 @@ import com.lordsofmidnight.utils.ResourceLoader;
 import com.lordsofmidnight.utils.StatsTracker;
 import com.lordsofmidnight.utils.enums.Direction;
 
+
 /**
  * Encapsulation of agent on map Represents both MIPS and Ghouls, as they are interchangeable. Can
  * be user or AI controlled
@@ -481,6 +482,9 @@ public class Entity implements Renderable {
     return false;
   }
 
+  public void increasePointsStolen(int i) {
+    statsTracker.increasePointsStolen(i);
+  }
   public String getName() {
     return name;
   }
@@ -541,5 +545,4 @@ public class Entity implements Renderable {
   public String getKilledBy(){
     return this.killedBy;
   }
-
 }
