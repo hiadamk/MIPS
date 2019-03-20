@@ -104,14 +104,13 @@ public class Pellet implements Renderable {
   /**
    * Called every physics update to increment the counter for respawn
    */
-  public boolean incrementRespawn() {
+  public void incrementRespawn() {
     if (!active) {
       respawnCount++;
     }
     if (respawnCount == respawntime) {
-      return true;
+      this.active = true;
     }
-    return false;
   }
 
   public boolean isTrap() {
