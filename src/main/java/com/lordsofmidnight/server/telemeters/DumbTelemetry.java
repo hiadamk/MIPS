@@ -190,9 +190,10 @@ public class DumbTelemetry extends Telemetry {
     for (String inventory : inventories) {
       String[] ls = inventory.split(":");
       int id = Integer.parseInt(ls[0]);
-      int pint = Integer.parseInt(ls[1]);
+      int powerup1 = Integer.parseInt(ls[1]);
+      int powerup2 = Integer.parseInt(ls[2]);
       if (id == clientID) {
-        agents[id].giveItem(PowerUp.fromInt(pint));
+        agents[id].setItems(powerup1,powerup2);
       }
     }
   }
@@ -202,7 +203,9 @@ public class DumbTelemetry extends Telemetry {
     String[] ls = s.split("\\|");
     double x = Double.valueOf(ls[0]);
     double y = Double.valueOf(ls[1]);
-    new EmptyPowerUpBox(new Point(x,y));
+    EmptyPowerUpBox pellet = new EmptyPowerUpBox(new Point(x, y));
+    pellet.updateImages(resourceLoader);
+    pellets.put(new Point(x,y), pellet);
   }
 
   // takes a packet string as defined in

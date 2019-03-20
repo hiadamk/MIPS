@@ -18,6 +18,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.Enumeration;
+import java.util.LinkedList;
 
 /**
  * Class which will holds shared utility data for classes.
@@ -234,10 +235,13 @@ public class NetworkUtility {
   public static String makeInventoryPacket(Entity[] agents) {
     String s = POWERUP_CODE+0; // |0:2|.
     for (int i = 0; i < agents.length; i++) {
+      LinkedList<PowerUp> items = agents[i].getItems();
       s += "|"
           +i
           + ":"
-          + agents[i].getItems().peek().toInt();
+          +items.get(0).toInt()
+          + ":"
+          +items.get(1).toInt();
     }
     return s;
   }

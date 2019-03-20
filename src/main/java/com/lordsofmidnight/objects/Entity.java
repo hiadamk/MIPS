@@ -2,6 +2,7 @@ package com.lordsofmidnight.objects;
 
 import com.lordsofmidnight.ai.routefinding.RouteFinder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -162,6 +163,10 @@ public class Entity implements Renderable {
 
   public LinkedList<PowerUp> getItems() {
     return items;
+  }
+
+  public void setItems(int p1, int p2){
+    this.items = new LinkedList<PowerUp>(Arrays.asList(PowerUp.fromInt(p1),PowerUp.fromInt(p2)));
   }
 
   public PowerUp getFirstItem() {

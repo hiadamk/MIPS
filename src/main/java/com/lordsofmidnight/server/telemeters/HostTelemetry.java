@@ -26,6 +26,7 @@ public class HostTelemetry extends Telemetry {
   private boolean singlePlayer;
   private AILoopControl ai;
   private boolean aiRunning;
+  private GameLoop inventoryUpdater;
   // GameLoop inputProcessor;
 
   /**
@@ -136,11 +137,19 @@ public class HostTelemetry extends Telemetry {
         new GameLoop(positionDELAY) {
           @Override
           public void handle() {
-            updateInventories(agents);
             updateClients(agents);
           }
         };
     positionUpdater.start();
+
+    inventoryUpdater =
+        new GameLoop(positionDELAY) {
+          @Override
+          public void handle() {
+            updateInventories(agents);
+          }
+        };
+    inventoryUpdater.start();
 
     scoreUpdater =
         new GameLoop(scoreDELAY) {
