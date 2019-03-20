@@ -233,15 +233,15 @@ public class NetworkUtility {
    * * @return The string packet.
    */
   public static String makeInventoryPacket(Entity[] agents) {
-    String s = POWERUP_CODE+0; // |0:2|.
+    String s = POWERUP_CODE + 0; // |0:2|.
     for (int i = 0; i < agents.length; i++) {
       LinkedList<PowerUp> items = agents[i].getItems();
+
       s += "|"
-          +i
-          + ":"
-          +items.get(0).toInt()
-          + ":"
-          +items.get(1).toInt();
+          + i;
+      for (PowerUp item : items) {
+        s += ":" + item.toInt();
+      }
     }
     return s;
   }

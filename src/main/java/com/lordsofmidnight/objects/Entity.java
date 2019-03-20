@@ -169,6 +169,14 @@ public class Entity implements Renderable {
     this.items = new LinkedList<PowerUp>(Arrays.asList(PowerUp.fromInt(p1),PowerUp.fromInt(p2)));
   }
 
+  public void setItems(int p1) {
+    this.items = new LinkedList<PowerUp>(Arrays.asList(PowerUp.fromInt(p1)));
+  }
+
+  public void setItems() {
+    this.items = new LinkedList<PowerUp>();
+  }
+
   public PowerUp getFirstItem() {
     if (items.size() < 1) {
       return null;
@@ -529,4 +537,5 @@ public class Entity implements Renderable {
   public String getKilledBy(){
     return this.killedBy;
   }
+
 }

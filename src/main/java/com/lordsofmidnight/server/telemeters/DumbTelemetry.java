@@ -190,10 +190,18 @@ public class DumbTelemetry extends Telemetry {
     for (String inventory : inventories) {
       String[] ls = inventory.split(":");
       int id = Integer.parseInt(ls[0]);
-      int powerup1 = Integer.parseInt(ls[1]);
-      int powerup2 = Integer.parseInt(ls[2]);
-      if (id == clientID) {
-        agents[id].setItems(powerup1,powerup2);
+      switch (ls.length) {
+        case 1:
+          agents[id].setItems();
+          break;
+        case 2:
+          agents[id].setItems(Integer.parseInt(ls[1]));
+          break;
+        case 3:
+          agents[id].setItems(Integer.parseInt(ls[1]), Integer.parseInt(ls[2]));
+          break;
+        default:
+          throw new IndexOutOfBoundsException();
       }
     }
   }
@@ -203,16 +211,17 @@ public class DumbTelemetry extends Telemetry {
     String[] ls = s.split("\\|");
     double x = Double.valueOf(ls[0]);
     double y = Double.valueOf(ls[1]);
-    EmptyPowerUpBox pellet = new EmptyPowerUpBox(new Point(x, y));
+    Point point = new Point(x,y);
+    pellets.remove(point);
+    EmptyPowerUpBox pellet = new EmptyPowerUpBox(point);
     pellet.updateImages(resourceLoader);
-    pellets.put(new Point(x,y), pellet);
+    pellets.put(point, pellet);
   }
 
   // takes a packet string as defined in
   // NetworkUtility.makePowerUPPacket(Input, Point)
   // without the starting POW1 code
   private void activatePowerup(String s) {
-    System.out.println("Powerup String to handle: " + s);
     String[] ls = s.split("\\|");
 
     int id = Integer.parseInt(ls[0]);
