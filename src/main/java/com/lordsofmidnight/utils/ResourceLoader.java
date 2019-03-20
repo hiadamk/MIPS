@@ -226,6 +226,9 @@ public class ResourceLoader {
     this.yResolution = Settings.getyResolution();
     this.renderingMode = Settings.getRenderingMode();
     this.theme = Settings.getTheme();
+    SpriteSheetData.updateSpriteDimensions(
+        new File(BASE_DIR + "sprites/" + theme + "/SHEET_DATA.txt"));
+    setResolution();
     setResolution();
   }
 
@@ -388,6 +391,7 @@ public class ResourceLoader {
                   SpriteSheetData.getDimension(SpriteDimensions.END_SPRITE_HEIGHT),
                   spriteSheet)
               .get(0);
+      System.out.println(playerSprites.size());
     } else {
       spriteSheet = recolourSprite(loadImageFile("sprites/" + theme + "/misc/GameEnd/", "ghoul"),this.ghoulPalette,0,id);
       playerSprites =
@@ -572,7 +576,7 @@ public class ResourceLoader {
 
   public void loadExplosion() {
     this.explosions =
-        splitSpriteSheet(39, 36, loadImageFile("sprites/" + theme + "/fx/", "explosion")).get(0);
+        splitSpriteSheet(SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_WIDTH), SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_HEIGHT), loadImageFile("sprites/" + theme + "/fx/", "explosion")).get(0);
   }
 
   public ArrayList<Image> getExplosion() {
