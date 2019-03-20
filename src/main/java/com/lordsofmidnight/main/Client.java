@@ -321,6 +321,7 @@ public class Client extends Application {
     gameScene.setOnKeyPressed(null);
     this.telemetry.stopGame();
     inputRenderLoop.stop();
+
     this.endGameScreen.StopEndScreen();
     menuController.reset();
     primaryStage.setScene(mainMenu);

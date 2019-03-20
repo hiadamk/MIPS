@@ -52,7 +52,6 @@ public class SpriteSheetData {
       reader = new BufferedReader(new FileReader(dimensionsFile));
       String line = reader.readLine();
       while (line != null) {
-        System.out.println(line);
         String key = line.substring(0,line.indexOf("="));
         if(dimensionKeys.contains(key)){
           String value = line.substring(line.indexOf("=")+1,line.length());

@@ -257,7 +257,9 @@ public class EndGameScreen {
   }
 
   public void StopEndScreen() {
-    this.awardScreen.stop();
+    if (this.awardScreen != null) {
+      this.awardScreen.stop();
+    }
   }
 
   private Point2D.Double getSpriteSize(double ratio, Entity e) {
