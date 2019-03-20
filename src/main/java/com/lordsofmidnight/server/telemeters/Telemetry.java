@@ -18,12 +18,8 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-
-/**
- * Parent class for DumbTelemetry and HostTelemetry
- */
+/** Parent class for DumbTelemetry and HostTelemetry */
 public abstract class Telemetry {
-
 
   static final int AGENT_COUNT = 5;
   static final int GAME_TIME = 150 * 100; // Number of seconds *100
@@ -89,11 +85,12 @@ public abstract class Telemetry {
 
     agents = new Entity[AGENT_COUNT];
     switch (AGENT_COUNT) {
-      default: {
-        for (int i = AGENT_COUNT - 1; i >= 5; i--) {
-          agents[i] = new Entity(false, i, new Point(1.5, 1.5));
+      default:
+        {
+          for (int i = AGENT_COUNT - 1; i >= 5; i--) {
+            agents[i] = new Entity(false, i, new Point(1.5, 1.5));
+          }
         }
-      }
       case 5:
         agents[4] = new Entity(false, 4, map.getRandomSpawnPoint());
       case 4:
@@ -136,7 +133,13 @@ public abstract class Telemetry {
           agents[i].setDirection(Direction.STOP);
         }
       }
-      agents[i].countRespawn();
+      if (agents[i].isDead()) {
+        agents[i].countRespawn();
+        int deathCounter = agents[i].getDeathCounter();
+        if (deathCounter == 20) {
+          agents[i].setLocation(map.getRandomSpawnPoint());
+        }
+      }
     }
 
     // separate loop for checking collision after iteration
@@ -160,9 +163,7 @@ public abstract class Telemetry {
     pelletCollision(agents, pellets, activePowerUps);
     for (Pellet p : pellets.values()) {
       p.incrementRespawn();
-
     }
-
 
     ArrayList<UUID> toRemove = new ArrayList<>();
     for (PowerUp p : activePowerUps.values()) {
@@ -194,7 +195,6 @@ public abstract class Telemetry {
 
   // physics engine
 
-
   static void invincibleCollision(Entity killer, Entity victim, ResourceLoader r) {
     if (killer.isDead() || victim.isDead()) {
       return;
@@ -203,7 +203,7 @@ public abstract class Telemetry {
     Point victimLocation = victim.getLocation();
     if (victimLocation.inRange(killerLocation)) {
       Methods.kill(killer, victim);
-      victim.setLocation(r.getMap().getRandomSpawnPoint());
+      // victim.setLocation(r.getMap().getRandomSpawnPoint());
     }
   }
 
@@ -227,7 +227,7 @@ public abstract class Telemetry {
       mipsman.setMipsman(false);
       ghoul.setMipsman(true);
       Methods.kill(ghoul, mipsman);
-      mipsman.setLocation(resourceLoader.getMap().getRandomSpawnPoint());
+      // mipsman.setLocation(resourceLoader.getMap().getRandomSpawnPoint());
       mipsman.setDirection(Direction.UP);
       mipsman.updateImages(resourceLoader);
       ghoul.updateImages(resourceLoader);
