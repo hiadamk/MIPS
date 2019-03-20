@@ -222,6 +222,7 @@ public class HostTelemetry extends Telemetry {
     inputProcessor.close();
     positionUpdater.close();
     scoreUpdater.close();
+    inventoryUpdater.close();
     ai.killAI();
   }
 
