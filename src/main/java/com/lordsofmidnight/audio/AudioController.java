@@ -1,5 +1,6 @@
 package com.lordsofmidnight.audio;
 
+import com.lordsofmidnight.utils.Settings;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -17,31 +18,17 @@ import javax.sound.sampled.FloatControl;
  */
 public class AudioController {
 
-  private Boolean mute;
   private Clip music;
   private ArrayList<Clip> openClips;
-  private double musicVolume;
-  private double soundVolume;
   private ClipCloser clipCloser;
 
   public AudioController() {
-    mute = false;
-    music = null;
-    musicVolume = 0.5;
-    soundVolume = 0.5;
     openClips = new ArrayList<>();
     clipCloser = new ClipCloser(openClips);
     clipCloser.start();
   }
 
-  /**
-   * Gets the current music volume.
-   *
-   * @return the current music volume.
-   */
-  public double getMusicVolume() {
-    return musicVolume;
-  }
+
 
   /**
    * Sets the music volume
@@ -49,34 +36,17 @@ public class AudioController {
    * @param musicVolume The volume to which we want to set it to
    */
   public void setMusicVolume(double musicVolume) {
-    this.musicVolume = musicVolume;
+    Settings.setMusicVolume(musicVolume);
     refreshMusic();
   }
 
-  /**
-   * Gets the current volume of sound effects
-   *
-   * @return The current volume which sound effects are played at
-   */
-  public double getSoundVolume() {
-    return soundVolume;
-  }
-
-  /**
-   * Sets the sound effects volume.
-   *
-   * @param soundVolume The volume we want to set the sound effects volume to.
-   */
-  public void setSoundVolume(double soundVolume) {
-    this.soundVolume = soundVolume;
-  }
 
   /**
    * This toggles the mute boolean on and off to be called by the com.lordsofmidnight.ui when a mute
    * button is pressed (can become a Setter
    */
   public void toggleMute() {
-    mute = !mute;
+    Settings.setMute(!Settings.getMute());
     refreshMusic();
   }
 
@@ -84,12 +54,12 @@ public class AudioController {
    * Increases master game volume.
    */
   public void increaseVolume() {
-    if (getMusicVolume() < 1) {
-      setMusicVolume(getMusicVolume() + 0.1);
+    if (Settings.getMusicVolume() < 1) {
+      Settings.setMusicVolume(Settings.getMusicVolume() + 0.1);
     }
 
-    if (getSoundVolume() < 1) {
-      setSoundVolume(getSoundVolume() + 0.1);
+    if (Settings.getSoundVolume() < 1) {
+      Settings.setSoundVolume(Settings.getSoundVolume() + 0.1);
     }
   }
 
@@ -97,12 +67,12 @@ public class AudioController {
    * Decreases master game volume.
    */
   public void decreaseVolume() {
-    if (getMusicVolume() >= 0.1) {
-      setMusicVolume(getMusicVolume() - 0.1);
+    if (Settings.getMusicVolume() >= 0.1) {
+      Settings.setMusicVolume(Settings.getMusicVolume() - 0.1);
     }
 
-    if (getSoundVolume() >= 0.1) {
-      setSoundVolume(getSoundVolume() - 0.1);
+    if (Settings.getSoundVolume() >= 0.1) {
+      Settings.setSoundVolume(Settings.getSoundVolume() - 0.1);
     }
   }
 
@@ -110,7 +80,7 @@ public class AudioController {
     if (music == null) {
       return;
     }
-    setClipVolume(music, mute ? 0 : musicVolume);
+    setClipVolume(music, Settings.getMute() ? 0 : Settings.getMusicVolume());
   }
 
   /**
@@ -119,7 +89,7 @@ public class AudioController {
    * @param sound the sound to play
    */
   public void playSound(Sounds sound) {
-    if (mute) {
+    if (Settings.getMute()) {
       return; // IF the com.lordsofmidnight.main has muted its audio nothing will be played
     }
     InputStream audio = AudioController.class.getResourceAsStream(sound.getPath());
@@ -129,7 +99,7 @@ public class AudioController {
       DataLine.Info info = new DataLine.Info(Clip.class, stream.getFormat());
       Clip clip = (Clip) AudioSystem.getLine(info);
       clip.open(stream);
-      setClipVolume(clip, soundVolume);
+      setClipVolume(clip, Settings.getSoundVolume());
       clip.start();
       openClips.add(clip);
     } catch (Exception e) {
@@ -178,7 +148,7 @@ public class AudioController {
         music.close();
       }
       music = clip;
-      setClipVolume(music, musicVolume);
+      setClipVolume(music, Settings.getMusicVolume());
       music.loop(Clip.LOOP_CONTINUOUSLY);
       openClips.add(music);
     } catch (Exception e) {
