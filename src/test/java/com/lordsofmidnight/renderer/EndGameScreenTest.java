@@ -24,7 +24,7 @@ public class EndGameScreenTest extends Application {
     GraphicsContext gc = canvas.getGraphicsContext2D();
 
     ResourceLoader r = new ResourceLoader("src/test/resources/");
-    EndGameScreen end = new EndGameScreen(gc,r.getBackground());
+    EndGameScreen end = new EndGameScreen(gc,r);
 
     Entity[] entities = new Entity[3];
 

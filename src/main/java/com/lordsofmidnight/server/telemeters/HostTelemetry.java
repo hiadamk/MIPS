@@ -155,21 +155,20 @@ public class HostTelemetry extends Telemetry {
       Input input = inputs.poll();
       int id = input.getClientID();
       Direction d = input.getMove();
+      agents[id].setDirectionSetFlag(false);
       if (d.equals(Direction.USE)) {
         if (agents[id].isDead()) {
           return;
         }
-        agents[id].setPowerUpUsedFlag(false);
-        agents[id].setDirectionSetFlag(false);
         usePowerUp(id);
+        agents[id].setPowerUpUsedFlag(false);
       } else {
-        agents[id].setDirectionSetFlag(false);
         if (Methods.validateDirection(d, agents[id].getLocation(), map)) {
           agents[id].setDirection(d);
           if (!singlePlayer) {
             // this is currently what's set to update on other clients' systems. they'll get valid
             // inputs
-            informClients(input, agents[id].getLocation()); // Inputs sent to the other clients
+            //informClients(input, agents[id].getLocation()); // Inputs sent to the other clients
           }
         }
       }
