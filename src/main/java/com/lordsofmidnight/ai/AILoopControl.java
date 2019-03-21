@@ -30,8 +30,8 @@ public class AILoopControl extends Thread {
 
     private static final int POWER_UP_USE_PROBABILITY = 10;         //chance that a powerUp is used
     private static final int SPEED_POWER_UP_ACTIVATE_DEPTH = 20;    //distance at which the AI will use a speed boost when in proximity to MIPSMan
-    private static final int INVINCIBILITY_AVOID_DISTANCE = 20;
-    private static final int INVINCIBILITY_PREFER_MULTIPLIER = 2;
+    private static final int INVINCIBILITY_AVOID_DISTANCE = 20;     //distance that will be searched in avoidance of an invincible agent
+    private static final int INVINCIBILITY_PREFER_MULTIPLIER = 2;   //the preference given to the current direction
     private static final int OPPOSITE_DIRECTION_DIVISOR = 4;
     private static final long SLEEP_TIME = 1;
 
@@ -419,7 +419,7 @@ public class AILoopControl extends Thread {
         List<PowerUp> powerUpList = ent.getItems();
         if (!powerUpList.isEmpty()&&!ent.isPowerUpUsed()) {
             Random r = new Random();
-            if (r.nextInt(POWER_UP_USE_PROBABILITY)<ent.powerUpUseAttempts()) {
+            if (r.nextInt(POWER_UP_USE_PROBABILITY)>ent.powerUpUseAttempts()) {
                 ent.setPowerUpUsedFlag(true);
                 setDirection(Direction.USE, ent);
             }
