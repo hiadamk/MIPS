@@ -1,8 +1,8 @@
 package com.lordsofmidnight.utils;
 
-import javafx.scene.input.KeyCode;
 import com.lordsofmidnight.utils.enums.InputKey;
 import com.lordsofmidnight.utils.enums.RenderingMode;
+import javafx.scene.input.KeyCode;
 
 public class Settings {
 
@@ -17,6 +17,33 @@ public class Settings {
   private static RenderingMode renderingMode = RenderingMode.SMOOTH_SCALING;
   private static String theme = "default";
 
+  private static Boolean mute = false;
+  private static double musicVolume = 0.5;
+  private static double soundVolume = 0.5;
+
+  public static Boolean getMute() {
+    return mute;
+  }
+
+  public static void setMute(Boolean mute) {
+    Settings.mute = mute;
+  }
+
+  public static double getMusicVolume() {
+    return musicVolume;
+  }
+
+  public static void setMusicVolume(double musicVolume) {
+    Settings.musicVolume = musicVolume;
+  }
+
+  public static double getSoundVolume() {
+    return soundVolume;
+  }
+
+  public static void setSoundVolume(double soundVolume) {
+    Settings.soundVolume = soundVolume;
+  }
 
   public static KeyCode getKey(InputKey key) {
     switch (key) {

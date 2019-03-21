@@ -818,7 +818,7 @@ public class MenuController {
         .generate(true, soundTabLayout, "SoundFX:", UIColours.WHITE, 16);
     JFXSlider soundFXSlider = new JFXSlider(0, 1, 0.5);
     soundFXSlider.valueProperty().addListener((ov, old_val, new_val) -> {
-      audioController.setSoundVolume(new_val.doubleValue());
+      Settings.setSoundVolume(new_val.doubleValue());
     });
 
     soundFXSlider.setMaxWidth(200);
