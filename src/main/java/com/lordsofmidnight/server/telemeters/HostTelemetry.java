@@ -163,7 +163,7 @@ public class HostTelemetry extends Telemetry {
         agents[id].setPowerUpUsedFlag(false);
         agents[id].setDirectionSetFlag(false);
       }else if(d.equals(Direction.STOP)){
-        //addClient(id);
+        ai.addClient(id);
       }
       else {
         agents[id].setDirectionSetFlag(false);
