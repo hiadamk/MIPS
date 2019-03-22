@@ -62,6 +62,7 @@ public class Renderer {
   private int currentAnimationFrame = 0;
 
   private ArrayList<Point2D.Double> traversalOrder = new ArrayList<>();
+  private boolean refreshMap;
 
   /**
    * @param _gc Graphics context to render the game onto
@@ -97,6 +98,11 @@ public class Renderer {
       PointMap<Pellet> pellets,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       int gameTime) {
+
+    if(refreshMap){
+      initMapTraversal(map);
+      refreshMap = false;
+    }
 
     this.clientEntity = getClientEntity(new ArrayList<>(Arrays.asList(entityArr)));
 
@@ -180,6 +186,7 @@ public class Renderer {
       long now,
       PointMap<Pellet> pellets,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
+
 
     int[][] rawMap = map.raw();
     ArrayList<Entity> entities = new ArrayList<>(Arrays.asList(entityArr));
@@ -712,5 +719,9 @@ public class Renderer {
     this.background = r.getBackground();
     this.palette = r.getBackgroundPalette();
     this.explosionManager.refreshSettings();
+  }
+
+  public void setRefreshMap(boolean b) {
+    this.refreshMap = b;
   }
 }

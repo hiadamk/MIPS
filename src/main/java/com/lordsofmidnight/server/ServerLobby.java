@@ -115,7 +115,7 @@ public class ServerLobby {
                   out.println("" + playerID);
                   out.flush();
                   System.out.println("Sent client " + playerID + " their ID...");
-               //   out.println("default");
+                  out.println("default");
                   out.println("" + MIPID);
                   out.flush();
                   out.println("SUCCESS");
