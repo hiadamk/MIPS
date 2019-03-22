@@ -46,7 +46,7 @@ public class AILoopControl extends Thread {
     private ArrayList<Entity> removeClient;             //list of clients to have AI control removed when the current full AI agent cycle completes
 
     private boolean runAILoop;      //will run the AI loop until false
-    private int mipsmanID;          //the index of mipsmanID in the gameAgents array
+    private Entity mipsman;          //the index of mipsmanID in the gameAgents array
 
 
     /**Initialises the object prior to the AI loop being executed.
@@ -220,7 +220,7 @@ public class AILoopControl extends Thread {
                 dir =
                         new RandomRouteFinder()
                                 .getRoute(currentLocation,
-                                        gameAgents[mipsmanID].getLocation());
+                                        mipsman.getLocation());
             }
             dir = confirmOrReplaceDirection(ent.getDirection(), currentLocation, dir);  //validate direction
             setDirection(dir, ent);
@@ -330,6 +330,9 @@ public class AILoopControl extends Thread {
             boolean agentNotFound = true;
             for (Entity ent : gameAgents) {
                 if (ent.getClientId() == controlIds[i]) {
+                    if (i==0) {
+                        mipsman = ent;  //default to having a mipsman which will be corrected later
+                    }
                     controlAgents.add(ent);
                     agentNotFound = false;
                     break;
@@ -355,7 +358,7 @@ public class AILoopControl extends Thread {
             }
         }
         if (mipsman != null && mipsmanRoute != null) {
-            mipsmanID = mipsmanRoute.getClientId();
+            this.mipsman = mipsmanRoute;
             RouteFinder r = mipsman.getRouteFinder();
             mipsman.setRouteFinder(mipsmanRoute.getRouteFinder());
             mipsmanRoute.setRouteFinder(r);
@@ -369,7 +372,7 @@ public class AILoopControl extends Thread {
      * @author Lewis Ackroyd*/
     private void executeRoute(Entity ent, Point currentLocation) {
         RouteFinder r = ent.getRouteFinder();
-        Point mipsManLoc = gameAgents[mipsmanID].getLocation();
+        Point mipsManLoc = mipsman.getLocation();
         Direction direction = r.getRoute(currentLocation, mipsManLoc);
         direction = accountForPowerUps(currentLocation, direction);
         direction = confirmOrReplaceDirection(ent.getDirection(), currentLocation, direction);
@@ -477,7 +480,7 @@ public class AILoopControl extends Thread {
                         class MipsmanProximityCondition implements SampleSearch.ConditionalInterface {
                             @Override
                             public boolean condition(Point position) {
-                                return position.equals(gameAgents[mipsmanID].getLocation());
+                                return position.equals(mipsman.getLocation());
                             }
                         }
                         SampleSearch sampleSearch = new SampleSearch(SPEED_POWER_UP_ACTIVATE_DEPTH, map);
