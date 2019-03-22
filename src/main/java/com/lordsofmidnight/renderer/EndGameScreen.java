@@ -75,6 +75,8 @@ public class EndGameScreen {
   }
 
   public void showEndSequence(Entity[] entities) {
+    this.xResolution = Settings.getxResolution();
+    this.yResolution = Settings.getyResolution();
     this.animationFrame = 0;
     ArrayList<Entity> entityArr = new ArrayList<>(Arrays.asList(entities));
     Awards[] awards = Awards.getTwoRandomAwards();
