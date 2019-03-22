@@ -91,10 +91,8 @@ public class PointSet extends AbstractSet<Point> implements Set<Point>, Cloneabl
     if (!(objects instanceof Point[])) {
       return false;
     }
-    Iterator<Point> iterator = iterator();
     boolean changed = false;
-    while (iterator.hasNext()) {
-      Point p = iterator.next();
+      for (Point p : this) {
       if (!collection.contains(p)) {
         remove(p);
         changed = true;

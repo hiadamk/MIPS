@@ -86,4 +86,30 @@ public class Map {
   public Point getRandomSpawnPoint() {
     return SPAWN_POINTS.get((new Random()).nextInt(SPAWN_POINTS.size()));
   }
+
+
+  /**If the given {@link Point} is within the bounds of the {@link Map}.
+   *
+   * @param map The map being checked
+   * @param point The point being checked
+   *
+   * @return True if within the bounds of the map
+   * @author Lewis Ackroyd*/
+  public static boolean withinBounds(Map map, Point point) {
+    return withinBounds(map.getMaxX(), map.getMaxY(), point);
+  }
+
+  /**If the given {@link Point} is within the bounds of the {@link Map}.
+   *
+   * @param maxX The upper limit of the x-axis
+   * @param maxY The upper limit of the y-axis
+   * @param point The point being checked
+   *
+   * @return True if within the bounds of the map
+   * @author Lewis Ackroyd*/
+  public static boolean withinBounds(int maxX, int maxY, Point point) {
+    boolean x = point.getX() >= 0 && point.getX() < maxX;
+    boolean y = point.getY() >= 0 && point.getY() < maxY;
+    return x && y;
+  }
 }
