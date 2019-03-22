@@ -230,12 +230,14 @@ public class Client extends Application {
   public void setMap(Map m) {
     this.map = m;
     Point.setMap(m);
+    renderer.refreshSettings();
   }
 
   public void setMap(String mapName) {
     resourceLoader.loadMap(mapName);
     this.map = resourceLoader.getMap();
     Point.setMap(map);
+    renderer.refreshSettings();
   }
 
   /**
