@@ -59,6 +59,7 @@ public class Renderer {
   private Entity clientEntity = null;
   private BufferedImage playerColours;
   private ExplosionFX explosionManager;
+  private int currentAnimationFrame = 0;
 
   private ArrayList<Point2D.Double> traversalOrder = new ArrayList<>();
 
@@ -141,6 +142,7 @@ public class Renderer {
 
     this.mapTiles = r.getMapTiles();
     this.mapRenderingCorner = getMapRenderingCorner();
+    tileSizeX = r.getMapTiles().get(0).getWidth();
     tileSizeX = r.getMapTiles().get(0).getWidth();
     tileSizeY = r.getMapTiles().get(0).getHeight();
 
@@ -350,7 +352,7 @@ public class Renderer {
     }
     UpDownIterator<java.lang.Double> backgroundOpacity = new UpDownIterator<>(opacity);
 
-    Image currentSprite = newMipsMan.getImage().get(newMipsMan.getCurrentFrame());
+    Image currentSprite = r.getPlayableGhoul(newMipsMan.getClientId()).get(newMipsMan.getFacing().toInt()).get(0);
     final double renderAnimationTime = 0.75 * Math.pow(10, 9);
     double startTime = System.nanoTime();
     final int frames = 40;
@@ -441,20 +443,27 @@ public class Renderer {
       Entity e,
       HashMap<com.lordsofmidnight.utils.enums.PowerUp, PowerUp> selfPowerUps,
       long timeElapsed) {
-    // choose correct animation
-    ArrayList<Image> currentSprites = e.getImage();
+    // choose correct Direction
+
+    ArrayList<Image> currentSprites = null;
+    if(e.isMipsman()){
+      currentSprites = r.getPlayableMip(e.getClientId()).get(e.getFacing().toInt());
+    }
+    else{
+      currentSprites = r.getPlayableGhoul(e.getClientId()).get(e.getFacing().toInt());
+    }
+
     if (secondInNanoseconds / e.getAnimationSpeed() < e.getTimeSinceLastFrame()
         && timeElapsed > 0) {
       e.setTimeSinceLastFrame(0);
-      e.nextFrame();
       for (PowerUp p : selfPowerUps.values()) {
         p.incrementFrame();
       }
+      currentAnimationFrame++;
     } else {
       e.setTimeSinceLastFrame(e.getTimeSinceLastFrame() + timeElapsed);
     }
-    Image currentSprite = currentSprites.get(e.getCurrentFrame());
-
+    Image currentSprite = currentSprites.get(currentAnimationFrame%currentSprites.size());
     double x = e.getLocation().getX() - 0.5;
     double y = e.getLocation().getY() - 0.5;
     Point2D.Double rendCoord =

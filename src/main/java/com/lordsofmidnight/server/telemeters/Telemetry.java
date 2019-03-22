@@ -101,7 +101,7 @@ public abstract class Telemetry {
         agents[0] = new Entity(false, 0, map.getRandomSpawnPoint());
     }
 
-    Methods.updateImages(agents, resourceLoader);
+    //Methods.updateImages(agents, resourceLoader);
   }
 
   static void invincibleCollision(Entity killer, Entity victim) {

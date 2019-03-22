@@ -307,7 +307,7 @@ public class Client extends Application {
     };
     inputRenderLoop.start();
     this.telemetry.startGame();
-    Methods.updateImages(agents, resourceLoader);
+    //Methods.updateImages(agents, resourceLoader);
     renderer.setClientID(id);
     renderer.initMapTraversal(map);
     map = resourceLoader.getMap();

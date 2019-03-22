@@ -118,11 +118,6 @@ public class EndGameScreen {
               this.stop();
               showAwards(awards);
             }
-            if (currentFrame % 12 == 1) {
-              gameWinner.nextFrame();
-              awardWinner1.nextFrame();
-              awardWinner2.nextFrame();
-            }
             renderFallFrame(currentFrame, true);
             currentFrame += 1;
           }
