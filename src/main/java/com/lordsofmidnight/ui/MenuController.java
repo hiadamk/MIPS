@@ -1077,6 +1077,7 @@ public class MenuController {
             if (!isHome) {
               backBtn.setVisible(true);
             }
+            Settings.saveSettings();
           }
         });
 
