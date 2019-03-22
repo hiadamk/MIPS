@@ -18,7 +18,7 @@ public class Point {
   private static boolean hasDefault = false;
 
   private final double EQUALITY_TOLERANCE = 0.001;
-  private final double CENTER_TOLERANCE = 0.1;
+  private final double CENTER_TOLERANCE = 0.2;
   private final double CENTER = 0.5;
   private final int MAX_X;
   private final int MAX_Y;
