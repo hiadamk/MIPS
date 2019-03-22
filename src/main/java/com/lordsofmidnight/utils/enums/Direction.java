@@ -4,25 +4,25 @@ public enum Direction {
   UP(0) {
     @Override
     public String toString() {
-      return "up";
+      return "UP";
     }
   },
   DOWN(1) {
     @Override
     public String toString() {
-      return "down";
+      return "DOWN";
     }
   },
   LEFT(2) {
     @Override
     public String toString() {
-      return "left";
+      return "LEFT";
     }
   },
   RIGHT(3) {
     @Override
     public String toString() {
-      return "right";
+      return "RIGHT";
     }
   },
   USE(4) {
@@ -38,6 +38,7 @@ public enum Direction {
     }
   };
 
+  /**All directions that can be used for movement.*/
   public static final Direction[] MOVEMENT_DIRECTIONS = {UP, DOWN, LEFT, RIGHT};
 
   private int id;
@@ -64,6 +65,9 @@ public enum Direction {
     return null;
   }
 
+  /**@return True if this direction is a movement direction
+   * @see #MOVEMENT_DIRECTIONS
+   * @author Lewis Ackroyd*/
   public boolean isMovementDirection() {
     switch (this) {
       case UP:

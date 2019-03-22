@@ -2,7 +2,6 @@ package com.lordsofmidnight.ai.routefinding.routefinders;
 
 import com.lordsofmidnight.ai.routefinding.RouteFinder;
 import com.lordsofmidnight.ai.routefinding.SampleSearch;
-import com.lordsofmidnight.ai.routefinding.routefinders.condition.ConditionalInterface;
 import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
@@ -25,16 +24,32 @@ public class MipsManRouteFinder implements RouteFinder {
   private Entity[] gameAgents;
   private final Map map;
 
+  /**Initialises this {@link RouteFinder} with the current {@link Map} and objects on it.
+   *
+   * @param pellets A mapping from every point containing a pellet, to that pellet
+   * @param gameAgents The array containing all entities in the game
+   * @param map The map being used
+   * @author Lewis Ackroyd*/
   public MipsManRouteFinder(PointMap<Pellet> pellets, Entity[] gameAgents, Map map) {
     this.pellets = pellets;
     this.gameAgents = gameAgents;
     this.map = map;
   }
 
+  /**
+   * Returns the direction to travel in until the next junction is reached such that the direction avoids
+   * other {@link Entity Entities} whilst also travelling towards the nearest {@link com.lordsofmidnight.objects.PowerUpBox PowerUpBox}.
+   *
+   * @param myLocation The start point.
+   * @param targetLocation The target point.
+   *
+   * @return The direction to travel in, or DEFAULT if no direction could be produced.
+   * @author Lewis Ackroyd
+   */
   @Override
   public Direction getRoute(Point myLocation, Point targetLocation) {
     SampleSearch sampleSearch = new SampleSearch(PELLET_SEARCH_DEPTH, map);
-    class GhoulCountCondition implements ConditionalInterface {
+    class GhoulCountCondition implements SampleSearch.ConditionalInterface {
       @Override
       public boolean condition(Point position) {
         for (Entity entity : gameAgents) {
@@ -49,7 +64,7 @@ public class MipsManRouteFinder implements RouteFinder {
     }
     int[] ghoulCounts = sampleSearch.getDirectionCounts(myLocation, new GhoulCountCondition());
 
-    class PowerPelletCountCondition implements ConditionalInterface {
+    class PowerPelletCountCondition implements SampleSearch.ConditionalInterface {
       @Override
       public boolean condition(Point position) {
         if (pellets.containsKey(position)) {
@@ -72,6 +87,12 @@ public class MipsManRouteFinder implements RouteFinder {
     return maxDirection(totals);
   }
 
+  /**Determines which direction has the highest preference and returns it.
+   *
+   * @param totals The array of values representing all directions for the conditions specified
+   *
+   * @return The direction with the highest associated value
+   * @author Lewis Ackroyd*/
   private Direction maxDirection(int[] totals) {
       int firstTwoIndex;
       if (totals[Direction.UP.toInt()]>totals[Direction.DOWN.toInt()]) {

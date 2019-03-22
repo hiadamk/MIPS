@@ -301,7 +301,7 @@ public class Point {
    * @param object The object being tested for equality.
    * @return If the {@link Object} cannot be cast to a {@link Point} then false. Otherwise if both x
    * and y of both this and the given {@link Point} are within {@link #EQUALITY_TOLERANCE} of each
-   * other.
+   * other returns True.
    * @author Lewis Ackroyd
    */
   @Override

@@ -4,7 +4,6 @@ import com.lordsofmidnight.ai.mapping.Mapping;
 import com.lordsofmidnight.ai.routefinding.RouteFinder;
 import com.lordsofmidnight.ai.routefinding.SampleSearch;
 import com.lordsofmidnight.ai.routefinding.routefinders.*;
-import com.lordsofmidnight.ai.routefinding.routefinders.condition.ConditionalInterface;
 import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.gamestate.points.PointMap;
@@ -31,31 +30,33 @@ public class AILoopControl extends Thread {
     private static final int POWER_UP_USE_PROBABILITY = 10;         //chance that a powerUp is used
     private static final int SPEED_POWER_UP_ACTIVATE_DEPTH = 20;    //distance at which the AI will use a speed boost when in proximity to MIPSMan
     private static final int INVINCIBILITY_AVOID_DISTANCE = 20;     //distance that will be searched in avoidance of an invincible agent
-    private static final int INVINCIBILITY_PREFER_MULTIPLIER = 2;   //the preference given to the current direction
-    private static final int OPPOSITE_DIRECTION_DIVISOR = 4;
-    private static final long SLEEP_TIME = 1;
+    private static final int INVINCIBILITY_PREFER_MULTIPLIER = 2;   //the preference given to the current direction of travel when avoiding invincible agents
+    private static final int OPPOSITE_DIRECTION_DIVISOR = 4;        //the probability as 1/OPPOSITE_DIRECTION_DIVISOR of travelling in the opposite direction to previous direciton of travel
+    private static final long SLEEP_TIME = 1;                       //how long to sleep between full AI agent cycle
 
-    private final ArrayList<Entity> controlAgents;
-    private final PointSet junctions;
-    private final PointMap<PointSet> edges;
-    private final BlockingQueue<Input> directionsOut;
-    private final Map map;
-    private final Entity[] gameAgents;
-    private final PointMap<Pellet> pellets;
+    private final ArrayList<Entity> controlAgents;      //agents controlled by AI
+    private final PointSet junctions;                   //all the junctions on the map, including 90 degree corners and dead ends
+    private final PointMap<PointSet> edges;             //all connedtions between directly adjacent junctions on the map, not uncluding loops around the map boundaries
+    private final BlockingQueue<Input> directionsOut;   //output queue for game instructions
+    private final Map map;                              //the map being played on
+    private final Entity[] gameAgents;                  //all agents present in the game
+    private final PointMap<Pellet> pellets;             //the locations of all pellets in the game
 
-    private ArrayList<Entity> newClient;
-    private ArrayList<Entity> removeClient;
+    private ArrayList<Entity> newClient;                //list of clients to be given AI control when the current full AI agent cycle completes
+    private ArrayList<Entity> removeClient;             //list of clients to have AI control removed when the current full AI agent cycle completes
 
-    private boolean runAILoop;
-    private int mipsmanID;
+    private boolean runAILoop;      //will run the AI loop until false
+    private Entity mipsman;          //the index of mipsmanID in the gameAgents array
 
 
     /**Initialises the object prior to the AI loop being executed.
+     *
      * @param gameAgents The complete set of all entities that are controlled (by AI or players) in the game.
      * @param controlIds The set of main Ids that the AI will control.
      * @param map The map the game is being played on.
      * @param directionsOut The {@link BlockingQueue}<{@link Input}> That processes all agent direction instructions.
      * @param pellets The {@link PointMap}<{@link Pellet}> that will hold all pellets in the current game.
+     *
      * @throws IllegalArgumentException gameAgent array contains duplicate main IDs.
      * @throws IllegalStateException Cannot have more than one mipsman.
      * @throws IllegalStateException The control ID does not match an agent main ID.
@@ -80,7 +81,8 @@ public class AILoopControl extends Thread {
         correctMipsmanRouteFinder();
     }
 
-    /**The AI execution loop*/
+    /**The AI execution loop
+     * @author Lewis Ackroyd*/
     @Override
     public void run() {
         System.out.println("Starting AI loop...");
@@ -113,7 +115,69 @@ public class AILoopControl extends Thread {
         System.out.println("AI safely terminated.");
     }
 
-    /**Processes the list of clients to add and remove from AI control.*/
+    /**Terminates the AI loop
+     * @author Lewis Ackroyd*/
+    public boolean killAI() {
+        runAILoop = false;
+        return isAlive();
+    }
+
+    /**An array controlling all IDs of agents being controlled by the AI.
+     *
+     * @return An array of IDs controlled by the AI.
+     * @author Lewis Ackroyd*/
+    public int[] getControlledIDs() {
+        int[] controlledIDs = new int[controlAgents.size()];
+        for (int i = 0; i<controlAgents.size(); i++) {
+            controlledIDs[i] = controlAgents.get(i).getClientId();
+        }
+        return controlledIDs;
+    }
+
+    /**Give control for the specified ID to the AI.
+     *
+     * @param id The id of the game agent to be controlled.
+     *
+     * @return True if control has been given to the AI.
+     * @author Lewis Ackroyd*/
+    public boolean addClient(int id) {
+        Entity entity = null;
+        for (Entity ent : gameAgents) {
+            if (ent.getClientId()==id) {
+                entity = ent;
+                break;
+            }
+        }
+        if (entity==null) {
+            return false;
+        }
+        for (Entity ent : controlAgents) {
+            if (ent.getClientId()==id) {
+                return false;
+            }
+        }
+        newClient.add(entity);
+        return true;
+    }
+
+    /**Remove control for the specified ID from the AI.
+     *
+     * @param id The id of the game agent to have AI control removed from.
+     *
+     * @return True if control is currently with the AI and will be removed. False if AI does not control the given ID.
+     * @author Lewis Ackroyd*/
+    public boolean removeClient(int id) {
+        for (Entity ent : controlAgents) {
+            if (ent.getClientId()==id) {
+                removeClient.add(ent);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**Processes the list of clients to add and remove from AI control.
+     * @author Lewis Ackroyd*/
     private void updateControlList() {
         while (!newClient.isEmpty()) {
             Entity ent = newClient.remove(newClient.size()-1);
@@ -139,7 +203,13 @@ public class AILoopControl extends Thread {
         }
     }
 
-    /**Produces a new {@link Direction} for the specified entity and outputs this to the inputs queue*/
+    /**Produces a new {@link Direction} for the specified entity and outputs this to the inputs queue.
+     *
+     * @param ent The entity currently being processed
+     * @param currentLocation The absolute position of the given {@link Entity} at the start of processing
+     * @param currentGridLocation The grid position of the given {@link Entity} at the start of processing
+     * @param atLastCoord If the {@link Entity} is at the same coordinate as the last time a route was calculated
+     * @author Lewis Ackroyd*/
     private void generateNewDirection(Entity ent, Point currentLocation, Point currentGridLocation, boolean atLastCoord) {
         if (atLastCoord) {  //direction invalid, produce a random valid direction instruction
             Point nearestJunction = Mapping.findNearestJunction(currentLocation, map, junctions);
@@ -150,7 +220,7 @@ public class AILoopControl extends Thread {
                 dir =
                         new RandomRouteFinder()
                                 .getRoute(currentLocation,
-                                        gameAgents[mipsmanID].getLocation());
+                                        mipsman.getLocation());
             }
             dir = confirmOrReplaceDirection(ent.getDirection(), currentLocation, dir);  //validate direction
             setDirection(dir, ent);
@@ -163,60 +233,10 @@ public class AILoopControl extends Thread {
         }
     }
 
-    /**Terminates the AI loop*/
-    public boolean killAI() {
-        runAILoop = false;
-        return isAlive();
-    }
-
-    /**An array controlling all IDs of agents being controlled by the AI.
-     * @return An array of IDs controlled by the AI.*/
-    public int[] getControlledIDs() {
-        int[] controlledIDs = new int[controlAgents.size()];
-        for (int i = 0; i<controlAgents.size(); i++) {
-            controlledIDs[i] = controlAgents.get(i).getClientId();
-        }
-        return controlledIDs;
-    }
-
-    /**Give control for the specified ID to the AI.
-     * @param id The id of the game agent to be controlled.
-     * @return True if control has been given to the AI.*/
-    public boolean addClient(int id) {
-        Entity entity = null;
-        for (Entity ent : gameAgents) {
-            if (ent.getClientId()==id) {
-                entity = ent;
-                break;
-            }
-        }
-        if (entity==null) {
-            return false;
-        }
-        for (Entity ent : controlAgents) {
-            if (ent.getClientId()==id) {
-                return false;
-            }
-        }
-        newClient.add(entity);
-        return true;
-    }
-
-    /**Remove control for the specified ID from the AI.
-     * @param id The id of the game agent to have AI control removed from.
-     * @return True if control is currently with the AI and will be removed. False if AI does not control the given ID.*/
-    public boolean removeClient(int id) {
-        for (Entity ent : controlAgents) {
-            if (ent.getClientId()==id) {
-                removeClient.add(ent);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**Checks that the entities given to the AI all have unique IDs and that only one is mipsman.
+    /**Checks that the entities given to the AI all have unique IDs and that only one is MIPsman.
+     *
      * @param gameAgents The complete set of all entities that are controlled (by AI or players) in the game.
+     *
      * @throws IllegalArgumentException gameAgent array contains duplicate main IDs.
      * @throws IllegalStateException Cannot have more than one mipsman.
      * @author Lewis Ackroyd*/
@@ -300,7 +320,9 @@ public class AILoopControl extends Thread {
     }
 
     /**Assigns the reference for the entities controlled by the AI.
+     *
      * @param controlIds The IDs of all agents to be controlled by the AI.
+     *
      * @throws IllegalStateException The control ID does not match an agent main ID.
      * @author Lewis Ackroyd*/
     private void assignControlEntities(int[] controlIds) throws IllegalStateException {
@@ -308,6 +330,9 @@ public class AILoopControl extends Thread {
             boolean agentNotFound = true;
             for (Entity ent : gameAgents) {
                 if (ent.getClientId() == controlIds[i]) {
+                    if (i==0) {
+                        mipsman = ent;  //default to having a mipsman which will be corrected later
+                    }
                     controlAgents.add(ent);
                     agentNotFound = false;
                     break;
@@ -319,7 +344,8 @@ public class AILoopControl extends Thread {
         }
     }
 
-    /**Corrects the {@link RouteFinder}s after a collision between mipsman and a ghoul.*/
+    /**Corrects the {@link RouteFinder}s after a collision between mipsman and a ghoul.
+     * @author Lewis Ackroyd*/
     private synchronized void correctMipsmanRouteFinder() {
         Entity mipsman = null;
         Entity mipsmanRoute = null;
@@ -332,7 +358,7 @@ public class AILoopControl extends Thread {
             }
         }
         if (mipsman != null && mipsmanRoute != null) {
-            mipsmanID = mipsmanRoute.getClientId();
+            this.mipsman = mipsmanRoute;
             RouteFinder r = mipsman.getRouteFinder();
             mipsman.setRouteFinder(mipsmanRoute.getRouteFinder());
             mipsmanRoute.setRouteFinder(r);
@@ -340,28 +366,40 @@ public class AILoopControl extends Thread {
     }
 
     /**Executes the {@link RouteFinder} associated with the given {@link Entity}. Validates the {@link Direction} produced and then outputs a valid {@link Direction}.
+     *
      * @param ent The current {@link Entity} who's route is being calculated.
-     * @param currentLocation The current location of this {@link Entity} when it began being processed.*/
+     * @param currentLocation The current location of this {@link Entity} when it began being processed.
+     * @author Lewis Ackroyd*/
     private void executeRoute(Entity ent, Point currentLocation) {
         RouteFinder r = ent.getRouteFinder();
-        Point mipsManLoc = gameAgents[mipsmanID].getLocation();
+        Point mipsManLoc = mipsman.getLocation();
         Direction direction = r.getRoute(currentLocation, mipsManLoc);
         direction = accountForPowerUps(currentLocation, direction);
         direction = confirmOrReplaceDirection(ent.getDirection(), currentLocation, direction);
         setDirection(direction, ent);
     }
 
-    /**Adjusts the given {@link Direction} to allow the entity to account for any active {@link com.lordsofmidnight.utils.enums.PowerUp}s that warrant a course adjustment.
+    /**Adjusts the given {@link Direction} to allow the entity to account for any active {@link com.lordsofmidnight.utils.enums.PowerUp PowerUp}s that warrant a course adjustment.
+     *
      * @param position The position of the {@link Entity}.
      * @param direction The current direction of travel.
-     * @return The corrected direction.*/
+     *
+     * @return The corrected direction.
+     * @author Lewis Ackroyd*/
     private Direction accountForPowerUps(Point position, Direction direction) {
         direction = invincibilityAdjust(position, direction);
         return direction;
     }
 
+    /**Determines if any of the agents in the near vicinity have invincibility powerup active and will try to avoid them.
+     *
+     * @param position The current position
+     * @param direction The direction that will be travelled in next currently
+     *
+     * @return The adjusted direction.
+     * @author Lewis Ackroyd*/
     private Direction invincibilityAdjust(Point position, Direction direction) {
-        class InvincibleAgentCondition implements ConditionalInterface {
+        class InvincibleAgentCondition implements SampleSearch.ConditionalInterface {
             @Override
             public boolean condition(Point position) {
                 for (Entity ent : gameAgents) {
@@ -400,6 +438,14 @@ public class AILoopControl extends Thread {
         return direction;
     }
 
+    /**Regenerates the direction to be travelled based on all possible directions, but not avoidDirection (if alternatives are available) and weighted towards preferDirection.
+     *
+     * @param avoidDirection The direction that will not be travelled in unless no other alternatives are available.
+     * @param preferDirection The direction which will have the highest weight of being chosen.
+     * @param currentLoc The current position.
+     *
+     * @return The re-rolled direction.
+     * @author Lewis Ackroyd*/
     private Direction reRoll(Direction avoidDirection, Direction preferDirection, Point currentLoc) {
         ArrayList<Direction> validDirections = getValidDirections(currentLoc, map);
         if (validDirections.contains(avoidDirection)&&validDirections.size()>1) {
@@ -415,6 +461,11 @@ public class AILoopControl extends Thread {
         return validDirections.get(val);
     }
 
+    /**Will use the current {@link Entity Entities} {@link com.lordsofmidnight.utils.enums.PowerUp PowerUp} with probability of 1/10 at first attempted use, increasing by 1/10 in probability for every consecutive attempted use. Will use {@link com.lordsofmidnight.utils.enums.PowerUp#SPEED Speed PowerUp} regardless if within {@link #SPEED_POWER_UP_ACTIVATE_DEPTH} squares of MIPsman.
+     *
+     * @param ent The current entity who's {@link com.lordsofmidnight.utils.enums.PowerUp PowerUp} is being processed.
+     * @param currentLocation The current location.
+     * @author Lewis Ackroyd*/
     private void processPowerUps(Entity ent, Point currentLocation) {
         List<PowerUp> powerUpList = ent.getItems();
         if (!powerUpList.isEmpty()&&!ent.isPowerUpUsed()) {
@@ -426,10 +477,10 @@ public class AILoopControl extends Thread {
             else {
                 try {
                     if (powerUpList.get(0).getType() == com.lordsofmidnight.utils.enums.PowerUp.SPEED) {
-                        class MipsmanProximityCondition implements ConditionalInterface {
+                        class MipsmanProximityCondition implements SampleSearch.ConditionalInterface {
                             @Override
                             public boolean condition(Point position) {
-                                return position.equals(gameAgents[mipsmanID].getLocation());
+                                return position.equals(mipsman.getLocation());
                             }
                         }
                         SampleSearch sampleSearch = new SampleSearch(SPEED_POWER_UP_ACTIVATE_DEPTH, map);
@@ -452,6 +503,11 @@ public class AILoopControl extends Thread {
         }
     }
 
+    /**Adds the specified direction to be processed by the server.
+     *
+     * @param direction The direction to be moved in.
+     * @param ent The entity the direction is associated with.
+     * @author Lewis Ackroyd*/
     private void setDirection(Direction direction, Entity ent) {
         if (direction == null) {
             return;
@@ -462,6 +518,13 @@ public class AILoopControl extends Thread {
         }
     }
 
+    /**Determines if the current {@link Entity} is at the same coordinate as the last time it was checked in the AI loop.
+     *
+     * @param ent The current entity.
+     * @param currentLocation The location of this {@link Entity} at the start of this AI process iteration.
+     *
+     * @return True if this {@link Entity} is at the same grid coordinate as in the last AI iteration.
+     * @author Lewis Ackroyd*/
     private boolean atPreviousCoordinate(Entity ent, Point currentLocation) {
         if (ent.getLastGridCoord() == null) {
             return false;
@@ -469,6 +532,14 @@ public class AILoopControl extends Thread {
         return ent.getLastGridCoord().equals(currentLocation);
     }
 
+    /**Checks if the given direction is valid, and if not replaces it with a random valid direction. Also reduces the liklihood of choosing a direction that would result in a 180 by the current agent.
+     *
+     * @param oldDirection The direction previously travelled by this {@link Entity}.
+     * @param currentLocation The location of this {@link Entity} at the start of this AI process iteration.
+     * @param dir The current direction to be set next.
+     *
+     * @return The corrected direction.
+     * @author Lewis Ackroyd*/
     private Direction confirmOrReplaceDirection(Direction oldDirection, Point currentLocation, Direction dir) {
         ArrayList<Direction> validDirections = getValidDirections(currentLocation, map);
         Random r = new Random();
@@ -496,6 +567,13 @@ public class AILoopControl extends Thread {
         return dir;
     }
 
+    /**Produces all valid directions from the current position.
+     *
+     * @param p The current position.
+     * @param map The current map.
+     *
+     * @return The list of all valid directions.
+     * @author Lewis Ackroyd*/
     private static final ArrayList<Direction> getValidDirections(Point p, Map map) {
         ArrayList<Direction> validDirections = new ArrayList<>();
         if (Methods.validateDirection(Direction.UP, p, map)) validDirections.add(Direction.UP);

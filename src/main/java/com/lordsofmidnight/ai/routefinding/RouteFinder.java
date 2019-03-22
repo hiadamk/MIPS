@@ -14,9 +14,11 @@ public interface RouteFinder {
   /**
    * Returns the direction to travel in until the next junction is reached.
    *
-   * @param myLocation The start com.lordsofmidnight.gamestate for route finding.
-   * @param targetLocation The target of the route finding.
+   * @param myLocation The start position for route finding.
+   * @param targetLocation The target position for route finding.
+   *
    * @return The direction to travel in.
+   * @author Lewis Ackroyd
    */
   public Direction getRoute(Point myLocation, Point targetLocation);
 }
