@@ -307,7 +307,6 @@ public class Entity implements Renderable {
   public void setDirection(Direction direction) {
     if (this.direction != direction) {
       if (direction != Direction.STOP) {
-        currentImage = images.get(direction.toInt());
       } else {
         oldDirection = this.direction;
       }
@@ -447,30 +446,7 @@ public class Entity implements Renderable {
   /**
    * @return current frame
    */
-  public int getCurrentFrame() {
-    if (this.currentFrame >= getImage().size()) {
-      this.currentFrame = 0;
-    }
-    return currentFrame;
-  }
 
-  /**
-   * update image to next animation step
-   *
-   * @author Tim Cheung
-   */
-  public void nextFrame() {
-    if (getImage().size() == 1) {
-      currentFrame = 0;
-    } else {
-      // currentFrame = (currentFrame + 1) % (getImage().size() - 1);
-      if (currentFrame >= getImage().size() - 1) {
-        currentFrame = 0;
-      } else {
-        currentFrame++;
-      }
-    }
-  }
 
   public boolean countRespawn() {
     if ( deathCounter == DEATHTIME) {

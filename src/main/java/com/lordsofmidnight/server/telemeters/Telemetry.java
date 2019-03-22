@@ -6,7 +6,6 @@ import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.main.Client;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
-import com.lordsofmidnight.objects.PowerUpBox;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
 import com.lordsofmidnight.utils.GameLoop;
 import com.lordsofmidnight.utils.Input;
@@ -14,7 +13,6 @@ import com.lordsofmidnight.utils.Methods;
 import com.lordsofmidnight.utils.ResourceLoader;
 import com.lordsofmidnight.utils.enums.Direction;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -103,7 +101,70 @@ public abstract class Telemetry {
         agents[0] = new Entity(false, 0, map.getRandomSpawnPoint());
     }
 
-    Methods.updateImages(agents, resourceLoader);
+    //Methods.updateImages(agents, resourceLoader);
+  }
+
+  static void invincibleCollision(Entity killer, Entity victim) {
+    if (killer.isDead() || victim.isDead()) {
+      return;
+    }
+    Point killerLocation = killer.getFaceLocation();
+    Point victimLocation = victim.getLocation();
+    if (victimLocation.inRange(killerLocation)) {
+      Methods.kill(killer, victim);
+      // victim.setLocation(r.getMap().getRandomSpawnPoint());
+    }
+  }
+
+  // physics engine
+
+  /**
+   * Static method to detect if the mipsman entity will eat a pellet
+   *
+   * @param agents The entities
+   * @param pellets The pellets
+   * @author Matthew Jones
+   */
+  private static void pelletCollision(
+      Entity[] agents, PointMap<Pellet> pellets, ConcurrentHashMap<UUID, PowerUp> activePowerUps,
+      ResourceLoader resourceLoader) {
+    for (Entity agent : agents) {
+      Point p = agent.getLocation();
+      Pellet pellet = pellets.get(p);
+      if (pellet != null) {
+        pellet.interact(agent, agents, activePowerUps);
+      }
+    }
+  }
+
+  /**
+   * Static method for 'swapping' a mipsman and ghoul if they occupy the same area.
+   *
+   * @param mipsman Entity currently acting as mipsman
+   * @param ghoul Entity currently running as ghoul
+   * @author Alex Banks, Matthew Jones
+   */
+  private static void detectEntityCollision(
+      Entity mipsman, Entity ghoul, ResourceLoader resourceLoader) {
+    if (mipsman.isDead() || ghoul.isDead()) {
+      return;
+    }
+    Point mipsmanCenter = mipsman.getLocation();
+    Point ghoulFace = ghoul.getFaceLocation();
+
+    if (mipsmanCenter.inRange(ghoulFace)) { // check temporary invincibility here
+      client.collisionDetected(ghoul);
+      mipsman.setMipsman(false);
+      ghoul.setMipsman(true);
+      Methods.kill(ghoul, mipsman);
+      // mipsman.setLocation(resourceLoader.getMap().getRandomSpawnPoint());
+      mipsman.setDirection(Direction.UP);
+      mipsman.updateImages(resourceLoader);
+      ghoul.updateImages(resourceLoader);
+
+      // System.out.println("~Ghoul" + ghoul.getClientId() + " captured Mipsman" +
+      // mipsman.getClientId());
+    }
   }
 
   /**
@@ -150,17 +211,17 @@ public abstract class Telemetry {
         if (agents[i].isMipsman() && !agents[j].isMipsman() && !agents[i].isInvincible()) {
           detectEntityCollision(agents[i], agents[j], resourceLoader);
         } else if (agents[i].isInvincible() && !agents[j].isInvincible()) {
-          invincibleCollision(agents[i], agents[j], resourceLoader);
+          invincibleCollision(agents[i], agents[j]);
         }
         if (agents[j].isMipsman() && !agents[i].isMipsman() && !agents[j].isInvincible()) {
           detectEntityCollision(agents[j], agents[i], resourceLoader);
         } else if (agents[j].isInvincible() && !agents[i].isInvincible()) {
-          invincibleCollision(agents[j], agents[i], resourceLoader);
+          invincibleCollision(agents[j], agents[i]);
         }
       }
     }
 
-    pelletCollision(agents, pellets, activePowerUps);
+    pelletCollision(agents, pellets, activePowerUps, resourceLoader);
     for (Pellet p : pellets.values()) {
       p.incrementRespawn();
     }
@@ -190,68 +251,6 @@ public abstract class Telemetry {
       System.out.println("Player " + winner + " won the game");
       System.out.println("Player " + winner + " won the game");
       client.finishGame();
-    }
-  }
-
-  // physics engine
-
-  static void invincibleCollision(Entity killer, Entity victim, ResourceLoader r) {
-    if (killer.isDead() || victim.isDead()) {
-      return;
-    }
-    Point killerLocation = killer.getFaceLocation();
-    Point victimLocation = victim.getLocation();
-    if (victimLocation.inRange(killerLocation)) {
-      Methods.kill(killer, victim);
-      // victim.setLocation(r.getMap().getRandomSpawnPoint());
-    }
-  }
-
-  /**
-   * Static method for 'swapping' a mipsman and ghoul if they occupy the same area.
-   *
-   * @param mipsman Entity currently acting as mipsman
-   * @param ghoul Entity currently running as ghoul
-   * @author Alex Banks, Matthew Jones
-   */
-  private static void detectEntityCollision(
-      Entity mipsman, Entity ghoul, ResourceLoader resourceLoader) {
-    if (mipsman.isDead() || ghoul.isDead()) {
-      return;
-    }
-    Point mipsmanCenter = mipsman.getLocation();
-    Point ghoulFace = ghoul.getFaceLocation();
-
-    if (mipsmanCenter.inRange(ghoulFace)) { // check temporary invincibility here
-      client.collisionDetected(ghoul);
-      mipsman.setMipsman(false);
-      ghoul.setMipsman(true);
-      Methods.kill(ghoul, mipsman);
-      // mipsman.setLocation(resourceLoader.getMap().getRandomSpawnPoint());
-      mipsman.setDirection(Direction.UP);
-      mipsman.updateImages(resourceLoader);
-      ghoul.updateImages(resourceLoader);
-
-      // System.out.println("~Ghoul" + ghoul.getClientId() + " captured Mipsman" +
-      // mipsman.getClientId());
-    }
-  }
-
-  /**
-   * Static method to detect if the mipsman entity will eat a pellet
-   *
-   * @param agents The entities
-   * @param pellets The pellets
-   * @author Matthew Jones
-   */
-  private static void pelletCollision(
-      Entity[] agents, PointMap<Pellet> pellets, ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
-    for (Entity agent : agents) {
-      Point p = agent.getLocation();
-      Pellet pellet = pellets.get(p);
-      if (pellet != null) {
-        pellet.interact(agent, agents, activePowerUps);
-      }
     }
   }
 

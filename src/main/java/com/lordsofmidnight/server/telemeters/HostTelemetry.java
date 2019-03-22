@@ -159,11 +159,11 @@ public class HostTelemetry extends Telemetry {
         if (agents[id].isDead()) {
           return;
         }
+        usePowerUp(id);
         agents[id].setPowerUpUsedFlag(false);
         agents[id].setDirectionSetFlag(false);
-        usePowerUp(id);
       }else if(d.equals(Direction.STOP)){
-      //  AILoopControl.addClient(id);
+        //addClient(id);
       }
       else {
         agents[id].setDirectionSetFlag(false);

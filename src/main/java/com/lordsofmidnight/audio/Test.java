@@ -21,11 +21,6 @@ public class Test {
   private static void test3(AudioController audioController) {
     audioController.playSound(Sounds.death);
     sleep(3);
-    audioController.setSoundVolume(0.25);
-    audioController.playSound(Sounds.death);
-    sleep(3);
-    audioController.setSoundVolume(1);
-    audioController.playSound(Sounds.death);
     sleep(3);
     audioController.playMusic(Sounds.intro);
     sleep(3);

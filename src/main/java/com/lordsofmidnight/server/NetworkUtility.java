@@ -189,15 +189,15 @@ public class NetworkUtility {
   /**
    * Makes the packet for when there is a collision between Pac man and a ghoul
    *
-   * @param pacmanID Entity ID of pac man
+   * @param mipsmanID Entity ID of pac man
    * @param ghoulID Entity ID of the ghoul
    * @param position Position that the collision occurred
    * @return The packet representing the collision
    */
   public static String makePacGhoulCollisionPacket(
-      int pacmanID, int ghoulID, Point2D.Double position) {
+      int mipsmanID, int ghoulID, Point2D.Double position) {
     return "COL0"
-        + pacmanID
+        + mipsmanID
         + ghoulID
         + coordFormat.format(position.getX())
         + coordFormat.format(position.getX());

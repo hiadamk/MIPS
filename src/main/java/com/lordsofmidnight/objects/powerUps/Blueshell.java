@@ -1,14 +1,12 @@
 package com.lordsofmidnight.objects.powerUps;
 
-import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
-import java.util.HashMap;
-import java.util.UUID;
-
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
 import com.lordsofmidnight.utils.Methods;
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Blueshell extends PowerUp {
@@ -45,10 +43,7 @@ public class Blueshell extends PowerUp {
   public boolean incrementTime() {
     super.incrementTime();
     if (counter == EFFECTTIME) {
-      PowerUp killer = new Mine();
-      killer.user = user;
-      killer.trigger(effected, activePowerUps);
-      user.increaseKills();
+      Methods.kill(user, effected);
       return true;
     }
     return false;

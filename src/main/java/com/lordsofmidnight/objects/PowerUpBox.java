@@ -22,7 +22,7 @@ public class PowerUpBox extends Pellet {
   };
 
   private final HashMap<Integer, PowerUp>[] ghostWeights = new HashMap[5];
-  private final HashMap<Integer, PowerUp>[] pacmanWeights = new HashMap[5];
+  private final HashMap<Integer, PowerUp>[] mipsmanWeights = new HashMap[5];
 
   public PowerUpBox(double x, double y) {
     super(x, y);
@@ -62,41 +62,41 @@ public class PowerUpBox extends Pellet {
     map.put(25, PowerUp.WEB);
     map.put(40, PowerUp.BLUESHELL);
     ghostWeights[4] = map;
-    // Init PacMan weights
+    // Init MIPsman weights
     map = new HashMap<>();
     map.put(5, PowerUp.INVINCIBLE);
     map.put(30, PowerUp.WEB);
     map.put(20, PowerUp.SPEED);
     map.put(20, PowerUp.MINE);
-    pacmanWeights[0] = map;
+    mipsmanWeights[0] = map;
     map = new HashMap<>();
     map.put(5, PowerUp.BLUESHELL);
     map.put(10, PowerUp.INVINCIBLE); //15
     map.put(40, PowerUp.WEB);
     map.put(30, PowerUp.MINE);
     map.put(30, PowerUp.SPEED);
-    pacmanWeights[1] = map;
+    mipsmanWeights[1] = map;
     map = new HashMap<>();
     map.put(10, PowerUp.BLUESHELL);
     map.put(10, PowerUp.INVINCIBLE); //10
     map.put(30, PowerUp.WEB);
     map.put(40, PowerUp.SPEED);
     map.put(35, PowerUp.MINE);
-    pacmanWeights[2] = map;
+    mipsmanWeights[2] = map;
     map = new HashMap<>();
     map.put(15, PowerUp.BLUESHELL);
     map.put(16, PowerUp.INVINCIBLE); //25
     map.put(30, PowerUp.WEB);
     map.put(40, PowerUp.SPEED);
     map.put(35, PowerUp.MINE);
-    pacmanWeights[3] = map;
+    mipsmanWeights[3] = map;
     map = new HashMap<>();
     map.put(20, PowerUp.BLUESHELL);
     map.put(21, PowerUp.INVINCIBLE); //40
     map.put(30, PowerUp.WEB);
     map.put(31, PowerUp.MINE);
     map.put(36, PowerUp.SPEED);
-    pacmanWeights[4] = map;
+    mipsmanWeights[4] = map;
   }
 
   /**
@@ -107,8 +107,8 @@ public class PowerUpBox extends Pellet {
    */
   public com.lordsofmidnight.objects.powerUps.PowerUp getPowerUp(Entity entity, Entity[] agents) {
     int rank = getRank(entity, agents);
-    HashMap<Integer, PowerUp> baseWeights = pacmanWeights[rank];
-    //   entity.isMipsman() ? pacmanWeights[rank] : ghostWeights[rank];
+    HashMap<Integer, PowerUp> baseWeights = mipsmanWeights[rank];
+    //   entity.isMipsman() ? mipsmanWeights[rank] : ghostWeights[rank];
     int totalWeights = 0;
     TreeMap<Integer, PowerUp> weights = new TreeMap<>();
     for (Entry<Integer, PowerUp> entry : baseWeights.entrySet()) {
