@@ -162,7 +162,10 @@ public class HostTelemetry extends Telemetry {
         agents[id].setPowerUpUsedFlag(false);
         agents[id].setDirectionSetFlag(false);
         usePowerUp(id);
-      } else {
+      }else if(d.equals(Direction.STOP)){
+      //  AILoopControl.addClient(id);
+      }
+      else {
         agents[id].setDirectionSetFlag(false);
         if (Methods.validateDirection(d, agents[id].getLocation(), map)) {
           agents[id].setDirection(d);

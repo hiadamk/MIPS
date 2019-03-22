@@ -67,6 +67,8 @@ public class Client extends Application {
   private Scene mainMenu;
   private boolean gameStarted = false;
   private EndGameScreen endGameScreen;
+  public boolean hostGone = false;
+
   public int getId() {
     return id;
   }
@@ -229,6 +231,12 @@ public class Client extends Application {
     Point.setMap(m);
   }
 
+  public void setMap(String mapName) {
+    resourceLoader.loadMap(mapName);
+    this.map = resourceLoader.getMap();
+    Point.setMap(map);
+  }
+
   /**
    * Updates the current screen resolution
    */
@@ -318,6 +326,9 @@ public class Client extends Application {
    * Handles the closing down of the game session in single player and multiplayer
    */
   public void closeGame() {
+    if( !(singlePlayer || isHost)) {
+      informServer(new Input(this.id, Direction.STOP));
+    }
     gameScene.setOnKeyPressed(null);
     this.telemetry.stopGame();
     inputRenderLoop.stop();
@@ -431,5 +442,9 @@ public class Client extends Application {
    */
   public Map getMap() {
     return this.map;
+  }
+
+  public void setHostGone(boolean b) {
+    hostGone = true;
   }
 }

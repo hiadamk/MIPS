@@ -115,6 +115,7 @@ public class ServerLobby {
                   out.println("" + playerID);
                   out.flush();
                   System.out.println("Sent client " + playerID + " their ID...");
+                  out.println("default.png");
                   out.println("" + MIPID);
                   out.flush();
                   out.println("SUCCESS");

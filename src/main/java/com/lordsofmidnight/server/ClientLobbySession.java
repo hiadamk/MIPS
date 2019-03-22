@@ -85,6 +85,9 @@ public class ClientLobbySession {
               client.setId(id);
 
               r = in.readLine();
+              client.setMap(r);
+
+              r = in.readLine();
               int MIPID = Integer.parseInt(r);
               client.setMIP(MIPID);
               r = in.readLine();

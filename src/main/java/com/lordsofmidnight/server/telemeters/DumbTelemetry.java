@@ -105,6 +105,8 @@ public class DumbTelemetry extends Telemetry {
           setScore(input.substring(5));
           break;
         case NetworkUtility.STOP_CODE:
+          //set client flag that server has left
+          client.setHostGone(true);
           stopGame();
           break;
         default:
@@ -114,15 +116,11 @@ public class DumbTelemetry extends Telemetry {
   }
 
 
-
+//called when server leaves game and when client quits.
   @Override
   public void stopGame() {
     inputProcessor.close();
-    // TODO render stop screen. I imagine somehow the message the game has stopped must be recieved
-    // by the client
-    // but currently, telemetry is what gets the signal, so DumbTelemetry must somehow communicate
-    // to the client
-    // that the game is over.
+
   }
 
   // takes a packet string as defined in
@@ -160,9 +158,9 @@ public class DumbTelemetry extends Telemetry {
     int id = input.getClientID();
     double x = Double.valueOf(ls[1]);
     double y = Double.valueOf(ls[2]);
-    System.out.println("X: " + x);
+/*    System.out.println("X: " + x);
     System.out.println("Y: " + y);
-    System.out.println("ID: " + id);
+    System.out.println("ID: " + id); */
     agents[id].setLocation(new Point(x, y, map));
     agents[id].setDirection(input.getMove());
     int MIPID = Integer.parseInt(ls[3]);
