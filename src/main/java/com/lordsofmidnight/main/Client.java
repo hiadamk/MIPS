@@ -83,6 +83,9 @@ public class Client extends Application {
 
   @Override
   public void start(Stage primaryStage) {
+    System.out.println("START");
+    Settings.loadSettings();
+    System.out.println("loaded settings");
     audioController = new AudioController();
     keyController = new KeyController();
     resourceLoader = new ResourceLoader("src/main/resources/");
