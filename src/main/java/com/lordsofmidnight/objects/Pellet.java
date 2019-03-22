@@ -123,6 +123,8 @@ public class Pellet implements Renderable {
     this.isTrap = true;
   }
 
+  /**@return True if the current pellet is a {@link PowerUpBox}
+   * @author Lewis Ackroyd*/
   public boolean isPowerPellet() {
     return false;
   }

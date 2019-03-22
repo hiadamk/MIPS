@@ -1,7 +1,12 @@
 package com.lordsofmidnight.gamestate.points;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Collection;
 
 /**
  * A class that can be used with {@link Point} to allow it to have the same functionality as {@link
@@ -15,16 +20,26 @@ public class PointMap<V> extends AbstractMap<Point, V> implements Map<Point, V>,
   private final int MAX_X;
   private final HashMap<Integer, V> map;
 
+  /**Initialises this Map according to the paramaters of the {@link com.lordsofmidnight.gamestate.maps.Map Map}.
+   *
+   * @param map The map on which the stored points will be held.
+   * @author Lewis Ackroyd*/
   public PointMap(com.lordsofmidnight.gamestate.maps.Map map) {
     this.MAX_X = map.getMaxX();
     this.map = new HashMap<>();
   }
 
+  /**Initialises this Map by using the specified value as the size of the x-axis.
+   *
+   * @param maxX The maximum xValue of any points being passed to this map
+   * @author Lewis Ackroyd*/
   private PointMap(int maxX) {
     this.MAX_X = maxX;
     this.map = new HashMap<>();
   }
 
+  /**Creates a clone of this map, but without any of it's elements
+   * @author Lewis Ackroyd*/
   public PointMap<V> getShallowClone() {
     return new PointMap<V>(MAX_X);
   }
@@ -152,11 +167,23 @@ public class PointMap<V> extends AbstractMap<Point, V> implements Map<Point, V>,
     return returnSet;
   }
 
+  /**Calculates the key value that will be used for a given point within the map.
+   *
+   * @param p The point being used as a key
+   *
+   * @return The key value to be used by the internal map
+   * @author Lewis Ackroyd*/
   private int getKeyValue(Point p) {
     p = p.getGridCoord();
     return (((int) p.getY()) * MAX_X) + (int) p.getX();
   }
 
+  /**Calculates the point that generates the given key.
+   *
+   * @param key The key used for the internal map
+   *
+   * @return The point that generated this key
+   * @author Lewis Ackroyd*/
   private Point getPointFromKey(int key) {
     int xVal = key % MAX_X;
     int yVal = (key - xVal) / MAX_X;

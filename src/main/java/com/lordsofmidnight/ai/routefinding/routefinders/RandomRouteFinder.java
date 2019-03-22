@@ -16,23 +16,26 @@ public class RandomRouteFinder implements RouteFinder {
   private static final Random R = new Random();
 
   /**
-   * Creates an instance of this routeFinder.
+   * Creates an instance of this {@link RouteFinder}.
+   *
+   * @author Lewis Ackroyd
    */
   public RandomRouteFinder() {
   }
 
   /**
-   * Returns the direction to travel in until the next junction is reached.
+   * Returns random direction to travel in until the next junction is reached.
    *
-   * @param myLocation The start of com.lordsofmidnight.gamestate for route finding.
-   * @param targetLocation The target com.lordsofmidnight.gamestate for route finding.
-   * @return The direction to travel in.
-   * @throws NullPointerException One or both of positions are null.
+   * @param myLocation The start point.
+   * @param targetLocation The target point.
+   *
+   * @return The direction to travel in, or DEFAULT if no direction could be produced.
+   * @author Lewis Ackroyd
    */
   @Override
   public Direction getRoute(Point myLocation, Point targetLocation) {
     if (myLocation == null || targetLocation == null) {
-      throw new NullPointerException("One or both positions are null.");
+      return DEFAULT;
     }
     Direction dir = DEFAULT;
     int dirValue = R.nextInt(6);

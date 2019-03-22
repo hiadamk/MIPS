@@ -147,7 +147,7 @@ public class Entity implements Renderable {
   }
 
   /**
-   * @return RouteFinder for this instance, null if user controlled
+   * @return RouteFinder for this entity
    * @author Lewis Ackroyd
    */
   public RouteFinder getRouteFinder() {
@@ -407,21 +407,6 @@ public class Entity implements Renderable {
     return outStr;
   }
 
-  public String toStringExpanded() {
-    String outStr = "";
-    if (this.mipsman) {
-      outStr += "mip" + clientId;
-    } else {
-      outStr += "ghoul" + clientId;
-    }
-    outStr += "\nmyloc " + location.toString();
-    outStr += "\nmydir " + direction;
-    outStr += "\nroutefinder " + routeFinder;
-    outStr += "\nlastPos " + lastGridCoord;
-    outStr += "\nscore " + score;
-    return outStr;
-  }
-
   /**
    * @return time since last frame
    */
@@ -469,27 +454,40 @@ public class Entity implements Renderable {
     this.name = s;
   }
 
+  /**@return True if the direction for this entity has already been set by AI but not processed by server
+   * @author Lewis Ackroyd*/
   public boolean isDirectionSet() {
     return directionSet;
   }
 
+  /**Sets if the {@link Direction} for this entity has been set but not processed by the server (True),
+   * or if the {@link Direction} has been processed by the server (False).
+   * @author Lewis Ackroyd*/
   public void setDirectionSetFlag(boolean b) {
     this.directionSet = b;
   }
 
+  /**@return True if the {@link com.lordsofmidnight.utils.enums.PowerUp} for this entity has already been set by AI but not processed by server
+   * @author Lewis Ackroyd*/
   public boolean isPowerUpUsed() {
     return powerUpUsed;
   }
 
+  /**Sets if the {@link com.lordsofmidnight.utils.enums.PowerUp} for this entity has been set but not processed by the server (True),
+   * or if the {@link com.lordsofmidnight.utils.enums.PowerUp} has been processed by the server (False).
+   * @author Lewis Ackroyd*/
   public void setPowerUpUsedFlag(boolean b) {
     this.powerUpUsed = b;
     this.powerUpUseAttempts = 0;
   }
 
+  /**Increases the chance out of the total probability of being used by 1 in the total. (e.g. if probability starts at 1/10, will increase use chance by 1/10)
+   * @author Lewis Ackroyd*/
   public void incrementPowerUpUseChance() {
     this.powerUpUseAttempts++;
   }
 
+  /**Returns the number of times that the current {@link com.lordsofmidnight.utils.enums.PowerUp} has been attempted to be used.*/
   public int powerUpUseAttempts() {
     return powerUpUseAttempts;
   }
