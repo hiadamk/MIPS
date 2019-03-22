@@ -160,6 +160,9 @@ public class MenuController {
     this.client = client;
     this.resourceLoader = resourceLoader;
     this.mapGenerationHandler = new MapGenerationHandler();
+
+    Image icon = new Image("icon.png", false);
+    primaryStage.getIcons().add(icon);
   }
 
   /**
