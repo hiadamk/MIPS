@@ -10,17 +10,23 @@ import java.util.Random;
 
 public class Methods {
 
+  @Deprecated //TODO remove
   public static void updateImages(Entity[] entities, ResourceLoader r) {
     for (Entity e : entities) {
       e.updateImages(r);
     }
   }
 
+  /**
+   * Handles everything to do with an entity killing another
+   *
+   * @param killer The entity doing the killing
+   * @param victim The entity being killed
+   */
   public static void kill(Entity killer, Entity victim) {
     if (!killer.isMipsman() && victim.isMipsman()) {
       victim.setMipsman(false);
       killer.setMipsman(true);
-      System.out.println("swapped mips");
     }
     killer.increaseKills();
     victim.setDead(true);
@@ -48,6 +54,11 @@ public class Methods {
     return !m.isWall(movedPoint) && p.isCentered();
   }
 
+  /**
+   * Finds the player in first place
+   * @param agents the list of game agents
+   * @return the id of the entity with the highest score
+   */
   public static int findWinner(Entity[] agents) {
     int winner = 0;
     int maxScore = 0;
@@ -60,6 +71,11 @@ public class Methods {
     return winner;
   }
 
+  /**
+   * Generates a list of random names for the AI players in the game
+   * @param i The number of names to pick
+   * @return The array of names
+   */
   public static String[] getRandomNames(int i) {
     String[] namesList = {"Ian", "Ghica", "Eike", "Mark", "Sujoy", "Levy", "Volker"};
     ArrayList<String> names = new ArrayList<String>(Arrays.asList(namesList));
