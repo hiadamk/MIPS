@@ -4,6 +4,9 @@ import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.utils.enums.Direction;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 
 public class Methods {
 
@@ -55,5 +58,16 @@ public class Methods {
       }
     }
     return winner;
+  }
+
+  public static String[] getRandomNames(int i) {
+    String[] namesList = {"Ian", "Ghica", "Eike", "Mark", "Sujoy", "Levy", "Volker"};
+    ArrayList<String> names = new ArrayList<String>(Arrays.asList(namesList));
+    Random r = new Random();
+    String[] selected = new String[i];
+    for (int j = 0; j < i; j++) {
+      selected[j] = "Bot " + names.remove(r.nextInt(names.size()));
+    }
+    return selected;
   }
 }

@@ -1,25 +1,21 @@
 package com.lordsofmidnight.server.telemeters;
 
-import com.lordsofmidnight.gamestate.maps.Map;
-import com.lordsofmidnight.gamestate.points.PointMap;
-import com.lordsofmidnight.objects.Pellet;
-import com.lordsofmidnight.objects.PowerUpBox;
 import com.lordsofmidnight.ai.AILoopControl;
+import com.lordsofmidnight.gamestate.points.Point;
+import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.main.Client;
 import com.lordsofmidnight.objects.Entity;
+import com.lordsofmidnight.objects.Pellet;
+import com.lordsofmidnight.objects.PowerUpBox;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
 import com.lordsofmidnight.server.NetworkUtility;
 import com.lordsofmidnight.utils.GameLoop;
 import com.lordsofmidnight.utils.Input;
 import com.lordsofmidnight.utils.Methods;
-import com.lordsofmidnight.gamestate.points.Point;
-import com.lordsofmidnight.utils.ResourceLoader;
 import com.lordsofmidnight.utils.enums.Direction;
 import java.util.Queue;
 import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class HostTelemetry extends Telemetry {
@@ -79,8 +75,10 @@ public class HostTelemetry extends Telemetry {
     if (aiCount > 0) {
       int[] aiControlled = new int[aiCount];
       int highestId = AGENT_COUNT - 1;
+      String[] names = Methods.getRandomNames(aiCount);
       for (int i = 0; i < aiCount; i++) {
         aiControlled[i] = highestId;
+        agents[highestId].setName(names[i]);
         highestId--;
       }
       aiRunning = false;
