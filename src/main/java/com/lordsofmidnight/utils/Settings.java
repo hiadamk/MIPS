@@ -1,5 +1,7 @@
 package com.lordsofmidnight.utils;
 
+import com.lordsofmidnight.audio.AudioController;
+import com.lordsofmidnight.main.Client;
 import com.lordsofmidnight.utils.enums.InputKey;
 import com.lordsofmidnight.utils.enums.RenderingMode;
 import java.io.BufferedReader;
@@ -50,6 +52,25 @@ public class Settings {
 
   public static void setSoundVolume(double soundVolume) {
     Settings.soundVolume = soundVolume;
+  }
+
+  public static void restoreDefaultSettings(Client c){
+    up = KeyCode.UP;
+    down = KeyCode.DOWN;
+    left = KeyCode.LEFT;
+    right = KeyCode.RIGHT;
+    useItem = KeyCode.SPACE;
+    xResolution = 1366;
+    yResolution = 768;
+    renderingMode = RenderingMode.SMOOTH_SCALING;
+    theme = "default";
+
+    mute = false;
+    musicVolume = 0.5;
+    soundVolume = 0.5;
+
+    c.updateResolution();
+    saveSettings();
   }
 
   public static KeyCode getKey(InputKey key) {
