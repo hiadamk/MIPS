@@ -222,19 +222,7 @@ public abstract class Telemetry {
     }
     gameTimer--;
     if (gameTimer == 0) {
-      System.out.println("GAME HAS ENDED ITS OVER");
-      System.out.println("GAME HAS ENDED ITS OVER");
-      System.out.println("GAME HAS ENDED ITS OVER");
-      System.out.println("GAME HAS ENDED ITS OVER");
-      System.out.println("GAME HAS ENDED ITS OVER");
-      System.out.println("GAME HAS ENDED ITS OVER");
-      System.out.println("GAME HAS ENDED ITS OVER");
-      System.out.println("GAME HAS ENDED ITS OVER");
       int winner = Methods.findWinner(agents);
-      System.out.println("Player " + winner + " won the game");
-      System.out.println("Player " + winner + " won the game");
-      System.out.println("Player " + winner + " won the game");
-      System.out.println("Player " + winner + " won the game");
       client.finishGame();
     }
   }
