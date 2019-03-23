@@ -104,18 +104,6 @@ public abstract class Telemetry {
     //Methods.updateImages(agents, resourceLoader);
   }
 
-  static void invincibleCollision(Entity killer, Entity victim) {
-    if (killer.isDead() || victim.isDead()) {
-      return;
-    }
-    Point killerLocation = killer.getFaceLocation();
-    Point victimLocation = victim.getLocation();
-    if (victimLocation.inRange(killerLocation)) {
-      Methods.kill(killer, victim);
-      // victim.setLocation(r.getMap().getRandomSpawnPoint());
-    }
-  }
-
   // physics engine
 
   /**
@@ -145,25 +133,22 @@ public abstract class Telemetry {
    * @author Alex Banks, Matthew Jones
    */
   private static void detectEntityCollision(
-      Entity mipsman, Entity ghoul, ResourceLoader resourceLoader) {
+      Entity mipsman, Entity ghoul) {
     if (mipsman.isDead() || ghoul.isDead()) {
       return;
     }
     Point mipsmanCenter = mipsman.getLocation();
     Point ghoulFace = ghoul.getFaceLocation();
-
     if (mipsmanCenter.inRange(ghoulFace)) { // check temporary invincibility here
       client.collisionDetected(ghoul);
-      mipsman.setMipsman(false);
+      /*mipsman.setMipsman(false);
       ghoul.setMipsman(true);
-      Methods.kill(ghoul, mipsman);
-      // mipsman.setLocation(resourceLoader.getMap().getRandomSpawnPoint());
       mipsman.setDirection(Direction.UP);
       mipsman.updateImages(resourceLoader);
       ghoul.updateImages(resourceLoader);
-
-      // System.out.println("~Ghoul" + ghoul.getClientId() + " captured Mipsman" +
-      // mipsman.getClientId());
+      System.out.println("~Ghoul" + ghoul.getClientId() + " captured Mipsman" +
+      mipsman.getClientId()); */
+      Methods.kill(ghoul, mipsman);
     }
   }
 
@@ -173,7 +158,7 @@ public abstract class Telemetry {
    *
    * @param agents array of entities in current state
    * @author Alex Banks, Matthew Jones
-   * @see this#detectEntityCollision(Entity, Entity, ResourceLoader)
+   * @see this#detectEntityCollision(Entity, Entity)
    */
   void processPhysics(
       Entity[] agents,
@@ -209,14 +194,14 @@ public abstract class Telemetry {
       for (int j = (i + 1); j < AGENT_COUNT; j++) {
 
         if (agents[i].isMipsman() && !agents[j].isMipsman() && !agents[i].isInvincible()) {
-          detectEntityCollision(agents[i], agents[j], resourceLoader);
+          detectEntityCollision(agents[i], agents[j]);
         } else if (agents[i].isInvincible() && !agents[j].isInvincible()) {
-          invincibleCollision(agents[i], agents[j]);
+          detectEntityCollision(agents[i], agents[j]);
         }
         if (agents[j].isMipsman() && !agents[i].isMipsman() && !agents[j].isInvincible()) {
-          detectEntityCollision(agents[j], agents[i], resourceLoader);
+          detectEntityCollision(agents[j], agents[i]);
         } else if (agents[j].isInvincible() && !agents[i].isInvincible()) {
-          invincibleCollision(agents[j], agents[i]);
+          detectEntityCollision(agents[j], agents[i]);
         }
       }
     }

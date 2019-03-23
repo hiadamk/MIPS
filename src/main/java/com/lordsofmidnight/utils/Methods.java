@@ -16,7 +16,8 @@ public class Methods {
   public static void kill(Entity killer, Entity victim) {
     if (!killer.isMipsman() && victim.isMipsman()) {
       victim.setMipsman(false);
-      victim.setMipsman(true);
+      killer.setMipsman(true);
+      System.out.println("swapped mips");
     }
     killer.increaseKills();
     victim.setDead(true);
