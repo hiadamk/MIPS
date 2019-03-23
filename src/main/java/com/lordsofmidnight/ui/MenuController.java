@@ -137,6 +137,8 @@ public class MenuController {
   private Button moveMapsRightBtn;
   private Map currentMap;
   private ArrayList<Map> validMaps = new ArrayList<>();
+  private ArrayList<String> mapNames = new ArrayList<>();
+  private Text mapNameBody;
   private Button bigMapBtn;
   private Button smallMapBtn;
 
@@ -336,6 +338,7 @@ public class MenuController {
       mapsIndex = numberOfMaps - 1;
       moveMapsRightBtn.setVisible(false);
     }
+    mapNameBody.setText(mapNames.get(mapsIndex));
     moveMapsLeftBtn.setVisible(true);
     mapView.setImage(mapImages.get(mapsIndex));
     currentMap = validMaps.get(mapsIndex);
@@ -350,6 +353,7 @@ public class MenuController {
       mapsIndex = 0;
       moveMapsLeftBtn.setVisible(false);
     }
+    mapNameBody.setText(mapNames.get(mapsIndex));
     moveMapsRightBtn.setVisible(true);
     mapView.setImage(mapImages.get(mapsIndex));
     currentMap = validMaps.get(mapsIndex);
@@ -544,12 +548,20 @@ public class MenuController {
     for (String map : knownMaps) {
       resourceLoader.loadMap(map);
       this.validMaps.add(resourceLoader.getMap());
+      mapNames.add(map);
       mapImages.add(mapPreview.getMapPreview(map));
     }
 
-    VBox mapSelectionView = new VBox(25);
+    VBox mapSelectionView = new VBox(20);
+
+    mapNameBody = TextGenerator.generate(mapNames.get(0), UIColours.YELLOW, 14);
+
+    TextFlow mapNameFlow = new TextFlow(mapNameBody);
     Label selectMapLbl = LabelGenerator
-        .generate(true, mapSelectionView, "Select a map: ", UIColours.WHITE, 14);
+        .generate(true, mapSelectionView, "Select a map", UIColours.WHITE, 14);
+
+    Label mapNameLbl = new Label(null, mapNameFlow);
+    mapSelectionView.getChildren().add(mapNameLbl);
     moveMapsLeftBtn = ButtonGenerator.generate(true, root, "<", UIColours.WHITE, 40);
     moveMapsRightBtn = ButtonGenerator.generate(true, root, ">", UIColours.WHITE, 40);
     moveMapsLeftBtn.setVisible(false);
@@ -568,9 +580,9 @@ public class MenuController {
     mapView.setPreserveRatio(true);
     mapView.setFitWidth(700);
     Button generateMapBtn = ButtonGenerator
-        .generate(true, root, "Generate Map", UIColours.WHITE, 25);
+        .generate(true, root, "Generate Map", UIColours.WHITE, 20);
     Button mapConfirmationBtn = ButtonGenerator
-        .generate(true, root, "Continue", UIColours.GREEN, 25);
+        .generate(true, root, "Continue", UIColours.GREEN, 20);
     mapConfirmationBtn.setOnAction(event -> {
       audioController.playSound(Sounds.click);
       moveItemsToBackTree();
@@ -632,7 +644,7 @@ public class MenuController {
     mapSelectionBtns.setAlignment(Pos.CENTER);
     mapSelectionBox.setAlignment(Pos.CENTER);
     mapSelectionView.setAlignment(Pos.CENTER);
-    StackPane.setMargin(mapSelectionView, new Insets(0, 0, 100, 0));
+    StackPane.setMargin(mapSelectionView, new Insets(0, 0, 150, 0));
     mapSelectionView.setVisible(false);
     root.getChildren().add(mapSelectionView);
 
