@@ -19,6 +19,7 @@ public abstract class PowerUp {
   protected Entity user;
   protected int currentFrame = 0;
   protected com.lordsofmidnight.utils.enums.PowerUp type;
+  protected boolean onMap;
 
   public PowerUp(int effectTime, String name) {
     this.EFFECTTIME = effectTime;
