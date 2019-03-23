@@ -31,7 +31,10 @@ public class MinePellet extends Pellet {
   @Override
   public void interact(Entity entity, Entity[] agents,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
-    Methods.kill(placer, entity);
+    if(!detonated){
+      Methods.kill(placer, entity);
+    }
+
     detonated = true;
   }
 

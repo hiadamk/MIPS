@@ -149,10 +149,10 @@ public class Entity implements Renderable {
   public void setDead(boolean dead) {
     this.dead = dead;
     if (dead) {
-      deathCounter = 0;
       statsTracker.increaseDeaths();
       deathLocation.add(new Point(location.getX(), location.getY()));
       velocity = 0;
+      deathCounter = 0;
     } else {
       resetVelocity();
     }
