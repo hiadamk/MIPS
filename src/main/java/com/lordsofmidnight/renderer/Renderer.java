@@ -1,5 +1,7 @@
 package com.lordsofmidnight.renderer;
 
+import com.lordsofmidnight.objects.EmptyPowerUpBox;
+import com.lordsofmidnight.objects.MinePellet;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.awt.image.BufferedImage;
@@ -99,7 +101,7 @@ public class Renderer {
       ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       int gameTime) {
 
-    if(refreshMap){
+    if (refreshMap) {
       initMapTraversal(map);
       refreshMap = false;
     }
@@ -187,7 +189,6 @@ public class Renderer {
       PointMap<Pellet> pellets,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
 
-
     int[][] rawMap = map.raw();
     ArrayList<Entity> entities = new ArrayList<>(Arrays.asList(entityArr));
     // sort entities to get rendering order
@@ -236,6 +237,8 @@ public class Renderer {
     // TODO refactor the way the translucent pellet is fetched
     Image powerup = r.getPowerBox().get(0);
 
+    ArrayList<Image> mines = r.getMine();
+
     // Loop through grid in diagonal traversal to render walls and entities by depth
     for (Double coord : traversalOrder) {
 
@@ -245,26 +248,29 @@ public class Renderer {
 
         // TODO use better way of finding if client is mipsman
         Entity client = getClientEntity(entities);
-
+        boolean isHidden = false;
         if (currentPellet.canUse(client)) {
-          if (currentPellet instanceof PowerUpBox) {
+          if (currentPellet instanceof PowerUpBox || currentPellet instanceof EmptyPowerUpBox) {
             currentSprite = powerup;
+          } else if (currentPellet instanceof MinePellet) {
+            currentSprite = mines.get(currentAnimationFrame % mines.size());
+            if (((MinePellet) currentPellet).isHidden()) {
+              isHidden = true;
+            }
           } else {
             currentSprite = pellet;
           }
         } else {
-          if (currentPellet instanceof PowerUpBox) {
-            // currentSprite = powerup;
-          } else {
-            currentSprite = translucentPellet;
-          }
+          currentSprite = translucentPellet;
         }
 
         // render pellet using either translucent or opaque sprite
         double x_ = currentPellet.getLocation().getX() - 0.5;
         double y_ = currentPellet.getLocation().getY() - 0.5;
         rendCoord = getIsoCoord(x_, y_, currentSprite.getHeight(), currentSprite.getWidth());
-        gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
+        if (!isHidden) {
+          gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
+        }
       }
 
       x = (int) coord.getX();
@@ -359,7 +365,8 @@ public class Renderer {
     }
     UpDownIterator<java.lang.Double> backgroundOpacity = new UpDownIterator<>(opacity);
 
-    Image currentSprite = r.getPlayableGhoul(newMipsMan.getClientId()).get(newMipsMan.getFacing().toInt()).get(0);
+    Image currentSprite =
+        r.getPlayableGhoul(newMipsMan.getClientId()).get(newMipsMan.getFacing().toInt()).get(0);
     final double renderAnimationTime = 0.75 * Math.pow(10, 9);
     double startTime = System.nanoTime();
     final int frames = 40;
@@ -453,10 +460,9 @@ public class Renderer {
     // choose correct Direction
 
     ArrayList<Image> currentSprites = null;
-    if(e.isMipsman()){
+    if (e.isMipsman()) {
       currentSprites = r.getPlayableMip(e.getClientId()).get(e.getFacing().toInt());
-    }
-    else{
+    } else {
       currentSprites = r.getPlayableGhoul(e.getClientId()).get(e.getFacing().toInt());
     }
 
@@ -470,7 +476,7 @@ public class Renderer {
     } else {
       e.setTimeSinceLastFrame(e.getTimeSinceLastFrame() + timeElapsed);
     }
-    Image currentSprite = currentSprites.get(currentAnimationFrame%currentSprites.size());
+    Image currentSprite = currentSprites.get(currentAnimationFrame % currentSprites.size());
     double x = e.getLocation().getX() - 0.5;
     double y = e.getLocation().getY() - 0.5;
     Point2D.Double rendCoord =

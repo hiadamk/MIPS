@@ -58,6 +58,8 @@ public class ResourceLoader {
   private ArrayList<BufferedImage> explosions;
   private ArrayList<BufferedImage> upRockets;
   private ArrayList<BufferedImage> downRockets;
+  private  ArrayList<BufferedImage> mine;
+  private ArrayList<Image> mineImages;
 
   /** @param baseDir path to the resources folder */
   public ResourceLoader(String baseDir) {
@@ -79,6 +81,7 @@ public class ResourceLoader {
     this.loadPowerUps();
     this.loadExplosion();
     this.loadRocketImages();
+    this.loadMine();
   }
 
   /**
@@ -230,7 +233,6 @@ public class ResourceLoader {
     SpriteSheetData.updateSpriteDimensions(
         new File(BASE_DIR + "sprites/" + theme + "/SHEET_DATA.txt"));
     setResolution();
-    setResolution();
   }
 
   public void refreshSettings(int x, int y, RenderingMode r, String theme) {
@@ -315,6 +317,7 @@ public class ResourceLoader {
       resizeSpritesSmooth(explosions, ratio);
       resizeSpritesSmooth(upRockets, ratio);
       resizeSpritesSmooth(downRockets, ratio);
+      resizeSpritesSmooth(mine, ratio);
       for (ArrayList<BufferedImage> powerUp : powerUps.values()) {
         resizeSpritesSmooth(powerUp, ratio);
       }
@@ -335,6 +338,7 @@ public class ResourceLoader {
       resizeSprites(explosions, ratio);
       resizeSprites(upRockets, ratio);
       resizeSprites(downRockets, ratio);
+      resizeSprites(mine, ratio);
       for (ArrayList<BufferedImage> powerUp : powerUps.values()) {
         resizeSprites(powerUp, ratio);
       }
@@ -627,6 +631,20 @@ public class ResourceLoader {
     return bufferedToJavaFxImage(this.upRockets);
   }
 
+  public void loadMine(){
+    int mineWidth = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_WIDTH);
+    int mineHeight = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_HEIGHT);
+    this.mine = splitSpriteSheet(mineWidth,mineHeight,loadImageFile("sprites/" + theme +"/consumable/","mine")).get(0);
+    this.mineImages = null;
+  }
+
+  public ArrayList<Image> getMine() {
+    if(this.mineImages == null){
+      this.mineImages = bufferedToJavaFxImage(this.mine);
+    }
+    return this.mineImages;
+  }
+
   /**
    * returns loads a png image in TYPE_4BYTE_ABGR
    *
@@ -790,4 +808,5 @@ public class ResourceLoader {
   private int getOutlineColour(BufferedImage sprite) {
     return -16777216;
   }
+
 }

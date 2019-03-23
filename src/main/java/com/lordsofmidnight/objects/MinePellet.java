@@ -9,7 +9,7 @@ public class MinePellet extends Pellet {
 
   private boolean hidden;
   private boolean detonated = false;
-  private int hidden_timer = 30;
+  private int hidden_timer = 300;
   private Entity placer;
 
   public MinePellet(double x, double y, Entity placer) {
