@@ -70,6 +70,7 @@ public class Settings {
     soundVolume = 0.5;
 
     c.updateResolution();
+    saveSettings();
   }
 
   public static KeyCode getKey(InputKey key) {
