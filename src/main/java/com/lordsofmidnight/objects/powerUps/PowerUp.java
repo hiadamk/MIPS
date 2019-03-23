@@ -1,13 +1,14 @@
 package com.lordsofmidnight.objects.powerUps;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * The base class for the powerUps
+ */
 public abstract class PowerUp {
 
   protected final String NAME;
@@ -15,10 +16,10 @@ public abstract class PowerUp {
   public UUID id;
   protected Entity effected;
   protected int counter = 0;
-  protected Boolean onMap = false;
   protected Entity user;
   protected int currentFrame = 0;
   protected com.lordsofmidnight.utils.enums.PowerUp type;
+  protected boolean onMap;
 
   public PowerUp(int effectTime, String name) {
     this.EFFECTTIME = effectTime;
@@ -47,12 +48,11 @@ public abstract class PowerUp {
     return null;
   }
 
+  /**
+   * @return The type of the powerUp
+   */
   public com.lordsofmidnight.utils.enums.PowerUp getType() {
     return type;
-  }
-
-  public Boolean getOnMap() {
-    return onMap;
   }
 
   /**
@@ -108,19 +108,34 @@ public abstract class PowerUp {
     return -1;
   }
 
+  /**
+   *
+   * @return The entity that used the powerUp
+   */
   public Entity getUser() {
     return this.user;
   }
 
+  /**
+   *
+   * @return The Name of the powerUp
+   */
   @Override
   public String toString() {
     return this.NAME;
   }
 
+  /**
+   * Increments the frame of the powerUp
+   */
   public void incrementFrame() {
     this.currentFrame++;
   }
 
+  /**
+   *
+   * @return The current frame of the powerUp
+   */
   public int getCurrentFrame() {
     return this.currentFrame;
   }

@@ -1,18 +1,18 @@
 package com.lordsofmidnight.objects;
 
 import com.lordsofmidnight.ai.routefinding.RouteFinder;
+import com.lordsofmidnight.gamestate.points.Point;
+import com.lordsofmidnight.objects.powerUps.PowerUp;
+import com.lordsofmidnight.utils.Renderable;
+import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.utils.StatsTracker;
+import com.lordsofmidnight.utils.enums.Direction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javafx.scene.image.Image;
-import com.lordsofmidnight.objects.powerUps.PowerUp;
-import com.lordsofmidnight.gamestate.points.Point;
-import com.lordsofmidnight.utils.Renderable;
-import com.lordsofmidnight.utils.ResourceLoader;
-import com.lordsofmidnight.utils.StatsTracker;
-import com.lordsofmidnight.utils.enums.Direction;
 
 
 /**
@@ -83,30 +83,48 @@ public class Entity implements Renderable {
     // updateImages();
   }
 
+  /**
+   * @return The Stats Tracker for the entity
+   */
   public StatsTracker getStatsTracker() {
     return statsTracker;
   }
 
+  /**
+   *
+   * @return If the entity is effected by a bonus speed
+   */
   public boolean isSpeeding() {
     return bonusSpeed > 0;
   }
 
-  public Direction getOldDirection() {
-    return oldDirection;
-  }
-
+  /**
+   *
+   * @return If the entity is invincible or not
+   */
   public boolean isInvincible() {
     return invincible;
   }
-
+  /**
+   * Sets if the entity is invincible or not and sets values accordingly
+   * @param invincible If the entity is invincible or not
+   */
   public void setInvincible(boolean invincible) {
     this.invincible = invincible;
   }
 
+  /**
+   *
+   * @return If the entity is stunned or not
+   */
   public boolean isStunned() {
     return stunned;
   }
 
+  /**
+   * Sets if the entity is stunned or not and sets values accordingly
+   * @param stunned If the entity is stunned or not
+   */
   public void setStunned(boolean stunned) {
     this.stunned = stunned;
     if (stunned) {
@@ -116,10 +134,18 @@ public class Entity implements Renderable {
     }
   }
 
+  /**
+   *
+   * @return If the entity is dead or not
+   */
   public boolean isDead() {
     return dead;
   }
 
+  /**
+   * Sets if the entity is dead or not and sets values accordingly
+   * @param dead If the entity is dead or not
+   */
   public void setDead(boolean dead) {
     this.dead = dead;
     if (dead) {
@@ -133,14 +159,25 @@ public class Entity implements Renderable {
 
   }
 
+  /**
+   *
+   * @return The location the entity died at
+   */
   public Point getDeathLocation() {
     return deathLocation.poll();
   }
 
+  /**
+   * Increases the number of kills the entity has by 1
+   */
   public void increaseKills() {
     statsTracker.increaseKills();
   }
 
+  /**
+   * Changes the bonus speed applied to the entity
+   * @param i the amount to change the speed by
+   */
   public void changeBonusSpeed(double i) {
     bonusSpeed += i;
     resetVelocity();
@@ -165,19 +202,34 @@ public class Entity implements Renderable {
   public LinkedList<PowerUp> getItems() {
     return items;
   }
-
+  /**
+   * Sets the inventory of the entity
+   * @param p1 the id of the first PowerUp in the inventory
+   * @param p2 the id of the second PowerUp in the inventory
+   */
   public void setItems(int p1, int p2){
     this.items = new LinkedList<PowerUp>(Arrays.asList(PowerUp.fromInt(p1),PowerUp.fromInt(p2)));
   }
 
+  /**
+   * Sets the inventory of the entity
+   * @param p1 the id of the PowerUp in the inventory
+   */
   public void setItems(int p1) {
     this.items = new LinkedList<PowerUp>(Arrays.asList(PowerUp.fromInt(p1)));
   }
 
+  /**
+   * //TODO write this, Who understands this method?
+   */
   public void setItems() {
     this.items = new LinkedList<PowerUp>();
   }
 
+  /**
+   * Returns the first powerUp in the entities inventory
+   * @return The PowerUp
+   */
   public PowerUp getFirstItem() {
     if (items.size() < 1) {
       return null;
@@ -186,6 +238,10 @@ public class Entity implements Renderable {
     return items.pop();
   }
 
+  /**
+   * If the entity has space to hold the powerUp it adds it to its inventory
+   * @param powerUp The powerUp to give
+   */
   public void giveItem(PowerUp powerUp) {
     if (items.size() < 2) {
       items.add(powerUp);
@@ -388,6 +444,10 @@ public class Entity implements Renderable {
     resetVelocity();
   }
 
+  /**
+   * Updates the image of the entity to the correct one
+   * @param resourceLoader The resource loader to get the images from
+   */
   public void updateImages(ResourceLoader resourceLoader) {
     currentFrame = 0;
     images =
@@ -396,6 +456,10 @@ public class Entity implements Renderable {
             : resourceLoader.getPlayableGhoul(clientId);
   }
 
+  /**
+   *
+   * @return The relevant info about the entity in string form
+   */
   @Override
   public String toString() {
     String outStr = "";
@@ -432,7 +496,10 @@ public class Entity implements Renderable {
    * @return current frame
    */
 
-
+  /**
+   * Increments the re-spawn counter and if its time re-spawns the entity
+   * @return If the entity has re-spawned
+   */
   public boolean countRespawn() {
     if ( deathCounter == DEATHTIME) {
       deathCounter = 0;
@@ -443,13 +510,26 @@ public class Entity implements Renderable {
     return false;
   }
 
+  /**
+   * Adds to the tracker the number of points its stolen
+   * @param i The number of Points to add
+   */
   public void increasePointsStolen(int i) {
     statsTracker.increasePointsStolen(i);
   }
+
+  /**
+   *
+   * @return The name of the player controlling the entity
+   */
   public String getName() {
     return name;
   }
 
+  /**
+   *
+   * @param s The name of the player controlling the entity
+   */
   public void setName(String s) {
     this.name = s;
   }
@@ -492,31 +572,58 @@ public class Entity implements Renderable {
     return powerUpUseAttempts;
   }
 
+  /**
+   * Resets the velocity depending on the type of entity
+   */
   public void resetVelocity() {
     this.velocity = (mipsman ? MIPS_SPEED : GHOUL_SPEED) + bonusSpeed;
   }
 
+  /**
+   *
+   * @return the entities death counter
+   */
   public int getDeathCounter() {
     return this.deathCounter;
   }
 
+  /**
+   *
+   * @return how long the entity stays dead for
+   */
   public int getDeathTime() {
     return this.DEATHTIME;
   }
 
+  /**
+   * Toggles if this entity is hidden from players
+   */
   public void toggleHidden() {
     hidden = !hidden;
   }
 
+  /**
+   *
+   * @return true if the entity is to be hidden from players
+   */
   public boolean getHidden() {
     return hidden;
   }
 
-  public void setKilledBy(String name){
-    this.killedBy = name;
+  /**
+   *
+   * @return The name of the player who killed the entity
+   */
+  public String getKilledBy() {
+    return this.killedBy;
   }
 
-  public String getKilledBy(){
-    return this.killedBy;
+  /**
+   * Sets who the entity was killed by
+   *
+   * @param name The name of who killed the entity
+   */
+  public void setKilledBy(String name){
+    this.killedBy = name;
   }
 }
