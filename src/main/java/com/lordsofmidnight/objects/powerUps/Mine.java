@@ -1,14 +1,12 @@
 package com.lordsofmidnight.objects.powerUps;
 
-import java.util.HashMap;
-import java.util.UUID;
-
+import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
+import com.lordsofmidnight.objects.MinePellet;
 import com.lordsofmidnight.objects.Pellet;
-import com.lordsofmidnight.objects.PowerUpBox;
 import com.lordsofmidnight.utils.Methods;
-import com.lordsofmidnight.gamestate.points.Point;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Mine extends PowerUp {
@@ -29,16 +27,13 @@ public class Mine extends PowerUp {
     Point loc = user.getMoveInDirection(1.1, user.getFacing().getInverse());
     int x = (int) loc.getX();
     int y = (int) loc.getY();
-    PowerUpBox box = new PowerUpBox(x + 0.5, y + 0.5);
-    box.setTrap(this);
-    pellets.put(loc, box);
+    MinePellet mine = new MinePellet(x + 0.5, y + 0.5, user);
+    pellets.put(loc, mine);
   }
 
   @Override
   public void trigger(Entity victim, ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
     Methods.kill(user, victim);
-    activePowerUps.put(id, this);
-    this.effected = victim;
     counter = 0;
   }
 }
