@@ -82,7 +82,7 @@ public class Methods {
     Random r = new Random();
     String[] selected = new String[i];
     for (int j = 0; j < i; j++) {
-      selected[j] = "Bot " + names.remove(r.nextInt(names.size()));
+      selected[j] = names.remove(r.nextInt(names.size())) + "Bot";
     }
     return selected;
   }

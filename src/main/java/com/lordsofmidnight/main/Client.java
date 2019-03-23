@@ -301,12 +301,17 @@ public class Client extends Application {
       pellets = telemetry.getPellets();
     }
 
-    for (int i = 0; i < agents.length; i++) {
-      if (!(playerNames[i] == null) && !playerNames[i].equals("null")) {
-        agents[i].setName(playerNames[i]);
-      }
+    if(singlePlayer){
+      agents[0].setName("You");
+    }else{
+      for (int i = 0; i < agents.length; i++) {
+        if (!(playerNames[i] == null) && !playerNames[i].equals("null")) {
+          agents[i].setName(playerNames[i]);
+        }
 
+      }
     }
+
     this.inputRenderLoop = new AnimationTimer() {
       @Override
       public void handle(long now) {

@@ -54,13 +54,16 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
- * @author Adam Kona Class which handles the creation and functionality of components in the
- * com.lordsofmidnight.main menu.
+ * @author Adam Kona
+ * Class which handles the creation and functionality of components in the
+ * main menu.
  */
 public class MenuController {
 
@@ -83,6 +86,7 @@ public class MenuController {
   private Button quitBtn;
   private ImageView logo;
   private Button instructions;
+  private Button creditsBtn;
 
   private Label lobbyStatusLbl;
   private Label loadingDots;
@@ -118,6 +122,12 @@ public class MenuController {
   private Label downLbl;
   private Label useLbl;
 
+  private Text upKey;
+  private Text leftKey;
+  private  Text rightKey;
+  private Text downKey;
+  private Text useKey;
+
   private MapPreview mapPreview = new MapPreview(1920, 1080);
   private ImageView mapView;
   private int mapsIndex = 0;
@@ -142,6 +152,7 @@ public class MenuController {
   private String currentTheme;
   private boolean isHome = true;
   private boolean isInstructions = false;
+  private boolean isCredits = false;
   private boolean inLobby;
   private Thread playerNumberDiscovery;
   private MulticastSocket socket;
@@ -447,7 +458,8 @@ public class MenuController {
    */
   private void updateToggleLabels() {
     System.out.println("Current UP KEY: " + Settings.getKey(InputKey.UP).getName());
-    upLbl.setText("UP KEY: " + Settings.getKey(InputKey.UP).getName());
+//    upLbl.setText("UP KEY: " + Settings.getKey(InputKey.UP).getName());
+    upKey.setText(Settings.getKey(InputKey.UP).getName());
     leftLbl.setText("LEFT KEY: " + Settings.getKey(InputKey.LEFT).getName());
     rightLbl.setText("RIGHT KEY: " + Settings.getKey(InputKey.RIGHT).getName());
     downLbl.setText("DOWN KEY: " + Settings.getKey(InputKey.DOWN).getName());
@@ -497,8 +509,7 @@ public class MenuController {
   /**
    * Creates all the menu items and defines their functionality.
    *
-   * @return The node containing the menu which will be returned to the game
-   * com.lordsofmidnight.main window.
+   * @return The node containing the menu which will be returned to the game window.
    */
   public Node createMainMenu() {
 
@@ -655,8 +666,8 @@ public class MenuController {
 
     playBtn = ButtonGenerator.generate(true, root, "Play", UIColours.GREEN, 35);
     playBtn.setText("Play");
-    StackPane.setAlignment(playBtn, Pos.CENTER);
-    StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
+//    StackPane.setAlignment(playBtn, Pos.CENTER);
+//    StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
     playBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
@@ -781,6 +792,7 @@ public class MenuController {
     root.getChildren().add(nameEntryOptions);
 
     quitBtn = ButtonGenerator.generate(true, root, "quit", UIColours.QUIT_RED, 25);
+    quitBtn.setFocusTraversable(false);
     StackPane.setAlignment(quitBtn, Pos.TOP_LEFT);
     StackPane.setMargin(quitBtn, new Insets(50, 0, 0, 50));
     quitBtn.setOnAction(
@@ -932,21 +944,27 @@ public class MenuController {
 
     VBox keyLbls = new VBox(45);
 
-    upLbl = LabelGenerator
-        .generate(true, keyLbls, "UP KEY: " + Settings.getKey(InputKey.UP).getName(),
-            UIColours.WHITE, 14);
-    leftLbl = LabelGenerator
-        .generate(true, keyLbls, "LEFT KEY: " + Settings.getKey(InputKey.LEFT).getName(),
-            UIColours.WHITE, 14);
-    rightLbl = LabelGenerator
-        .generate(true, keyLbls, "RIGHT KEY: " + Settings.getKey(InputKey.RIGHT).getName(),
-            UIColours.WHITE, 14);
-    downLbl = LabelGenerator
-        .generate(true, keyLbls, "DOWN KEY: " + Settings.getKey(InputKey.DOWN).getName(),
-            UIColours.WHITE, 14);
-    useLbl = LabelGenerator
-        .generate(true, keyLbls, "USE KEY: " + Settings.getKey(InputKey.USE).getName(),
-            UIColours.WHITE, 14);
+    upKey = TextGenerator.generate(Settings.getKey(InputKey.UP).getName(), UIColours.GREEN, 14);
+    TextFlow upFlow = new TextFlow(TextGenerator.generate("UP KEY: ", UIColours.WHITE, 14), upKey);
+    upLbl = new Label(null, upFlow);
+
+    leftKey = TextGenerator.generate(Settings.getKey(InputKey.LEFT).getName(), UIColours.GREEN, 14);
+    TextFlow leftFlow = new TextFlow(TextGenerator.generate("LEFT KEY: ", UIColours.WHITE,14), leftKey);
+    leftLbl = new Label(null, leftFlow);
+
+    rightKey = TextGenerator.generate(Settings.getKey(InputKey.RIGHT).getName(), UIColours.GREEN, 14);
+    TextFlow rightFlow = new TextFlow(TextGenerator.generate("RIGHT KEY: ", UIColours.WHITE,14), rightKey);
+    rightLbl = new Label(null, rightFlow);
+
+    downKey = TextGenerator.generate(Settings.getKey(InputKey.DOWN).getName(), UIColours.GREEN, 14);
+    TextFlow downFlow = new TextFlow(TextGenerator.generate("DOWN KEY: ", UIColours.WHITE,14), downKey);
+    downLbl = new Label(null, downFlow);
+
+    useKey = TextGenerator.generate(Settings.getKey(InputKey.USE).getName(), UIColours.GREEN, 14);
+    TextFlow useFlow = new TextFlow(TextGenerator.generate("USE KEY: ", UIColours.WHITE,14), useKey);
+    useLbl = new Label(null, useFlow);
+
+    keyLbls.getChildren().addAll(upLbl, leftLbl, rightLbl, downLbl,useLbl);
     keyLbls.setAlignment(Pos.CENTER);
 
     StackPane.setAlignment(keyLbls, Pos.CENTER);
@@ -981,7 +999,7 @@ public class MenuController {
     downToggle.setToggleGroup(toggleGroup);
     useToggle.setToggleGroup(toggleGroup);
 
-    VBox keyToggles = new VBox(45, upToggle, leftToggle, rightToggle, downToggle, useToggle);
+    VBox keyToggles = new VBox(35, upToggle, leftToggle, rightToggle, downToggle, useToggle);
     keyToggles.setAlignment(Pos.CENTER);
 
     StackPane.setAlignment(keyToggles, Pos.CENTER);
@@ -1101,21 +1119,17 @@ public class MenuController {
     StackPane.setMargin(instructionsGif, new Insets(100, 0, 0, 0));
     root.getChildren().add(instructionsGif);
 
-    Label instructionLbl = new Label("Use your keyboard mastery to capture MIPs man "
+    Label instructionLbl = LabelGenerator.generate(false, root, "Use your keyboard mastery to capture MIPs man "
         + "and collect as many points as possible whilst you control him. "
         + "Beware: If you are captured by a ghoul, you will become one and have to capture"
-        + " the new MIPs man all over again. Good luck! ");
+        + " the new MIPs man all over again. Good luck! ", UIColours.WHITE, 15);
     instructionLbl.setWrapText(true);
     instructionLbl.setTextAlignment(TextAlignment.CENTER);
     StackPane.setAlignment(instructionLbl, Pos.CENTER);
     StackPane.setMargin(instructionLbl, new Insets(200, 200, 0, 200));
-    root.getChildren().add(instructionLbl);
-    instructionLbl.setVisible(false);
 
     instructions = ButtonGenerator
         .generate(true, root, "Instructions", UIColours.YELLOW, 30);
-    StackPane.setAlignment(instructions, Pos.BOTTOM_CENTER);
-    StackPane.setMargin(instructions, new Insets(0, 0, 100, 0));
     instructions.setOnAction(event -> {
       audioController.playSound(Sounds.click);
       moveItemsToBackTree();
@@ -1126,6 +1140,49 @@ public class MenuController {
       itemsOnScreen.add(instructionsGif);
       showItemsOnScreen();
     });
+
+    creditsBtn = ButtonGenerator.generate(true, root, "Credits", UIColours.WHITE, 30);
+    StackPane.setAlignment(creditsBtn, Pos.BOTTOM_CENTER);
+    StackPane.setMargin(creditsBtn, new Insets(0,0,50,0));
+
+
+    String creditsTxt = "Music:         OpenGamesArt\n\n" +
+                        "SoundFX:     SubspaceAudio \n\n" +
+                        "Developers: \n\nAdam Kona\nAlex Banks\nJames Weir\nLewis Ackroyd\nMatty Jones\nTim Cheung";
+
+    Text musicHeader = TextGenerator.generate("Music:", UIColours.YELLOW, 20);
+    Text musicBody = TextGenerator.generate("         OpenGamesArt\n\n", UIColours.WHITE, 20);
+    Text soundFXHeader = TextGenerator.generate("SoundFX", UIColours.YELLOW, 20);
+    Text soundFXBody = TextGenerator.generate("     SubspaceAudio \n\n", UIColours.WHITE, 20);
+    Text developersHeader = TextGenerator.generate("Developers:", UIColours.YELLOW, 20);
+    Text developersBody = TextGenerator.generate(" \n\nAdam Kona\n\nAlex Banks\n\nJames Weir\n\nLewis Ackroyd\n\nMatty Jones\n\nTim Cheung", UIColours.WHITE, 20);
+
+    TextFlow textFlow = new TextFlow(musicHeader, musicBody, soundFXHeader, soundFXBody, developersHeader, developersBody);
+    textFlow.setTextAlignment(TextAlignment.CENTER);
+
+    Label creditsLbl = new Label(null, textFlow);
+    creditsLbl.setVisible(false);
+    root.getChildren().add(creditsLbl);
+    creditsLbl.setWrapText(true);
+    creditsLbl.setTextAlignment(TextAlignment.CENTER);
+    StackPane.setAlignment(creditsLbl, Pos.CENTER);
+    StackPane.setMargin(creditsLbl, new Insets(0,0,0,0));
+
+    creditsBtn.setOnAction(event -> {
+      audioController.playSound(Sounds.click);
+      moveItemsToBackTree();
+      creditsLbl.setVisible(true);
+      backBtn.setVisible(true);
+      settingsBtn.setVisible(false);
+      isCredits = true;
+
+    });
+
+    VBox homeOptions = new VBox(20,playBtn, instructions, creditsBtn);
+    root.getChildren().add(homeOptions);
+    homeOptions.setAlignment(Pos.CENTER);
+    StackPane.setAlignment(homeOptions, Pos.CENTER);
+    StackPane.setMargin(homeOptions, new Insets(160,0,0,0));
 
     backBtn = ButtonGenerator.generate(false, root, "back", UIColours.RED, 30);
     StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);
@@ -1144,6 +1201,17 @@ public class MenuController {
             isInstructions = false;
             settingsBtn.setVisible(true);
 
+          }
+
+          if(isCredits){
+            creditsLbl.setVisible(false);
+            settingsBtn.setVisible(true);
+            backBtn.setVisible(false);
+            itemsOnScreen.clear();
+            ArrayList<Node> toShow = backTree.pop();
+            itemsOnScreen.addAll(toShow);
+            showItemsOnScreen();
+            isCredits = false;
           }
 
           if (inLobby) {
@@ -1166,8 +1234,7 @@ public class MenuController {
         });
 
     backTree.empty();
-    itemsOnScreen.add(playBtn);
-    itemsOnScreen.add(instructions);
+    itemsOnScreen.add(homeOptions);
     itemsOnScreen.add(logo);
     itemsOnScreen.add(quitBtn);
     itemsOnScreen.add(settingsBtn);
