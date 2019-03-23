@@ -20,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import javax.imageio.ImageIO;
 
 public class EndGameScreen {
 
@@ -100,8 +101,8 @@ public class EndGameScreen {
     this.awardWinner2Images =
         resourceLoader.getEndScreenMip(awardWinner2.getClientId(), awardWinner2.isMipsman());
 
-    this.winnerSize = getSpriteSize(0.4, gameWinner);
-    this.awardSize = getSpriteSize(0.3, awardWinner1);
+    this.winnerSize = getSpriteSize(0.4, gameWinnerImages.get(0));
+    this.awardSize = getSpriteSize(0.3, awardWinner1Images.get(0));
 
     this.winnerLocation =
         new Point2D.Double(xResolution / 2 - (winnerSize.getX() / 2), yResolution * 0.3);
@@ -259,12 +260,12 @@ public class EndGameScreen {
     }
   }
 
-  private Point2D.Double getSpriteSize(double ratio, Entity e) {
+  private Point2D.Double getSpriteSize(double ratio, Image img) {
     int y = (int) (ratio * yResolution);
     int x =
         (int)
-            (((ratio * yResolution) / e.getImage().get(0).getHeight())
-                * e.getImage().get(0).getWidth());
+            (((ratio * yResolution) / img.getHeight())
+                * img.getWidth());
     return new Point2D.Double(x, y);
   }
 }
