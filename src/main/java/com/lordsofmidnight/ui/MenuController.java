@@ -457,13 +457,12 @@ public class MenuController {
    * Resets the toggle labels to their default state with the current control values.
    */
   private void updateToggleLabels() {
-    System.out.println("Current UP KEY: " + Settings.getKey(InputKey.UP).getName());
-//    upLbl.setText("UP KEY: " + Settings.getKey(InputKey.UP).getName());
+
     upKey.setText(Settings.getKey(InputKey.UP).getName());
-    leftLbl.setText("LEFT KEY: " + Settings.getKey(InputKey.LEFT).getName());
-    rightLbl.setText("RIGHT KEY: " + Settings.getKey(InputKey.RIGHT).getName());
-    downLbl.setText("DOWN KEY: " + Settings.getKey(InputKey.DOWN).getName());
-    useLbl.setText("USE ITEM KEY: " + Settings.getKey(InputKey.USE).getName());
+    leftKey.setText(Settings.getKey(InputKey.LEFT).getName());
+    rightKey.setText(Settings.getKey(InputKey.RIGHT).getName());
+    downKey.setText(Settings.getKey(InputKey.DOWN).getName());
+    useKey.setText(Settings.getKey(InputKey.USE).getName());
   }
 
   /**
@@ -973,6 +972,7 @@ public class MenuController {
     keyToggleStatus = new Label("");
     keyToggleStatus.setStyle(" -fx-font-size: 12pt ; -fx-text-fill: white");
     StackPane.setAlignment(keyToggleStatus, Pos.BOTTOM_CENTER);
+    StackPane.setMargin(keyToggleStatus,new Insets(0,0,50,0));
 
     ToggleButton upToggle = new ToggleButton(defaultToggleText);
     ToggleButton leftToggle = new ToggleButton(defaultToggleText);
@@ -1074,6 +1074,20 @@ public class MenuController {
 
     root.getChildren().addAll(settingsTabs);
 
+    Button defaultBtn = ButtonGenerator.generate(false, root, "Restore Default Settings", UIColours.YELLOW, 20);
+    StackPane.setAlignment(defaultBtn, Pos.BOTTOM_CENTER);
+    StackPane.setMargin(defaultBtn, new Insets(0,0,50,0));
+    defaultBtn.setOnAction(event -> {
+      Settings.restoreDefaultSettings(this.client);
+      bg.setImage(resourceLoader.getBackground());
+      updateToggleLabels();
+      soundFXSlider.setValue(0.5);
+      musicVolumeSlider.setValue(0.5);
+
+
+    });
+
+
     ImageView settingsView = new ImageView("ui/settings.png");
     settingsBtn = ButtonGenerator.generate(true, root, settingsView);
     StackPane.setAlignment(settingsBtn, Pos.TOP_RIGHT);
@@ -1089,11 +1103,13 @@ public class MenuController {
 
             backBtn.setVisible(false);
             settingsTabs.setVisible(true);
+            defaultBtn.setVisible(true);
             settingsBtn.setVisible(true);
 
           } else {
             viewSettings = false;
             settingsTabs.setVisible(false);
+            defaultBtn.setVisible(false);
             showItemsOnScreen();
             if (!isHome) {
               backBtn.setVisible(true);
