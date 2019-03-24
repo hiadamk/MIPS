@@ -64,6 +64,7 @@ public class Renderer {
   private int currentAnimationFrame = 0;
 
   private ArrayList<Point2D.Double> traversalOrder = new ArrayList<>();
+  private HashMap<String,Point> mapPoints = new HashMap<>();
   private boolean refreshMap;
 
   /**
@@ -146,6 +147,11 @@ public class Renderer {
         int y = start_col + j;
         this.traversalOrder.add(new Double(x, y));
       }
+    }
+
+    this.mapPoints = new HashMap<>();
+    for(Double coord: traversalOrder){
+      this.mapPoints.put(coord.toString(),new Point(coord.getX(),coord.getY()));
     }
 
     this.mapTiles = r.getMapTiles();
@@ -243,7 +249,7 @@ public class Renderer {
     for (Double coord : traversalOrder) {
 
       // render consumable com.lordsofmidnight.objects on top
-      Pellet currentPellet = pellets.get(new Point(coord.getX(), coord.getY(), map));
+      Pellet currentPellet = pellets.get(mapPoints.get(coord.toString()));
       if (currentPellet != null && currentPellet.isActive()) {
 
         // TODO use better way of finding if client is mipsman
