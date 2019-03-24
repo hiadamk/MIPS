@@ -72,7 +72,7 @@ public class ServerLobby {
                   socket.send(sending);
                 }
               }
-              Thread.sleep(1000);
+              Thread.sleep(500);
             }
 
           } catch (InterruptedException e) {

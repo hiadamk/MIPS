@@ -41,7 +41,7 @@ public class PacketReceiver extends Thread {
                   received.length() - NetworkUtility.SUFFIX.length()); // rids PREFIX and SUFFIX
           feedQueue.add(received.trim());
         }
-        Thread.sleep(50);
+        Thread.sleep(1);
       } catch (IOException e) {
         e.printStackTrace();
       } catch (InterruptedException e) {
