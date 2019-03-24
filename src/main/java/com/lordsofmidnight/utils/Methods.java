@@ -24,6 +24,9 @@ public class Methods {
    * @param victim The entity being killed
    */
   public static void kill(Entity killer, Entity victim) {
+    if (victim.isInvincible()) {
+      return;
+    }
     if (!killer.isMipsman() && victim.isMipsman()) {
       victim.setMipsman(false);
       killer.setMipsman(true);
