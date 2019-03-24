@@ -145,6 +145,7 @@ public class MenuController {
   private Label themeName;
   private String currentTheme;
   private boolean isHome = true;
+  private boolean isMultiplayer = false;
   private boolean inLobby;
   private Thread playerNumberDiscovery;
   private MulticastSocket socket;
@@ -503,13 +504,12 @@ public class MenuController {
     hideItemsOnScreen();
     itemsOnScreen.clear();
     backTree.clear();
-//    itemsOnScreen.add(playBtn);
-//    itemsOnScreen.add(instructions);
     itemsOnScreen.add(logo);
     itemsOnScreen.add(quitBtn);
     itemsOnScreen.add(settingsBtn);
     itemsOnScreen.add(homeOptions);
     isHome = true;
+    isMultiplayer = false;
     backBtn.setVisible(false);
     showItemsOnScreen();
 
@@ -594,7 +594,12 @@ public class MenuController {
     mapConfirmationBtn.setOnAction(event -> {
       audioController.playSound(Sounds.click);
       moveItemsToBackTree();
-      itemsOnScreen.add(startGameBtn);
+      if(isMultiplayer){
+        itemsOnScreen.add(multiplayerOptions);
+      }else{
+        itemsOnScreen.add(startGameBtn);
+      }
+
       resourceLoader.setMap(currentMap);
       client.setMap(resourceLoader.getMap());
       showItemsOnScreen();
@@ -712,6 +717,7 @@ public class MenuController {
     singlePlayerBtn.setFocusTraversable(false);
     singlePlayerBtn.setOnAction(
         e -> {
+          isMultiplayer = false;
           audioController.playSound(Sounds.click);
           moveItemsToBackTree();
           itemsOnScreen.add(mapSelectionView);
@@ -723,6 +729,7 @@ public class MenuController {
     multiplayerBtn.setFocusTraversable(false);
     multiplayerBtn.setOnAction(
         e -> {
+          isMultiplayer = true;
           audioController.playSound(Sounds.click);
           moveItemsToBackTree();
           itemsOnScreen.add(nameEntryOptions);
@@ -849,7 +856,9 @@ public class MenuController {
           moveItemsToBackTree();
           hideItemsOnScreen();
           this.client.setName(nameEntry.getText());
-          itemsOnScreen.add(multiplayerOptions);
+//          itemsOnScreen.add(multiplayerOptions);
+          itemsOnScreen.add(mapSelectionView);
+
           showItemsOnScreen();
         });
 

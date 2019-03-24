@@ -44,7 +44,7 @@ public class ClientLobbySession {
           super.run();
           while (!Thread.currentThread().isInterrupted()) {
             try {
-              System.out.println("Getting the com.lordsofmidnight.server address");
+              System.out.println("Getting the server address");
               MulticastSocket socket = new MulticastSocket(NetworkUtility.CLIENT_M_PORT);
               InetAddress group = NetworkUtility.GROUP;
               Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();

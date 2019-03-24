@@ -58,7 +58,7 @@ public class Client extends Application {
   private Queue<Input> keypressQueue;
   public boolean isHost;
   private boolean singlePlayer = false;
-  private BlockingQueue<Input> incomingQueue; // only used in singleplayer
+  private BlockingQueue<Input> incomingQueue; // only used in single player
   private PointMap<Pellet> pellets;
   private int MIPID;
   private Canvas canvas = new Canvas();
