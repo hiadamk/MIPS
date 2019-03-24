@@ -163,7 +163,7 @@ public class MenuController {
 
   private MapGenerationHandler mapGenerationHandler;
 
-  private ResourceSaver resourceSaver = new ResourceSaver("src/test/resources/");
+  private ResourceSaver resourceSaver = new ResourceSaver("src/main/resources/");
 
   /**
    * @param audio Global audio controller which is passed around the system
