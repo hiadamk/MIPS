@@ -83,10 +83,8 @@ public class MenuController {
   private Button backBtn;
   private Button startMGameBtn;
   private Button settingsBtn;
-  private Button playBtn;
   private Button quitBtn;
   private ImageView logo;
-  private Button instructions;
   private VBox homeOptions;
 
   private Label lobbyStatusLbl;
@@ -738,7 +736,7 @@ public class MenuController {
     root.getChildren().add(gameModeOptions);
     gameModeOptions.setVisible(false);
 
-    playBtn = ButtonGenerator.generate(true, root, "Play", UIColours.GREEN, 35);
+    Button playBtn = ButtonGenerator.generate(true, root, "Play", UIColours.GREEN, 35);
     playBtn.setText("Play");
     playBtn.setOnAction(
         e -> {
@@ -1214,7 +1212,7 @@ public class MenuController {
     StackPane.setAlignment(instructionLbl, Pos.CENTER);
     StackPane.setMargin(instructionLbl, new Insets(200, 200, 0, 200));
 
-    instructions = ButtonGenerator
+    Button instructions = ButtonGenerator
         .generate(true, root, "Instructions", UIColours.YELLOW, 30);
     instructions.setOnAction(event -> {
       isHome = false;
@@ -1258,7 +1256,7 @@ public class MenuController {
       showItemsOnScreen();
     });
 
-    homeOptions = new VBox(20,playBtn, instructions, creditsBtn);
+    homeOptions = new VBox(20, playBtn, instructions, creditsBtn);
     root.getChildren().add(homeOptions);
     homeOptions.setAlignment(Pos.CENTER);
     StackPane.setAlignment(homeOptions, Pos.CENTER);
