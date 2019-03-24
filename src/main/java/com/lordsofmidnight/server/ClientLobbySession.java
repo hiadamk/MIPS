@@ -1,5 +1,6 @@
 package com.lordsofmidnight.server;
 
+import com.lordsofmidnight.gamestate.maps.Map;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -85,8 +86,8 @@ public class ClientLobbySession {
               client.setId(id);
 
               r = in.readLine();
-              System.out.println("Map set to :" +r);
-              client.setMap(r);
+              System.out.println("Map set to :" + r);
+              client.setMap(Map.deserialiseMap(r));
 
               r = in.readLine();
               int MIPID = Integer.parseInt(r);
