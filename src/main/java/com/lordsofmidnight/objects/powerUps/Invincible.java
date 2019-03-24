@@ -1,18 +1,17 @@
 package com.lordsofmidnight.objects.powerUps;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
+import com.lordsofmidnight.utils.enums.PowerUps;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Invincible extends PowerUp {
 
   public Invincible() {
     super(200, "invincible");
-    this.type = com.lordsofmidnight.utils.enums.PowerUp.INVINCIBLE;
+    this.type = PowerUps.INVINCIBLE;
   }
 
   @Override

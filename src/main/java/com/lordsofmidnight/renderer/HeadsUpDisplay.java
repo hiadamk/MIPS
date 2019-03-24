@@ -1,5 +1,9 @@
 package com.lordsofmidnight.renderer;
 
+import com.lordsofmidnight.objects.Entity;
+import com.lordsofmidnight.utils.CircularIterator;
+import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.utils.enums.PowerUps;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.awt.image.BufferedImage;
@@ -14,10 +18,6 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import com.lordsofmidnight.objects.Entity;
-import com.lordsofmidnight.utils.CircularIterator;
-import com.lordsofmidnight.utils.ResourceLoader;
-import com.lordsofmidnight.utils.enums.PowerUp;
 
 public class HeadsUpDisplay {
 
@@ -54,7 +54,7 @@ public class HeadsUpDisplay {
     this.inventory = r.getInventory(id);
     this.powerUpsIcon = r.getPowerUpIcons();
 
-    Integer[] powerupIDs = new Integer[PowerUp.values().length];
+    Integer[] powerupIDs = new Integer[PowerUps.values().length];
     for (int i = 0; i < powerupIDs.length; i++) {
       powerupIDs[i] = i;
     }

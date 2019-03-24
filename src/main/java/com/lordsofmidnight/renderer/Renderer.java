@@ -1,7 +1,21 @@
 package com.lordsofmidnight.renderer;
 
+import com.lordsofmidnight.gamestate.maps.Map;
+import com.lordsofmidnight.gamestate.points.Point;
+import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.EmptyPowerUpBox;
+import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.MinePellet;
+import com.lordsofmidnight.objects.Pellet;
+import com.lordsofmidnight.objects.PowerUpBox;
+import com.lordsofmidnight.objects.powerUps.PowerUp;
+import com.lordsofmidnight.utils.GameLoop;
+import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.utils.Settings;
+import com.lordsofmidnight.utils.UpDownIterator;
+import com.lordsofmidnight.utils.enums.MapElement;
+import com.lordsofmidnight.utils.enums.PowerUps;
+import com.lordsofmidnight.utils.enums.RenderingMode;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.awt.image.BufferedImage;
@@ -13,8 +27,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.UUID;
-
-import com.lordsofmidnight.gamestate.points.PointMap;
 import java.util.concurrent.ConcurrentHashMap;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
@@ -22,18 +34,6 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import com.lordsofmidnight.objects.Entity;
-import com.lordsofmidnight.objects.Pellet;
-import com.lordsofmidnight.objects.PowerUpBox;
-import com.lordsofmidnight.objects.powerUps.PowerUp;
-import com.lordsofmidnight.utils.GameLoop;
-import com.lordsofmidnight.gamestate.maps.Map;
-import com.lordsofmidnight.gamestate.points.Point;
-import com.lordsofmidnight.utils.ResourceLoader;
-import com.lordsofmidnight.utils.Settings;
-import com.lordsofmidnight.utils.UpDownIterator;
-import com.lordsofmidnight.utils.enums.MapElement;
-import com.lordsofmidnight.utils.enums.RenderingMode;
 
 public class Renderer {
 
@@ -202,7 +202,7 @@ public class Renderer {
     int x;
     int y;
 
-    HashMap<Entity, HashMap<com.lordsofmidnight.utils.enums.PowerUp, PowerUp>> entityPowerUps =
+    HashMap<Entity, HashMap<PowerUps, PowerUp>> entityPowerUps =
         new HashMap<>();
     for (Entity e : entityArr) {
       entityPowerUps.put(e, new HashMap<>());
@@ -455,7 +455,7 @@ public class Renderer {
    */
   private void renderEntity(
       Entity e,
-      HashMap<com.lordsofmidnight.utils.enums.PowerUp, PowerUp> selfPowerUps,
+      HashMap<PowerUps, PowerUp> selfPowerUps,
       long timeElapsed) {
     // choose correct Direction
 
@@ -523,25 +523,25 @@ public class Renderer {
 
   private void renderPowerUpEffects(
       Entity e,
-      HashMap<com.lordsofmidnight.utils.enums.PowerUp, PowerUp> selfPowerUps,
+      HashMap<PowerUps, PowerUp> selfPowerUps,
       Double rendCoord) {
     if (e.isSpeeding()) {
-      PowerUp speed = selfPowerUps.get(com.lordsofmidnight.utils.enums.PowerUp.SPEED);
-      ArrayList<Image> sprites = r.getPowerUps().get(com.lordsofmidnight.utils.enums.PowerUp.SPEED);
+      PowerUp speed = selfPowerUps.get(PowerUps.SPEED);
+      ArrayList<Image> sprites = r.getPowerUps().get(PowerUps.SPEED);
       gc.drawImage(
           sprites.get(speed.getCurrentFrame() % sprites.size()),
           rendCoord.getX(),
           rendCoord.getY());
     }
     if (e.isInvincible()) {
-      PowerUp invincible = selfPowerUps.get(com.lordsofmidnight.utils.enums.PowerUp.INVINCIBLE);
+      PowerUp invincible = selfPowerUps.get(PowerUps.INVINCIBLE);
       gc.drawImage(
           r.getPowerUps()
-              .get(com.lordsofmidnight.utils.enums.PowerUp.INVINCIBLE)
+              .get(PowerUps.INVINCIBLE)
               .get(
                   invincible.getCurrentFrame()
                       % r.getPowerUps()
-                          .get(com.lordsofmidnight.utils.enums.PowerUp.INVINCIBLE)
+                      .get(PowerUps.INVINCIBLE)
                           .size()),
           rendCoord.getX(),
           rendCoord.getY());
@@ -549,7 +549,7 @@ public class Renderer {
     // is the entity stunned?
     if (e.isStunned()) {
       gc.drawImage(
-          r.getPowerUps().get(com.lordsofmidnight.utils.enums.PowerUp.WEB).get(0),
+          r.getPowerUps().get(PowerUps.WEB).get(0),
           rendCoord.getX(),
           rendCoord.getY());
     }

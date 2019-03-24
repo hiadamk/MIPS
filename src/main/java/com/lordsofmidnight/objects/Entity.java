@@ -7,6 +7,7 @@ import com.lordsofmidnight.utils.Renderable;
 import com.lordsofmidnight.utils.ResourceLoader;
 import com.lordsofmidnight.utils.StatsTracker;
 import com.lordsofmidnight.utils.enums.Direction;
+import com.lordsofmidnight.utils.enums.PowerUps;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -204,8 +205,8 @@ public class Entity implements Renderable {
   }
   /**
    * Sets the inventory of the entity
-   * @param p1 the id of the first PowerUp in the inventory
-   * @param p2 the id of the second PowerUp in the inventory
+   * @param p1 the id of the first PowerUps in the inventory
+   * @param p2 the id of the second PowerUps in the inventory
    */
   public void setItems(int p1, int p2){
     this.items = new LinkedList<PowerUp>(Arrays.asList(PowerUp.fromInt(p1),PowerUp.fromInt(p2)));
@@ -213,7 +214,7 @@ public class Entity implements Renderable {
 
   /**
    * Sets the inventory of the entity
-   * @param p1 the id of the PowerUp in the inventory
+   * @param p1 the id of the PowerUps in the inventory
    */
   public void setItems(int p1) {
     this.items = new LinkedList<PowerUp>(Arrays.asList(PowerUp.fromInt(p1)));
@@ -228,7 +229,7 @@ public class Entity implements Renderable {
 
   /**
    * Returns the first powerUp in the entities inventory
-   * @return The PowerUp
+   * @return The PowerUps
    */
   public PowerUp getFirstItem() {
     if (items.size() < 1) {
@@ -547,14 +548,14 @@ public class Entity implements Renderable {
     this.directionSet = b;
   }
 
-  /**@return True if the {@link com.lordsofmidnight.utils.enums.PowerUp} for this entity has already been set by AI but not processed by server
+  /**@return True if the {@link PowerUps} for this entity has already been set by AI but not processed by server
    * @author Lewis Ackroyd*/
   public boolean isPowerUpUsed() {
     return powerUpUsed;
   }
 
-  /**Sets if the {@link com.lordsofmidnight.utils.enums.PowerUp} for this entity has been set but not processed by the server (True),
-   * or if the {@link com.lordsofmidnight.utils.enums.PowerUp} has been processed by the server (False).
+  /**Sets if the {@link PowerUps} for this entity has been set but not processed by the server (True),
+   * or if the {@link PowerUps} has been processed by the server (False).
    * @author Lewis Ackroyd*/
   public void setPowerUpUsedFlag(boolean b) {
     this.powerUpUsed = b;
@@ -567,7 +568,9 @@ public class Entity implements Renderable {
     this.powerUpUseAttempts++;
   }
 
-  /**Returns the number of times that the current {@link com.lordsofmidnight.utils.enums.PowerUp} has been attempted to be used.*/
+  /**
+   * Returns the number of times that the current {@link PowerUps} has been attempted to be used.
+   */
   public int powerUpUseAttempts() {
     return powerUpUseAttempts;
   }

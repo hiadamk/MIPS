@@ -3,6 +3,7 @@ package com.lordsofmidnight.objects.powerUps;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
+import com.lordsofmidnight.utils.enums.PowerUps;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,7 +19,7 @@ public abstract class PowerUp {
   protected int counter = 0;
   protected Entity user;
   protected int currentFrame = 0;
-  protected com.lordsofmidnight.utils.enums.PowerUp type;
+  protected PowerUps type;
   protected boolean onMap;
 
   public PowerUp(int effectTime, String name) {
@@ -30,7 +31,7 @@ public abstract class PowerUp {
   /**
    * Used to communicate powerups to clients
    *
-   * @return the PowerUp corresponding to the int provided
+   * @return the PowerUps corresponding to the int provided
    */
   public static PowerUp fromInt(int n) {
     switch (n) {
@@ -51,7 +52,7 @@ public abstract class PowerUp {
   /**
    * @return The type of the powerUp
    */
-  public com.lordsofmidnight.utils.enums.PowerUp getType() {
+  public PowerUps getType() {
     return type;
   }
 

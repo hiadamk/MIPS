@@ -1,11 +1,10 @@
 package com.lordsofmidnight.objects.powerUps;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
+import com.lordsofmidnight.utils.enums.PowerUps;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -13,7 +12,7 @@ public class Speed extends PowerUp {
 
   public Speed() {
     super(300, "speed");
-    this.type = com.lordsofmidnight.utils.enums.PowerUp.SPEED;
+    this.type = PowerUps.SPEED;
   }
 
   @Override

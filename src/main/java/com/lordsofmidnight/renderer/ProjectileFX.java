@@ -1,14 +1,12 @@
 package com.lordsofmidnight.renderer;
 
 import com.lordsofmidnight.gamestate.points.Point;
-import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.powerUps.Blueshell;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
 import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.utils.enums.PowerUps;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import javafx.scene.canvas.GraphicsContext;
@@ -42,7 +40,7 @@ public class ProjectileFX {
   public void render(long timeElapsed, ConcurrentHashMap<UUID, PowerUp> activePowerups) {
     rockets = new ArrayList<>();
     for (PowerUp p : activePowerups.values()) {
-      if (p.getType() == com.lordsofmidnight.utils.enums.PowerUp.BLUESHELL) {
+      if (p.getType() == PowerUps.BLUESHELL) {
         rockets.add((Blueshell) p);
       }
     }

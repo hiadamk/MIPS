@@ -1,28 +1,28 @@
 package com.lordsofmidnight.objects;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.TreeMap;
-import java.util.UUID;
+import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.objects.powerUps.Blueshell;
 import com.lordsofmidnight.objects.powerUps.Invincible;
 import com.lordsofmidnight.objects.powerUps.Mine;
 import com.lordsofmidnight.objects.powerUps.Speed;
 import com.lordsofmidnight.objects.powerUps.Web;
-import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.utils.ResourceLoader;
-import com.lordsofmidnight.utils.enums.PowerUp;
+import com.lordsofmidnight.utils.enums.PowerUps;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Random;
+import java.util.TreeMap;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PowerUpBox extends Pellet {
 
-  private static PowerUp[] powerUps = {
-      PowerUp.BLUESHELL, PowerUp.SPEED, PowerUp.WEB, PowerUp.INVINCIBLE
+  private static PowerUps[] powerUps = {
+      PowerUps.BLUESHELL, PowerUps.SPEED, PowerUps.WEB, PowerUps.INVINCIBLE
   };
 
-  private final HashMap<Integer, PowerUp>[] ghostWeights = new HashMap[5];
-  private final HashMap<Integer, PowerUp>[] mipsmanWeights = new HashMap[5];
+  private final HashMap<Integer, PowerUps>[] ghostWeights = new HashMap[5];
+  private final HashMap<Integer, PowerUps>[] mipsmanWeights = new HashMap[5];
 
   public PowerUpBox(double x, double y) {
     super(x, y);
@@ -38,80 +38,80 @@ public class PowerUpBox extends Pellet {
     this.respawntime = 300;
     this.value = 0;
     // Init ghost item weights
-    HashMap<Integer, PowerUp> map = new HashMap<>();
-    map.put(50, PowerUp.WEB);
-    map.put(51, PowerUp.SPEED);
+    HashMap<Integer, PowerUps> map = new HashMap<>();
+    map.put(50, PowerUps.WEB);
+    map.put(51, PowerUps.SPEED);
     ghostWeights[0] = map;
     map = new HashMap<>();
-    map.put(60, PowerUp.SPEED);
-    map.put(40, PowerUp.WEB);
-    map.put(10, PowerUp.BLUESHELL);
+    map.put(60, PowerUps.SPEED);
+    map.put(40, PowerUps.WEB);
+    map.put(10, PowerUps.BLUESHELL);
     ghostWeights[1] = map;
     map = new HashMap<>();
-    map.put(75, PowerUp.SPEED);
-    map.put(25, PowerUp.WEB);
-    map.put(20, PowerUp.BLUESHELL);
+    map.put(75, PowerUps.SPEED);
+    map.put(25, PowerUps.WEB);
+    map.put(20, PowerUps.BLUESHELL);
     ghostWeights[2] = map;
     map = new HashMap<>();
-    map.put(75, PowerUp.SPEED);
-    map.put(26, PowerUp.WEB);
-    map.put(25, PowerUp.BLUESHELL);
+    map.put(75, PowerUps.SPEED);
+    map.put(26, PowerUps.WEB);
+    map.put(25, PowerUps.BLUESHELL);
     ghostWeights[3] = map;
     map = new HashMap<>();
-    map.put(75, PowerUp.SPEED);
-    map.put(25, PowerUp.WEB);
-    map.put(40, PowerUp.BLUESHELL);
+    map.put(75, PowerUps.SPEED);
+    map.put(25, PowerUps.WEB);
+    map.put(40, PowerUps.BLUESHELL);
     ghostWeights[4] = map;
     // Init MIPsman weights
     map = new HashMap<>();
-    map.put(5, PowerUp.INVINCIBLE);
-    map.put(30, PowerUp.WEB);
-    map.put(20, PowerUp.SPEED);
-    map.put(20, PowerUp.MINE);
+    map.put(5, PowerUps.INVINCIBLE);
+    map.put(30, PowerUps.WEB);
+    map.put(20, PowerUps.SPEED);
+    map.put(20, PowerUps.MINE);
     mipsmanWeights[0] = map;
     map = new HashMap<>();
-    map.put(5, PowerUp.BLUESHELL);
-    map.put(10, PowerUp.INVINCIBLE); //15
-    map.put(40, PowerUp.WEB);
-    map.put(30, PowerUp.MINE);
-    map.put(30, PowerUp.SPEED);
+    map.put(5, PowerUps.BLUESHELL);
+    map.put(10, PowerUps.INVINCIBLE); //15
+    map.put(40, PowerUps.WEB);
+    map.put(30, PowerUps.MINE);
+    map.put(30, PowerUps.SPEED);
     mipsmanWeights[1] = map;
     map = new HashMap<>();
-    map.put(10, PowerUp.BLUESHELL);
-    map.put(10, PowerUp.INVINCIBLE); //10
-    map.put(30, PowerUp.WEB);
-    map.put(40, PowerUp.SPEED);
-    map.put(35, PowerUp.MINE);
+    map.put(10, PowerUps.BLUESHELL);
+    map.put(10, PowerUps.INVINCIBLE); //10
+    map.put(30, PowerUps.WEB);
+    map.put(40, PowerUps.SPEED);
+    map.put(35, PowerUps.MINE);
     mipsmanWeights[2] = map;
     map = new HashMap<>();
-    map.put(15, PowerUp.BLUESHELL);
-    map.put(16, PowerUp.INVINCIBLE); //25
-    map.put(30, PowerUp.WEB);
-    map.put(40, PowerUp.SPEED);
-    map.put(35, PowerUp.MINE);
+    map.put(15, PowerUps.BLUESHELL);
+    map.put(16, PowerUps.INVINCIBLE); //25
+    map.put(30, PowerUps.WEB);
+    map.put(40, PowerUps.SPEED);
+    map.put(35, PowerUps.MINE);
     mipsmanWeights[3] = map;
     map = new HashMap<>();
-    map.put(20, PowerUp.BLUESHELL);
-    map.put(21, PowerUp.INVINCIBLE); //40
-    map.put(30, PowerUp.WEB);
-    map.put(31, PowerUp.MINE);
-    map.put(36, PowerUp.SPEED);
+    map.put(20, PowerUps.BLUESHELL);
+    map.put(21, PowerUps.INVINCIBLE); //40
+    map.put(30, PowerUps.WEB);
+    map.put(31, PowerUps.MINE);
+    map.put(36, PowerUps.SPEED);
     mipsmanWeights[4] = map;
   }
 
   /**
-   * Gets a random PowerUp
+   * Gets a random PowerUps
    *
-   * @return the PowerUp
+   * @return the PowerUps
    * @author Matthew Jones
    */
   public com.lordsofmidnight.objects.powerUps.PowerUp getPowerUp(Entity entity, Entity[] agents) {
     int rank = getRank(entity, agents);
-    HashMap<Integer, PowerUp> baseWeights = mipsmanWeights[rank];
+    HashMap<Integer, PowerUps> baseWeights = mipsmanWeights[rank];
     //   entity.isMipsman() ? mipsmanWeights[rank] : ghostWeights[rank];
     int totalWeights = 0;
-    TreeMap<Integer, PowerUp> weights = new TreeMap<>();
-    for (Entry<Integer, PowerUp> entry : baseWeights.entrySet()) {
+    TreeMap<Integer, PowerUps> weights = new TreeMap<>();
+    for (Entry<Integer, PowerUps> entry : baseWeights.entrySet()) {
       weights.put(totalWeights, entry.getValue());
       totalWeights += entry.getKey();
     }

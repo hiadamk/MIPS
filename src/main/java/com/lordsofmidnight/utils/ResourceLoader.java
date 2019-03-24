@@ -1,7 +1,11 @@
 package com.lordsofmidnight.utils;
 
+import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.renderer.SpriteSheetData;
 import com.lordsofmidnight.renderer.SpriteSheetData.SpriteDimensions;
+import com.lordsofmidnight.utils.enums.MapElement;
+import com.lordsofmidnight.utils.enums.PowerUps;
+import com.lordsofmidnight.utils.enums.RenderingMode;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -17,10 +21,6 @@ import java.util.HashMap;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
-import com.lordsofmidnight.gamestate.maps.Map;
-import com.lordsofmidnight.utils.enums.MapElement;
-import com.lordsofmidnight.utils.enums.PowerUp;
-import com.lordsofmidnight.utils.enums.RenderingMode;
 
 public class ResourceLoader {
 
@@ -54,7 +54,7 @@ public class ResourceLoader {
   private BufferedImage inventory;
   private ArrayList<BufferedImage> powerUpIcons;
   private int inventoryColourID;
-  private HashMap<com.lordsofmidnight.utils.enums.PowerUp, ArrayList<BufferedImage>> powerUps;
+  private HashMap<PowerUps, ArrayList<BufferedImage>> powerUps;
   private ArrayList<BufferedImage> explosions;
   private ArrayList<BufferedImage> upRockets;
   private ArrayList<BufferedImage> downRockets;
@@ -552,8 +552,8 @@ public class ResourceLoader {
 
   public void loadPowerUpIcons() {
     ArrayList<BufferedImage> powerUps = new ArrayList<>();
-    for (com.lordsofmidnight.utils.enums.PowerUp powerUp :
-        com.lordsofmidnight.utils.enums.PowerUp.values()) {
+    for (PowerUps powerUp :
+        PowerUps.values()) {
       powerUps.add(loadImageFile("sprites/" + theme + "/misc/icon/", powerUp.toString()));
     }
     this.powerUpIcons = powerUps;
@@ -564,13 +564,13 @@ public class ResourceLoader {
   }
 
   public void loadPowerUps() {
-    HashMap<PowerUp, ArrayList<BufferedImage>> powerUps = new HashMap<>();
+    HashMap<PowerUps, ArrayList<BufferedImage>> powerUps = new HashMap<>();
 
     // add web powerup
     int webWidth = SpriteSheetData.getDimension(SpriteDimensions.POWERUP_WEB_WIDTH);
     int webHeight = SpriteSheetData.getDimension(SpriteDimensions.POWERUP_WEB_HEIGHT);
     powerUps.put(
-        PowerUp.WEB,
+        PowerUps.WEB,
         splitSpriteSheet(
                 webWidth, webHeight, loadImageFile("sprites/" + theme + "/powerups/", "web"))
             .get(0));
@@ -580,23 +580,24 @@ public class ResourceLoader {
     int spriteHeight = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_HEIGHT);
     BufferedImage speedAnimation =
         transparentizeSprite(loadImageFile("sprites/" + theme + "/powerups/", "speed"));
-    powerUps.put(PowerUp.SPEED, splitSpriteSheet(spriteWidth, spriteHeight, speedAnimation).get(0));
+    powerUps
+        .put(PowerUps.SPEED, splitSpriteSheet(spriteWidth, spriteHeight, speedAnimation).get(0));
 
     // add invincible powerup
     BufferedImage invincibleAnimation =
         transparentizeSprite(loadImageFile("sprites/" + theme + "/powerups/", "invincible"));
     powerUps.put(
-        PowerUp.INVINCIBLE,
+        PowerUps.INVINCIBLE,
         splitSpriteSheet(spriteWidth, spriteHeight, invincibleAnimation).get(0));
 
     this.powerUps = powerUps;
   }
 
-  public HashMap<com.lordsofmidnight.utils.enums.PowerUp, ArrayList<Image>> getPowerUps() {
-    HashMap<com.lordsofmidnight.utils.enums.PowerUp, ArrayList<Image>> convertedSprites =
+  public HashMap<PowerUps, ArrayList<Image>> getPowerUps() {
+    HashMap<PowerUps, ArrayList<Image>> convertedSprites =
         new HashMap<>();
 
-    for (com.lordsofmidnight.utils.enums.PowerUp key : this.powerUps.keySet()) {
+    for (PowerUps key : this.powerUps.keySet()) {
       convertedSprites.put(key, bufferedToJavaFxImage(this.powerUps.get(key)));
     }
 
