@@ -87,6 +87,7 @@ public class MenuController {
   private Button quitBtn;
   private ImageView logo;
   private Button instructions;
+  private VBox homeOptions;
 
   private Label lobbyStatusLbl;
   private Label loadingDots;
@@ -116,12 +117,6 @@ public class MenuController {
   private InputKey toRemap = null;
   private KeyCode proposedChange = null;
 
-  private Label upLbl;
-  private Label leftLbl;
-  private Label rightLbl;
-  private Label downLbl;
-  private Label useLbl;
-
   private Text upKey;
   private Text leftKey;
   private  Text rightKey;
@@ -139,8 +134,6 @@ public class MenuController {
   private ArrayList<Map> validMaps = new ArrayList<>();
   private ArrayList<String> mapNames = new ArrayList<>();
   private Text mapNameBody;
-  private Button bigMapBtn;
-  private Button smallMapBtn;
   private Map generatedBuffer;
   private Image previewBuffer;
 
@@ -152,11 +145,8 @@ public class MenuController {
   private Button moveThemesLeftBtn;
   private Button moveThemesRightBtn;
   private Label themeName;
-  private Button selectThemeBtn;
   private String currentTheme;
   private boolean isHome = true;
-  private boolean isInstructions = false;
-  private boolean isCredits = false;
   private boolean inLobby;
   private Thread playerNumberDiscovery;
   private MulticastSocket socket;
@@ -265,6 +255,9 @@ public class MenuController {
     System.out.println("Lobby players thread fully ended");
   });
 
+  /**
+   * Kills the thread which listens for the number of players in a lobby.
+   */
   public void endPlayerDiscovery() {
     this.playerNumberDiscovery.interrupt();
   }
@@ -364,6 +357,9 @@ public class MenuController {
     currentMap = validMaps.get(mapsIndex);
   }
 
+  /**
+   * Handles showing the next theme in the menu
+   */
   private void showNextTheme() {
     themeIndex++;
     if (themeIndex >= (numberofThemes - 1)) {
@@ -377,6 +373,9 @@ public class MenuController {
     themePreview.setImage(themeImages[themeIndex]);
   }
 
+  /**
+   * Handles showing the previous theme in the menu
+   */
   private void showPreviousTheme() {
     themeIndex--;
     if (themeIndex <= 0) {
@@ -499,15 +498,19 @@ public class MenuController {
     }
   }
 
+  /**
+   * Resets the main menu to its default state.
+   */
   public void reset() {
     hideItemsOnScreen();
     itemsOnScreen.clear();
     backTree.clear();
-    itemsOnScreen.add(playBtn);
-    itemsOnScreen.add(instructions);
+//    itemsOnScreen.add(playBtn);
+//    itemsOnScreen.add(instructions);
     itemsOnScreen.add(logo);
     itemsOnScreen.add(quitBtn);
     itemsOnScreen.add(settingsBtn);
+    itemsOnScreen.add(homeOptions);
     isHome = true;
     backBtn.setVisible(false);
     showItemsOnScreen();
@@ -665,7 +668,7 @@ public class MenuController {
     mapNameOptions.setVisible(false);
     root.getChildren().add(mapNameOptions);
 
-    smallMapBtn = ButtonGenerator.generate(true, mapSizeBtns, "Small", UIColours.GREEN, 35);
+    Button smallMapBtn = ButtonGenerator.generate(true, mapSizeBtns, "Small", UIColours.GREEN, 35);
     smallMapBtn.setOnAction(event -> {
       mapNameTxt.setText("Generated Map");
       generatedBuffer = mapGenerationHandler.getSmallMap();
@@ -676,7 +679,7 @@ public class MenuController {
       showItemsOnScreen();
 
     });
-    bigMapBtn = ButtonGenerator.generate(true, mapSizeBtns, "Big", UIColours.RED, 35);
+    Button bigMapBtn = ButtonGenerator.generate(true, mapSizeBtns, "Big", UIColours.RED, 35);
     bigMapBtn.setOnAction(event -> {
       mapNameTxt.setText("Generated Map");
       generatedBuffer = mapGenerationHandler.getBigMap();
@@ -1011,25 +1014,25 @@ public class MenuController {
 
     upKey = TextGenerator.generate(Settings.getKey(InputKey.UP).getName(), UIColours.GREEN, 14);
     TextFlow upFlow = new TextFlow(TextGenerator.generate("UP KEY: ", UIColours.WHITE, 14), upKey);
-    upLbl = new Label(null, upFlow);
+    Label upLbl = new Label(null, upFlow);
 
     leftKey = TextGenerator.generate(Settings.getKey(InputKey.LEFT).getName(), UIColours.GREEN, 14);
     TextFlow leftFlow = new TextFlow(TextGenerator.generate("LEFT KEY: ", UIColours.WHITE,14), leftKey);
-    leftLbl = new Label(null, leftFlow);
+    Label leftLbl = new Label(null, leftFlow);
 
     rightKey = TextGenerator.generate(Settings.getKey(InputKey.RIGHT).getName(), UIColours.GREEN, 14);
     TextFlow rightFlow = new TextFlow(TextGenerator.generate("RIGHT KEY: ", UIColours.WHITE,14), rightKey);
-    rightLbl = new Label(null, rightFlow);
+    Label rightLbl = new Label(null, rightFlow);
 
     downKey = TextGenerator.generate(Settings.getKey(InputKey.DOWN).getName(), UIColours.GREEN, 14);
     TextFlow downFlow = new TextFlow(TextGenerator.generate("DOWN KEY: ", UIColours.WHITE,14), downKey);
-    downLbl = new Label(null, downFlow);
+    Label downLbl = new Label(null, downFlow);
 
     useKey = TextGenerator.generate(Settings.getKey(InputKey.USE).getName(), UIColours.GREEN, 14);
     TextFlow useFlow = new TextFlow(TextGenerator.generate("USE KEY: ", UIColours.WHITE,14), useKey);
-    useLbl = new Label(null, useFlow);
+    Label useLbl = new Label(null, useFlow);
 
-    keyLbls.getChildren().addAll(upLbl, leftLbl, rightLbl, downLbl,useLbl);
+    keyLbls.getChildren().addAll(upLbl, leftLbl, rightLbl, downLbl, useLbl);
     keyLbls.setAlignment(Pos.CENTER);
 
     StackPane.setAlignment(keyLbls, Pos.CENTER);
@@ -1111,7 +1114,8 @@ public class MenuController {
     moveThemesRightBtn.setFocusTraversable(false);
     moveThemesLeftBtn.setFocusTraversable(false);
 
-    selectThemeBtn = ButtonGenerator.generate(true, themesContainer, "Select", UIColours.GREEN, 30);
+    Button selectThemeBtn = ButtonGenerator
+        .generate(true, themesContainer, "Select", UIColours.GREEN, 30);
     selectThemeBtn.setOnAction(event -> {
       client.updateTheme(currentTheme);
       bg.setImage(resourceLoader.getBackground());
@@ -1213,10 +1217,10 @@ public class MenuController {
     instructions = ButtonGenerator
         .generate(true, root, "Instructions", UIColours.YELLOW, 30);
     instructions.setOnAction(event -> {
+      isHome = false;
       audioController.playSound(Sounds.click);
       moveItemsToBackTree();
       settingsBtn.setVisible(false);
-      isInstructions = true;
       backBtn.setVisible(true);
       itemsOnScreen.add(instructionLbl);
       itemsOnScreen.add(instructionsGif);
@@ -1226,11 +1230,6 @@ public class MenuController {
     creditsBtn = ButtonGenerator.generate(true, root, "Credits", UIColours.WHITE, 30);
     StackPane.setAlignment(creditsBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(creditsBtn, new Insets(0,0,50,0));
-
-
-    String creditsTxt = "Music:         OpenGamesArt\n\n" +
-                        "SoundFX:     SubspaceAudio \n\n" +
-                        "Developers: \n\nAdam Kona\nAlex Banks\nJames Weir\nLewis Ackroyd\nMatty Jones\nTim Cheung";
 
     Text musicHeader = TextGenerator.generate("Music:", UIColours.YELLOW, 20);
     Text musicBody = TextGenerator.generate("         OpenGamesArt\n\n", UIColours.WHITE, 20);
@@ -1251,16 +1250,15 @@ public class MenuController {
     StackPane.setMargin(creditsLbl, new Insets(0,0,0,0));
 
     creditsBtn.setOnAction(event -> {
+      isHome = false;
       audioController.playSound(Sounds.click);
       moveItemsToBackTree();
-      creditsLbl.setVisible(true);
+      itemsOnScreen.add(creditsLbl);
       backBtn.setVisible(true);
-      settingsBtn.setVisible(false);
-      isCredits = true;
-
+      showItemsOnScreen();
     });
 
-    VBox homeOptions = new VBox(20,playBtn, instructions, creditsBtn);
+    homeOptions = new VBox(20,playBtn, instructions, creditsBtn);
     root.getChildren().add(homeOptions);
     homeOptions.setAlignment(Pos.CENTER);
     StackPane.setAlignment(homeOptions, Pos.CENTER);
@@ -1273,29 +1271,6 @@ public class MenuController {
     backBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.click);
-          if (isInstructions) {
-            instructionLbl.setVisible(false);
-            instructionsGif.setVisible(false);
-            backBtn.setVisible(false);
-            itemsOnScreen.clear();
-            ArrayList<Node> toShow = backTree.pop();
-            itemsOnScreen.addAll(toShow);
-            showItemsOnScreen();
-            isInstructions = false;
-            settingsBtn.setVisible(true);
-
-          }
-
-          if(isCredits){
-            creditsLbl.setVisible(false);
-            settingsBtn.setVisible(true);
-            backBtn.setVisible(false);
-            itemsOnScreen.clear();
-            ArrayList<Node> toShow = backTree.pop();
-            itemsOnScreen.addAll(toShow);
-            showItemsOnScreen();
-            isCredits = false;
-          }
 
           if (inLobby) {
             playerNumberDiscovery.interrupt();
@@ -1317,10 +1292,7 @@ public class MenuController {
         });
 
     backTree.empty();
-    itemsOnScreen.add(homeOptions);
-    itemsOnScreen.add(logo);
-    itemsOnScreen.add(quitBtn);
-    itemsOnScreen.add(settingsBtn);
+    reset();
 
     imageViews =
         Arrays.asList(
