@@ -12,6 +12,7 @@ import com.lordsofmidnight.main.Client;
 import com.lordsofmidnight.server.NetworkUtility;
 import com.lordsofmidnight.utils.KeyRemapping;
 import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.utils.ResourceSaver;
 import com.lordsofmidnight.utils.Settings;
 import com.lordsofmidnight.utils.enums.InputKey;
 import com.lordsofmidnight.utils.enums.RenderingMode;
@@ -86,7 +87,6 @@ public class MenuController {
   private Button quitBtn;
   private ImageView logo;
   private Button instructions;
-  private Button creditsBtn;
 
   private Label lobbyStatusLbl;
   private Label loadingDots;
@@ -141,6 +141,8 @@ public class MenuController {
   private Text mapNameBody;
   private Button bigMapBtn;
   private Button smallMapBtn;
+  private Map generatedBuffer;
+  private Image previewBuffer;
 
   private ImageView themePreview;
   private int themeIndex = 0;
@@ -160,6 +162,8 @@ public class MenuController {
   private MulticastSocket socket;
 
   private MapGenerationHandler mapGenerationHandler;
+
+  private ResourceSaver resourceSaver = new ResourceSaver("src/test/resources/");
 
   /**
    * @param audio Global audio controller which is passed around the system
@@ -230,6 +234,7 @@ public class MenuController {
         }
 
         if (numberOfPlayers != players) {
+          numberOfPlayers = players;
           System.out.println("Updating player count");
           Platform.runLater(() -> {
             lobbyStatusLbl.setText("Waiting for game to start");
@@ -581,8 +586,10 @@ public class MenuController {
     mapView.setFitWidth(700);
     Button generateMapBtn = ButtonGenerator
         .generate(true, root, "Generate Map", UIColours.WHITE, 20);
+    generateMapBtn.setFocusTraversable(false);
     Button mapConfirmationBtn = ButtonGenerator
         .generate(true, root, "Continue", UIColours.GREEN, 20);
+    mapConfirmationBtn.setFocusTraversable(false);
     mapConfirmationBtn.setOnAction(event -> {
       audioController.playSound(Sounds.click);
       moveItemsToBackTree();
@@ -597,45 +604,96 @@ public class MenuController {
     HBox mapSizeBtns = new HBox(20);
     mapSizeBtns.setVisible(false);
     StackPane.setAlignment(mapSizeBtns, Pos.CENTER);
+    Label mapNameTxt = LabelGenerator.generate(true, "Generated Map", UIColours.WHITE, 15);
+
+    ImageView generatedMapPreview = new ImageView();
+    generatedMapPreview.setPreserveRatio(true);
+    generatedMapPreview.setFitWidth(700);
+    root.getChildren().add(generatedMapPreview);
+    StackPane.setAlignment(generatedMapPreview, Pos.CENTER);
+
+    TextField mapNameEntry = new TextField();
+    mapNameEntry.setPromptText("Select a name for the map...");
+    mapNameEntry.setStyle(
+        "-fx-text-inner-color: white; "
+            + "-fx-prompt-text-fill: white; "
+            + "-fx-background-color: transparent;");
+    mapNameEntry.setAlignment(Pos.CENTER);
+
+    Line line = new Line(0, 100, 500, 100);
+    line.setStroke(Color.WHITE);
+    VBox mapField = new VBox(mapNameEntry, line);
+    mapField.setAlignment(Pos.CENTER);
+
+    Button saveMapBtn = ButtonGenerator.generate(true, root, "Save", UIColours.GREEN, 25);
+    saveMapBtn.setOnAction(
+        event -> {
+          if(mapNameEntry.getText().equals("")){
+            mapNameTxt.setText("Please enter a name");
+          }else if(mapNames.contains(mapNameEntry.getText())){
+            mapNameTxt.setText("Map Name Already Exists");
+          }else{
+            try{
+              resourceSaver.saveMap(generatedBuffer, mapNameEntry.getText());
+            }catch(IOException e){
+              e.printStackTrace();
+            }
+
+            validMaps.add(generatedBuffer);
+            generatedBuffer = null;
+            mapImages.add(previewBuffer);
+            previewBuffer = null;
+            numberOfMaps++;
+            mapsIndex = numberOfMaps - 1;
+            currentMap = validMaps.get(mapsIndex);
+            mapView.setImage(mapImages.get(mapsIndex));
+            moveMapsRightBtn.setVisible(false);
+            moveMapsLeftBtn.setVisible(true);
+            mapNameBody.setText(mapNameEntry.getText());
+            mapNames.add(mapNameEntry.getText());
+            backBtn.fire();
+            backBtn.fire();
+          }
+
+        });
+
+    VBox mapNameOptions = new VBox(10,mapNameTxt,generatedMapPreview ,mapField, saveMapBtn);
+    mapNameOptions.setAlignment(Pos.CENTER);
+    StackPane.setAlignment(mapNameOptions, Pos.CENTER);
+    StackPane.setMargin(mapNameOptions, new Insets(0, 0, 170, 0));
+    mapNameOptions.setPrefWidth(300);
+    mapNameOptions.setVisible(false);
+    root.getChildren().add(mapNameOptions);
 
     smallMapBtn = ButtonGenerator.generate(true, mapSizeBtns, "Small", UIColours.GREEN, 35);
     smallMapBtn.setOnAction(event -> {
-      Map generatedMap = mapGenerationHandler.getSmallMap();
-      validMaps.add(generatedMap);
-      Image generatedPreview = mapPreview.getMapPreview(generatedMap);
-      mapImages.add(generatedPreview);
-      numberOfMaps++;
-      mapsIndex = numberOfMaps - 1;
-      currentMap = validMaps.get(mapsIndex);
-      mapView.setImage(mapImages.get(mapsIndex));
-      moveMapsRightBtn.setVisible(false);
-      moveMapsLeftBtn.setVisible(true);
-      mapSizeBtns.setVisible(false);
-      mapSelectionView.setVisible(true);
+      mapNameTxt.setText("Generated Map");
+      generatedBuffer = mapGenerationHandler.getSmallMap();
+      previewBuffer = mapPreview.getMapPreview(generatedBuffer);
+      generatedMapPreview.setImage(previewBuffer);
+      moveItemsToBackTree();
+      itemsOnScreen.add(mapNameOptions);
+      showItemsOnScreen();
 
     });
     bigMapBtn = ButtonGenerator.generate(true, mapSizeBtns, "Big", UIColours.RED, 35);
     bigMapBtn.setOnAction(event -> {
-      Map generatedMap = mapGenerationHandler.getBigMap();
-      validMaps.add(generatedMap);
-      Image generatedPreview = mapPreview.getMapPreview(generatedMap);
-      mapImages.add(generatedPreview);
-      numberOfMaps++;
-      mapsIndex = numberOfMaps - 1;
-      currentMap = validMaps.get(mapsIndex);
-      mapView.setImage(mapImages.get(mapsIndex));
-      moveMapsRightBtn.setVisible(false);
-      moveMapsLeftBtn.setVisible(true);
-      mapSizeBtns.setVisible(false);
-      mapSelectionView.setVisible(true);
+      mapNameTxt.setText("Generated Map");
+      generatedBuffer = mapGenerationHandler.getBigMap();
+      previewBuffer = mapPreview.getMapPreview(generatedBuffer);
+      generatedMapPreview.setImage(previewBuffer);
+      moveItemsToBackTree();
+      itemsOnScreen.add(mapNameOptions);
+      showItemsOnScreen();
 
     });
     mapSizeBtns.setAlignment(Pos.CENTER);
     root.getChildren().addAll(mapSizeBtns);
 
     generateMapBtn.setOnAction(event -> {
-      mapSizeBtns.setVisible(true);
-      mapSelectionView.setVisible(false);
+      moveItemsToBackTree();
+      itemsOnScreen.add(mapSizeBtns);
+      showItemsOnScreen();
     });
 
     HBox mapSelectionBox = new HBox(30, moveMapsLeftBtn, mapView, moveMapsRightBtn);
@@ -650,6 +708,7 @@ public class MenuController {
 
     Button singlePlayerBtn = ButtonGenerator
         .generate(true, root, "Singleplayer", UIColours.WHITE, 40);
+    singlePlayerBtn.setFocusTraversable(false);
     singlePlayerBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
@@ -660,6 +719,7 @@ public class MenuController {
 
     Button multiplayerBtn = ButtonGenerator
         .generate(true, root, "Multiplayer", UIColours.WHITE, 40);
+    multiplayerBtn.setFocusTraversable(false);
     multiplayerBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
@@ -677,8 +737,6 @@ public class MenuController {
 
     playBtn = ButtonGenerator.generate(true, root, "Play", UIColours.GREEN, 35);
     playBtn.setText("Play");
-//    StackPane.setAlignment(playBtn, Pos.CENTER);
-//    StackPane.setMargin(playBtn, new Insets(160, 0, 0, 0));
     playBtn.setOnAction(
         e -> {
           audioController.playSound(Sounds.click);
@@ -828,9 +886,7 @@ public class MenuController {
     Label musicLbl = LabelGenerator.generate(true, soundTabLayout, "Music:", UIColours.WHITE, 16);
 
     JFXSlider musicVolumeSlider = new JFXSlider(0, 1, 0.5);
-    musicVolumeSlider.valueProperty().addListener((ov, old_val, new_val) -> {
-      audioController.setMusicVolume(new_val.doubleValue());
-    });
+    musicVolumeSlider.valueProperty().addListener((ov, old_val, new_val) -> audioController.setMusicVolume(new_val.doubleValue()));
 
     musicVolumeSlider.setMaxWidth(200);
 
@@ -843,9 +899,7 @@ public class MenuController {
     Label soundFXLbl = LabelGenerator
         .generate(true, soundTabLayout, "SoundFX:", UIColours.WHITE, 16);
     JFXSlider soundFXSlider = new JFXSlider(0, 1, 0.5);
-    soundFXSlider.valueProperty().addListener((ov, old_val, new_val) -> {
-      Settings.setSoundVolume(new_val.doubleValue());
-    });
+    soundFXSlider.valueProperty().addListener((ov, old_val, new_val) -> Settings.setSoundVolume(new_val.doubleValue()));
 
     soundFXSlider.setMaxWidth(200);
     StackPane.setAlignment(soundFXLbl, Pos.CENTER);
@@ -1213,6 +1267,7 @@ public class MenuController {
     StackPane.setMargin(homeOptions, new Insets(160,0,0,0));
 
     backBtn = ButtonGenerator.generate(false, root, "back", UIColours.RED, 30);
+    backBtn.setFocusTraversable(false);
     StackPane.setAlignment(backBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(backBtn, new Insets(0, 0, 100, 0));
     backBtn.setOnAction(

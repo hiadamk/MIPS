@@ -13,4 +13,11 @@ public class LabelGenerator {
     newLabel.setStyle(" -fx-font-size:" + fontSize + "pt ; -fx-text-fill: " + colour + ";");
     return newLabel;
   }
+  public static Label generate(boolean visible, String text, UIColours colour,
+      int fontSize) {
+    Label newLabel = new Label(text);
+    newLabel.setVisible(visible);
+    newLabel.setStyle(" -fx-font-size:" + fontSize + "pt ; -fx-text-fill: " + colour + ";");
+    return newLabel;
+  }
 }
