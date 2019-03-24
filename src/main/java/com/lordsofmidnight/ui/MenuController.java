@@ -594,6 +594,8 @@ public class MenuController {
     mapConfirmationBtn.setOnAction(event -> {
       audioController.playSound(Sounds.click);
       moveItemsToBackTree();
+      resourceLoader.setMap(currentMap);
+      client.setMap(resourceLoader.getMap());
       if(isMultiplayer){
         lobbyStatusLbl.setText("Creating Game");
         itemsOnScreen.add(searchingForMultiplayers);
@@ -606,9 +608,6 @@ public class MenuController {
       }else{
         itemsOnScreen.add(startGameBtn);
       }
-
-      resourceLoader.setMap(currentMap);
-      client.setMap(resourceLoader.getMap());
       showItemsOnScreen();
     });
 
