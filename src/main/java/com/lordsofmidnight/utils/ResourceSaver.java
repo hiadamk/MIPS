@@ -23,9 +23,9 @@ public class ResourceSaver {
    * @throws IOException the map with that name already exists
    */
   public void saveMap(Map map, String mapName) throws IllegalArgumentException, IOException {
-    if (!MapGenerator.validateMap(map.raw())) {
-      throw new IllegalArgumentException("Invalid Map!");
-    }
+//    if (!MapGenerator.validateMap(map.raw())) {
+//      throw new IllegalArgumentException("Invalid Map!");
+//    }
     File saveLocation = new File(BASE_DIR + "maps/" + mapName + ".png");
     if (saveLocation.exists()) {
       throw new IOException("file already exists!");

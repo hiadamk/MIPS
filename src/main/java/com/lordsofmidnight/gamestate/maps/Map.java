@@ -1,6 +1,7 @@
 package com.lordsofmidnight.gamestate.maps;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.utils.ResourceLoader;
@@ -18,6 +19,16 @@ public class Map {
 
   private final int[][] MAP;
   private final ArrayList<Point> SPAWN_POINTS;
+
+  private enum serializedMapDelimiters{
+    ROW_END("-"),CELL_SEPARATOR("&");
+
+    private final String delimiter;
+
+    serializedMapDelimiters(String delimiter){
+      this.delimiter = delimiter;
+    }
+  }
 
   /**
    * basic constructor that takes raw ints and performs preprocessing
@@ -111,5 +122,55 @@ public class Map {
     boolean x = point.getX() >= 0 && point.getX() < maxX;
     boolean y = point.getY() >= 0 && point.getY() < maxY;
     return x && y;
+  }
+
+  /**
+   * @param map The map to be serialised
+   * @return a serialised map String
+   * * @author Tim Cheung
+   */
+  public static String serialiseMap(Map map){
+    String serializedMap = "";
+    int[][] rawMap = map.raw();
+    for(int[] row: rawMap){
+      for(int cell: row){
+        serializedMap += cell + serializedMapDelimiters.CELL_SEPARATOR.delimiter;
+      }
+      serializedMap = serializedMap.substring(0,serializedMap.length()-1);
+      serializedMap += serializedMapDelimiters.ROW_END.delimiter;
+    }
+    serializedMap = serializedMap.substring(0,serializedMap.length()-1);
+    return serializedMap;
+  }
+
+  /**
+   * @param serializedMap The map to be deserialised
+   * @return a deserialised map Object
+   * * @author Tim Cheung
+   */
+  public static Map deserialiseMap(String serializedMap){
+    String[] rows = serializedMap.split(serializedMapDelimiters.ROW_END.delimiter);
+    ArrayList<ArrayList<String>> stringMap = new ArrayList<>();
+    for(String row: rows){
+      stringMap.add(new ArrayList<>(
+          Arrays.asList(row.split(serializedMapDelimiters.CELL_SEPARATOR.delimiter))));
+    }
+
+    int[][] deserialisedMap = new int[stringMap.size()][stringMap.get(0).size()];
+
+    for(int i = 0; i < deserialisedMap.length;i++){
+      for(int j = 0; j < deserialisedMap[i].length;j++){
+        deserialisedMap[i][j] = Integer.parseInt(stringMap.get(i).get(j));
+      }
+    }
+    return new Map(deserialisedMap);
+  }
+
+  @Override
+  public boolean equals(Object _map){
+    if(!(_map instanceof Map)){
+      return false;
+    }
+    return Arrays.deepEquals(this.MAP,((Map) _map).raw());
   }
 }

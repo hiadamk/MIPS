@@ -32,8 +32,6 @@ public class EndGameScreenTest extends Application {
     entities[1] = new Entity(false,1,new Point(0,0));
     entities[2] = new Entity(false,2,new Point(0,0));
 
-    Methods.updateImages(entities,r);
-
     root.getChildren().add(canvas);
 
     primaryStage.setScene(s);
