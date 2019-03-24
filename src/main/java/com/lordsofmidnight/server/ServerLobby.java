@@ -1,5 +1,6 @@
 package com.lordsofmidnight.server;
 
+import com.lordsofmidnight.gamestate.maps.Map;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,6 +21,7 @@ import com.lordsofmidnight.utils.Input;
 
 public class ServerLobby {
 
+  private Map map;
   private AtomicInteger playerCount;
   private ArrayList<InetAddress> playerIPs;
   private ServerGameplayHandler s;
@@ -81,77 +83,21 @@ public class ServerLobby {
         }
       };
 
-  /**
-   * Accepts connections from clients
-   */
-  Thread acceptConnections =
-      new Thread() {
-        @Override
-        public void run() {
-          super.run();
+  /** Accepts connections from clients */
+  Thread acceptConnections;
 
-          try {
-            server = new ServerSocket(NetworkUtility.SERVER_DGRAM_PORT);
-            while (!isInterrupted()) {
-              if (playerCount.get() < 5) {
-                Socket soc = server.accept();
-                BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
-                PrintWriter out = new PrintWriter(soc.getOutputStream());
-                activeInputStreams.add(in);
-                activeOutstreams.add(out);
-                activeClientSockets.add(soc);
-                System.out.println("Waiting for new connection...");
 
-                String r = in.readLine();
-                String name = in.readLine();
-                names[playerCount.get()] = name;
-
-                if (r.equals(NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX)) {
-                  InetAddress ip = soc.getInetAddress();
-                  System.out.println("Connecting to: " + ip);
-                  playerIPs.add(ip);
-
-                  int playerID = getNextID();
-                  out.println("" + playerID);
-                  out.flush();
-                  System.out.println("Sent client " + playerID + " their ID...");
-                  out.println("default");
-                  out.println("" + MIPID);
-                  out.flush();
-                  out.println("SUCCESS");
-                  out.flush();
-                  System.out.println(
-                      "Sent client " + playerID + " a successful connection message...");
-                  playerCount.set(playerCount.get() + 1);
-                  lobbyLeaverListener l = new lobbyLeaverListener(soc, in, out, ip, playerID);
-                  lobbyLeavers.add(l);
-                  l.start();
-                }
-
-              } else {
-                return;
-              }
-            }
-            server.close();
-          } catch (SocketException e) {
-            System.out.println("Sockets were closed while waiting to accept");
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-        }
-      };
-
-  public ServerLobby() {
-    pinger.start();
+  public ServerLobby(Map map) {
+    this.map = map;
+    this.acceptConnections = connectionAccepter();
     this.playerCount = new AtomicInteger(0);
     this.playerIPs = new ArrayList<>();
-    acceptConnections.start();
     this.MIPID = (new Random()).nextInt(5);
+    pinger.start();
+    acceptConnections.start();
   }
 
-  /**
-   * Shuts down the internal threads and all TCP connections
-   */
+  /** Shuts down the internal threads and all TCP connections */
   public void shutDown() {
     acceptConnections.interrupt();
     if (server != null && !server.isClosed()) {
@@ -192,13 +138,74 @@ public class ServerLobby {
       }
     }
     try {
-      this.s = new ServerGameplayHandler(this.playerIPs, playerCount.get(), inputQueue,
-          outputQueue);
+      this.s =
+          new ServerGameplayHandler(this.playerIPs, playerCount.get(), inputQueue, outputQueue);
     } catch (IOException e) {
       e.printStackTrace();
     }
 
     return s;
+  }
+
+  private Thread connectionAccepter(){
+    Thread thread = new Thread() {
+      Map m = map;
+
+      @Override
+      public void run() {
+        super.run();
+
+        try {
+          server = new ServerSocket(NetworkUtility.SERVER_DGRAM_PORT);
+          while (!isInterrupted()) {
+            if (playerCount.get() < 5) {
+              Socket soc = server.accept();
+              BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+              PrintWriter out = new PrintWriter(soc.getOutputStream());
+              activeInputStreams.add(in);
+              activeOutstreams.add(out);
+              activeClientSockets.add(soc);
+              System.out.println("Waiting for new connection...");
+
+              String r = in.readLine();
+              String name = in.readLine();
+              names[playerCount.get()] = name;
+
+              if (r.equals(NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX)) {
+                InetAddress ip = soc.getInetAddress();
+                System.out.println("Connecting to: " + ip);
+                playerIPs.add(ip);
+
+                int playerID = getNextID();
+                out.println("" + playerID);
+                out.flush();
+                System.out.println("Sent client " + playerID + " their ID...");
+                out.println(Map.serialiseMap(this.m));
+                out.println("" + MIPID);
+                out.flush();
+                out.println("SUCCESS");
+                out.flush();
+                System.out.println(
+                    "Sent client " + playerID + " a successful connection message...");
+                playerCount.set(playerCount.get() + 1);
+                lobbyLeaverListener l = new lobbyLeaverListener(soc, in, out, ip, playerID);
+                lobbyLeavers.add(l);
+                l.start();
+              }
+
+            } else {
+              return;
+            }
+          }
+          server.close();
+        } catch (SocketException e) {
+          System.out.println("Sockets were closed while waiting to accept");
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    };
+    return thread;
   }
 
   /**
@@ -225,9 +232,7 @@ public class ServerLobby {
     return this.playerCount.get();
   }
 
-  /**
-   * Shuts down all the TCP connections in the current client
-   */
+  /** Shuts down all the TCP connections in the current client */
   private void shutdownTCP() {
     try {
       for (Socket s : activeClientSockets) {
@@ -248,12 +253,9 @@ public class ServerLobby {
     } catch (IOException e) {
       e.printStackTrace();
     }
-
   }
 
-  /**
-   * Private class which is listening for clients in the lobby who leave the game.
-   */
+  /** Private class which is listening for clients in the lobby who leave the game. */
   private class lobbyLeaverListener extends Thread {
 
     private Socket client;
@@ -262,8 +264,8 @@ public class ServerLobby {
     private int id;
     private InetAddress ip;
 
-    public lobbyLeaverListener(Socket client, BufferedReader in, PrintWriter out, InetAddress ip,
-        int id) {
+    public lobbyLeaverListener(
+        Socket client, BufferedReader in, PrintWriter out, InetAddress ip, int id) {
       this.client = client;
       this.in = in;
       this.out = out;

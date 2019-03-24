@@ -149,7 +149,8 @@ public class Client extends Application {
     // outgoing keypressQueue for local client
     keypressQueue = new LinkedBlockingQueue<>();
     try {
-      this.server = new ServerLobby();
+      this.map = resourceLoader.getMap();
+      this.server = new ServerLobby(map);
       clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this, name);
     } catch (IOException e) {
       e.printStackTrace();
@@ -230,6 +231,8 @@ public class Client extends Application {
   public void setMap(Map m) {
     this.map = m;
     Point.setMap(m);
+    renderer.setRefreshMap(true);
+    renderer.refreshSettings();
   }
 
   public void setMap(String mapName) {
