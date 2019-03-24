@@ -595,7 +595,14 @@ public class MenuController {
       audioController.playSound(Sounds.click);
       moveItemsToBackTree();
       if(isMultiplayer){
-        itemsOnScreen.add(multiplayerOptions);
+        lobbyStatusLbl.setText("Creating Game");
+        itemsOnScreen.add(searchingForMultiplayers);
+        itemsOnScreen.add(startMGameBtn);
+        showItemsOnScreen();
+        client.createMultiplayerLobby();
+        inLobby = true;
+        playerNumberDiscovery = new Thread(lobbyPlayers);
+        playerNumberDiscovery.start();
       }else{
         itemsOnScreen.add(startGameBtn);
       }
@@ -782,14 +789,15 @@ public class MenuController {
         event -> {
           audioController.playSound(Sounds.click);
           moveItemsToBackTree();
-          lobbyStatusLbl.setText("Creating Game");
-          itemsOnScreen.add(searchingForMultiplayers);
-          itemsOnScreen.add(startMGameBtn);
+//          lobbyStatusLbl.setText("Creating Game");
+//          itemsOnScreen.add(searchingForMultiplayers);
+//          itemsOnScreen.add(startMGameBtn);
+          itemsOnScreen.add(mapSelectionView);
           showItemsOnScreen();
-          client.createMultiplayerLobby();
-          inLobby = true;
-          playerNumberDiscovery = new Thread(lobbyPlayers);
-          playerNumberDiscovery.start();
+//          client.createMultiplayerLobby();
+//          inLobby = true;
+//          playerNumberDiscovery = new Thread(lobbyPlayers);
+//          playerNumberDiscovery.start();
         });
 
     multiplayerOptions = new VBox(10, createGameBtn, joinGameBtn);
@@ -856,8 +864,8 @@ public class MenuController {
           moveItemsToBackTree();
           hideItemsOnScreen();
           this.client.setName(nameEntry.getText());
-//          itemsOnScreen.add(multiplayerOptions);
-          itemsOnScreen.add(mapSelectionView);
+          itemsOnScreen.add(multiplayerOptions);
+//          itemsOnScreen.add(mapSelectionView);
 
           showItemsOnScreen();
         });
