@@ -1,16 +1,15 @@
 package com.lordsofmidnight.objects;
 
+import com.lordsofmidnight.gamestate.points.Point;
+import com.lordsofmidnight.objects.powerUps.PowerUp;
+import com.lordsofmidnight.utils.Renderable;
+import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.utils.enums.Direction;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import javafx.scene.image.Image;
-import com.lordsofmidnight.objects.powerUps.PowerUp;
-import com.lordsofmidnight.gamestate.points.Point;
-import com.lordsofmidnight.utils.Renderable;
-import com.lordsofmidnight.utils.ResourceLoader;
-import com.lordsofmidnight.utils.enums.Direction;
 
 /**
  * Class for the pellet items and base class for all items
@@ -26,7 +25,7 @@ public class Pellet implements Renderable {
   protected int value = 1;
   protected com.lordsofmidnight.objects.powerUps.PowerUp trap;
   protected boolean isTrap = false;
-  private int respawnCount = 0;
+  protected int respawnCount = 0;
 
   public Pellet(double x, double y) {
     this.location = new Point(x, y);
