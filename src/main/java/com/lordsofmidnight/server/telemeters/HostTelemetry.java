@@ -155,16 +155,15 @@ public class HostTelemetry extends Telemetry {
       Direction d = input.getMove();
       if (d.equals(Direction.USE)) {
         if (agents[id].isDead()) {
+          agents[id].setPowerUpUsedFlag(false);
           return;
         }
         usePowerUp(id);
         agents[id].setPowerUpUsedFlag(false);
-        agents[id].setDirectionSetFlag(false);
       }else if(d.equals(Direction.STOP)){
         ai.addClient(id);
       }
       else {
-        agents[id].setDirectionSetFlag(false);
         if (Methods.validateDirection(d, agents[id].getLocation(), map)) {
           agents[id].setDirection(d);
           if (!singlePlayer) {
@@ -174,6 +173,7 @@ public class HostTelemetry extends Telemetry {
           }
         }
       }
+      agents[id].setDirectionSetFlag(false);
     }
   }
 

@@ -91,7 +91,10 @@ public class AILoopControl extends Thread {
             for (Entity ent : controlAgents) {  //for all game agents
                 Point currentLocation = ent.getLocation().getCopy();
                 Point currentGridLocation = currentLocation.getGridCoord();
-                if (currentLocation.isCentered()) { //only when in the centre of a grid square
+                if (currentGridLocation.equals(new Point(9,9))) {
+                    System.out.println(ent.getClientId());
+                }
+                if (currentLocation.isCentered() || !ent.getDirection().isMovementDirection()) { //only when in the centre of a grid square or if direction is not a movement direction
                     boolean atLastCoord = atPreviousCoordinate(ent, currentGridLocation);
                     if (!ent.getDirection().isMovementDirection()   //direction is not a movement direction
                             || !Methods.validateDirection(ent.getDirection(), currentLocation, map) ||  //movement direction is no longer valid
@@ -211,7 +214,7 @@ public class AILoopControl extends Thread {
      * @param atLastCoord If the {@link Entity} is at the same coordinate as the last time a route was calculated
      * @author Lewis Ackroyd*/
     private void generateNewDirection(Entity ent, Point currentLocation, Point currentGridLocation, boolean atLastCoord) {
-        if (atLastCoord) {  //direction invalid, produce a random valid direction instruction
+        if (atLastCoord || !junctions.contains(currentGridLocation)) {  //direction invalid, produce a random valid direction instruction
             Point nearestJunction = Mapping.findNearestJunction(currentLocation, map, junctions);
             Direction dir;
             if (!nearestJunction.equals(currentGridLocation)) { //go to nearest junction
@@ -227,9 +230,7 @@ public class AILoopControl extends Thread {
 
         } else {
             ent.setLastGridCoord(currentGridLocation);      //prevents multiple directions being produced for the same grid coordinate
-            if (junctions.contains(currentGridLocation)) {  //if the current grid coordinate is a junction
-                executeRoute(ent, currentLocation);
-            }
+            executeRoute(ent, currentLocation);
         }
     }
 
@@ -278,7 +279,7 @@ public class AILoopControl extends Thread {
                     break;
                 }
                 case 3: {
-                    routeFinder = new PowerPelletPatrolRouteFinder(map, pellets);
+                    routeFinder = new PowerUpBoxPatrolRouteFinder(map, pellets);
                     break;
                 }
                 default: {
@@ -474,32 +475,29 @@ public class AILoopControl extends Thread {
                 ent.setPowerUpUsedFlag(true);
                 setDirection(Direction.USE, ent);
             }
-            else {
-                try {
-                    if (powerUpList.get(0).getType() == com.lordsofmidnight.utils.enums.PowerUp.SPEED) {
-                        class MipsmanProximityCondition implements SampleSearch.ConditionalInterface {
-                            @Override
-                            public boolean condition(Point position) {
-                                return position.equals(mipsman.getLocation());
-                            }
-                        }
-                        SampleSearch sampleSearch = new SampleSearch(SPEED_POWER_UP_ACTIVATE_DEPTH, map);
-                        int[] mipsmanProximities = sampleSearch.getDirectionCounts(currentLocation, new MipsmanProximityCondition());
-                        for (int i : mipsmanProximities) {
-                            if (i > 0) {
-                                ent.setPowerUpUsedFlag(true);
-                                setDirection(Direction.USE, ent);
-                                break;
-                            }
+            else try {
+                if (powerUpList.get(0).getType() == com.lordsofmidnight.utils.enums.PowerUp.SPEED) {
+                    class MipsmanProximityCondition implements SampleSearch.ConditionalInterface {
+                        @Override
+                        public boolean condition(Point position) {
+                            return position.equals(mipsman.getLocation());
                         }
                     }
-                    if (!ent.isPowerUpUsed()) {
-                        ent.incrementPowerUpUseChance();
+                    SampleSearch sampleSearch = new SampleSearch(SPEED_POWER_UP_ACTIVATE_DEPTH, map);
+                    int[] mipsmanProximities = sampleSearch.getDirectionCounts(currentLocation, new MipsmanProximityCondition());
+                    for (int i : mipsmanProximities) {
+                        if (i > 0) {
+                            ent.setPowerUpUsedFlag(true);
+                            setDirection(Direction.USE, ent);
+                            break;
+                        }
                     }
                 }
-                catch (NullPointerException e) {} //PowerUp removed whilst processing. Skip this cycle
-                catch (IndexOutOfBoundsException e) {}
-            }
+                if (!ent.isPowerUpUsed()) {
+                    ent.incrementPowerUpUseChance();
+                }
+            } catch (NullPointerException | IndexOutOfBoundsException e) {
+            } //PowerUp removed whilst processing. Skip this cycle
         }
     }
 
@@ -515,6 +513,9 @@ public class AILoopControl extends Thread {
         if(direction!=ent.getDirection()&&!ent.isDirectionSet()){
             ent.setDirectionSetFlag(true);
             directionsOut.add(new Input(ent.getClientId(), direction));
+            if (direction==Direction.STOP) {
+                System.out.println(ent.getClientId());
+            }
         }
     }
 
@@ -544,7 +545,8 @@ public class AILoopControl extends Thread {
         ArrayList<Direction> validDirections = getValidDirections(currentLocation, map);
         Random r = new Random();
         if (validDirections.size()<=0) {
-            return null;
+            System.err.println("No directions can be travelled in.");
+            return Direction.STOP;
         }
         if (!Methods.validateDirection(dir, currentLocation, map)) {
             if (validDirections.size()>0) {
@@ -575,6 +577,9 @@ public class AILoopControl extends Thread {
      * @return The list of all valid directions.
      * @author Lewis Ackroyd*/
     private static final ArrayList<Direction> getValidDirections(Point p, Map map) {
+        if (!p.isCentered()) {
+            p = p.centralise();
+        }
         ArrayList<Direction> validDirections = new ArrayList<>();
         if (Methods.validateDirection(Direction.UP, p, map)) validDirections.add(Direction.UP);
         if (Methods.validateDirection(Direction.DOWN, p, map)) validDirections.add(Direction.DOWN);
