@@ -512,7 +512,7 @@ public class MenuController {
     isMultiplayer = false;
     backBtn.setVisible(false);
     showItemsOnScreen();
-
+    audioController.playMusic(Sounds.MENULOOP);
   }
 
   /**
