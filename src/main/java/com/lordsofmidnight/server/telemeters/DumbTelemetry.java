@@ -1,24 +1,19 @@
 package com.lordsofmidnight.server.telemeters;
 
-import com.lordsofmidnight.gamestate.maps.Map;
+import com.lordsofmidnight.audio.AudioController;
+import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.gamestate.points.PointMap;
-import com.lordsofmidnight.objects.EmptyPowerUpBox;
-import com.lordsofmidnight.objects.Pellet;
-import com.lordsofmidnight.objects.PowerUpBox;
-import com.lordsofmidnight.utils.ResourceLoader;
-import java.util.Queue;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.BlockingQueue;
 import com.lordsofmidnight.main.Client;
+import com.lordsofmidnight.objects.EmptyPowerUpBox;
 import com.lordsofmidnight.objects.Entity;
+import com.lordsofmidnight.objects.Pellet;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
 import com.lordsofmidnight.server.NetworkUtility;
 import com.lordsofmidnight.utils.GameLoop;
 import com.lordsofmidnight.utils.Input;
-import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.utils.enums.Direction;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 
 public class DumbTelemetry extends Telemetry {
 
@@ -30,8 +25,8 @@ public class DumbTelemetry extends Telemetry {
   // entites
   // rather than using any AI.
   // it is the client's telemetry.
-  public DumbTelemetry(Queue<String> inputQueue, Client client) {
-    super(client);
+  public DumbTelemetry(Queue<String> inputQueue, Client client, AudioController audioController) {
+    super(client, audioController);
     inputs = (BlockingQueue<String>) inputQueue;
     initialise();
     //    startGame();

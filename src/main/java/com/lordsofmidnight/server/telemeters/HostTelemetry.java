@@ -1,6 +1,7 @@
 package com.lordsofmidnight.server.telemeters;
 
 import com.lordsofmidnight.ai.AILoopControl;
+import com.lordsofmidnight.audio.AudioController;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.main.Client;
@@ -33,8 +34,9 @@ public class HostTelemetry extends Telemetry {
    * MultiPlayer Constructor
    */
   public HostTelemetry(
-      int playerCount, Queue<Input> inputQueue, Queue<String> outputQueue, Client client) {
-    super(client);
+      int playerCount, Queue<Input> inputQueue, Queue<String> outputQueue, Client client,
+      AudioController audioController) {
+    super(client, audioController);
     inputs = (BlockingQueue<Input>) inputQueue;
     outputs = (BlockingQueue<String>) outputQueue;
     this.playerCount = playerCount;
@@ -46,8 +48,8 @@ public class HostTelemetry extends Telemetry {
   /**
    * Single Player Constructor
    */
-  public HostTelemetry(Queue<Input> clientQueue, Client client) {
-    super(client);
+  public HostTelemetry(Queue<Input> clientQueue, Client client, AudioController audioController) {
+    super(client, audioController);
     inputs = (BlockingQueue<Input>) clientQueue;
     outputs = new LinkedBlockingQueue<>();
     this.playerCount = 1;
@@ -93,12 +95,11 @@ public class HostTelemetry extends Telemetry {
   public void startGame() {
     updateClients(agents); // set starting positions
     startAI();
-
+    audioController.gameIntro();
     gameTimer = GAME_TIME;
     final long DELAY = (long) Math.pow(10, 7);
     final long positionDELAY = (long) Math.pow(10, 9) / 2;
     final long scoreDELAY = (long) Math.pow(10, 9);
-
     inputProcessor =
         new GameLoop(DELAY) {
           @Override

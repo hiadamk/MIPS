@@ -130,7 +130,7 @@ public class Client extends Application {
     map = resourceLoader.getMap();
 
     incomingQueue = new LinkedBlockingQueue<>();
-    this.telemetry = new HostTelemetry(incomingQueue, this);
+    this.telemetry = new HostTelemetry(incomingQueue, this, audioController);
     this.primaryStage.setScene(gameScene);
     this.id = 0;
 
@@ -167,7 +167,7 @@ public class Client extends Application {
     keypressQueue = new LinkedBlockingQueue<>();
     try {
       clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this, name);
-      this.telemetry = new DumbTelemetry(clientIn, this);
+      this.telemetry = new DumbTelemetry(clientIn, this, audioController);
       this.telemetry.setMipID(MIPID);
     } catch (IOException e) {
       e.printStackTrace();
@@ -211,7 +211,8 @@ public class Client extends Application {
       map = resourceLoader.getMap();
       int playerCount = server.getPlayerCount();
       System.out.println("PLAYER COUNT IS: " + playerCount);
-      this.telemetry = new HostTelemetry(playerCount, inputQueue, outputQueue, this);
+      this.telemetry = new HostTelemetry(playerCount, inputQueue, outputQueue, this,
+          audioController);
       this.telemetry.setMipID(MIPID);
       gameScene.setOnKeyPressed(keyController);
       startGame();
