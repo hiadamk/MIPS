@@ -93,6 +93,8 @@ public class MenuController {
   private int numberOfPlayers;
 
   private TextField nameEntry;
+  private VBox nameEntryView;
+  private Label nameEntryStatus;
 
   private VBox multiplayerOptions;
   private VBox gameModeOptions;
@@ -172,7 +174,7 @@ public class MenuController {
   }
 
   /**
-   * Thread to listen to the Server Lobby which is contrantly pinging the number of players in the
+   * Thread to listen to the Server Lobby which is constantly pinging the number of players in the
    * lobby.
    */
   private Runnable lobbyPlayers = (() -> {
@@ -738,7 +740,8 @@ public class MenuController {
           isMultiplayer = true;
           audioController.playSound(Sounds.CLICK);
           moveItemsToBackTree();
-          itemsOnScreen.add(nameEntryOptions);
+//          itemsOnScreen.add(nameEntryOptions);
+          itemsOnScreen.add(multiplayerOptions);
           showItemsOnScreen();
         });
 
@@ -757,7 +760,12 @@ public class MenuController {
           isHome = false;
           backBtn.setVisible(true);
           moveItemsToBackTree();
-          itemsOnScreen.add(gameModeOptions);
+          System.out.println("NAME: " + Settings.getName());
+          if (Settings.getName().equals("null")) {
+            itemsOnScreen.add(nameEntryView);
+          } else {
+            itemsOnScreen.add(gameModeOptions);
+          }
           showItemsOnScreen();
         });
 
@@ -843,7 +851,7 @@ public class MenuController {
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
-    nameEntry.setPromptText("Please enter your player name...");
+    nameEntry.setPromptText("Please enter your name...");
     nameEntry.setStyle(
         "-fx-text-inner-color: white; "
             + "-fx-prompt-text-fill: white; "
@@ -856,26 +864,42 @@ public class MenuController {
     VBox nameAndLine = new VBox(nameEntry, clear);
     nameAndLine.setAlignment(Pos.CENTER);
 
-    Button nameEntryBtn = ButtonGenerator.generate(true, root, "Continue", UIColours.GREEN, 30);
+    Button nameEntryBtn = ButtonGenerator.generate(true, root, "Next", UIColours.GREEN, 30);
     nameEntryBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.CLICK);
-          moveItemsToBackTree();
-          hideItemsOnScreen();
-          this.client.setName(nameEntry.getText());
-          itemsOnScreen.add(multiplayerOptions);
-//          itemsOnScreen.add(mapSelectionView);
+          if (nameEntry.getText().equals("")) {
+            nameEntryStatus.setVisible(true);
+          } else {
+            moveItemsToBackTree();
+            hideItemsOnScreen();
+            this.client.setName(nameEntry.getText());
+            itemsOnScreen.add(gameModeOptions);
 
-          showItemsOnScreen();
+//          itemsOnScreen.add(multiplayerOptions);
+            showItemsOnScreen();
+          }
+
         });
 
-    nameEntryOptions = new VBox(30, nameAndLine, nameEntryBtn);
+    Label namePrompt = LabelGenerator
+        .generate(true, root, "What's your name?", UIColours.WHITE, 20);
+    nameEntryStatus = LabelGenerator
+        .generate(true, root, "Enter something man", UIColours.WHITE, 20);
+    nameEntryStatus.setVisible(false);
+    nameEntryOptions = new VBox(40, nameAndLine, nameEntryBtn);
     nameEntryOptions.setAlignment(Pos.CENTER);
     StackPane.setAlignment(nameEntryOptions, Pos.CENTER);
     StackPane.setMargin(nameEntryOptions, new Insets(50, 250, 0, 250));
     nameEntryOptions.setPrefWidth(300);
-    nameEntryOptions.setVisible(false);
+    nameEntryOptions.setVisible(true);
     root.getChildren().add(nameEntryOptions);
+
+    nameEntryView = new VBox(80, namePrompt, nameEntryOptions, nameEntryStatus);
+    nameEntryView.setAlignment(Pos.CENTER);
+    StackPane.setAlignment(nameEntryView, Pos.CENTER);
+    root.getChildren().add(nameEntryView);
+    nameEntryView.setVisible(false);
 
     quitBtn = ButtonGenerator.generate(true, root, "quit", UIColours.QUIT_RED, 25);
     quitBtn.setFocusTraversable(false);
