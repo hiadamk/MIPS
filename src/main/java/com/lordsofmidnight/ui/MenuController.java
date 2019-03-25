@@ -16,7 +16,6 @@ import com.lordsofmidnight.utils.ResourceSaver;
 import com.lordsofmidnight.utils.Settings;
 import com.lordsofmidnight.utils.enums.InputKey;
 import com.lordsofmidnight.utils.enums.RenderingMode;
-import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion.Setting;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
