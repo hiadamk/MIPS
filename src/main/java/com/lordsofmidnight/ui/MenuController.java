@@ -16,6 +16,7 @@ import com.lordsofmidnight.utils.ResourceSaver;
 import com.lordsofmidnight.utils.Settings;
 import com.lordsofmidnight.utils.enums.InputKey;
 import com.lordsofmidnight.utils.enums.RenderingMode;
+import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion.Setting;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -512,7 +513,7 @@ public class MenuController {
     isMultiplayer = false;
     backBtn.setVisible(false);
     showItemsOnScreen();
-    audioController.playMusic(Sounds.MENULOOP);
+
   }
 
   /**
@@ -902,7 +903,7 @@ public class MenuController {
 
     Label musicLbl = LabelGenerator.generate(true, soundTabLayout, "Music:", UIColours.WHITE, 16);
 
-    JFXSlider musicVolumeSlider = new JFXSlider(0, 1, 0.5);
+    JFXSlider musicVolumeSlider = new JFXSlider(0, 1, Settings.getMusicVolume());
     musicVolumeSlider.valueProperty().addListener((ov, old_val, new_val) -> audioController.setMusicVolume(new_val.doubleValue()));
 
     musicVolumeSlider.setMaxWidth(200);
@@ -915,7 +916,7 @@ public class MenuController {
 
     Label soundFXLbl = LabelGenerator
         .generate(true, soundTabLayout, "SoundFX:", UIColours.WHITE, 16);
-    JFXSlider soundFXSlider = new JFXSlider(0, 1, 0.5);
+    JFXSlider soundFXSlider = new JFXSlider(0, 1, Settings.getSoundVolume());
     soundFXSlider.valueProperty().addListener((ov, old_val, new_val) -> Settings.setSoundVolume(new_val.doubleValue()));
 
     soundFXSlider.setMaxWidth(200);
@@ -966,6 +967,22 @@ public class MenuController {
       client.updateResolution();
     });
 
+    resolutionCombo.setMinWidth(330);
+
+    switch (Settings.getxResolution()) {
+      case 1366:
+        resolutionCombo.getSelectionModel().select(0);
+        break;
+      case 1920:
+        resolutionCombo.getSelectionModel().select(1);
+        break;
+      case 2560:
+        resolutionCombo.getSelectionModel().select(2);
+        break;
+      default:
+        break;
+    }
+
     // Provide our own ListCells for the ComboBox
     alignComboText(resolutionCombo);
 
@@ -973,7 +990,7 @@ public class MenuController {
     StackPane.setAlignment(resolutionCombo, Pos.CENTER);
 
     StackPane.setMargin(resolutionLbl, new Insets(0, 270, 200, 0));
-    StackPane.setMargin(resolutionCombo, new Insets(0, 0, 200, 300));
+    StackPane.setMargin(resolutionCombo, new Insets(0, 0, 200, 330));
 
     //Adding resolution label and combo box
     Label scalingLbl = LabelGenerator
@@ -1004,6 +1021,24 @@ public class MenuController {
           System.out.println("Setting rendering mode failed.");
       }
     });
+
+    scalingCombo.setMinWidth(330);
+
+    switch (Settings.getRenderingMode().getName()) {
+      case "no_scaling":
+        scalingCombo.getSelectionModel().select(0);
+        break;
+      case "integer_scaling":
+        scalingCombo.getSelectionModel().select(2);
+        break;
+      case "smooth_scaling":
+        scalingCombo.getSelectionModel().select(3);
+        break;
+      case "standard_scaling":
+        scalingCombo.getSelectionModel().select(1);
+      default:
+        break;
+    }
 
     // Provide our own ListCells for the ComboBox
     alignComboText(scalingCombo);
