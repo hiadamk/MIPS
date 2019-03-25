@@ -545,7 +545,7 @@ public class MenuController {
     StackPane.setMargin(startGameBtn, new Insets(0, 0, 0, 0));
     startGameBtn.setOnAction(
         e -> {
-          audioController.playSound(Sounds.click);
+          audioController.playSound(Sounds.CLICK);
           client.startSinglePlayerGame();
         });
 
@@ -592,7 +592,7 @@ public class MenuController {
         .generate(true, root, "Continue", UIColours.GREEN, 20);
     mapConfirmationBtn.setFocusTraversable(false);
     mapConfirmationBtn.setOnAction(event -> {
-      audioController.playSound(Sounds.click);
+      audioController.playSound(Sounds.CLICK);
       moveItemsToBackTree();
       if(isMultiplayer){
         lobbyStatusLbl.setText("Creating Game");
@@ -725,7 +725,7 @@ public class MenuController {
     singlePlayerBtn.setOnAction(
         e -> {
           isMultiplayer = false;
-          audioController.playSound(Sounds.click);
+          audioController.playSound(Sounds.CLICK);
           moveItemsToBackTree();
           itemsOnScreen.add(mapSelectionView);
           showItemsOnScreen();
@@ -737,7 +737,7 @@ public class MenuController {
     multiplayerBtn.setOnAction(
         e -> {
           isMultiplayer = true;
-          audioController.playSound(Sounds.click);
+          audioController.playSound(Sounds.CLICK);
           moveItemsToBackTree();
           itemsOnScreen.add(nameEntryOptions);
           showItemsOnScreen();
@@ -754,7 +754,7 @@ public class MenuController {
     playBtn.setText("Play");
     playBtn.setOnAction(
         e -> {
-          audioController.playSound(Sounds.click);
+          audioController.playSound(Sounds.CLICK);
           isHome = false;
           backBtn.setVisible(true);
           moveItemsToBackTree();
@@ -771,7 +771,7 @@ public class MenuController {
     joinGameBtn.setPickOnBounds(true);
     joinGameBtn.setOnAction(
         event -> {
-          audioController.playSound(Sounds.click);
+          audioController.playSound(Sounds.CLICK);
           moveItemsToBackTree();
           lobbyStatusLbl.setText("Searching for game");
           itemsOnScreen.add(searchingForMultiplayers);
@@ -787,7 +787,7 @@ public class MenuController {
     createGameBtn.setPickOnBounds(true);
     createGameBtn.setOnAction(
         event -> {
-          audioController.playSound(Sounds.click);
+          audioController.playSound(Sounds.CLICK);
           moveItemsToBackTree();
 //          lobbyStatusLbl.setText("Creating Game");
 //          itemsOnScreen.add(searchingForMultiplayers);
@@ -860,7 +860,7 @@ public class MenuController {
     Button nameEntryBtn = ButtonGenerator.generate(true, root, "Continue", UIColours.GREEN, 30);
     nameEntryBtn.setOnAction(
         event -> {
-          audioController.playSound(Sounds.click);
+          audioController.playSound(Sounds.CLICK);
           moveItemsToBackTree();
           hideItemsOnScreen();
           this.client.setName(nameEntry.getText());
@@ -884,7 +884,7 @@ public class MenuController {
     StackPane.setMargin(quitBtn, new Insets(50, 0, 0, 50));
     quitBtn.setOnAction(
         event -> {
-          audioController.playSound(Sounds.click);
+          audioController.playSound(Sounds.CLICK);
           System.exit(0);
         });
 
@@ -947,7 +947,7 @@ public class MenuController {
     resolutionCombo.setPromptText("Select a resolution...");
     resolutionCombo.setOnAction(event -> {
       System.out.println(resolutionCombo.getValue());
-      audioController.playSound(Sounds.click);
+      audioController.playSound(Sounds.CLICK);
       switch (resolutionCombo.getValue()) {
         case "1366x768":
           Settings.setxResolution(1366);
@@ -1181,7 +1181,7 @@ public class MenuController {
     settingsView.setFitWidth(50);
     settingsBtn.setOnAction(
         event -> {
-          audioController.playSound(Sounds.click);
+          audioController.playSound(Sounds.CLICK);
           if (!viewSettings) {
             viewSettings = true;
             hideItemsOnScreen();
@@ -1208,7 +1208,7 @@ public class MenuController {
     StackPane.setMargin(startMGameBtn, new Insets(0, 0, 200, 0));
     startMGameBtn.setOnAction(
         e -> {
-          audioController.playSound(Sounds.click);
+          audioController.playSound(Sounds.CLICK);
           client.startMultiplayerGame();
         });
 
@@ -1233,7 +1233,7 @@ public class MenuController {
         .generate(true, root, "Instructions", UIColours.YELLOW, 30);
     instructions.setOnAction(event -> {
       isHome = false;
-      audioController.playSound(Sounds.click);
+      audioController.playSound(Sounds.CLICK);
       moveItemsToBackTree();
       settingsBtn.setVisible(false);
       backBtn.setVisible(true);
@@ -1266,7 +1266,7 @@ public class MenuController {
 
     creditsBtn.setOnAction(event -> {
       isHome = false;
-      audioController.playSound(Sounds.click);
+      audioController.playSound(Sounds.CLICK);
       moveItemsToBackTree();
       itemsOnScreen.add(creditsLbl);
       backBtn.setVisible(true);
@@ -1285,7 +1285,7 @@ public class MenuController {
     StackPane.setMargin(backBtn, new Insets(0, 0, 100, 0));
     backBtn.setOnAction(
         event -> {
-          audioController.playSound(Sounds.click);
+          audioController.playSound(Sounds.CLICK);
 
           if (inLobby) {
             playerNumberDiscovery.interrupt();
