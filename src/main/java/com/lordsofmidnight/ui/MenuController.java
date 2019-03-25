@@ -797,6 +797,7 @@ public class MenuController {
           itemsOnScreen.add(searchingForMultiplayers);
           showItemsOnScreen();
           inLobby = true;
+          numberOfPlayers = 0;
           client.joinMultiplayerLobby();
           playerNumberDiscovery = new Thread(lobbyPlayers);
           playerNumberDiscovery.start();
@@ -809,15 +810,9 @@ public class MenuController {
         event -> {
           audioController.playSound(Sounds.CLICK);
           moveItemsToBackTree();
-//          lobbyStatusLbl.setText("Creating Game");
-//          itemsOnScreen.add(searchingForMultiplayers);
-//          itemsOnScreen.add(startMGameBtn);
+          numberOfPlayers = 0;
           itemsOnScreen.add(mapSelectionView);
           showItemsOnScreen();
-//          client.createMultiplayerLobby();
-//          inLobby = true;
-//          playerNumberDiscovery = new Thread(lobbyPlayers);
-//          playerNumberDiscovery.start();
         });
 
     multiplayerOptions = new VBox(10, createGameBtn, joinGameBtn);

@@ -114,7 +114,7 @@ public class ServerLobby {
   /**
    * Starts the game for all clients by sending player names and start game flag.
    *
-   * @return The com.lordsofmidnight.server gameplay handler which will be used by the client.
+   * @return The server gameplay handler which will be used by the client.
    */
   public ServerGameplayHandler gameStart(Queue<Input> inputQueue, Queue<String> outputQueue) {
     this.outputQueue = outputQueue;
