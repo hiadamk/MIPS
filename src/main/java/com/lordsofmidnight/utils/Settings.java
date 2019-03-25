@@ -25,7 +25,7 @@ public class Settings {
   private static int yResolution = 768;
   private static RenderingMode renderingMode = RenderingMode.SMOOTH_SCALING;
   private static String theme = "default";
-  private static String name = null;
+  private static String name = "null";
 
   private static Boolean mute = false;
   private static double musicVolume = 0.5;
