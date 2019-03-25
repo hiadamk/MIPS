@@ -29,37 +29,43 @@ public abstract class Mapping {
   public static PointSet getJunctions(Map map) {
 
     PointSet junctions = new PointSet(map);
+    Point testPoint = new Point(0,0);
     for (int x = 0; x < map.getMaxX(); x++) { //for all points on the map
       for (int y = 0; y < map.getMaxY(); y++) {
         // left right down up
         boolean[] isPath = {false, false, false, false};
-        if (!map.isWall(new Point(x, y))) {   //assumption that anything that is not a wall is moveable
+        testPoint.setLocation(x,y);
+        if (!map.isWall(testPoint)) {   //assumption that anything that is not a wall is moveable
           if (x > 0) { // left
-            if (!map.isWall(new Point(x - 1, y))) {
+            if (!map.isWall(testPoint.moveInDirection(1, Direction.LEFT))) {
               isPath[0] = true;
             }
           }
+          testPoint.setLocation(x, y);
           if (x < (map.getMaxX() - 1)) { // right
-            if (!map.isWall(new Point(x + 1, y))) {
+            if (!map.isWall(testPoint.moveInDirection(1, Direction.RIGHT))) {
               isPath[1] = true;
             }
           }
+          testPoint.setLocation(x,y);
           if (y > 0) { // down
-            if (!map.isWall(new Point(x, y - 1))) {
+            if (!map.isWall(testPoint.moveInDirection(1, Direction.DOWN))) {
               isPath[2] = true;
             }
           }
+          testPoint.setLocation(x, y);
           if (y < (map.getMaxY() - 1)) { // up
-            if (!map.isWall(new Point(x, y + 1))) {
+            if (!map.isWall(testPoint.moveInDirection(1, Direction.UP))) {
               isPath[3] = true;
             }
           }
 
+          testPoint.setLocation(x, y);
           // a point is classified as a junction if there are at least 2 adjacent path
           // points to the current one that between them do not share a common x or y
           // coordinate (i.e. they are diagonal to each other)
           if ((isPath[0] || isPath[1]) && (isPath[2] || isPath[3])) {
-            junctions.add(new Point(x, y));
+            junctions.add(testPoint);
           }
         }
       }
@@ -101,49 +107,46 @@ public abstract class Mapping {
     // generates links for every junction
     for (Point p : junctions) {
       PointSet edgeSet = new PointSet(map);
-      double currentX = p.getX() - 1;
+      Point testPoint = p.getCopy();
+      testPoint.setLocation(p.getX()-1, p.getY());
       // a wall or junction will terminate the search
-      while (currentX > 0 && !(map.isWall(new Point(currentX, p.getY())))) {
-        Point testPoint = new Point(currentX, p.getY());
+      while (testPoint.getX() > 0 && !(map.isWall(testPoint))) {
         if (junctions.contains(testPoint)) {
           // if a junction is found it is added to the edge pairing
           edgeSet.add(testPoint);
           break;
         }
-        currentX--;
+        testPoint.setLocation(testPoint.getX()-1, testPoint.getY());
       }
-      currentX = p.getX() + 1;
+      testPoint.setLocation(p.getX()+1, p.getY());
       // a wall or junction will terminate the search
-      while (currentX < map.getMaxX() && (!map.isWall(new Point(currentX, p.getY())))) {
-        Point testPoint = new Point(currentX, p.getY());
+      while (testPoint.getX() < map.getMaxX() && (!map.isWall(testPoint))) {
         if (junctions.contains(testPoint)) {
           // if a junction is found it is added to the edge pairing
           edgeSet.add(testPoint);
           break;
         }
-        currentX++;
+        testPoint.setLocation(testPoint.getX()+1, testPoint.getY());
       }
-      double currentY = p.getY() - 1;
+      testPoint.setLocation(p.getX(), p.getY()-1);
       // a wall or junction will terminate the search
-      while (currentY > 0 && !(map.isWall(new Point(p.getX(), currentY)))) {
-        Point testPoint = new Point(p.getX(), currentY);
+      while (testPoint.getY() > 0 && !(map.isWall(testPoint))) {
         if (junctions.contains(testPoint)) {
           // if a junction is found it is added to the edge pairing
           edgeSet.add(testPoint);
           break;
         }
-        currentY--;
+        testPoint.setLocation(testPoint.getX(), testPoint.getY()-1);
       }
-      currentY = p.getY() + 1;
+      testPoint.setLocation(p.getX(), p.getY()+1);
       // a wall or junction will terminate the search
-      while (currentY < map.getMaxY() && (!map.isWall(new Point(p.getX(), currentY)))) {
-        Point testPoint = new Point(p.getX(), currentY);
+      while (testPoint.getY() < map.getMaxY() && (!map.isWall(testPoint))) {
         if (junctions.contains(testPoint)) {
           // if a junction is found it is added to the edge pairing
           edgeSet.add(testPoint);
           break;
         }
-        currentY++;
+        testPoint.setLocation(testPoint.getX(), testPoint.getY()+1);
       }
       edgeMap.put(p, edgeSet);
     }
@@ -182,17 +185,19 @@ public abstract class Mapping {
    *        by travelling along a single axis
    * @author Lewis Ackroyd*/
   public static Point findNearestJunction(Point position, Map map, PointSet junctions) {
-    Point output = new Point(Math.floor(position.getX()), Math.floor(position.getY()));
-    double vertical = costVertical(output, map, junctions);
-    double horizontal = costHorizontal(output, map, junctions);
+    double x = position.getX();
+    double y = position.getY();
+    position = position.getGridCoord();
+    double vertical = costVertical(position, map, junctions);
+    double horizontal = costHorizontal(position, map, junctions);
     if (Math.abs(vertical) < Math.abs(horizontal)) {
-      output.setLocation(output.getX(), output.getY() + vertical);
+      position.setLocation(position.getX(), position.getY() + vertical);
     } else {
-      output = new Point(output.getX() + horizontal, output.getY());
+      position.setLocation(position.getX() + horizontal, position.getY());
     }
 
-    if (Map.withinBounds(map.getMaxX(), map.getMaxY(), output)) {
-      return output;
+    if (!Map.withinBounds(map.getMaxX(), map.getMaxY(), position)) {
+      position.setLocation(x, y);
     }
     return position;
   }
@@ -232,8 +237,8 @@ public abstract class Mapping {
    * @return The distance to the nearest junction
    * @author Lewis Ackroyd*/
   private static double costVertical(Point position, Map map, PointSet junctions) {
-    Point up = new Point(position.getX(), position.getY());
-    Point down = new Point(position.getX(), position.getY());
+    Point up = position.getCopy();
+    Point down = position.getCopy();
     boolean upWall = false;
     boolean downWall = false;
     while ((Map.withinBounds(map, up) && !map.isWall(up))
@@ -268,8 +273,8 @@ public abstract class Mapping {
    * @return The distance to the nearest junction
    * @author Lewis Ackroyd*/
   private static double costHorizontal(Point position, Map map, PointSet junctions) {
-    Point left = new Point(position.getX(), position.getY());
-    Point right = new Point(position.getX(), position.getY());
+    Point left = position.getCopy();
+    Point right = position.getCopy();
     boolean leftWall = false;
     boolean rightWall = false;
     while ((Map.withinBounds(map, left) && !map.isWall(left))
