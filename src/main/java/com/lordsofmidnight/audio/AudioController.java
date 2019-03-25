@@ -131,7 +131,7 @@ public class AudioController {
 
   public void gameIntro() {
     playSound(Sounds.GAMEINTRO);
-    new Runnable() {
+    new Thread() {
       @Override
       public void run() {
         try {
@@ -141,7 +141,7 @@ public class AudioController {
         }
         playMusic(Sounds.GAMELOOP);
       }
-    }.run();
+    }.start();
   }
   /**
    * This plays the given sound as the background music (playing it until told to stop or play other
