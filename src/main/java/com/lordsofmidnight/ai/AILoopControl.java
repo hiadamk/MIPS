@@ -96,9 +96,6 @@ public class AILoopControl extends Thread {
             for (Entity ent : controlAgents) {  //for all game agents
                 Point currentLocation = ent.getLocation().getCopy();
                 Point currentGridLocation = currentLocation.getGridCoord();
-                if (currentGridLocation.equals(new Point(9,9))) {
-                    System.out.println(ent.getClientId());
-                }
                 if (currentLocation.isCentered() || !ent.getDirection().isMovementDirection()) { //only when in the centre of a grid square or if direction is not a movement direction
                     boolean atLastCoord = atPreviousCoordinate(ent, currentGridLocation);
                     if (!ent.getDirection().isMovementDirection()   //direction is not a movement direction
@@ -518,9 +515,6 @@ public class AILoopControl extends Thread {
         if(direction!=ent.getDirection()&&!ent.isDirectionSet()){
             ent.setDirectionSetFlag(true);
             directionsOut.add(new Input(ent.getClientId(), direction));
-            if (direction==Direction.STOP) {
-                System.out.println(ent.getClientId());
-            }
         }
     }
 
