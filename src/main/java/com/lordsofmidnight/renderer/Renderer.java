@@ -63,8 +63,7 @@ public class Renderer {
   private ExplosionFX explosionManager;
   private int currentAnimationFrame = 0;
 
-  private ArrayList<Point2D.Double> traversalOrder = new ArrayList<>();
-  private HashMap<String,Point> mapPoints = new HashMap<>();
+  private ArrayList<Point> traversalOrder = new ArrayList<>();
   private boolean refreshMap;
 
   /**
@@ -145,13 +144,8 @@ public class Renderer {
       for (int j = 0; j < count; j++) {
         int x = Math.min(ROW, line) - j - 1;
         int y = start_col + j;
-        this.traversalOrder.add(new Double(x, y));
+        this.traversalOrder.add(new Point(x, y));
       }
-    }
-
-    this.mapPoints = new HashMap<>();
-    for(Double coord: traversalOrder){
-      this.mapPoints.put(coord.toString(),new Point(coord.getX(),coord.getY()));
     }
 
     this.mapTiles = r.getMapTiles();
@@ -213,6 +207,7 @@ public class Renderer {
     for (Entity e : entityArr) {
       entityPowerUps.put(e, new HashMap<>());
     }
+    new Point(1, 1, Integer.MAX_VALUE, Integer.MAX_VALUE, false);
     if (activePowerUps != null) {
       for (PowerUp p : activePowerUps.values()) {
         entityPowerUps.get(p.getUser()).put(p.getType(), p);
@@ -221,7 +216,7 @@ public class Renderer {
 
     // Render floor first (floors will never be on a higher layer than anything apart form the
     // background
-    for (Double coord : traversalOrder) {
+    for (Point coord : traversalOrder) {
       x = (int) coord.getX();
       y = (int) coord.getY();
 
@@ -246,10 +241,10 @@ public class Renderer {
     ArrayList<Image> mines = r.getMine();
 
     // Loop through grid in diagonal traversal to render walls and entities by depth
-    for (Double coord : traversalOrder) {
+    for (Point coord : traversalOrder) {
 
       // render consumable com.lordsofmidnight.objects on top
-      Pellet currentPellet = pellets.get(mapPoints.get(coord.toString()));
+      Pellet currentPellet = pellets.get(coord);
       if (currentPellet != null && currentPellet.isActive()) {
 
         // TODO use better way of finding if client is mipsman
