@@ -34,7 +34,7 @@ public abstract class GameLoop extends Thread {
       }
 
       //correct over-run of thread sleep
-      currentTime = (System.nanoTime() - currentTime - gameSpeed)+System.nanoTime();
+      currentTime = System.nanoTime()-(System.nanoTime() - currentTime - gameSpeed);
     }
   }
 
