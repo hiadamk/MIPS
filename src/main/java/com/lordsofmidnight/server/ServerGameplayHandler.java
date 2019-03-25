@@ -61,7 +61,7 @@ public class ServerGameplayHandler {
               inputQueue.add(Input.fromString(incomingQueue.poll()));
 
               try {
-                Thread.sleep(50);
+                Thread.sleep(1);
               } catch (InterruptedException e) {
                 e.printStackTrace();
               }

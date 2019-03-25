@@ -49,7 +49,7 @@ public class PacketSender extends Thread {
         String s = feedQueue.poll();
         //System.out.println("About to send " + s);
         send(s);
-        Thread.sleep(50);
+        Thread.sleep(1);
       }
 
     } catch (IOException e) {

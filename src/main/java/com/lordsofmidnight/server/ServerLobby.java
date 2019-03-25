@@ -72,7 +72,7 @@ public class ServerLobby {
                   socket.send(sending);
                 }
               }
-              Thread.sleep(1000);
+              Thread.sleep(500);
             }
 
           } catch (InterruptedException e) {
@@ -89,11 +89,11 @@ public class ServerLobby {
 
   public ServerLobby(Map map) {
     this.map = map;
-    this.acceptConnections = connectionAccepter();
     this.playerCount = new AtomicInteger(0);
     this.playerIPs = new ArrayList<>();
     this.MIPID = (new Random()).nextInt(5);
     pinger.start();
+    this.acceptConnections = connectionAccepter();
     acceptConnections.start();
   }
 
