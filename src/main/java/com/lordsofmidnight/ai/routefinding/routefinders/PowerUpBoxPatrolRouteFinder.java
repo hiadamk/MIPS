@@ -13,9 +13,7 @@ import com.lordsofmidnight.utils.enums.Direction;
  *
  * @author Lewis Ackroyd
  */
-public class PowerPelletPatrolRouteFinder implements RouteFinder {
-  private static final boolean COMPLETE = true;
-
+public class PowerUpBoxPatrolRouteFinder implements RouteFinder {
   private static final int SEARCH_DEPTH = 20;
   private static final int AVOID_DEPTH = 5;
   private final Map map;
@@ -26,7 +24,7 @@ public class PowerPelletPatrolRouteFinder implements RouteFinder {
    * @param map The map being used
    * @param pellets A mapping from every point containing a pellet, to that pellet
    * @author Lewis Ackroyd*/
-  public PowerPelletPatrolRouteFinder(Map map, PointMap<Pellet> pellets) {
+  public PowerUpBoxPatrolRouteFinder(Map map, PointMap<Pellet> pellets) {
     this.map = map;
     this.pellets = pellets;
   }
@@ -44,9 +42,6 @@ public class PowerPelletPatrolRouteFinder implements RouteFinder {
    */
   @Override
   public Direction getRoute(Point myLocation, Point targetLocation) {
-    if (!COMPLETE) {
-      return new RandomRouteFinder().getRoute(myLocation, targetLocation);
-    }
     SampleSearch sampleSearch = new SampleSearch(SEARCH_DEPTH, map);
 
     class PowerPelletCountCondition implements SampleSearch.ConditionalInterface {

@@ -94,7 +94,7 @@ public enum Direction {
       case RIGHT:
         return LEFT;
       default:
-        return null;
+        return this;
     }
   }
 

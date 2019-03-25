@@ -177,6 +177,7 @@ public abstract class Telemetry {
           // System.out.println("~Player" + i + " drove into a wall");
           agents[i].setLocation(prevLocation.centralise());
           agents[i].setDirection(Direction.STOP);
+          agents[i].setDirectionSetFlag(false);
         }
       }
       if (agents[i].isDead()) {
