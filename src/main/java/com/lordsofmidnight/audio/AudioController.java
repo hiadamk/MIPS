@@ -129,6 +129,20 @@ public class AudioController {
     control.setValue((float) (Math.log(volume) / Math.log(10.0) * 20.0));
   }
 
+  public void gameIntro() {
+    playSound(Sounds.GAMEINTRO);
+    new Thread() {
+      @Override
+      public void run() {
+        try {
+          Thread.sleep(8000);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        playMusic(Sounds.GAMELOOP);
+      }
+    }.start();
+  }
   /**
    * This plays the given sound as the background music (playing it until told to stop or play other
    * music)

@@ -1,5 +1,6 @@
 package com.lordsofmidnight.server.telemeters;
 
+import com.lordsofmidnight.audio.AudioController;
 import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.gamestate.points.PointMap;
@@ -36,12 +37,14 @@ public abstract class Telemetry {
   protected GameLoop inputProcessor;
   protected GameLoop positionUpdater;
   protected GameLoop scoreUpdater;
+  protected AudioController audioController;
 
-  Telemetry(Client client) {
+  Telemetry(Client client, AudioController audioController) {
     this.map = client.getMap();
     Telemetry.client = client;
     this.resourceLoader = client.getResourceLoader();
     this.agents = client.getAgents();
+    this.audioController = audioController;
   }
 
   ConcurrentHashMap<UUID, PowerUp> activePowerUps = new ConcurrentHashMap<>();
