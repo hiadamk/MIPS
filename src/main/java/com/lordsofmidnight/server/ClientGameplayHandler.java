@@ -65,7 +65,7 @@ public class ClientGameplayHandler {
                 key = keypressQueue.take();
                 // sends inputs as strings, which are converted back by ServerGameplay handler
                 outgoingQueue.add(key.toString());
-                Thread.sleep(50);
+                Thread.sleep(1);
               } catch (InterruptedException e) {
                 e.printStackTrace();
               }
@@ -97,7 +97,7 @@ public class ClientGameplayHandler {
                   System.out.println("Dodgy string " + data);
                   throw new Exception();
                 }
-                Thread.sleep(50);
+                Thread.sleep(1);
               } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("Argument in incoming queue had invalid code");

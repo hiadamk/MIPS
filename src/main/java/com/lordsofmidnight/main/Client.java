@@ -229,6 +229,7 @@ public class Client extends Application {
    * @param m the map to use
    */
   public void setMap(Map m) {
+    resourceLoader.setMap(m);
     this.map = m;
     Point.setMap(m);
     renderer.setRefreshMap(true);
