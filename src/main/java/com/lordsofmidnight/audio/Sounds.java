@@ -13,7 +13,7 @@ public enum Sounds {
   MIPS("/audio/mips.wav"),
   ROCKET("/audio/rocket.wav"),
   POWERUP("audio/powerup.wav"),
-  ROCKETLAUNCH("audio/rocketlaunch.wav"),
+  ROCKETLAUNCH("audio/rocketlaunch.wav");
   private final String path;
 
   Sounds(String path) {
