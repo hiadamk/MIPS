@@ -6,12 +6,12 @@ package com.lordsofmidnight.utils.enums;
  *
  * @author Matthew Jones
  */
-public enum PowerUp {
+public enum PowerUps {
   WEB("web"), SPEED("speed"), BLUESHELL("blueshell"), INVINCIBLE("invincible"), MINE("mine");
 
   private final String NAME;
 
-  PowerUp(String name) {
+  PowerUps(String name) {
     this.NAME = name;
   }
 

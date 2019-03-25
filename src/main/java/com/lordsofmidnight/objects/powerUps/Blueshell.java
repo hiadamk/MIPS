@@ -4,6 +4,7 @@ import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
 import com.lordsofmidnight.utils.Methods;
+import com.lordsofmidnight.utils.enums.PowerUps;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.util.UUID;
@@ -23,7 +24,7 @@ public class Blueshell extends PowerUp {
 
   public Blueshell() {
     super(600, "blueshell");
-    this.type = com.lordsofmidnight.utils.enums.PowerUp.BLUESHELL;
+    this.type = PowerUps.BLUESHELL;
   }
 
   @Override

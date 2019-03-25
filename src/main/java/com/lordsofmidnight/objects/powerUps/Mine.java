@@ -6,6 +6,7 @@ import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.MinePellet;
 import com.lordsofmidnight.objects.Pellet;
 import com.lordsofmidnight.utils.Methods;
+import com.lordsofmidnight.utils.enums.PowerUps;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,7 +14,7 @@ public class Mine extends PowerUp {
 
   public Mine() {
     super(10, "mine");
-    this.type = com.lordsofmidnight.utils.enums.PowerUp.MINE;
+    this.type = PowerUps.MINE;
   }
 
   @Override

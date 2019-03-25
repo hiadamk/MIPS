@@ -3,7 +3,11 @@ package com.lordsofmidnight.ai;
 import com.lordsofmidnight.ai.mapping.Mapping;
 import com.lordsofmidnight.ai.routefinding.RouteFinder;
 import com.lordsofmidnight.ai.routefinding.SampleSearch;
-import com.lordsofmidnight.ai.routefinding.routefinders.*;
+import com.lordsofmidnight.ai.routefinding.routefinders.AStarRouteFinder;
+import com.lordsofmidnight.ai.routefinding.routefinders.MipsManRouteFinder;
+import com.lordsofmidnight.ai.routefinding.routefinders.NextJunctionRouteFinder;
+import com.lordsofmidnight.ai.routefinding.routefinders.PowerUpBoxPatrolRouteFinder;
+import com.lordsofmidnight.ai.routefinding.routefinders.RandomRouteFinder;
 import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.gamestate.points.PointMap;
@@ -14,10 +18,11 @@ import com.lordsofmidnight.objects.powerUps.PowerUp;
 import com.lordsofmidnight.utils.Input;
 import com.lordsofmidnight.utils.Methods;
 import com.lordsofmidnight.utils.enums.Direction;
-import java.util.HashSet;
+import com.lordsofmidnight.utils.enums.PowerUps;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -380,7 +385,7 @@ public class AILoopControl extends Thread {
         setDirection(direction, ent);
     }
 
-    /**Adjusts the given {@link Direction} to allow the entity to account for any active {@link com.lordsofmidnight.utils.enums.PowerUp PowerUp}s that warrant a course adjustment.
+  /**Adjusts the given {@link Direction} to allow the entity to account for any active {@link PowerUps PowerUps}s that warrant a course adjustment.
      *
      * @param position The position of the {@link Entity}.
      * @param direction The current direction of travel.
@@ -462,9 +467,9 @@ public class AILoopControl extends Thread {
         return validDirections.get(val);
     }
 
-    /**Will use the current {@link Entity Entities} {@link com.lordsofmidnight.utils.enums.PowerUp PowerUp} with probability of 1/10 at first attempted use, increasing by 1/10 in probability for every consecutive attempted use. Will use {@link com.lordsofmidnight.utils.enums.PowerUp#SPEED Speed PowerUp} regardless if within {@link #SPEED_POWER_UP_ACTIVATE_DEPTH} squares of MIPsman.
+  /**Will use the current {@link Entity Entities} {@link PowerUps PowerUps} with probability of 1/10 at first attempted use, increasing by 1/10 in probability for every consecutive attempted use. Will use {@link PowerUps#SPEED Speed PowerUps} regardless if within {@link #SPEED_POWER_UP_ACTIVATE_DEPTH} squares of MIPsman.
      *
-     * @param ent The current entity who's {@link com.lordsofmidnight.utils.enums.PowerUp PowerUp} is being processed.
+   * @param ent The current entity who's {@link PowerUps PowerUps} is being processed.
      * @param currentLocation The current location.
      * @author Lewis Ackroyd*/
     private void processPowerUps(Entity ent, Point currentLocation) {
@@ -476,7 +481,7 @@ public class AILoopControl extends Thread {
                 setDirection(Direction.USE, ent);
             }
             else try {
-                if (powerUpList.get(0).getType() == com.lordsofmidnight.utils.enums.PowerUp.SPEED) {
+                if (powerUpList.get(0).getType() == PowerUps.SPEED) {
                     class MipsmanProximityCondition implements SampleSearch.ConditionalInterface {
                         @Override
                         public boolean condition(Point position) {

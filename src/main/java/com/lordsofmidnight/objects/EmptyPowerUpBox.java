@@ -1,18 +1,8 @@
 package com.lordsofmidnight.objects;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.TreeMap;
-import java.util.UUID;
-import com.lordsofmidnight.objects.powerUps.Blueshell;
-import com.lordsofmidnight.objects.powerUps.Invincible;
-import com.lordsofmidnight.objects.powerUps.Mine;
-import com.lordsofmidnight.objects.powerUps.Speed;
-import com.lordsofmidnight.objects.powerUps.Web;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.utils.ResourceLoader;
-import com.lordsofmidnight.utils.enums.PowerUp;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class EmptyPowerUpBox extends Pellet {
