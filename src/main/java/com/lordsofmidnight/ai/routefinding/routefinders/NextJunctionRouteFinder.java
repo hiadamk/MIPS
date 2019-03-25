@@ -76,7 +76,9 @@ public class NextJunctionRouteFinder implements RouteFinder {
     if (mipsmanLocation == null || mipsmanDirection == null) {
       return DEFAULT;
     }
-    targetLocation = Mapping.findNextJunction(mipsmanLocation, mipsmanDirection, map, junctions);
+    if (mipsmanDirection.isMovementDirection()) {
+      targetLocation = Mapping.findNextJunction(mipsmanLocation, mipsmanDirection, map, junctions);
+    }
     return new AStarRouteFinder(junctions, edges, map).getRoute(myLocation, targetLocation);
   }
 }

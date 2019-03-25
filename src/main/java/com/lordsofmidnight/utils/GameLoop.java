@@ -13,9 +13,7 @@ public abstract class GameLoop extends Thread {
 
   @Override
   public void run() {
-    long currentSleepTime = 0;
     long currentTime = System.nanoTime();
-    long newTime = System.nanoTime();
     while (running) {
       if (pause) {
         try {
@@ -23,22 +21,20 @@ public abstract class GameLoop extends Thread {
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
+        currentTime = System.nanoTime();
         continue;
       }
       this.handle();
-      while (currentSleepTime < gameSpeed) {
+      while(System.nanoTime() - currentTime  < gameSpeed){
         try {
           Thread.sleep(1);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
-        newTime = System.nanoTime();
-        currentSleepTime += newTime - currentTime;
-        currentTime = newTime;
-
       }
-      currentSleepTime = 0;
 
+      //correct over-run of thread sleep
+      currentTime = (System.nanoTime() - currentTime - gameSpeed)+System.nanoTime();
     }
   }
 

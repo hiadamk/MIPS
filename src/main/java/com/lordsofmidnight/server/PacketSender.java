@@ -49,14 +49,11 @@ public class PacketSender extends Thread {
         String s = feedQueue.poll();
         //System.out.println("About to send " + s);
         send(s);
-        Thread.sleep(50);
       }
 
     } catch (IOException e) {
       running = false;
       System.out.println("ServerGameplayHandler closed");
-    } catch (InterruptedException e) {
-      e.printStackTrace();
     }
   }
 
