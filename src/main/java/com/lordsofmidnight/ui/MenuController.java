@@ -508,6 +508,7 @@ public class MenuController {
    * Resets the main menu to its default state.
    */
   public void reset() {
+    audioController.playMusic(Sounds.MENULOOP);
     hideItemsOnScreen();
     itemsOnScreen.clear();
     backTree.clear();
