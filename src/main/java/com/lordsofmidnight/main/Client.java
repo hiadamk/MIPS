@@ -364,6 +364,10 @@ public class Client extends Application {
     }
   }
 
+  public void noGameFound() {
+    menuController.gameNotFound();
+  }
+
   public void finishGame(){
     this.telemetry.stopGame();
     inputRenderLoop.stop();

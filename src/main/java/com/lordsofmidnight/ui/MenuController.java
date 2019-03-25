@@ -151,6 +151,7 @@ public class MenuController {
   private boolean inLobby;
   private Thread playerNumberDiscovery;
   private MulticastSocket socket;
+  private boolean gameFound = false;
 
   private MapGenerationHandler mapGenerationHandler;
 
@@ -203,7 +204,7 @@ public class MenuController {
         byte[] buf = new byte[256];
         DatagramPacket packet = new DatagramPacket(buf, buf.length);
         socket.receive(packet);
-
+        gameFound = true;
         byte[] data = new byte[packet.getLength()];
         System.arraycopy(buf, 0, data, 0, packet.getLength());
         String lobbyStatus = new String(data);
@@ -236,12 +237,15 @@ public class MenuController {
         socket.close();
       } catch (SocketTimeoutException e) {
         System.out.println("Server stopped sending lobby updates.");
-        client.leaveLobby();
-        Platform.runLater(() -> {
-          lobbyStatusLbl.setText("Host left the game");
-          loadingDots.setVisible(false);
-          playersInLobby.setVisible(false);
-        });
+        if (gameFound) {
+          client.leaveLobby();
+          Platform.runLater(() -> {
+            lobbyStatusLbl.setText("Host left the game");
+            loadingDots.setVisible(false);
+            playersInLobby.setVisible(false);
+          });
+        }
+
         Thread.currentThread().interrupt();
       } catch (InterruptedException e1) {
         System.out.println("Lobby players thread was interrupted. ");
@@ -260,6 +264,7 @@ public class MenuController {
    * Kills the thread which listens for the number of players in a lobby.
    */
   public void endPlayerDiscovery() {
+    gameFound = false;
     this.playerNumberDiscovery.interrupt();
   }
 
@@ -514,6 +519,14 @@ public class MenuController {
     isMultiplayer = false;
     backBtn.setVisible(false);
     showItemsOnScreen();
+
+  }
+
+  public void gameNotFound() {
+    Platform.runLater(() -> {
+      lobbyStatusLbl.setText("Game Not Found");
+      loadingDots.setVisible(false);
+    });
 
   }
 
@@ -1344,7 +1357,7 @@ public class MenuController {
         event -> {
           audioController.playSound(Sounds.CLICK);
 
-          if (inLobby) {
+          if (inLobby && gameFound) {
             playerNumberDiscovery.interrupt();
             client.leaveLobby();
             inLobby = false;

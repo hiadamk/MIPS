@@ -11,6 +11,8 @@ import java.net.MulticastSocket;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.Enumeration;
 import java.util.Queue;
 import javafx.application.Platform;
@@ -47,6 +49,7 @@ public class ClientLobbySession {
             try {
               System.out.println("Getting the server address");
               MulticastSocket socket = new MulticastSocket(NetworkUtility.CLIENT_M_PORT);
+              socket.setSoTimeout(NetworkUtility.LOBBY_TIMEOUT);
               InetAddress group = NetworkUtility.GROUP;
               Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
               while (interfaces.hasMoreElements()) {
@@ -71,6 +74,7 @@ public class ClientLobbySession {
               socket.close();
 
               soc = new Socket(serverIP, NetworkUtility.SERVER_DGRAM_PORT);
+              soc.setSoTimeout(NetworkUtility.LOBBY_TIMEOUT);
               out = new PrintWriter(soc.getOutputStream());
               in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
 
@@ -98,8 +102,11 @@ public class ClientLobbySession {
               }
               gameStarter.start();
               Thread.currentThread().interrupt();
-            } catch (IOException e) {
-              e.printStackTrace();
+            } catch (SocketTimeoutException e) {
+              client.noGameFound();
+              Thread.currentThread().interrupt();
+            } catch (IOException e1) {
+              e1.printStackTrace();
             }
           }
         }
