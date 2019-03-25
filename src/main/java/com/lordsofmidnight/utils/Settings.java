@@ -73,6 +73,7 @@ public class Settings {
     yResolution = 768;
     renderingMode = RenderingMode.SMOOTH_SCALING;
     theme = "default";
+    name = "null";
 
     mute = false;
     musicVolume = 0.5;

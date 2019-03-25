@@ -151,7 +151,8 @@ public class Client extends Application {
     try {
       this.map = resourceLoader.getMap();
       this.server = new ServerLobby(map);
-      clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this, name);
+      clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this,
+          Settings.getName());
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -166,7 +167,8 @@ public class Client extends Application {
     BlockingQueue<String> clientIn = new LinkedBlockingQueue<>();
     keypressQueue = new LinkedBlockingQueue<>();
     try {
-      clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this, name);
+      clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this,
+          Settings.getName());
       this.telemetry = new DumbTelemetry(clientIn, this, audioController);
       this.telemetry.setMipID(MIPID);
     } catch (IOException e) {
@@ -277,13 +279,13 @@ public class Client extends Application {
    * @param n the name of the client
    */
   public void setName(String n) {
-    //not sure why this updateResolution is here
-    //updateResolution(this.screenRes);
+
     if (n.matches(".*[a-zA-Z]+.*")) {
       this.name = n;
     } else {
       this.name = "Joe Bloggs";
     }
+    Settings.setName(n);
   }
 
   /**
@@ -307,7 +309,7 @@ public class Client extends Application {
     }
 
     if(singlePlayer){
-      agents[0].setName("You");
+      agents[0].setName(Settings.getName());
     }else{
       for (int i = 0; i < agents.length; i++) {
         if (!(playerNames[i] == null) && !playerNames[i].equals("null")) {
