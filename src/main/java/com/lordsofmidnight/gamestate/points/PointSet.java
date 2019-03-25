@@ -1,11 +1,7 @@
 package com.lordsofmidnight.gamestate.points;
 
 import java.io.Serializable;
-import java.util.AbstractSet;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 
 import com.lordsofmidnight.gamestate.maps.Map;
 
@@ -18,7 +14,8 @@ import com.lordsofmidnight.gamestate.maps.Map;
  */
 public class PointSet extends AbstractSet<Point> implements Set<Point>, Cloneable, Serializable {
 
-  private HashSet<Integer> points;
+  private final HashSet<Integer> points;
+  private final HashMap<Integer, Point> keyMappings;
   private final int MAX_X;
 
   /**Initialises this Map according to the paramaters of the {@link Map}.
@@ -27,7 +24,8 @@ public class PointSet extends AbstractSet<Point> implements Set<Point>, Cloneabl
    * @author Lewis Ackroyd*/
   public PointSet(Map map) {
     this.MAX_X = map.getMaxX();
-    points = new HashSet<>();
+    this.points = new HashSet<>();
+    this.keyMappings = new HashMap<>();
   }
 
   /**Initialises this Map by using the specified value as the size of the x-axis.
@@ -36,7 +34,8 @@ public class PointSet extends AbstractSet<Point> implements Set<Point>, Cloneabl
    * @author Lewis Ackroyd*/
   private PointSet(int maxX) {
     this.MAX_X = maxX;
-    points = new HashSet<>();
+    this.points = new HashSet<>();
+    this.keyMappings = new HashMap<>();
   }
 
   /**Creates a clone of this map, but without any of it's elements
@@ -57,6 +56,7 @@ public class PointSet extends AbstractSet<Point> implements Set<Point>, Cloneabl
   @Override
   public boolean add(Point p) {
       int key = getKeyValue(p);
+      keyMappings.put(key, p);
       return points.add(key);
   }
 
@@ -65,7 +65,8 @@ public class PointSet extends AbstractSet<Point> implements Set<Point>, Cloneabl
     if (o instanceof Point) {
       Point p = (Point) o;
       int key = getKeyValue(p);
-      return remove(key);
+      keyMappings.remove(key);
+      return points.remove(key);
     }
     return false;
   }
@@ -156,6 +157,7 @@ public class PointSet extends AbstractSet<Point> implements Set<Point>, Cloneabl
 
   @Override
   public void clear() {
+    keyMappings.clear();
     points.clear();
   }
 
@@ -218,8 +220,6 @@ public class PointSet extends AbstractSet<Point> implements Set<Point>, Cloneabl
    * @return The point that generated this key
    * @author Lewis Ackroyd*/
   private Point getPointFromKey(int key) {
-    int xVal = key % MAX_X;
-    int yVal = (key - xVal) / MAX_X;
-    return new Point(xVal, yVal);
+    return keyMappings.get(key);
   }
 }

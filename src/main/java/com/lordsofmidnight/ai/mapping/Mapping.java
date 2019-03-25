@@ -65,7 +65,7 @@ public abstract class Mapping {
           // points to the current one that between them do not share a common x or y
           // coordinate (i.e. they are diagonal to each other)
           if ((isPath[0] || isPath[1]) && (isPath[2] || isPath[3])) {
-            junctions.add(testPoint);
+            junctions.add(testPoint.getCopy());
           }
         }
       }
@@ -113,7 +113,7 @@ public abstract class Mapping {
       while (testPoint.getX() > 0 && !(map.isWall(testPoint))) {
         if (junctions.contains(testPoint)) {
           // if a junction is found it is added to the edge pairing
-          edgeSet.add(testPoint);
+          edgeSet.add(testPoint.getCopy());
           break;
         }
         testPoint.setLocation(testPoint.getX()-1, testPoint.getY());
@@ -123,7 +123,7 @@ public abstract class Mapping {
       while (testPoint.getX() < map.getMaxX() && (!map.isWall(testPoint))) {
         if (junctions.contains(testPoint)) {
           // if a junction is found it is added to the edge pairing
-          edgeSet.add(testPoint);
+          edgeSet.add(testPoint.getCopy());
           break;
         }
         testPoint.setLocation(testPoint.getX()+1, testPoint.getY());
@@ -133,7 +133,7 @@ public abstract class Mapping {
       while (testPoint.getY() > 0 && !(map.isWall(testPoint))) {
         if (junctions.contains(testPoint)) {
           // if a junction is found it is added to the edge pairing
-          edgeSet.add(testPoint);
+          edgeSet.add(testPoint.getCopy());
           break;
         }
         testPoint.setLocation(testPoint.getX(), testPoint.getY()-1);
@@ -143,7 +143,7 @@ public abstract class Mapping {
       while (testPoint.getY() < map.getMaxY() && (!map.isWall(testPoint))) {
         if (junctions.contains(testPoint)) {
           // if a junction is found it is added to the edge pairing
-          edgeSet.add(testPoint);
+          edgeSet.add(testPoint.getCopy());
           break;
         }
         testPoint.setLocation(testPoint.getX(), testPoint.getY()+1);
