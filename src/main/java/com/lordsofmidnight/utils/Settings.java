@@ -25,6 +25,7 @@ public class Settings {
   private static int yResolution = 768;
   private static RenderingMode renderingMode = RenderingMode.SMOOTH_SCALING;
   private static String theme = "default";
+  private static String name = null;
 
   private static Boolean mute = false;
   private static double musicVolume = 0.5;
@@ -52,6 +53,14 @@ public class Settings {
 
   public static void setSoundVolume(double soundVolume) {
     Settings.soundVolume = soundVolume;
+  }
+
+  public static void setName(String name) {
+    Settings.name = name;
+  }
+
+  public static String getName() {
+    return name;
   }
 
   public static void restoreDefaultSettings(Client c){
@@ -159,6 +168,8 @@ public class Settings {
       writeSetting("MUTE", (mute) ? "TRUE" : "FALSE", bw);
       writeSetting("MUSIC_VOL", Double.toString(musicVolume), bw);
       writeSetting("SFX_VOL", Double.toString(soundVolume), bw);
+
+      writeSetting("NAME", name, bw);
     } catch (IOException e) {
       e.printStackTrace();
     } finally {
@@ -218,7 +229,7 @@ public class Settings {
     yResolution = Integer.parseInt(settings.get("Y_RES"));
     renderingMode = RenderingMode.fromString(settings.get("RENDERING_MODE"));
     theme = settings.get("THEME");
-
+    name = settings.get("NAME");
     mute = (settings.get("MUTE").equals("TRUE")) ? true : false;
     musicVolume = Double.parseDouble(settings.get("MUSIC_VOL"));
     soundVolume = Double.parseDouble(settings.get("SFX_VOL"));
