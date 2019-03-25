@@ -19,6 +19,7 @@ import java.util.Collection;
 public class PointMap<V> extends AbstractMap<Point, V> implements Map<Point, V>, Cloneable, Serializable {
   private final int MAX_X;
   private final HashMap<Integer, V> map;
+  private final HashMap<Integer, Point> keyMappings;
 
   /**Initialises this Map according to the paramaters of the {@link com.lordsofmidnight.gamestate.maps.Map Map}.
    *
@@ -27,6 +28,7 @@ public class PointMap<V> extends AbstractMap<Point, V> implements Map<Point, V>,
   public PointMap(com.lordsofmidnight.gamestate.maps.Map map) {
     this.MAX_X = map.getMaxX();
     this.map = new HashMap<>();
+    this.keyMappings = new HashMap<>();
   }
 
   /**Initialises this Map by using the specified value as the size of the x-axis.
@@ -36,6 +38,7 @@ public class PointMap<V> extends AbstractMap<Point, V> implements Map<Point, V>,
   private PointMap(int maxX) {
     this.MAX_X = maxX;
     this.map = new HashMap<>();
+    this.keyMappings = new HashMap<>();
   }
 
   /**Creates a clone of this map, but without any of it's elements
@@ -47,6 +50,7 @@ public class PointMap<V> extends AbstractMap<Point, V> implements Map<Point, V>,
   @Override
   public void clear() {
     map.clear();
+    keyMappings.clear();
   }
 
 
@@ -107,7 +111,9 @@ public class PointMap<V> extends AbstractMap<Point, V> implements Map<Point, V>,
 
   @Override
   public V put(Point p, V data) {
-    return map.put(getKeyValue(p), data);
+    int keyValue = getKeyValue(p);
+    keyMappings.put(keyValue, p);
+    return map.put(keyValue, data);
   }
 
 
@@ -118,6 +124,7 @@ public class PointMap<V> extends AbstractMap<Point, V> implements Map<Point, V>,
     }
     Point p = (Point) o;
     int key = getKeyValue(p);
+    keyMappings.remove(key);
     return map.remove(key);
   }
 
@@ -185,8 +192,6 @@ public class PointMap<V> extends AbstractMap<Point, V> implements Map<Point, V>,
    * @return The point that generated this key
    * @author Lewis Ackroyd*/
   private Point getPointFromKey(int key) {
-    int xVal = key % MAX_X;
-    int yVal = (key - xVal) / MAX_X;
-    return new Point(xVal, yVal);
+    return keyMappings.get(key);
   }
 }
