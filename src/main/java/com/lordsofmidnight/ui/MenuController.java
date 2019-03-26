@@ -520,6 +520,7 @@ public class MenuController {
     isMultiplayer = false;
     backBtn.setVisible(false);
     showItemsOnScreen();
+    mapGenerationHandler.resume();
 
   }
 
@@ -563,6 +564,7 @@ public class MenuController {
         e -> {
           audioController.playSound(Sounds.CLICK);
           client.startSinglePlayerGame();
+          mapGenerationHandler.pause();
         });
 
     String[] knownMaps = resourceLoader.getValidMaps();
@@ -885,7 +887,6 @@ public class MenuController {
             this.client.setName(nameEntry.getText());
             itemsOnScreen.add(gameModeOptions);
 
-//          itemsOnScreen.add(multiplayerOptions);
             showItemsOnScreen();
           }
 
@@ -1276,6 +1277,7 @@ public class MenuController {
         e -> {
           audioController.playSound(Sounds.CLICK);
           client.startMultiplayerGame();
+          mapGenerationHandler.pause();
         });
 
     ImageView instructionsGif = new ImageView("ui/preview.gif");

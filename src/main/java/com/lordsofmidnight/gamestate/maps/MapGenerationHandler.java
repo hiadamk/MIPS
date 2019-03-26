@@ -1,5 +1,6 @@
 package com.lordsofmidnight.gamestate.maps;
 
+import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -20,13 +21,14 @@ public class MapGenerationHandler {
       } else {
 
         try {
-          Thread.sleep(2000);
+          Thread.sleep(8000);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
       }
 
     }
+
   });
 
   Thread bigMapGenerator = new Thread(() -> {
@@ -36,7 +38,7 @@ public class MapGenerationHandler {
       } else {
 
         try {
-          Thread.sleep(2000);
+          Thread.sleep(5000);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
@@ -61,6 +63,24 @@ public class MapGenerationHandler {
       e.printStackTrace();
     }
     return new Map(MapGenerator.generateNewMap(-1, -1));
+  }
+
+  public void pause() {
+    try {
+      smallMapGenerator.wait();
+      bigMapGenerator.wait();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void resume() {
+    try {
+      smallMapGenerator.notify();
+      bigMapGenerator.notify();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
 
