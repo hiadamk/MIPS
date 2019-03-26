@@ -520,8 +520,7 @@ public class MenuController {
     isMultiplayer = false;
     backBtn.setVisible(false);
     showItemsOnScreen();
-    mapGenerationHandler.resume();
-
+    mapGenerationHandler.start();
   }
 
   public void gameNotFound() {
@@ -564,7 +563,7 @@ public class MenuController {
         e -> {
           audioController.playSound(Sounds.CLICK);
           client.startSinglePlayerGame();
-          mapGenerationHandler.pause();
+          mapGenerationHandler.stop();
         });
 
     String[] knownMaps = resourceLoader.getValidMaps();
@@ -1277,7 +1276,7 @@ public class MenuController {
         e -> {
           audioController.playSound(Sounds.CLICK);
           client.startMultiplayerGame();
-          mapGenerationHandler.pause();
+          mapGenerationHandler.stop();
         });
 
     ImageView instructionsGif = new ImageView("ui/preview.gif");
