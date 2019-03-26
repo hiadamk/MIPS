@@ -42,22 +42,36 @@ public class ResourceLoader {
   private BufferedImage ghoulPalette;
 
   private ArrayList<BufferedImage> pellets;
+  private ArrayList<Image> pelletImages = null;
   private ArrayList<BufferedImage> translucentPellets;
+  private ArrayList<Image> translucentPelletImages = null;
   private ArrayList<BufferedImage> powerUpBox;
+  private ArrayList<Image> powerUpBoxImages = null;
   private ArrayList<BufferedImage> mapTiles;
+  private ArrayList<Image> mapTilesImages = null;
 
   private BufferedImage background;
   private BufferedImage backgroundPalette;
 
   private BufferedImage mipMarker;
+  private Image mipMarkerImages = null;
   private BufferedImage clientMarker;
+  private Image clientMarkerImages = null;
   private BufferedImage inventory;
+  private Image inventoryImage = null;
   private ArrayList<BufferedImage> powerUpIcons;
+  private ArrayList<Image> powerUpIconImages = null;
   private int inventoryColourID;
+
   private HashMap<PowerUps, ArrayList<BufferedImage>> powerUps;
+  private HashMap<PowerUps, ArrayList<Image>> powerUpImages = null;
+
   private ArrayList<BufferedImage> explosions;
+  private ArrayList<Image> explosionImages = null;
   private ArrayList<BufferedImage> upRockets;
+  private ArrayList<Image> upRocketImages;
   private ArrayList<BufferedImage> downRockets;
+  private ArrayList<Image> downRocketImages;
   private  ArrayList<BufferedImage> mine;
   private ArrayList<Image> mineImages;
 
@@ -479,18 +493,31 @@ public class ResourceLoader {
     this.powerUpBox =
         new ArrayList<>(
             Arrays.asList(loadImageFile("sprites/" + theme + "/consumable/", "powerBox")));
+
+    this.pelletImages = null;
+    this.translucentPelletImages = null;
+    this.powerUpBoxImages = null;
   }
 
   public ArrayList<Image> getPellet() {
-    return bufferedToJavaFxImage(this.pellets);
+    if(this.pelletImages == null){
+      this.pelletImages = bufferedToJavaFxImage(this.pellets);
+    }
+    return this.pelletImages;
   }
 
   public ArrayList<Image> getPowerBox() {
-    return bufferedToJavaFxImage(this.powerUpBox);
+    if(this.powerUpBoxImages == null){
+      this.powerUpBoxImages = bufferedToJavaFxImage(this.powerUpBox);
+    }
+    return this.powerUpBoxImages;
   }
 
   public ArrayList<Image> getTranslucentPellet() {
-    return bufferedToJavaFxImage(this.translucentPellets);
+    if(this.translucentPelletImages == null){
+      this.translucentPelletImages = bufferedToJavaFxImage(this.translucentPellets);
+    }
+    return this.translucentPelletImages;
   }
 
   /** */
@@ -500,10 +527,14 @@ public class ResourceLoader {
       _mapTiles.add(loadImageFile("sprites/" + theme + "/tiles/", m.toString()));
     }
     this.mapTiles = _mapTiles;
+    this.mapTilesImages = null;
   }
 
   public ArrayList<Image> getMapTiles() {
-    return bufferedToJavaFxImage(this.mapTiles);
+    if(this.mapTilesImages == null){
+      this.mapTilesImages = bufferedToJavaFxImage(this.mapTiles);
+    }
+    return this.mapTilesImages;
   }
 
   public void loadBackground() {
@@ -522,18 +553,26 @@ public class ResourceLoader {
 
   public void loadMipMarker() {
     this.mipMarker = loadImageFile("sprites/" + theme + "/misc/", "mip_marker");
+    this.mipMarkerImages = null;
   }
 
   public Image getMipMarker() {
-    return SwingFXUtils.toFXImage(this.mipMarker, null);
+    if(this.mipMarkerImages == null){
+      this.mipMarkerImages = SwingFXUtils.toFXImage(this.mipMarker, null);
+    }
+    return this.mipMarkerImages;
   }
 
   public void loadClientMarker() {
     this.clientMarker = loadImageFile("sprites/" + theme + "/misc/", "client_marker");
+    this.clientMarkerImages = null;
   }
 
   public Image getMClientMarker() {
-    return SwingFXUtils.toFXImage(this.clientMarker, null);
+    if(this.clientMarkerImages == null){
+      this.clientMarkerImages = SwingFXUtils.toFXImage(this.clientMarker, null);
+    }
+    return this.clientMarkerImages;
   }
 
   public void loadInventory() {
@@ -557,10 +596,14 @@ public class ResourceLoader {
       powerUps.add(loadImageFile("sprites/" + theme + "/misc/icon/", powerUp.toString()));
     }
     this.powerUpIcons = powerUps;
+    this.powerUpIconImages = null;
   }
 
   public ArrayList<Image> getPowerUpIcons() {
-    return bufferedToJavaFxImage(this.powerUpIcons);
+    if(this.powerUpBoxImages == null){
+      this.powerUpIconImages = bufferedToJavaFxImage(this.powerUpIcons);
+    }
+    return this.powerUpIconImages;
   }
 
   public void loadPowerUps() {
@@ -589,19 +632,21 @@ public class ResourceLoader {
     powerUps.put(
         PowerUps.INVINCIBLE,
         splitSpriteSheet(spriteWidth, spriteHeight, invincibleAnimation).get(0));
-
+    this.powerUpImages = null;
     this.powerUps = powerUps;
   }
 
   public HashMap<PowerUps, ArrayList<Image>> getPowerUps() {
-    HashMap<PowerUps, ArrayList<Image>> convertedSprites =
-        new HashMap<>();
+    if(this.powerUpImages == null){
+      HashMap<PowerUps, ArrayList<Image>> convertedSprites =
+          new HashMap<>();
 
-    for (PowerUps key : this.powerUps.keySet()) {
-      convertedSprites.put(key, bufferedToJavaFxImage(this.powerUps.get(key)));
+      for (PowerUps key : this.powerUps.keySet()) {
+        convertedSprites.put(key, bufferedToJavaFxImage(this.powerUps.get(key)));
+      }
+      this.powerUpImages = convertedSprites;
     }
-
-    return convertedSprites;
+    return this.powerUpImages;
   }
 
   public void loadExplosion() {
@@ -611,10 +656,14 @@ public class ResourceLoader {
                 SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_HEIGHT),
                 loadImageFile("sprites/" + theme + "/fx/", "explosion"))
             .get(0);
+    this.explosionImages = null;
   }
 
   public ArrayList<Image> getExplosion() {
-    return bufferedToJavaFxImage(this.explosions);
+    if(explosionImages == null){
+      this.explosionImages = bufferedToJavaFxImage(this.explosions);
+    }
+    return this.explosionImages;
   }
 
   public void loadRocketImages() {
@@ -626,10 +675,17 @@ public class ResourceLoader {
   }
 
   public ArrayList<Image> getRocketImages(boolean flipped) {
-    if (flipped) {
-      return bufferedToJavaFxImage(this.downRockets);
+    if(this.upRocketImages == null){
+      this.upRocketImages = bufferedToJavaFxImage(this.downRockets);
     }
-    return bufferedToJavaFxImage(this.upRockets);
+    if(this.downRocketImages == null){
+      this.downRocketImages = bufferedToJavaFxImage(this.upRockets);
+    }
+
+    if (flipped) {
+      return this.downRocketImages;
+    }
+    return this.upRocketImages;
   }
 
   public void loadMine(){

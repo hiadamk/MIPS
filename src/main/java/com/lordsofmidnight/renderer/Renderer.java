@@ -66,6 +66,12 @@ public class Renderer {
   private ArrayList<Point> traversalOrder = new ArrayList<>();
   private boolean refreshMap;
 
+  private Pellet currentPellet;
+  private int entityCounter = 0;
+  private Image currentSprite = null;
+  private Double rendCoord;
+  private Point spriteCoord;
+
   /**
    * @param _gc Graphics context to render the game onto
    * @param _xResolution Game x resolution
@@ -194,20 +200,16 @@ public class Renderer {
     // sort entities to get rendering order
     entities.sort(Comparator.comparingDouble(o -> o.getLocation().getX() + o.getLocation().getY()));
 
-    int entityCounter = 0;
-    Image currentSprite = null;
-    Double rendCoord;
-    Point spriteCoord = new Point(java.lang.Double.MAX_VALUE, java.lang.Double.MAX_VALUE);
-
+    spriteCoord = new Point(java.lang.Double.MAX_VALUE, java.lang.Double.MAX_VALUE);
+    entityCounter = 0;
     int x;
     int y;
 
-    HashMap<Entity, HashMap<PowerUps, PowerUp>> entityPowerUps =
-        new HashMap<>();
+    HashMap<Entity, HashMap<PowerUps, PowerUp>> entityPowerUps = new HashMap<>();
     for (Entity e : entityArr) {
       entityPowerUps.put(e, new HashMap<>());
     }
-    new Point(1, 1, Integer.MAX_VALUE, Integer.MAX_VALUE, false);
+    //new Point(1, 1, Integer.MAX_VALUE, Integer.MAX_VALUE, false);
     if (activePowerUps != null) {
       for (PowerUp p : activePowerUps.values()) {
         entityPowerUps.get(p.getUser()).put(p.getType(), p);
@@ -231,38 +233,28 @@ public class Renderer {
       }
     }
 
-    // TODO refactor the way the translucent pellet is fetched
-    Image translucentPellet = r.getTranslucentPellet().get(0);
-    // TODO refactor the way the translucent pellet is fetched
-    Image pellet = r.getPellet().get(0);
-    // TODO refactor the way the translucent pellet is fetched
-    Image powerup = r.getPowerBox().get(0);
-
-    ArrayList<Image> mines = r.getMine();
-
     // Loop through grid in diagonal traversal to render walls and entities by depth
     for (Point coord : traversalOrder) {
 
       // render consumable com.lordsofmidnight.objects on top
-      Pellet currentPellet = pellets.get(coord);
+      currentPellet = pellets.get(coord);
       if (currentPellet != null && currentPellet.isActive()) {
 
         // TODO use better way of finding if client is mipsman
-        Entity client = getClientEntity(entities);
         boolean isHidden = false;
-        if (currentPellet.canUse(client)) {
+        if (currentPellet.canUse(entityArr[this.clientID])) {
           if (currentPellet instanceof PowerUpBox || currentPellet instanceof EmptyPowerUpBox) {
-            currentSprite = powerup;
+            currentSprite = r.getPowerBox().get(0);
           } else if (currentPellet instanceof MinePellet) {
-            currentSprite = mines.get(currentAnimationFrame % mines.size());
+            currentSprite = r.getMine().get(currentAnimationFrame % r.getMine().size());
             if (((MinePellet) currentPellet).isHidden()) {
               isHidden = true;
             }
           } else {
-            currentSprite = pellet;
+            currentSprite = r.getPellet().get(0);
           }
         } else {
-          currentSprite = translucentPellet;
+          currentSprite = r.getTranslucentPellet().get(0);
         }
 
         // render pellet using either translucent or opaque sprite
@@ -454,10 +446,7 @@ public class Renderer {
    * @param e entitiy to render
    * @param timeElapsed time since last frame to decide whether to move to next animation frame
    */
-  private void renderEntity(
-      Entity e,
-      HashMap<PowerUps, PowerUp> selfPowerUps,
-      long timeElapsed) {
+  private void renderEntity(Entity e, HashMap<PowerUps, PowerUp> selfPowerUps, long timeElapsed) {
     // choose correct Direction
 
     ArrayList<Image> currentSprites = null;
@@ -523,9 +512,7 @@ public class Renderer {
   }
 
   private void renderPowerUpEffects(
-      Entity e,
-      HashMap<PowerUps, PowerUp> selfPowerUps,
-      Double rendCoord) {
+      Entity e, HashMap<PowerUps, PowerUp> selfPowerUps, Double rendCoord) {
     if (e.isSpeeding()) {
       PowerUp speed = selfPowerUps.get(PowerUps.SPEED);
       ArrayList<Image> sprites = r.getPowerUps().get(PowerUps.SPEED);
@@ -539,20 +526,13 @@ public class Renderer {
       gc.drawImage(
           r.getPowerUps()
               .get(PowerUps.INVINCIBLE)
-              .get(
-                  invincible.getCurrentFrame()
-                      % r.getPowerUps()
-                      .get(PowerUps.INVINCIBLE)
-                          .size()),
+              .get(invincible.getCurrentFrame() % r.getPowerUps().get(PowerUps.INVINCIBLE).size()),
           rendCoord.getX(),
           rendCoord.getY());
     }
     // is the entity stunned?
     if (e.isStunned()) {
-      gc.drawImage(
-          r.getPowerUps().get(PowerUps.WEB).get(0),
-          rendCoord.getX(),
-          rendCoord.getY());
+      gc.drawImage(r.getPowerUps().get(PowerUps.WEB).get(0), rendCoord.getX(), rendCoord.getY());
     }
   }
 
