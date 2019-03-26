@@ -138,7 +138,7 @@ public class DumbTelemetry extends Telemetry {
       int direction = Integer.parseInt(ls[1]);
       Double x = Double.valueOf(ls[2]);
       Double y = Double.valueOf(ls[3]);
-      agents[id].setLocation(new Point(x, y, map));
+      agents[id].setLocation(x, y);
       agents[id].setDirection(Direction.fromInt(direction));
     }
   }
@@ -156,7 +156,7 @@ public class DumbTelemetry extends Telemetry {
 /*    System.out.println("X: " + x);
     System.out.println("Y: " + y);
     System.out.println("ID: " + id); */
-    agents[id].setLocation(new Point(x, y, map));
+    agents[id].setLocation(x, y);
     agents[id].setDirection(input.getMove());
     int MIPID = Integer.parseInt(ls[3]);
     for (Entity ent : agents) {
@@ -227,7 +227,7 @@ public class DumbTelemetry extends Telemetry {
     double x = Double.valueOf(ls[2]);
     double y = Double.valueOf(ls[3]);
 
-    agents[id].setLocation(new Point(x, y, map));
+    agents[id].setLocation(x, y);
     PowerUp powerup = PowerUp.fromInt(powerint);
     powerup.use(agents[id], activePowerUps, pellets, agents);
   }
