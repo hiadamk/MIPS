@@ -24,7 +24,6 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -150,19 +149,9 @@ public class MenuController {
   private boolean isHome = true;
   private boolean isMultiplayer = false;
   private boolean inLobby;
-
   private Thread playerNumberDiscovery;
   private MulticastSocket socket;
   private boolean gameFound = false;
-  private byte[] buf = new byte[256];
-  private int hostStatus;
-  private int players;
-  private String lobbyStatus;
-  private byte[] data;
-  private InetAddress group = NetworkUtility.GROUP;
-  private Enumeration<NetworkInterface> interfaces;
-  private DatagramPacket packet;
-  private String[] statusPackets;
 
   private MapGenerationHandler mapGenerationHandler;
 
@@ -181,12 +170,6 @@ public class MenuController {
     this.resourceLoader = resourceLoader;
     this.mapGenerationHandler = new MapGenerationHandler();
 
-    try {
-      this.interfaces = NetworkInterface.getNetworkInterfaces();
-    } catch (SocketException e) {
-      e.printStackTrace();
-    }
-
     Image icon = new Image("icon.png", false);
     primaryStage.getIcons().add(icon);
   }
@@ -199,14 +182,11 @@ public class MenuController {
     while (!Thread.currentThread().isInterrupted()) {
       try {
         Thread.sleep(1000);
-//        System.out.println("Listening for number of players...");
+        System.out.println("Listening for number of players...");
         socket = new MulticastSocket(NetworkUtility.CLIENT_M_PORT);
         socket.setSoTimeout(NetworkUtility.LOBBY_TIMEOUT);
-//        InetAddress group = NetworkUtility.GROUP;
-
-        if (interfaces == null) {
-          this.interfaces = NetworkInterface.getNetworkInterfaces();
-        }
+        InetAddress group = NetworkUtility.GROUP;
+        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
         while (interfaces.hasMoreElements()) {
           NetworkInterface iface = interfaces.nextElement();
           if (iface.isLoopback() || !iface.isUp()) {
@@ -221,16 +201,18 @@ public class MenuController {
           }
         }
 
-        buf = new byte[256];
-        packet = new DatagramPacket(buf, buf.length);
+        byte[] buf = new byte[256];
+        DatagramPacket packet = new DatagramPacket(buf, buf.length);
         socket.receive(packet);
         gameFound = true;
-        data = new byte[packet.getLength()];
+        byte[] data = new byte[packet.getLength()];
         System.arraycopy(buf, 0, data, 0, packet.getLength());
-        lobbyStatus = new String(data);
-        statusPackets = lobbyStatus.split("\\|");
-        players = Integer.parseInt(statusPackets[0]);
-        hostStatus = Integer.parseInt(statusPackets[1]);
+        String lobbyStatus = new String(data);
+        System.out.println(new String(data));
+        String[] statusPackets = lobbyStatus.split("\\|");
+        System.out.println("Array: " + Arrays.toString(statusPackets));
+        int players = Integer.parseInt(statusPackets[0]);
+        int hostStatus = Integer.parseInt(statusPackets[1]);
         if (hostStatus == 0) {
           System.out.println("Server left lobby");
           client.leaveLobby();
@@ -792,7 +774,7 @@ public class MenuController {
           isHome = false;
           backBtn.setVisible(true);
           moveItemsToBackTree();
-//          System.out.println("NAME: " + Settings.getName());
+          System.out.println("NAME: " + Settings.getName());
           if (Settings.getName().equals("null")) {
             itemsOnScreen.add(nameEntryView);
           } else {
@@ -996,6 +978,7 @@ public class MenuController {
     resolutionCombo.setEditable(false);
     resolutionCombo.setPromptText("Select a resolution...");
     resolutionCombo.setOnAction(event -> {
+      System.out.println(resolutionCombo.getValue());
       audioController.playSound(Sounds.CLICK);
       switch (resolutionCombo.getValue()) {
         case "1366x768":
