@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PowerUpBox extends Pellet {
 
+  private boolean toReplace = false;
   private static PowerUps[] powerUps = {
       PowerUps.BLUESHELL, PowerUps.SPEED, PowerUps.WEB, PowerUps.INVINCIBLE
   };
@@ -152,6 +153,7 @@ public class PowerUpBox extends Pellet {
       trap.trigger(entity, activePowerUps);
       isTrap = false;
       setActive(false);
+      toReplace = true;
       return;
     }
     if (!active) {
@@ -176,5 +178,10 @@ public class PowerUpBox extends Pellet {
       }
     }
     return rank;
+  }
+
+  @Override
+  public boolean replace() {
+    return toReplace;
   }
 }

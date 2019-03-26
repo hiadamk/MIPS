@@ -20,6 +20,9 @@ public enum Sounds {
     this.path = path;
   }
 
+  /**
+   * @return The path to the audio file for the sound
+   */
   public String getPath() {
     return path;
   }
