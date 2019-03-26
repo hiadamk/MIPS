@@ -677,10 +677,10 @@ public class ResourceLoader {
 
   public ArrayList<Image> getRocketImages(boolean flipped) {
     if(this.upRocketImages == null){
-      this.upRocketImages = bufferedToJavaFxImage(this.downRockets);
+      this.upRocketImages = bufferedToJavaFxImage(this.upRockets);
     }
     if(this.downRocketImages == null){
-      this.downRocketImages = bufferedToJavaFxImage(this.upRockets);
+      this.downRocketImages = bufferedToJavaFxImage(this.downRockets);
     }
 
     if (flipped) {
