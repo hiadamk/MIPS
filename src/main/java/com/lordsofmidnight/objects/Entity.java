@@ -3,8 +3,8 @@ package com.lordsofmidnight.objects;
 import com.lordsofmidnight.ai.routefinding.RouteFinder;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
-import com.lordsofmidnight.utils.Renderable;
 import com.lordsofmidnight.renderer.ResourceLoader;
+import com.lordsofmidnight.utils.Renderable;
 import com.lordsofmidnight.utils.StatsTracker;
 import com.lordsofmidnight.utils.enums.Direction;
 import com.lordsofmidnight.utils.enums.PowerUps;
@@ -258,11 +258,21 @@ public class Entity implements Renderable {
   }
 
   /**
-   * @param location new com.lordsofmidnight.gamestate
+   * @see #setLocation(double, double)
+   * @param location Point to be made direction
    * @author Matty Jones, Alex Banks
    */
   public void setLocation(Point location) {
     this.location = location;
+  }
+
+  /**
+   * @param x coord
+   * @param y coord
+   * @author Matty Jones, Alex Banks
+   */
+  public void setLocation(double x, double y) {
+    this.location.setLocation(x, y);
   }
 
   /**

@@ -6,15 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.lordsofmidnight.ai.routefinding.RouteFinder;
 import com.lordsofmidnight.ai.routefinding.routefinders.MipsManRouteFinder;
+import com.lordsofmidnight.gamestate.maps.Map;
+import com.lordsofmidnight.objects.Entity;
+import com.lordsofmidnight.renderer.ResourceLoader;
+import com.lordsofmidnight.utils.Input;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import com.lordsofmidnight.objects.Entity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import com.lordsofmidnight.utils.Input;
-import com.lordsofmidnight.gamestate.maps.Map;
-import com.lordsofmidnight.gamestate.points.Point;
-import com.lordsofmidnight.renderer.ResourceLoader;
 
 /**
  * Unit tests for the {@link AILoopControl} class.
@@ -74,7 +73,7 @@ class AILoopControlTests {
     ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
     int[] ids = {4};
     for (int i = 0; i < ALL_AGENTS.length; i++) {
-      ALL_AGENTS[i].setLocation(new Point(1 + i, 1));
+      ALL_AGENTS[i].setLocation(1 + i, 1);
       ALL_AGENTS[i].updateImages(resourceLoader);
     }
 

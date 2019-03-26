@@ -1,16 +1,14 @@
 package com.lordsofmidnight.ai;
 
-import com.lordsofmidnight.ai.routefinding.routefinders.RandomRouteFinder;
-import com.lordsofmidnight.objects.Entity;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
-import com.lordsofmidnight.gamestate.points.Point;
-import com.lordsofmidnight.utils.enums.Direction;
-
-import java.util.HashMap;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.lordsofmidnight.ai.routefinding.routefinders.RandomRouteFinder;
+import com.lordsofmidnight.objects.Entity;
+import com.lordsofmidnight.utils.enums.Direction;
+import java.util.HashMap;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 /**
  * Unit tests for the {@link RandomRouteFinder} class.
@@ -36,7 +34,7 @@ class RandomRouteFinderTests {
         new Entity(false, 4, null)
     };
     for (int i = 0; i < gas.length; i++) {
-      gas[i].setLocation(new Point(0, i));
+      gas[i].setLocation(0, i);
     }
     rrf.getRoute(gas[1].getLocation(), gas[0].getLocation());
   }
@@ -53,7 +51,7 @@ class RandomRouteFinderTests {
     };
     Executable e = () -> rrf.getRoute(gas[1].getLocation(), gas[0].getLocation());
     assertThrows(NullPointerException.class, e);
-    gas[0].setLocation(new Point(1, 1));
+    gas[0].setLocation(1, 1);
     e = () -> rrf.getRoute(gas[1].getLocation(), gas[0].getLocation());
     assertThrows(NullPointerException.class, e);
 
@@ -73,7 +71,7 @@ class RandomRouteFinderTests {
     };
 
     for (int i = 0; i < gas.length; i++) {
-      gas[i].setLocation(new Point(i, i));
+      gas[i].setLocation(i, i);
     }
 
     HashMap<Direction, Integer> counters = new HashMap<Direction, Integer>();
