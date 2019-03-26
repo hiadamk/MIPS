@@ -84,6 +84,7 @@ public class MenuController {
   private Button startMGameBtn;
   private Button settingsBtn;
   private Button quitBtn;
+  private Button setNameBtn;
   private ImageView logo;
   private VBox homeOptions;
 
@@ -778,12 +779,7 @@ public class MenuController {
           isHome = false;
           backBtn.setVisible(true);
           moveItemsToBackTree();
-          System.out.println("NAME: " + Settings.getName());
-          if (Settings.getName().equals("null")) {
-            itemsOnScreen.add(nameEntryView);
-          } else {
-            itemsOnScreen.add(gameModeOptions);
-          }
+          itemsOnScreen.add(gameModeOptions);
           showItemsOnScreen();
         });
 
@@ -877,18 +873,17 @@ public class MenuController {
     VBox nameAndLine = new VBox(nameEntry, clear);
     nameAndLine.setAlignment(Pos.CENTER);
 
-    Button nameEntryBtn = ButtonGenerator.generate(true, root, "Next", UIColours.GREEN, 30);
+    Button nameEntryBtn = ButtonGenerator.generate(true, root, "Save", UIColours.GREEN, 30);
     nameEntryBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.CLICK);
           if (nameEntry.getText().equals("")) {
             nameEntryStatus.setVisible(true);
           } else {
-            moveItemsToBackTree();
             hideItemsOnScreen();
+            itemsOnScreen.clear();
             this.client.setName(nameEntry.getText());
-            itemsOnScreen.add(gameModeOptions);
-
+            backBtn.fire();
             showItemsOnScreen();
           }
 
@@ -1300,7 +1295,7 @@ public class MenuController {
     StackPane.setMargin(instructionLbl, new Insets(200, 200, 0, 200));
 
     Button instructions = ButtonGenerator
-        .generate(true, root, "Instructions", UIColours.YELLOW, 30);
+        .generate(true, root, "Instructions", UIColours.WHITE, 30);
     instructions.setOnAction(event -> {
       isHome = false;
       audioController.playSound(Sounds.CLICK);
@@ -1349,7 +1344,15 @@ public class MenuController {
       showItemsOnScreen();
     });
 
-    homeOptions = new VBox(20, playBtn, instructions, creditsBtn);
+    setNameBtn = ButtonGenerator.generate(true, root, "Set Name", UIColours.YELLOW, 30);
+    setNameBtn.setOnAction(event -> {
+      isHome = false;
+      moveItemsToBackTree();
+      itemsOnScreen.add(nameEntryView);
+      showItemsOnScreen();
+    });
+
+    homeOptions = new VBox(20, playBtn, instructions, setNameBtn, creditsBtn);
     root.getChildren().add(homeOptions);
     homeOptions.setAlignment(Pos.CENTER);
     StackPane.setAlignment(homeOptions, Pos.CENTER);
