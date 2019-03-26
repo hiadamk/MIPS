@@ -22,6 +22,12 @@ public abstract class PowerUp {
   protected PowerUps type;
   protected boolean onMap;
 
+  /**
+   * Abstract class for the powerUps
+   *
+   * @param effectTime how long the effect of the powerUp lasts
+   * @param name the name of the powerUp
+   */
   public PowerUp(int effectTime, String name) {
     this.EFFECTTIME = effectTime;
     this.NAME = name;

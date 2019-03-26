@@ -8,10 +8,10 @@ import com.lordsofmidnight.main.Client;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
+import com.lordsofmidnight.renderer.ResourceLoader;
 import com.lordsofmidnight.utils.GameLoop;
 import com.lordsofmidnight.utils.Input;
 import com.lordsofmidnight.utils.Methods;
-import com.lordsofmidnight.renderer.ResourceLoader;
 import com.lordsofmidnight.utils.enums.Direction;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -211,10 +211,17 @@ public abstract class Telemetry {
     }
 
     pelletCollision(agents, pellets, activePowerUps, resourceLoader);
+    ArrayList<Point> replace = new ArrayList<>();
     for (Pellet p : pellets.values()) {
       p.incrementRespawn();
+      if (p.replace()) {
+        replace.add(p.getLocation());
+      }
     }
-
+    for (Point p : replace) {
+      pellets.put(p, new Pellet(p));
+      System.out.println("replaced 1");
+    }
     ArrayList<UUID> toRemove = new ArrayList<>();
     for (PowerUp p : activePowerUps.values()) {
       if (p.incrementTime()) {
@@ -226,7 +233,6 @@ public abstract class Telemetry {
     }
     gameTimer--;
     if (gameTimer == 0) {
-      int winner = Methods.findWinner(agents);
       client.finishGame();
     }
   }

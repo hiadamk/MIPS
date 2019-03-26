@@ -2,8 +2,8 @@ package com.lordsofmidnight.objects;
 
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
-import com.lordsofmidnight.utils.Renderable;
 import com.lordsofmidnight.renderer.ResourceLoader;
+import com.lordsofmidnight.utils.Renderable;
 import com.lordsofmidnight.utils.enums.Direction;
 import java.util.ArrayList;
 import java.util.Random;
@@ -110,6 +110,13 @@ public class Pellet implements Renderable {
     if (respawnCount == respawntime) {
       this.active = true;
     }
+  }
+
+  /**
+   * @return If the pellet needs to be replaced
+   */
+  public boolean replace() {
+    return false;
   }
 
   public boolean isTrap() {
