@@ -384,7 +384,7 @@ public class ResourceLoader {
    *     frame
    */
   public ArrayList<ArrayList<Image>> getPlayableMip(int _colourID) {
-    if (this.mipSprites == null) {
+    if (this.mipSprites == null || this.mipSprites.size() < this.mipColourSprites.size()) {
       this.mipSprites = new ArrayList<>();
       for (int i = 0; i < this.mipPalette.getHeight(); i++) {
         this.mipSprites.add(
@@ -468,7 +468,7 @@ public class ResourceLoader {
    *     frame
    */
   public ArrayList<ArrayList<Image>> getPlayableGhoul(int _colourID) {
-    if (this.ghoulSprites == null) {
+    if (this.ghoulSprites == null || this.ghoulSprites.size() < this.ghoulColourSprites.size()) {
       this.ghoulSprites = new ArrayList<>();
       for (int i = 0; i < this.ghoulPalette.getHeight(); i++) {
         this.ghoulSprites.add(
