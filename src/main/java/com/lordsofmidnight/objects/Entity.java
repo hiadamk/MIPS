@@ -11,8 +11,6 @@ import com.lordsofmidnight.utils.enums.PowerUps;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import javafx.scene.image.Image;
 
 
@@ -151,7 +149,7 @@ public class Entity implements Renderable {
     this.dead = dead;
     if (dead) {
       statsTracker.increaseDeaths();
-      deathLocation = new Point(location.getX(), location.getY());
+      deathLocation = location.getCopy();
       velocity = 0;
       deathCounter = 0;
     } else {
