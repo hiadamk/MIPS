@@ -278,7 +278,7 @@ public class HostTelemetry extends Telemetry {
    * @param agents The game agents
    */
   private void updateClients(Entity[] agents) {
-    outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents) + getMipID());
+    outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents) + getMipID() + "|" + gameTimer);
   }
 
   /**

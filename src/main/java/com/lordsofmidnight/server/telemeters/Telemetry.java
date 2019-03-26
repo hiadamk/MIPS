@@ -237,6 +237,10 @@ public abstract class Telemetry {
     }
   }
 
+  public void setTime(int t) {
+    this.gameTimer = t;
+  }
+
   public GameLoop getInputProcessor() {
     return inputProcessor;
   }

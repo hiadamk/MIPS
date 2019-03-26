@@ -141,7 +141,9 @@ public class DumbTelemetry extends Telemetry {
    */
   private void setEntityPositions(String s) {
     String[] positions = s.split("\\|");
-    int mipID = Integer.parseInt(positions[positions.length - 1]);
+    int mipID = Integer.parseInt(positions[positions.length - 2]);
+    int gameTime = Integer.parseInt(positions[positions.length - 1]);
+    setTime(gameTime);
     for (Entity ent : agents) {
       if (ent.getClientId() == mipID) {
         ent.setMipsman(true);
