@@ -164,7 +164,7 @@ public class Client extends Application {
   public void joinMultiplayerLobby() {
     //map = resourceLoader.getMap();
     isHost = false;
-    BlockingQueue<String> clientIn = new LinkedBlockingQueue<>();
+    clientIn = new LinkedBlockingQueue<>();
     keypressQueue = new LinkedBlockingQueue<>();
     try {
       clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this,
