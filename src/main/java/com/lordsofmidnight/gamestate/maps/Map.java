@@ -151,16 +151,21 @@ public class Map {
   }
 
   /**
-   * @return random com.lordsofmidnight.gamestate to position ghouls at if caught
+   * Returns random spawnpoint that's not near any other entities
+   *
+   * @return random Point to position entities upon respawn
+   * @author Alex Banks
    */
   public Point getRandomSpawnPoint(Entity[] agents) {
+    final int MIN_DIST = 2;
+
     boolean found = false;
     Point p = null;
     while (!found) {
       p = SPAWN_POINTS.get((new Random()).nextInt(SPAWN_POINTS.size()));
       found = true;
       for (Entity agent : agents) {
-        if (agent.getLocation().inRange(p)) {
+        if (agent.getLocation().distance(p) < MIN_DIST) {
           found = false;
         }
       }
