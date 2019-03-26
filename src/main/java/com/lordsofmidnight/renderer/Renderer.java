@@ -68,7 +68,7 @@ public class Renderer {
   private Pellet currentPellet;
   private int entityCounter = 0;
   private Image currentSprite = null;
-  private Double rendCoord;
+  private Double rendCoord = new Point2D.Double(0,0);
   private Point spriteCoord;
   Point deathLocation;
   final double MAP_BORDER = xResolution * 0.005;
@@ -223,12 +223,12 @@ public class Renderer {
       y = (int) coord.getY();
 
       if (MapElement.FLOOR.toInt() == rawMap[x][y]) {
-        rendCoord =
-            getIsoCoord(
-                x,
-                y,
-                mapTiles.get(MapElement.FLOOR.toInt()).getHeight(),
-                mapTiles.get(MapElement.FLOOR.toInt()).getWidth());
+        setIsoCoord(
+            rendCoord,
+            x,
+            y,
+            mapTiles.get(MapElement.FLOOR.toInt()).getHeight(),
+            mapTiles.get(MapElement.FLOOR.toInt()).getWidth());
         gc.drawImage(mapTiles.get(MapElement.FLOOR.toInt()), rendCoord.x, rendCoord.y);
       }
     }
@@ -260,7 +260,7 @@ public class Renderer {
         // render pellet using either translucent or opaque sprite
         double x_ = currentPellet.getLocation().getX() - 0.5;
         double y_ = currentPellet.getLocation().getY() - 0.5;
-        rendCoord = getIsoCoord(x_, y_, currentSprite.getHeight(), currentSprite.getWidth());
+        setIsoCoord(rendCoord,x_, y_, currentSprite.getHeight(), currentSprite.getWidth());
         if (!isHidden) {
           gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
         }
@@ -270,7 +270,7 @@ public class Renderer {
       y = (int) coord.getY();
 
       currentSprite = mapTiles.get(rawMap[x][y]);
-      rendCoord = getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
+      setIsoCoord(rendCoord,x, y, currentSprite.getHeight(), currentSprite.getWidth());
       if (MapElement.FLOOR.toInt() == rawMap[x][y]) {
         continue;
       }
@@ -403,8 +403,7 @@ public class Renderer {
 
     double x = newMipsMan.getLocation().getX() - 0.5;
     double y = newMipsMan.getLocation().getY() - 0.5;
-    Double rendCoord =
-        getIsoCoord(
+        setIsoCoord(rendCoord,
             x,
             y,
             currentSprite.getHeight() * sizeMultiplier,
@@ -425,6 +424,7 @@ public class Renderer {
     gc.strokeText("CAPTURED MIPS", xResolution / 2, yResolution * 0.45);
   }
 
+  @Deprecated
   /**
    * @param x cartesian x coordinate
    * @param y cartesian Y coordinate
@@ -440,6 +440,18 @@ public class Renderer {
             + (y + x) * (this.tileSizeY / (double) 2)
             + (tileSizeY - spriteHeight);
     return new Point2D.Double(isoX, isoY);
+  }
+
+  public void setIsoCoord(
+      Point2D.Double rendCoord, double x, double y, double spriteHeight, double spriteWidth) {
+
+    rendCoord.setLocation(
+        mapRenderingCorner.getX()
+            - (y - x) * (this.tileSizeX / (double) 2)
+            + ((tileSizeX - spriteWidth) / 2),
+        mapRenderingCorner.getY()
+            + (y + x) * (this.tileSizeY / (double) 2)
+            + (tileSizeY - spriteHeight));
   }
 
   /**
@@ -469,7 +481,7 @@ public class Renderer {
     Image currentSprite = currentSprites.get(currentAnimationFrame % currentSprites.size());
     double x = e.getLocation().getX() - 0.5;
     double y = e.getLocation().getY() - 0.5;
-    rendCoord = getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
+     setIsoCoord(rendCoord,x, y, currentSprite.getHeight(), currentSprite.getWidth());
 
     deathLocation = e.getDeathLocation();
     if (deathLocation != null) {

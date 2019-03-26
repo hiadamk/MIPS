@@ -98,7 +98,7 @@ public class HostTelemetry extends Telemetry {
     audioController.gameIntro();
     gameTimer = GAME_TIME;
     final long DELAY = (long) Math.pow(10, 7);
-    final long positionDELAY = (long) Math.pow(10, 9) / 2;
+    final long positionDELAY = (long) Math.pow(10, 8);
     final long scoreDELAY = (long) Math.pow(10, 9);
     inputProcessor =
         new GameLoop(DELAY) {
