@@ -165,6 +165,9 @@ public class Map {
       p = SPAWN_POINTS.get((new Random()).nextInt(SPAWN_POINTS.size()));
       found = true;
       for (Entity agent : agents) {
+        if (agent == null) {
+          continue;
+        }
         if (agent.getLocation().distance(p) < MIN_DIST) {
           found = false;
         }
