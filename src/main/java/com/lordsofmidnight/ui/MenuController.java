@@ -175,7 +175,7 @@ public class MenuController {
   }
 
   /**
-   * Thread to listen to the Server Lobby which is constantly pinging the number of players in the
+   * Runnable to listen to the Server Lobby which is constantly pinging the number of players in the
    * lobby.
    */
   private Runnable lobbyPlayers = (() -> {
@@ -523,6 +523,9 @@ public class MenuController {
     mapGenerationHandler.start();
   }
 
+  /**
+   * Updates the lobby label letting the user know that a game was not found.
+   */
   public void gameNotFound() {
     Platform.runLater(() -> {
       lobbyStatusLbl.setText("Game Not Found");

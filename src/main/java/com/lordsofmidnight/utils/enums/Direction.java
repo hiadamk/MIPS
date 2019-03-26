@@ -1,5 +1,8 @@
 package com.lordsofmidnight.utils.enums;
 
+/**
+ * More detailed enumeration for the different inputs possible.
+ */
 public enum Direction {
   UP(0) {
     @Override

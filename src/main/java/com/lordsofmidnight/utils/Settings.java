@@ -1,6 +1,5 @@
 package com.lordsofmidnight.utils;
 
-import com.lordsofmidnight.audio.AudioController;
 import com.lordsofmidnight.main.Client;
 import com.lordsofmidnight.utils.enums.InputKey;
 import com.lordsofmidnight.utils.enums.RenderingMode;
@@ -13,7 +12,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import javafx.scene.input.KeyCode;
 
+/**
+ * Class which stores the settings of the client.
+ */
 public class Settings {
+
   private static final String settingsDirectory = "src/main/resources/settings.cfg";
 
   private static KeyCode up = KeyCode.UP;
@@ -31,38 +34,76 @@ public class Settings {
   private static double musicVolume = 0.5;
   private static double soundVolume = 0.5;
 
+  /**
+   * Gets whether or not the audio has been muted
+   *
+   * @return True is muted, false otherwise.
+   */
   public static Boolean getMute() {
     return mute;
   }
 
+  /**
+   * Sets the value of mute.
+   * @param mute True is the audio is muted, false otherwise
+   */
   public static void setMute(Boolean mute) {
     Settings.mute = mute;
   }
 
+  /**
+   * Gets the current volume of music.
+   * @return The current volume of music in the game
+   */
   public static double getMusicVolume() {
     return musicVolume;
   }
 
+  /**
+   * Sets the volume of music in the game
+   * @param musicVolume The volume to set current volume to.
+   */
   public static void setMusicVolume(double musicVolume) {
     Settings.musicVolume = musicVolume;
   }
 
+  /**
+   * Gets the volume of sound effects
+   * @return The current volume of sound effects
+   */
   public static double getSoundVolume() {
     return soundVolume;
   }
 
+  /**
+   * Sets the volume of sound effects
+   * @param soundVolume The volume which we want to set the sound effects volume to.
+   */
   public static void setSoundVolume(double soundVolume) {
     Settings.soundVolume = soundVolume;
   }
 
+  /**
+   * Sets the name of the client.
+   * @param name The client's name
+   */
   public static void setName(String name) {
     Settings.name = name;
+    saveSettings();
   }
 
+  /**
+   * Gets the name of the client
+   * @return Client's name
+   */
   public static String getName() {
     return name;
   }
 
+  /**
+   * Restores the game settings to system default
+   * @param c the current client.
+   */
   public static void restoreDefaultSettings(Client c){
     up = KeyCode.UP;
     down = KeyCode.DOWN;
@@ -83,6 +124,11 @@ public class Settings {
     saveSettings();
   }
 
+  /**
+   * Gets the current Input Key key code
+   * @param key the key we want to query
+   * @return The keycode we want
+   */
   public static KeyCode getKey(InputKey key) {
     switch (key) {
       case UP:
@@ -98,6 +144,11 @@ public class Settings {
     }
   }
 
+  /**
+   * Sets a key
+   * @param key The input type
+   * @param keyCode The keycode of the input.
+   */
   public static void setKey(InputKey key, KeyCode keyCode) {
     switch (key) {
       case UP:
@@ -118,38 +169,73 @@ public class Settings {
     System.err.println("Invalid key to be bound");
   }
 
+  /**
+   * Gets the horizontal resolution of the screen.
+   * @return The number of pixels across
+   */
   public static int getxResolution() {
     return xResolution;
   }
 
+  /**
+   * Sets the horizontal resolution of the game
+   * @param xResolution The number of pixels axross
+   */
   public static void setxResolution(int xResolution) {
     Settings.xResolution = xResolution;
   }
 
+  /**
+   * Gets the vertical resolution of the screen
+   * @return the number of vertical pixels there are
+   */
   public static int getyResolution() {
     return yResolution;
   }
 
+  /**
+   * Sets the number of vertical pixels in the game
+   * @param yResolution The number of vertical pixels
+   */
   public static void setyResolution(int yResolution) {
     Settings.yResolution = yResolution;
   }
 
+  /**
+   * Gets the current rendering mode being used
+   * @return The rendering mode being used
+   */
   public static RenderingMode getRenderingMode() {
     return renderingMode;
   }
 
+  /**
+   * Sets the rendering mode
+   * @param renderingMode The rendering mode we want to use
+   */
   public static void setRenderingMode(RenderingMode renderingMode) {
     Settings.renderingMode = renderingMode;
   }
 
+  /**
+   * Gets the current theme
+   * @return The theme being used
+   */
   public static String getTheme() {
     return theme;
   }
 
+  /**
+   * Changes the theme being used
+   * @param theme The theme to change the theme to
+   */
   public static void setTheme(String theme) {
     Settings.theme = theme;
   }
 
+  /**
+   * Saves the settings by persisting them to a file.
+   */
   public static void saveSettings() {
     BufferedWriter bw = null;
     try {
@@ -184,12 +270,22 @@ public class Settings {
     }
   }
 
+  /**
+   * Writes a setting to the settings file
+   * @param name The setting name
+   * @param setting The setting value
+   * @param bw The buffered writer.
+   * @throws IOException Caused by Buffered Writer
+   */
   private static void writeSetting(String name, String setting, BufferedWriter bw)
       throws IOException {
-      bw.write(name + "=" + setting);
-      bw.newLine();
+    bw.write(name + "=" + setting);
+    bw.newLine();
   }
 
+  /**
+   * Loads the settings from a file
+   */
   public static void loadSettings() {
     File settingsFile = new File(settingsDirectory);
     if (!settingsFile.exists()) {

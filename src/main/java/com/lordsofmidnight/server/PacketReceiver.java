@@ -18,7 +18,7 @@ public class PacketReceiver extends Thread {
 
   /**
    * Continuously listens to the port agreed and adds the messages to the relevant queue in the
-   * client/com.lordsofmidnight.server
+   * server
    */
   @Override
   public void run() {

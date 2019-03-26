@@ -10,6 +10,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import com.lordsofmidnight.main.Client;
 
+/**
+ * Class for composing the game screen from canvas and buttons.
+ */
 public class GameSceneController {
 
   private StackPane root;
@@ -22,6 +25,9 @@ public class GameSceneController {
     init();
   }
 
+  /**
+   * Places the buttons on top of canvas.
+   */
   private void init() {
     VBox quitContainer = new VBox(15);
     HBox quitBtns = new HBox(15);
@@ -63,6 +69,9 @@ public class GameSceneController {
     root.requestFocus();
   }
 
+  /**
+   * Returns the root of the game scene
+   */
   public StackPane getGameRoot() {
     return root;
   }
