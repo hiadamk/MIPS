@@ -162,7 +162,7 @@ public class Client extends Application {
    * Allows a client to join a lobby
    */
   public void joinMultiplayerLobby() {
-    map = resourceLoader.getMap();
+    //map = resourceLoader.getMap();
     isHost = false;
     BlockingQueue<String> clientIn = new LinkedBlockingQueue<>();
     keypressQueue = new LinkedBlockingQueue<>();
@@ -333,7 +333,7 @@ public class Client extends Application {
     //Methods.updateImages(agents, resourceLoader);
     renderer.setClientID(id);
     renderer.initMapTraversal(map);
-    map = resourceLoader.getMap();
+    //map = resourceLoader.getMap();
     this.primaryStage.setScene(gameScene);
   }
 
