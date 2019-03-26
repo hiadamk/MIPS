@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import com.lordsofmidnight.gamestate.points.Point;
-import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.renderer.ResourceLoader;
 import com.lordsofmidnight.utils.enums.MapElement;
 
 /**

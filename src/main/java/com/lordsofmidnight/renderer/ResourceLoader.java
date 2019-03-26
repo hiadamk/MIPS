@@ -1,8 +1,9 @@
-package com.lordsofmidnight.utils;
+package com.lordsofmidnight.renderer;
 
 import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.renderer.SpriteSheetData;
 import com.lordsofmidnight.renderer.SpriteSheetData.SpriteDimensions;
+import com.lordsofmidnight.utils.Settings;
 import com.lordsofmidnight.utils.enums.MapElement;
 import com.lordsofmidnight.utils.enums.PowerUps;
 import com.lordsofmidnight.utils.enums.RenderingMode;

@@ -10,7 +10,6 @@ import com.lordsofmidnight.objects.Pellet;
 import com.lordsofmidnight.objects.PowerUpBox;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
 import com.lordsofmidnight.utils.GameLoop;
-import com.lordsofmidnight.utils.ResourceLoader;
 import com.lordsofmidnight.utils.Settings;
 import com.lordsofmidnight.utils.UpDownIterator;
 import com.lordsofmidnight.utils.enums.MapElement;
@@ -71,6 +70,7 @@ public class Renderer {
   private Image currentSprite = null;
   private Double rendCoord;
   private Point spriteCoord;
+  Point deathLocation;
 
   /**
    * @param _gc Graphics context to render the game onto
@@ -209,7 +209,7 @@ public class Renderer {
     for (Entity e : entityArr) {
       entityPowerUps.put(e, new HashMap<>());
     }
-    //new Point(1, 1, Integer.MAX_VALUE, Integer.MAX_VALUE, false);
+    // new Point(1, 1, Integer.MAX_VALUE, Integer.MAX_VALUE, false);
     if (activePowerUps != null) {
       for (PowerUp p : activePowerUps.values()) {
         entityPowerUps.get(p.getUser()).put(p.getType(), p);
@@ -469,10 +469,9 @@ public class Renderer {
     Image currentSprite = currentSprites.get(currentAnimationFrame % currentSprites.size());
     double x = e.getLocation().getX() - 0.5;
     double y = e.getLocation().getY() - 0.5;
-    Point2D.Double rendCoord =
-        getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
+    rendCoord = getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
 
-    Point deathLocation = e.getDeathLocation();
+    deathLocation = e.getDeathLocation();
     if (deathLocation != null) {
       Point loc = e.getLocation();
       Point2D.Double coord =

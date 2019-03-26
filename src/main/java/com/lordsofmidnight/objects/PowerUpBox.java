@@ -6,7 +6,7 @@ import com.lordsofmidnight.objects.powerUps.Invincible;
 import com.lordsofmidnight.objects.powerUps.Mine;
 import com.lordsofmidnight.objects.powerUps.Speed;
 import com.lordsofmidnight.objects.powerUps.Web;
-import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.renderer.ResourceLoader;
 import com.lordsofmidnight.utils.enums.PowerUps;
 import java.util.HashMap;
 import java.util.Map.Entry;

@@ -1,7 +1,5 @@
 package com.lordsofmidnight.gamestate.maps;
 
-import java.util.HashMap;
-
 import com.lordsofmidnight.gamestate.points.PointMap;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -14,7 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.renderer.Renderer;
-import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.renderer.ResourceLoader;
 
 /**
  * @author Tim Cheung

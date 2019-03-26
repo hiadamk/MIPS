@@ -11,7 +11,7 @@ import com.lordsofmidnight.gamestate.maps.MapPreview;
 import com.lordsofmidnight.main.Client;
 import com.lordsofmidnight.server.NetworkUtility;
 import com.lordsofmidnight.utils.KeyRemapping;
-import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.renderer.ResourceLoader;
 import com.lordsofmidnight.utils.ResourceSaver;
 import com.lordsofmidnight.utils.Settings;
 import com.lordsofmidnight.utils.enums.InputKey;

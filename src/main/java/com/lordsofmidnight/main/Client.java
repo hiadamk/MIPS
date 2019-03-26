@@ -18,7 +18,7 @@ import com.lordsofmidnight.ui.GameSceneController;
 import com.lordsofmidnight.ui.MenuController;
 import com.lordsofmidnight.utils.Input;
 import com.lordsofmidnight.utils.Methods;
-import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.renderer.ResourceLoader;
 import com.lordsofmidnight.utils.Settings;
 import com.lordsofmidnight.utils.enums.Direction;
 import java.io.IOException;

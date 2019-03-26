@@ -1,5 +1,7 @@
-package com.lordsofmidnight.utils;
+package com.lordsofmidnight.renderer;
 
+import com.lordsofmidnight.renderer.ResourceLoader;
+import com.lordsofmidnight.utils.Methods;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import javafx.application.Application;

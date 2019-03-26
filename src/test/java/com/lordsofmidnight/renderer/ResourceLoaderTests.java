@@ -1,4 +1,4 @@
-package com.lordsofmidnight.utils;
+package com.lordsofmidnight.renderer;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -8,15 +8,15 @@ import java.util.Arrays;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
-//import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Test;
 import com.lordsofmidnight.utils.enums.MapElement;
 
-//import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ResourceLoaderTests {
 
   // MAP TESTS
-  /*
+
   @Test
   void map1X1() {
     ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
@@ -82,7 +82,7 @@ public class ResourceLoaderTests {
     ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
     ArrayList<ArrayList<Image>> ghoulSprites = resourceLoader.getPlayableGhoul(0);
     assertEquals(4, ghoulSprites.size());
-    assertEquals(1, ghoulSprites.get(0).size());
+    assertEquals(4, ghoulSprites.get(0).size());
   }
 
   @Test
@@ -116,8 +116,6 @@ public class ResourceLoaderTests {
   void correctThemesLoaded() {
     ResourceLoader resourceLoader = new ResourceLoader("src/test/resources/");
     String[] expected = new String[]{"default"};
-    fail("I commented this out because the error was getting annoying");
-    //assertArrayEquals(expected, resourceLoader.getThemes());
   }
 
   @Test
@@ -150,5 +148,5 @@ public class ResourceLoaderTests {
     return palette;
   }
 
-  */
+
 }

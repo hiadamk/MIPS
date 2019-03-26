@@ -4,7 +4,7 @@ import com.lordsofmidnight.ai.routefinding.RouteFinder;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
 import com.lordsofmidnight.utils.Renderable;
-import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.renderer.ResourceLoader;
 import com.lordsofmidnight.utils.StatsTracker;
 import com.lordsofmidnight.utils.enums.Direction;
 import com.lordsofmidnight.utils.enums.PowerUps;

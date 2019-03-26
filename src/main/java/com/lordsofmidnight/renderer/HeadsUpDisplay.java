@@ -2,7 +2,6 @@ package com.lordsofmidnight.renderer;
 
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.utils.CircularIterator;
-import com.lordsofmidnight.utils.ResourceLoader;
 import com.lordsofmidnight.utils.enums.PowerUps;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;

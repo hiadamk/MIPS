@@ -11,7 +11,7 @@ import com.lordsofmidnight.objects.powerUps.PowerUp;
 import com.lordsofmidnight.utils.GameLoop;
 import com.lordsofmidnight.utils.Input;
 import com.lordsofmidnight.utils.Methods;
-import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.renderer.ResourceLoader;
 import com.lordsofmidnight.utils.enums.Direction;
 import java.util.ArrayList;
 import java.util.UUID;
