@@ -1316,14 +1316,20 @@ public class MenuController {
     StackPane.setAlignment(creditsBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(creditsBtn, new Insets(0,0,50,0));
 
-    Text musicHeader = TextGenerator.generate("Music:", UIColours.YELLOW, 20);
-    Text musicBody = TextGenerator.generate("         OpenGamesArt\n\n", UIColours.WHITE, 20);
-    Text soundFXHeader = TextGenerator.generate("SoundFX", UIColours.YELLOW, 20);
-    Text soundFXBody = TextGenerator.generate("     SubspaceAudio \n\n", UIColours.WHITE, 20);
+    Text musicHeader = TextGenerator.generate("Game Music:", UIColours.YELLOW, 20);
+    Text musicBody = TextGenerator
+        .generate("           Trinnox - Fast Flow\n\n", UIColours.WHITE, 20);
+    Text bgMusicHeader = TextGenerator.generate("Background Music:", UIColours.YELLOW, 20);
+    Text bgMusicBody = TextGenerator
+        .generate("     Patrick de Arteaga - Chiptronical\n\n", UIColours.WHITE, 20);
+
+    Text soundFXHeader = TextGenerator.generate("SoundFX:", UIColours.YELLOW, 20);
+    Text soundFXBody = TextGenerator.generate("           SubspaceAudio \n\n", UIColours.WHITE, 20);
     Text developersHeader = TextGenerator.generate("Developers:", UIColours.YELLOW, 20);
     Text developersBody = TextGenerator.generate(" \n\nAdam Kona\n\nAlex Banks\n\nJames Weir\n\nLewis Ackroyd\n\nMatty Jones\n\nTim Cheung", UIColours.WHITE, 20);
 
-    TextFlow textFlow = new TextFlow(musicHeader, musicBody, soundFXHeader, soundFXBody, developersHeader, developersBody);
+    TextFlow textFlow = new TextFlow(musicHeader, musicBody, bgMusicHeader, bgMusicBody,
+        soundFXHeader, soundFXBody, developersHeader, developersBody);
     textFlow.setTextAlignment(TextAlignment.CENTER);
 
     Label creditsLbl = new Label(null, textFlow);
