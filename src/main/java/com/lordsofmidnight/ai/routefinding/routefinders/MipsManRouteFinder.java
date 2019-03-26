@@ -64,12 +64,12 @@ public class MipsManRouteFinder implements RouteFinder {
     }
     int[] ghoulCounts = sampleSearch.getDirectionCounts(myLocation, new GhoulCountCondition());
 
-    class PowerPelletCountCondition implements SampleSearch.ConditionalInterface {
+    class PowerUpBoxCountCondition implements SampleSearch.ConditionalInterface {
       @Override
       public boolean condition(Point position) {
         if (pellets.containsKey(position)) {
             Pellet pellet = pellets.get(position);
-            if (pellet.isPowerPellet()) {
+            if (pellet.isPowerUpBox()) {
                 return true;
             }
         }
@@ -77,11 +77,11 @@ public class MipsManRouteFinder implements RouteFinder {
       }
     }
     sampleSearch = new SampleSearch(GHOUL_SEARCH_DEPTH, map);
-    int[] powerPelletCounts = sampleSearch.getDirectionCounts(myLocation, new PowerPelletCountCondition());
+    int[] powerUpBoxCounts = sampleSearch.getDirectionCounts(myLocation, new PowerUpBoxCountCondition());
 
     int[] totals = {1, 1, 1, 1};
     for (int i = 0; i<totals.length; i++) {
-        totals[i] += powerPelletCounts[i]-(ghoulCounts[i]*GHOUL_NEGATIVE_MULTIPLIER);
+        totals[i] += powerUpBoxCounts[i]-(ghoulCounts[i]*GHOUL_NEGATIVE_MULTIPLIER);
     }
 
     return maxDirection(totals);
