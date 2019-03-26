@@ -210,7 +210,7 @@ public class Client extends Application {
       BlockingQueue<Input> inputQueue = new LinkedBlockingQueue<>();
       BlockingQueue<String> outputQueue = new LinkedBlockingQueue<>();
       serverGameplayHandler = server.gameStart(inputQueue, outputQueue);
-      map = resourceLoader.getMap();
+      //map = resourceLoader.getMap();
       int playerCount = server.getPlayerCount();
       System.out.println("PLAYER COUNT IS: " + playerCount);
       this.telemetry = new HostTelemetry(playerCount, inputQueue, outputQueue, this,
@@ -304,7 +304,7 @@ public class Client extends Application {
     updateResolution();
     if (telemetry != null) {
       agents = telemetry.getAgents();
-      map = telemetry.getMap();
+      //map = telemetry.getMap();
       pellets = telemetry.getPellets();
     }
 

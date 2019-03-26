@@ -71,6 +71,7 @@ public class Renderer {
   private Double rendCoord;
   private Point spriteCoord;
   Point deathLocation;
+  final double MAP_BORDER = xResolution * 0.005;
 
   /**
    * @param _gc Graphics context to render the game onto
@@ -156,7 +157,6 @@ public class Renderer {
 
     this.mapTiles = r.getMapTiles();
     this.mapRenderingCorner = getMapRenderingCorner();
-    tileSizeX = r.getMapTiles().get(0).getWidth();
     tileSizeX = r.getMapTiles().get(0).getWidth();
     tileSizeY = r.getMapTiles().get(0).getHeight();
 
@@ -542,7 +542,6 @@ public class Renderer {
    */
   private void renderBackground(Map map) {
     // render backing image
-    final double MAP_BORDER = xResolution * 0.005;
     gc.drawImage(background, 0, 0, xResolution, yResolution);
 
     // Render map base

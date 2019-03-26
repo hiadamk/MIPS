@@ -149,7 +149,6 @@ public class ServerLobby {
 
   private Thread connectionAccepter(){
     Thread thread = new Thread() {
-      Map m = map;
 
       @Override
       public void run() {
@@ -180,7 +179,7 @@ public class ServerLobby {
                 out.println("" + playerID);
                 out.flush();
                 System.out.println("Sent client " + playerID + " their ID...");
-                out.println(Map.serialiseMap(this.m));
+                out.println(Map.serialiseMap(map));
                 out.println("" + MIPID);
                 out.flush();
                 out.println("SUCCESS");
