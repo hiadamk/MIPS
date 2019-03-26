@@ -35,6 +35,9 @@ public class ServerLobby {
   private ArrayList<lobbyLeaverListener> lobbyLeavers = new ArrayList<>();
   private ServerSocket server;
   private boolean hostPresent = true;
+  private MulticastSocket socket;
+  private String message;
+  private byte[] buf;
 
   /**
    * Thread which sends messages to multicast group to make com.lordsofmidnight.server IP known but
@@ -46,12 +49,11 @@ public class ServerLobby {
         public void run() {
           super.run();
           try {
-            MulticastSocket socket = new MulticastSocket();
+            socket = new MulticastSocket();
             InetAddress group = NetworkUtility.GROUP;
 
             while (!isInterrupted()) {
-              byte[] buf;
-              String message = playerCount.get() + "|" + (hostPresent ? 1 : 0);
+              message = playerCount.get() + "|" + (hostPresent ? 1 : 0);
 
               buf = message.getBytes();
               DatagramPacket sending =
@@ -76,7 +78,9 @@ public class ServerLobby {
             }
 
           } catch (InterruptedException e) {
-            return;
+            if (socket != null && (!socket.isClosed())) {
+              socket.close();
+            }
           } catch (IOException e) {
             e.printStackTrace();
           }
