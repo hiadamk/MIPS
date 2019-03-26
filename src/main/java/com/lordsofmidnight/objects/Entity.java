@@ -265,10 +265,6 @@ public class Entity implements Renderable {
     this.location = location;
   }
 
-  public void setLocation(double x, double y) {
-    this.location.setLocation(x, y);
-  }
-
   /**
    * return where center com.lordsofmidnight.gamestate would be if agent moved in certain motion.
    * Uses util.Point to ensure modularity (wraping around map)
