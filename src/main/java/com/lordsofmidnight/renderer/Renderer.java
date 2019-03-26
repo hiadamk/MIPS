@@ -474,6 +474,7 @@ public class Renderer {
     deathLocation = e.getDeathLocation();
     if (deathLocation != null) {
       Point loc = e.getLocation();
+      e.resetDeathLocation();
       Point2D.Double coord =
           getIsoCoord(loc.getX(), loc.getY(), currentSprite.getWidth(), currentSprite.getHeight());
       explosionManager.addExplosion(coord.getX(), coord.getY());

@@ -57,7 +57,7 @@ public class Entity implements Renderable {
 
 
   private StatsTracker statsTracker;
-  private Queue<Point> deathLocation = new ConcurrentLinkedQueue();
+  private Point deathLocation;
 
   /**
    * Constructor
@@ -151,7 +151,7 @@ public class Entity implements Renderable {
     this.dead = dead;
     if (dead) {
       statsTracker.increaseDeaths();
-      deathLocation.add(new Point(location.getX(), location.getY()));
+      deathLocation = new Point(location.getX(), location.getY());
       velocity = 0;
       deathCounter = 0;
     } else {
@@ -165,7 +165,7 @@ public class Entity implements Renderable {
    * @return The location the entity died at
    */
   public Point getDeathLocation() {
-    return deathLocation.poll();
+    return deathLocation;
   }
 
   /**
@@ -638,5 +638,9 @@ public class Entity implements Renderable {
    */
   public void setKilledBy(String name){
     this.killedBy = name;
+  }
+
+  public void resetDeathLocation() {
+    this.deathLocation = null;
   }
 }
