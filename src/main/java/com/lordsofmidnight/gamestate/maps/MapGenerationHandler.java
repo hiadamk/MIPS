@@ -8,30 +8,32 @@ public class MapGenerationHandler {
 
   private BlockingQueue<Map> bigMaps = new LinkedBlockingQueue();
   private BlockingQueue<Map> smallMaps = new LinkedBlockingQueue();
+  private Thread smallMapsThread;
+  private Thread bigMapsThread;
 
   public MapGenerationHandler() {
-    smallMapGenerator.start();
-    bigMapGenerator.start();
+
+//    smallMapGenerator.start();
+//    bigMapGenerator.start();
   }
 
-  Thread smallMapGenerator = new Thread(() -> {
-    while (!Thread.currentThread().isInterrupted()) {
-      if (smallMaps.size() < 20) {
-        smallMaps.add(new Map(MapGenerator.newRandomMap(-1, -1)));
-      } else {
+  Runnable smallMapGenerator =
+      (() -> {
+        while (!Thread.currentThread().isInterrupted()) {
+          if (smallMaps.size() < 20) {
+            smallMaps.add(new Map(MapGenerator.newRandomMap(-1, -1)));
+          } else {
 
-        try {
-          Thread.sleep(8000);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
+            try {
+              Thread.sleep(8000);
+            } catch (InterruptedException e) {
+              System.out.println("Small Map Generator shut down...");
+            }
+          }
         }
-      }
+      });
 
-    }
-
-  });
-
-  Thread bigMapGenerator = new Thread(() -> {
+  Runnable bigMapGenerator = (() -> {
     while (!Thread.currentThread().isInterrupted()) {
       if (bigMaps.size() < 20) {
         bigMaps.add(new Map(MapGenerator.newRandomMap(2, 2)));
@@ -40,7 +42,7 @@ public class MapGenerationHandler {
         try {
           Thread.sleep(5000);
         } catch (InterruptedException e) {
-          e.printStackTrace();
+          System.out.println("Big Map Generator shut down...");
         }
       }
 
@@ -65,22 +67,17 @@ public class MapGenerationHandler {
     return new Map(MapGenerator.generateNewMap(-1, -1));
   }
 
-  public void pause() {
-    try {
-      smallMapGenerator.wait();
-      bigMapGenerator.wait();
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+  public void stop() {
+    smallMapsThread.interrupt();
+    bigMapsThread.interrupt();
   }
 
-  public void resume() {
-    try {
-      smallMapGenerator.notify();
-      bigMapGenerator.notify();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+  public void start() {
+    smallMapsThread = new Thread(smallMapGenerator);
+    bigMapsThread = new Thread(bigMapGenerator);
+    smallMapsThread.start();
+    bigMapsThread.start();
+
   }
 
 

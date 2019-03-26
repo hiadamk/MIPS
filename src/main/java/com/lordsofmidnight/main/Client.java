@@ -169,8 +169,6 @@ public class Client extends Application {
     try {
       clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this,
           Settings.getName());
-      this.telemetry = new DumbTelemetry(clientIn, this, audioController);
-      this.telemetry.setMipID(MIPID);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -219,6 +217,8 @@ public class Client extends Application {
       gameScene.setOnKeyPressed(keyController);
       startGame();
     } else {
+      this.telemetry = new DumbTelemetry(clientIn, this, audioController);
+      this.telemetry.setMipID(MIPID);
       System.out.println("Starting multiplayer for non-host");
       this.primaryStage.setScene(gameScene);
       gameScene.setOnKeyPressed(keyController);
