@@ -15,50 +15,61 @@ import com.lordsofmidnight.utils.enums.Direction;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * Behaves similar to Host Telemetry but relies on input from the server exclusively to know what is
+ * happening with the entities rather than using AI
+ */
 public class DumbTelemetry extends Telemetry {
 
   private BlockingQueue<String> inputs;
   private Queue<Input> clientQueue;
-  // private GameLoop inputProcessor;
 
-  // dumb telemetry is like telemetry but it relies on information from the com.lordsofmidnight.server to set it's
-  // entites
-  // rather than using any AI.
-  // it is the client's telemetry.
   public DumbTelemetry(Queue<String> inputQueue, Client client, AudioController audioController) {
     super(client, audioController);
     inputs = (BlockingQueue<String>) inputQueue;
     initialise();
-    //    startGame();
   }
 
+  /**
+   * Initialises the pellets on the maps and the entities
+   */
   private void initialise() {
     initialiseEntities();
     initialisePellets();
   }
 
-  //populates the map with pellets
+
+  /**
+   * Populates the map with pellets
+   */
   @Override
-   void initialisePellets() {
-      Pellet pellet;
-      pellets = new PointMap<>(map);
-      for (int i = 0; i < map.getMaxX(); i++) {
-        for (int j = 0; j < map.getMaxY(); j++) {
-          Point point = new Point(i + 0.5, j + 0.5);
-          if (!map.isWall(point)) {
-            pellet = new Pellet(point);
-            pellet.updateImages(resourceLoader);
-            pellets.put(new Point(i, j), pellet);
-          }
+  void initialisePellets() {
+    Pellet pellet;
+    pellets = new PointMap<>(map);
+    for (int i = 0; i < map.getMaxX(); i++) {
+      for (int j = 0; j < map.getMaxY(); j++) {
+        Point point = new Point(i + 0.5, j + 0.5);
+        if (!map.isWall(point)) {
+          pellet = new Pellet(point);
+          pellet.updateImages(resourceLoader);
+          pellets.put(new Point(i, j), pellet);
         }
       }
     }
+  }
 
-  // Not needed as the only input received is from com.lordsofmidnight.server and not from client.
+  /**
+   * Not needed as the only input received is from server and not from client.
+   *
+   * @param in Erroneous input
+   */
   public void addInput(Input in) {
     System.err.println("DumbTelemetry receiving inputs");
   }
 
+  /**
+   * Starts the main game loop for the client and processing of inputs.
+   */
   public void startGame() {
     System.out.println("Started dumb telemetry");
     gameTimer = GAME_TIME;
@@ -74,6 +85,9 @@ public class DumbTelemetry extends Telemetry {
     inputProcessor.start();
   }
 
+  /**
+   * Removes each of the inputs in the queue and performs the appropriate action based on the contents.
+   */
   void processInputs() {
     while (!inputs.isEmpty()) {
       System.out.println("Dumb HostTelemetry received: " + inputs.peek());
@@ -89,7 +103,7 @@ public class DumbTelemetry extends Telemetry {
           break;
         case "POW0":
           updateInventory(input.substring(5));
-        break;
+          break;
         case "POW1":
           activatePowerup(input.substring(4));
           break;
@@ -111,16 +125,20 @@ public class DumbTelemetry extends Telemetry {
   }
 
 
-//called when server leaves game and when client quits.
+  /**
+   * Called when the server informs the client that the game needs to end.
+   */
   @Override
   public void stopGame() {
     inputProcessor.close();
 
   }
 
-  // takes a packet string as defined in
-  // NetworkUtility.makeEntitiesPositionPacket(Entity[])
-  // without the starting POSx code
+  /**
+   * Updates the positions each of the entities
+   * @param s Packet containing the positions of each of the entities as defined by
+   * NetworkUtility.makeEntitiesPositionPacket(Entity[])
+   */
   private void setEntityPositions(String s) {
     String[] positions = s.split("\\|");
     int mipID = Integer.parseInt(positions[positions.length - 1]);
@@ -143,19 +161,16 @@ public class DumbTelemetry extends Telemetry {
     }
   }
 
-  // takes a packet string as defined in
-  // NetworkUtility.makeEntityMovementPacket(Input, Point)
-  // without the starting POSx code
+  /**
+   * Updates the client od current movement status of a given entity
+   * @param s String containing packet about where each of the entities are moving.
+   */
   private void setEntityMovement(String s) {
-    System.out.println("Movement to handle: " + s);
     String[] ls = s.split("\\|");
     Input input = Input.fromString(ls[0]);
     int id = input.getClientID();
     double x = Double.valueOf(ls[1]);
     double y = Double.valueOf(ls[2]);
-/*    System.out.println("X: " + x);
-    System.out.println("Y: " + y);
-    System.out.println("ID: " + id); */
     agents[id].setLocation(x, y);
     agents[id].setDirection(input.getMove());
     int MIPID = Integer.parseInt(ls[3]);
@@ -168,9 +183,10 @@ public class DumbTelemetry extends Telemetry {
     }
   }
 
-  // takes a packet string as defined in
-  // NetworkUtility.makeScorePacket(Entity[])
-  // without the starting SCOR| string
+  /**
+   * Sets the scores for each client to maintain consistency
+   * @param scores Packet containing scores of each client
+   */
   private void setScore(String scores) {
     try {
       String[] ls = scores.split("\\|");
@@ -183,6 +199,10 @@ public class DumbTelemetry extends Telemetry {
     }
   }
 
+  /**
+   * Updates the inventories of all clients
+   * @param s Packet containing the inventories of each of the clients
+   */
   private void updateInventory(String s) {
     String[] inventories = s.split("\\|");
     for (String inventory : inventories) {
@@ -204,7 +224,10 @@ public class DumbTelemetry extends Telemetry {
     }
   }
 
-
+  /**
+   * Adds a power up box to the pellets
+   * @param s The packet used to relay the power up information
+   */
   private void setPowerupBox(String s) {
     String[] ls = s.split("\\|");
     double x = Double.valueOf(ls[0]);
@@ -216,9 +239,10 @@ public class DumbTelemetry extends Telemetry {
     pellets.put(point, pellet);
   }
 
-  // takes a packet string as defined in
-  // NetworkUtility.makePowerUPPacket(Input, Point)
-  // without the starting POW1 code
+  /**
+   * Handles activation of a power up for a client
+   * @param s Packet String as defined in NetworkUtility.makePowerUPPacket(Input, Point)
+   */
   private void activatePowerup(String s) {
     String[] ls = s.split("\\|");
 
@@ -232,10 +256,9 @@ public class DumbTelemetry extends Telemetry {
     powerup.use(agents[id], activePowerUps, pellets, agents);
   }
 
-  public void startAI() {
-    // haha trick this does nothing.
-    // shouldn't actually be called from client if this object exists
-    System.err.println("DumbTelemetry startAI");
-  }
+  /**
+   * Redundant method for a dumb telemeter as it doesn't control the AI
+   */
+  public void startAI() { }
 
 }

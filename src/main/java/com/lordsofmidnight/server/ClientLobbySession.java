@@ -69,7 +69,6 @@ public class ClientLobbySession {
               byte[] buf = new byte[256];
               DatagramPacket packet = new DatagramPacket(buf, buf.length);
               socket.receive(packet);
-              System.out.printf("Server Address: " + packet.getAddress());
               serverIP = packet.getAddress();
               socket.close();
 
@@ -80,9 +79,7 @@ public class ClientLobbySession {
 
               String str = NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX;
               out.println(str);
-              System.out.println("SENT CONNECT TO SERVER");
               out.println(clientName);
-              System.out.println("SENT CLIENT NAME: " + clientName);
               out.flush();
 
               String r = in.readLine();

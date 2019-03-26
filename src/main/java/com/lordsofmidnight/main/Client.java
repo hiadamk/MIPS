@@ -256,13 +256,12 @@ public class Client extends Application {
 
     canvas.setWidth(Settings.getxResolution());
     canvas.setHeight(Settings.getyResolution());
-
-    //old method to change resolution
-    //com.lordsofmidnight.renderer.setResolution(xRes, yRes, this.renderingMode);
-
     renderer.refreshSettings();
   }
 
+  /**
+   *
+   */
   public void updateTheme(String themeName) {
     Settings.setTheme(themeName);
     refresh();
