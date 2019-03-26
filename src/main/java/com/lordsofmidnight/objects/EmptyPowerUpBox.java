@@ -1,7 +1,7 @@
 package com.lordsofmidnight.objects;
 
 import com.lordsofmidnight.gamestate.points.Point;
-import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.renderer.ResourceLoader;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 

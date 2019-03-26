@@ -3,6 +3,7 @@ package com.lordsofmidnight.utils;
 import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.objects.Entity;
+import com.lordsofmidnight.renderer.ResourceLoader;
 import com.lordsofmidnight.utils.enums.Direction;
 import java.util.ArrayList;
 import java.util.Arrays;

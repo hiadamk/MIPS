@@ -35,6 +35,9 @@ public class ServerLobby {
   private ArrayList<lobbyLeaverListener> lobbyLeavers = new ArrayList<>();
   private ServerSocket server;
   private boolean hostPresent = true;
+  private MulticastSocket socket;
+  private String message;
+  private byte[] buf;
 
   /**
    * Thread which sends messages to multicast group to make com.lordsofmidnight.server IP known but
@@ -46,12 +49,11 @@ public class ServerLobby {
         public void run() {
           super.run();
           try {
-            MulticastSocket socket = new MulticastSocket();
+            socket = new MulticastSocket();
             InetAddress group = NetworkUtility.GROUP;
 
             while (!isInterrupted()) {
-              byte[] buf;
-              String message = playerCount.get() + "|" + (hostPresent ? 1 : 0);
+              message = playerCount.get() + "|" + (hostPresent ? 1 : 0);
 
               buf = message.getBytes();
               DatagramPacket sending =
@@ -76,7 +78,9 @@ public class ServerLobby {
             }
 
           } catch (InterruptedException e) {
-            return;
+            if (socket != null && (!socket.isClosed())) {
+              socket.close();
+            }
           } catch (IOException e) {
             e.printStackTrace();
           }
@@ -114,7 +118,7 @@ public class ServerLobby {
   /**
    * Starts the game for all clients by sending player names and start game flag.
    *
-   * @return The com.lordsofmidnight.server gameplay handler which will be used by the client.
+   * @return The server gameplay handler which will be used by the client.
    */
   public ServerGameplayHandler gameStart(Queue<Input> inputQueue, Queue<String> outputQueue) {
     this.outputQueue = outputQueue;
@@ -149,7 +153,6 @@ public class ServerLobby {
 
   private Thread connectionAccepter(){
     Thread thread = new Thread() {
-      Map m = map;
 
       @Override
       public void run() {
@@ -180,7 +183,7 @@ public class ServerLobby {
                 out.println("" + playerID);
                 out.flush();
                 System.out.println("Sent client " + playerID + " their ID...");
-                out.println(Map.serialiseMap(this.m));
+                out.println(Map.serialiseMap(map));
                 out.println("" + MIPID);
                 out.flush();
                 out.println("SUCCESS");

@@ -1,8 +1,6 @@
 package com.lordsofmidnight.renderer;
 
-import com.lordsofmidnight.utils.ResourceLoader;
 import com.lordsofmidnight.utils.enums.Awards;
-import com.lordsofmidnight.utils.enums.Direction;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.io.File;
@@ -20,7 +18,6 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import javax.imageio.ImageIO;
 
 public class EndGameScreen {
 

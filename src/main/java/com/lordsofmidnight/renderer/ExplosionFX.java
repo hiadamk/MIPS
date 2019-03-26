@@ -3,7 +3,6 @@ package com.lordsofmidnight.renderer;
 import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import com.lordsofmidnight.utils.ResourceLoader;
 
 public class ExplosionFX {
 

@@ -130,7 +130,7 @@ public class AudioController {
   }
 
   public void gameIntro() {
-    playSound(Sounds.GAMEINTRO);
+    playMusic(Sounds.GAMEINTRO);
     new Thread() {
       @Override
       public void run() {

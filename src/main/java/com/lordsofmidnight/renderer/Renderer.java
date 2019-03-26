@@ -10,7 +10,6 @@ import com.lordsofmidnight.objects.Pellet;
 import com.lordsofmidnight.objects.PowerUpBox;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
 import com.lordsofmidnight.utils.GameLoop;
-import com.lordsofmidnight.utils.ResourceLoader;
 import com.lordsofmidnight.utils.Settings;
 import com.lordsofmidnight.utils.UpDownIterator;
 import com.lordsofmidnight.utils.enums.MapElement;
@@ -63,9 +62,16 @@ public class Renderer {
   private ExplosionFX explosionManager;
   private int currentAnimationFrame = 0;
 
-  private ArrayList<Point2D.Double> traversalOrder = new ArrayList<>();
-  private HashMap<String,Point> mapPoints = new HashMap<>();
+  private ArrayList<Point> traversalOrder = new ArrayList<>();
   private boolean refreshMap;
+
+  private Pellet currentPellet;
+  private int entityCounter = 0;
+  private Image currentSprite = null;
+  private Double rendCoord;
+  private Point spriteCoord;
+  Point deathLocation;
+  final double MAP_BORDER = xResolution * 0.005;
 
   /**
    * @param _gc Graphics context to render the game onto
@@ -145,18 +151,12 @@ public class Renderer {
       for (int j = 0; j < count; j++) {
         int x = Math.min(ROW, line) - j - 1;
         int y = start_col + j;
-        this.traversalOrder.add(new Double(x, y));
+        this.traversalOrder.add(new Point(x, y));
       }
-    }
-
-    this.mapPoints = new HashMap<>();
-    for(Double coord: traversalOrder){
-      this.mapPoints.put(coord.toString(),new Point(coord.getX(),coord.getY()));
     }
 
     this.mapTiles = r.getMapTiles();
     this.mapRenderingCorner = getMapRenderingCorner();
-    tileSizeX = r.getMapTiles().get(0).getWidth();
     tileSizeX = r.getMapTiles().get(0).getWidth();
     tileSizeY = r.getMapTiles().get(0).getHeight();
 
@@ -200,19 +200,16 @@ public class Renderer {
     // sort entities to get rendering order
     entities.sort(Comparator.comparingDouble(o -> o.getLocation().getX() + o.getLocation().getY()));
 
-    int entityCounter = 0;
-    Image currentSprite = null;
-    Double rendCoord;
-    Point spriteCoord = new Point(java.lang.Double.MAX_VALUE, java.lang.Double.MAX_VALUE);
-
+    spriteCoord = new Point(java.lang.Double.MAX_VALUE, java.lang.Double.MAX_VALUE);
+    entityCounter = 0;
     int x;
     int y;
 
-    HashMap<Entity, HashMap<PowerUps, PowerUp>> entityPowerUps =
-        new HashMap<>();
+    HashMap<Entity, HashMap<PowerUps, PowerUp>> entityPowerUps = new HashMap<>();
     for (Entity e : entityArr) {
       entityPowerUps.put(e, new HashMap<>());
     }
+    // new Point(1, 1, Integer.MAX_VALUE, Integer.MAX_VALUE, false);
     if (activePowerUps != null) {
       for (PowerUp p : activePowerUps.values()) {
         entityPowerUps.get(p.getUser()).put(p.getType(), p);
@@ -221,7 +218,7 @@ public class Renderer {
 
     // Render floor first (floors will never be on a higher layer than anything apart form the
     // background
-    for (Double coord : traversalOrder) {
+    for (Point coord : traversalOrder) {
       x = (int) coord.getX();
       y = (int) coord.getY();
 
@@ -236,38 +233,28 @@ public class Renderer {
       }
     }
 
-    // TODO refactor the way the translucent pellet is fetched
-    Image translucentPellet = r.getTranslucentPellet().get(0);
-    // TODO refactor the way the translucent pellet is fetched
-    Image pellet = r.getPellet().get(0);
-    // TODO refactor the way the translucent pellet is fetched
-    Image powerup = r.getPowerBox().get(0);
-
-    ArrayList<Image> mines = r.getMine();
-
     // Loop through grid in diagonal traversal to render walls and entities by depth
-    for (Double coord : traversalOrder) {
+    for (Point coord : traversalOrder) {
 
       // render consumable com.lordsofmidnight.objects on top
-      Pellet currentPellet = pellets.get(mapPoints.get(coord.toString()));
+      currentPellet = pellets.get(coord);
       if (currentPellet != null && currentPellet.isActive()) {
 
         // TODO use better way of finding if client is mipsman
-        Entity client = getClientEntity(entities);
         boolean isHidden = false;
-        if (currentPellet.canUse(client)) {
+        if (currentPellet.canUse(entityArr[this.clientID])) {
           if (currentPellet instanceof PowerUpBox || currentPellet instanceof EmptyPowerUpBox) {
-            currentSprite = powerup;
+            currentSprite = r.getPowerBox().get(0);
           } else if (currentPellet instanceof MinePellet) {
-            currentSprite = mines.get(currentAnimationFrame % mines.size());
+            currentSprite = r.getMine().get(currentAnimationFrame % r.getMine().size());
             if (((MinePellet) currentPellet).isHidden()) {
               isHidden = true;
             }
           } else {
-            currentSprite = pellet;
+            currentSprite = r.getPellet().get(0);
           }
         } else {
-          currentSprite = translucentPellet;
+          currentSprite = r.getTranslucentPellet().get(0);
         }
 
         // render pellet using either translucent or opaque sprite
@@ -459,10 +446,7 @@ public class Renderer {
    * @param e entitiy to render
    * @param timeElapsed time since last frame to decide whether to move to next animation frame
    */
-  private void renderEntity(
-      Entity e,
-      HashMap<PowerUps, PowerUp> selfPowerUps,
-      long timeElapsed) {
+  private void renderEntity(Entity e, HashMap<PowerUps, PowerUp> selfPowerUps, long timeElapsed) {
     // choose correct Direction
 
     ArrayList<Image> currentSprites = null;
@@ -485,10 +469,9 @@ public class Renderer {
     Image currentSprite = currentSprites.get(currentAnimationFrame % currentSprites.size());
     double x = e.getLocation().getX() - 0.5;
     double y = e.getLocation().getY() - 0.5;
-    Point2D.Double rendCoord =
-        getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
+    rendCoord = getIsoCoord(x, y, currentSprite.getHeight(), currentSprite.getWidth());
 
-    Point deathLocation = e.getDeathLocation();
+    deathLocation = e.getDeathLocation();
     if (deathLocation != null) {
       Point loc = e.getLocation();
       Point2D.Double coord =
@@ -528,9 +511,7 @@ public class Renderer {
   }
 
   private void renderPowerUpEffects(
-      Entity e,
-      HashMap<PowerUps, PowerUp> selfPowerUps,
-      Double rendCoord) {
+      Entity e, HashMap<PowerUps, PowerUp> selfPowerUps, Double rendCoord) {
     if (e.isSpeeding()) {
       PowerUp speed = selfPowerUps.get(PowerUps.SPEED);
       ArrayList<Image> sprites = r.getPowerUps().get(PowerUps.SPEED);
@@ -544,20 +525,13 @@ public class Renderer {
       gc.drawImage(
           r.getPowerUps()
               .get(PowerUps.INVINCIBLE)
-              .get(
-                  invincible.getCurrentFrame()
-                      % r.getPowerUps()
-                      .get(PowerUps.INVINCIBLE)
-                          .size()),
+              .get(invincible.getCurrentFrame() % r.getPowerUps().get(PowerUps.INVINCIBLE).size()),
           rendCoord.getX(),
           rendCoord.getY());
     }
     // is the entity stunned?
     if (e.isStunned()) {
-      gc.drawImage(
-          r.getPowerUps().get(PowerUps.WEB).get(0),
-          rendCoord.getX(),
-          rendCoord.getY());
+      gc.drawImage(r.getPowerUps().get(PowerUps.WEB).get(0), rendCoord.getX(), rendCoord.getY());
     }
   }
 
@@ -568,7 +542,6 @@ public class Renderer {
    */
   private void renderBackground(Map map) {
     // render backing image
-    final double MAP_BORDER = xResolution * 0.005;
     gc.drawImage(background, 0, 0, xResolution, yResolution);
 
     // Render map base

@@ -2,8 +2,6 @@ package com.lordsofmidnight.renderer;
 
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.objects.Entity;
-import com.lordsofmidnight.utils.Methods;
-import com.lordsofmidnight.utils.ResourceLoader;
 import com.lordsofmidnight.utils.Settings;
 import javafx.application.Application;
 import javafx.scene.Group;

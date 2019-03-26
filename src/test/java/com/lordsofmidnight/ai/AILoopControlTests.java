@@ -14,7 +14,7 @@ import org.junit.jupiter.api.function.Executable;
 import com.lordsofmidnight.utils.Input;
 import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.gamestate.points.Point;
-import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.renderer.ResourceLoader;
 
 /**
  * Unit tests for the {@link AILoopControl} class.

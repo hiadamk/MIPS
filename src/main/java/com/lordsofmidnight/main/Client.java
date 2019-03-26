@@ -18,7 +18,7 @@ import com.lordsofmidnight.ui.GameSceneController;
 import com.lordsofmidnight.ui.MenuController;
 import com.lordsofmidnight.utils.Input;
 import com.lordsofmidnight.utils.Methods;
-import com.lordsofmidnight.utils.ResourceLoader;
+import com.lordsofmidnight.renderer.ResourceLoader;
 import com.lordsofmidnight.utils.Settings;
 import com.lordsofmidnight.utils.enums.Direction;
 import java.io.IOException;
@@ -151,7 +151,8 @@ public class Client extends Application {
     try {
       this.map = resourceLoader.getMap();
       this.server = new ServerLobby(map);
-      clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this, name);
+      clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this,
+          Settings.getName());
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -166,7 +167,8 @@ public class Client extends Application {
     BlockingQueue<String> clientIn = new LinkedBlockingQueue<>();
     keypressQueue = new LinkedBlockingQueue<>();
     try {
-      clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this, name);
+      clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this,
+          Settings.getName());
       this.telemetry = new DumbTelemetry(clientIn, this, audioController);
       this.telemetry.setMipID(MIPID);
     } catch (IOException e) {
@@ -208,7 +210,7 @@ public class Client extends Application {
       BlockingQueue<Input> inputQueue = new LinkedBlockingQueue<>();
       BlockingQueue<String> outputQueue = new LinkedBlockingQueue<>();
       serverGameplayHandler = server.gameStart(inputQueue, outputQueue);
-      map = resourceLoader.getMap();
+      //map = resourceLoader.getMap();
       int playerCount = server.getPlayerCount();
       System.out.println("PLAYER COUNT IS: " + playerCount);
       this.telemetry = new HostTelemetry(playerCount, inputQueue, outputQueue, this,
@@ -277,13 +279,13 @@ public class Client extends Application {
    * @param n the name of the client
    */
   public void setName(String n) {
-    //not sure why this updateResolution is here
-    //updateResolution(this.screenRes);
+
     if (n.matches(".*[a-zA-Z]+.*")) {
       this.name = n;
     } else {
       this.name = "Joe Bloggs";
     }
+    Settings.setName(n);
   }
 
   /**
@@ -302,12 +304,12 @@ public class Client extends Application {
     updateResolution();
     if (telemetry != null) {
       agents = telemetry.getAgents();
-      map = telemetry.getMap();
+      //map = telemetry.getMap();
       pellets = telemetry.getPellets();
     }
 
     if(singlePlayer){
-      agents[0].setName("You");
+      agents[0].setName(Settings.getName());
     }else{
       for (int i = 0; i < agents.length; i++) {
         if (!(playerNames[i] == null) && !playerNames[i].equals("null")) {
@@ -360,6 +362,10 @@ public class Client extends Application {
       }
       clientLobbySession.leaveLobby();
     }
+  }
+
+  public void noGameFound() {
+    menuController.gameNotFound();
   }
 
   public void finishGame(){

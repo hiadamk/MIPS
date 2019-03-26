@@ -3,7 +3,6 @@ package com.lordsofmidnight.renderer;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.objects.powerUps.Blueshell;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
-import com.lordsofmidnight.utils.ResourceLoader;
 import com.lordsofmidnight.utils.enums.PowerUps;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
