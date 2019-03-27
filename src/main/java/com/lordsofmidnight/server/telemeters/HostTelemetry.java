@@ -100,6 +100,8 @@ public class HostTelemetry extends Telemetry {
    */
   public void startGame() {
     updateClients(agents); // set starting positions
+
+    initialisePellets();
     startAI();
     audioController.gameIntro();
     gameTimer = GAME_TIME;
