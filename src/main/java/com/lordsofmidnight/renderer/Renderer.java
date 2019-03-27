@@ -65,13 +65,17 @@ public class Renderer {
   private ArrayList<Point> traversalOrder = new ArrayList<>();
   private boolean refreshMap;
 
+  // multiple use variables to render the game
+  // (uses less memory than re-creating these objects every time)
   private Pellet currentPellet;
   private int entityCounter = 0;
   private Image currentSprite = null;
-  private Double rendCoord = new Point2D.Double(0,0);
+  private ArrayList<Image> currentSprites = null;
+  private Double rendCoord = new Point2D.Double(0, 0);
   private Point spriteCoord;
   Point deathLocation;
   final double MAP_BORDER = xResolution * 0.005;
+  boolean isHidden;
 
   /**
    * @param _gc Graphics context to render the game onto
@@ -113,7 +117,7 @@ public class Renderer {
       refreshMap = false;
     }
 
-    this.clientEntity = getClientEntity(new ArrayList<>(Arrays.asList(entityArr)));
+    this.clientEntity = entityArr[this.clientID];
 
     long timeElapsed = now - lastFrame;
     // clear screen
@@ -121,8 +125,7 @@ public class Renderer {
     renderBackground(map);
     renderGameOnly(map, entityArr, now, pellets, activePowerUps);
     hudRender.renderHUD(entityArr, gameTime);
-    hudRender.renderInventory(
-        getClientEntity(new ArrayList<>(Arrays.asList(entityArr))), timeElapsed);
+    hudRender.renderInventory(this.clientEntity, timeElapsed);
     // showFPS(timeElapsed);
 
     lastFrame = now;
@@ -134,7 +137,11 @@ public class Renderer {
     }
   }
 
-  /** initialises map array, map traversal order, map tiles and fonts */
+  /**
+   * initialises map array, map traversal order, map tiles and fonts
+   *
+   * @param map the map to set the traversal for
+   */
   public void initMapTraversal(Map map) {
 
     final int ROW = map.getMaxX();
@@ -147,7 +154,6 @@ public class Renderer {
 
       int count = Math.min(line, Math.min(COL - start_col, ROW));
 
-      // Print elements of this line
       for (int j = 0; j < count; j++) {
         int x = Math.min(ROW, line) - j - 1;
         int y = start_col + j;
@@ -177,8 +183,8 @@ public class Renderer {
   }
 
   /**
-   * @param colour sets Graphics context fill colour using an intRGB (gc.setFillColour only allows
-   *     setting of colour com.lordsofmidnight.objects)
+   * @param colour intRGB colour
+   * @return colour java.scene.Paint Color object representing the intRGB colour
    */
   public static Color intRGBtoColour(int colour) {
     return new Color(
@@ -188,6 +194,13 @@ public class Renderer {
         1);
   }
 
+  /**
+   * @param map Game Map
+   * @param entityArr Entities in the game
+   * @param now current time (nanoseconds)
+   * @param pellets pellets, powerupboxs, mines and traps on the map
+   * @param activePowerUps powerups in use
+   */
   public void renderGameOnly(
       Map map,
       Entity[] entityArr,
@@ -197,7 +210,8 @@ public class Renderer {
 
     int[][] rawMap = map.raw();
     ArrayList<Entity> entities = new ArrayList<>(Arrays.asList(entityArr));
-    // sort entities to get rendering order
+
+    // sort entities to get depth rendering order
     entities.sort(Comparator.comparingDouble(o -> o.getLocation().getX() + o.getLocation().getY()));
 
     spriteCoord = new Point(java.lang.Double.MAX_VALUE, java.lang.Double.MAX_VALUE);
@@ -205,11 +219,13 @@ public class Renderer {
     int x;
     int y;
 
+    // hashmap linking entities to powerups
     HashMap<Entity, HashMap<PowerUps, PowerUp>> entityPowerUps = new HashMap<>();
     for (Entity e : entityArr) {
       entityPowerUps.put(e, new HashMap<>());
     }
-    // new Point(1, 1, Integer.MAX_VALUE, Integer.MAX_VALUE, false);
+
+    // add powerups to entity
     if (activePowerUps != null) {
       for (PowerUp p : activePowerUps.values()) {
         entityPowerUps.get(p.getUser()).put(p.getType(), p);
@@ -236,18 +252,22 @@ public class Renderer {
     // Loop through grid in diagonal traversal to render walls and entities by depth
     for (Point coord : traversalOrder) {
 
-      // render consumable com.lordsofmidnight.objects on top
       currentPellet = pellets.get(coord);
       if (currentPellet != null && currentPellet.isActive()) {
 
-        // TODO use better way of finding if client is mipsman
-        boolean isHidden = false;
+        isHidden = false;
+
+        // check whether the client should be able to see the pellet
         if (currentPellet.canUse(entityArr[this.clientID])) {
+          // is the current pellet a  a fakebox or a powerupbox?
           if (currentPellet instanceof PowerUpBox || currentPellet instanceof EmptyPowerUpBox) {
             currentSprite = r.getPowerBox().get(0);
-          } else if (currentPellet instanceof MinePellet) {
+          }
+          // is the current pellet a mine
+          else if (currentPellet instanceof MinePellet) {
             currentSprite = r.getMine().get(currentAnimationFrame % r.getMine().size());
             if (((MinePellet) currentPellet).isHidden()) {
+              // hide the mine
               isHidden = true;
             }
           } else {
@@ -260,7 +280,7 @@ public class Renderer {
         // render pellet using either translucent or opaque sprite
         double x_ = currentPellet.getLocation().getX() - 0.5;
         double y_ = currentPellet.getLocation().getY() - 0.5;
-        setIsoCoord(rendCoord,x_, y_, currentSprite.getHeight(), currentSprite.getWidth());
+        setIsoCoord(rendCoord, x_, y_, currentSprite.getHeight(), currentSprite.getWidth());
         if (!isHidden) {
           gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY());
         }
@@ -270,7 +290,7 @@ public class Renderer {
       y = (int) coord.getY();
 
       currentSprite = mapTiles.get(rawMap[x][y]);
-      setIsoCoord(rendCoord,x, y, currentSprite.getHeight(), currentSprite.getWidth());
+      setIsoCoord(rendCoord, x, y, currentSprite.getHeight(), currentSprite.getWidth());
       if (MapElement.FLOOR.toInt() == rawMap[x][y]) {
         continue;
       }
@@ -287,10 +307,13 @@ public class Renderer {
           && ((x + y) >= ((int) spriteCoord.getX() + (int) spriteCoord.getY()))
           && spriteCoord.getX() > x) {
 
+        // is it a collision animation call?
         if (now == 0) {
           renderEntity(entities.get(entityCounter), null, 0);
           entityCounter++;
-        } else {
+        }
+        // normal render call
+        else {
           Entity entityToRender = entities.get(entityCounter);
           renderEntity(entityToRender, entityPowerUps.get(entityToRender), now - lastFrame);
           entityCounter++;
@@ -302,23 +325,15 @@ public class Renderer {
         }
       }
     }
+
+    // render explosions and projectiles if it isn't a collision animation call
     if (now != 0) {
       explosionManager.render(now - lastFrame);
       projectileManager.render(now - lastFrame, activePowerUps);
     }
   }
 
-  private Entity getClientEntity(ArrayList<Entity> entities) {
-    // TODO refactor the way the render knows the client is MIPSman
-    for (Entity e : entities) {
-      if (e.getClientId() == clientID) {
-        return e;
-      }
-    }
-    return null;
-  }
-
-  /** @param timeElapsed current time in nanoseconds */
+  /** @param timeElapsed time since last call */
   private void showFPS(long timeElapsed) {
 
     gc.setTextAlign(TextAlignment.CENTER);
@@ -335,7 +350,8 @@ public class Renderer {
   }
 
   /**
-   * allows com.lordsofmidnight.renderer to show a marker on who is the client's entity
+   * allows renderer to show a marker on who is the client's entity and client specific rendering
+   * effects (death screen, etc)
    *
    * @param _id the ID of the entity which the client controls
    */
@@ -343,6 +359,13 @@ public class Renderer {
     this.clientID = _id;
   }
 
+  /**
+   * @param newMipsMan ghoul which caught mipsman
+   * @param entities entities in the game
+   * @param map Game map
+   * @param renderingLoop loop to render Game (used to pause current rendering)
+   * @param inputProcessor loop to process inputs (used to pause input processing)
+   */
   public void renderCollisionAnimation(
       Entity newMipsMan,
       Entity[] entities,
@@ -358,7 +381,7 @@ public class Renderer {
     }
     UpDownIterator<java.lang.Double> backgroundOpacity = new UpDownIterator<>(opacity);
 
-    Image currentSprite =
+    currentSprite =
         r.getPlayableGhoul(newMipsMan.getClientId()).get(newMipsMan.getFacing().toInt()).get(0);
     final double renderAnimationTime = 0.75 * Math.pow(10, 9);
     double startTime = System.nanoTime();
@@ -387,6 +410,14 @@ public class Renderer {
     }.start();
   }
 
+  /**
+   * @param newMipsMan ghoul which capture mipsman
+   * @param entities entities in the game
+   * @param map Game map
+   * @param sizeMultiplier size of ghoul to render
+   * @param backgroundOpacity transparency of screen
+   * @param currentSprite image of ghoul that captured mipsman
+   */
   private void renderCollision(
       Entity newMipsMan,
       Entity[] entities,
@@ -403,12 +434,14 @@ public class Renderer {
 
     double x = newMipsMan.getLocation().getX() - 0.5;
     double y = newMipsMan.getLocation().getY() - 0.5;
-        setIsoCoord(rendCoord,
-            x,
-            y,
-            currentSprite.getHeight() * sizeMultiplier,
-            currentSprite.getWidth() * sizeMultiplier);
-
+    setIsoCoord(
+        rendCoord,
+        x,
+        y,
+        currentSprite.getHeight() * sizeMultiplier,
+        currentSprite.getWidth() * sizeMultiplier);
+    currentSprite =
+        r.getPlayableGhoul(newMipsMan.getClientId()).get(newMipsMan.getFacing().toInt()).get(0);
     gc.drawImage(
         currentSprite,
         rendCoord.getX(),
@@ -429,6 +462,7 @@ public class Renderer {
    * @param x cartesian x coordinate
    * @param y cartesian Y coordinate
    * @param spriteHeight vertical offset
+   * @param spriteWidth horizontal offset
    */
   public Point2D.Double getIsoCoord(double x, double y, double spriteHeight, double spriteWidth) {
     double isoX =
@@ -442,6 +476,13 @@ public class Renderer {
     return new Point2D.Double(isoX, isoY);
   }
 
+  /**
+   * @param rendCoord coordinate to modify
+   * @param x cartesian x coordinate
+   * @param y cartesian Y coordinate
+   * @param spriteHeight vertical offset
+   * @param spriteWidth horizontal offset
+   */
   public void setIsoCoord(
       Point2D.Double rendCoord, double x, double y, double spriteHeight, double spriteWidth) {
 
@@ -459,15 +500,15 @@ public class Renderer {
    * @param timeElapsed time since last frame to decide whether to move to next animation frame
    */
   private void renderEntity(Entity e, HashMap<PowerUps, PowerUp> selfPowerUps, long timeElapsed) {
-    // choose correct Direction
 
-    ArrayList<Image> currentSprites = null;
+    // get sprite based on whether they are mipsman or ghoul
     if (e.isMipsman()) {
       currentSprites = r.getPlayableMip(e.getClientId()).get(e.getFacing().toInt());
     } else {
       currentSprites = r.getPlayableGhoul(e.getClientId()).get(e.getFacing().toInt());
     }
 
+    // advance frame if necessary
     if (secondInNanoseconds / e.getAnimationSpeed() < e.getTimeSinceLastFrame()
         && timeElapsed > 0) {
       e.setTimeSinceLastFrame(0);
@@ -478,20 +519,26 @@ public class Renderer {
     } else {
       e.setTimeSinceLastFrame(e.getTimeSinceLastFrame() + timeElapsed);
     }
-    Image currentSprite = currentSprites.get(currentAnimationFrame % currentSprites.size());
+
+    // get the correct sprite frame
+    currentSprite = currentSprites.get(currentAnimationFrame % currentSprites.size());
+
     double x = e.getLocation().getX() - 0.5;
     double y = e.getLocation().getY() - 0.5;
-     setIsoCoord(rendCoord,x, y, currentSprite.getHeight(), currentSprite.getWidth());
+    // get coordinate to render entity
+    setIsoCoord(rendCoord, x, y, currentSprite.getHeight(), currentSprite.getWidth());
 
+    // add explosion if entity is dead
     deathLocation = e.getDeathLocation();
     if (deathLocation != null) {
       Point loc = e.getLocation();
       e.resetDeathLocation();
-      Point2D.Double coord =
-          getIsoCoord(loc.getX(), loc.getY(), currentSprite.getWidth(), currentSprite.getHeight());
-      explosionManager.addExplosion(coord.getX(), coord.getY());
+      setIsoCoord(
+          rendCoord, loc.getX(), loc.getY(), currentSprite.getWidth(), currentSprite.getHeight());
+      explosionManager.addExplosion(rendCoord.getX(), rendCoord.getY());
     }
 
+    // show flashing respawn animation
     if (e.isDead() && e.getDeathCounter() > e.getDeathTime() * 0.5) {
       if (secondInNanoseconds / e.getAnimationSpeed() < e.getTimeSinceLastFrame()
           && timeElapsed > 0) {
@@ -502,6 +549,8 @@ public class Renderer {
       }
       return;
     }
+
+    // don't render powerup effects if dead
     if (e.isDead()) {
       return;
     }
@@ -516,13 +565,23 @@ public class Renderer {
       return;
     }
 
-    Image marker = (e.isMipsman()) ? r.getMipMarker() : r.getMClientMarker();
-    Point2D.Double coord =
-        getIsoCoord(x, y, marker.getHeight() + currentSprite.getHeight(), marker.getWidth());
+    // render the marker of Mipsman/Client if neccessary
+    currentSprite = (e.isMipsman()) ? r.getMipMarker() : r.getMClientMarker();
+    setIsoCoord(
+        rendCoord,
+        x,
+        y,
+        currentSprite.getHeight() + currentSprite.getHeight(),
+        currentSprite.getWidth());
 
-    gc.drawImage(marker, coord.getX(), coord.getY());
+    gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY()-currentSprite.getHeight()*2);
   }
 
+  /**
+   * @param e Entity which has the powerup
+   * @param selfPowerUps Powerups that affects the entity
+   * @param rendCoord where to render the powerups
+   */
   private void renderPowerUpEffects(
       Entity e, HashMap<PowerUps, PowerUp> selfPowerUps, Double rendCoord) {
     if (e.isSpeeding()) {
@@ -558,22 +617,22 @@ public class Renderer {
     gc.drawImage(background, 0, 0, xResolution, yResolution);
 
     // Render map base
-    Point2D.Double tmpCoord = getIsoCoord(-1, -1, tileSizeY, tileSizeX);
+    setIsoCoord(rendCoord, -1, -1, tileSizeY, tileSizeX);
     Point2D.Double topLeft =
-        new Double(tmpCoord.getX() + 0.5 * tileSizeX, tmpCoord.getY() - 0.5 * MAP_BORDER);
+        new Double(rendCoord.getX() + 0.5 * tileSizeX, rendCoord.getY() - 0.5 * MAP_BORDER);
 
-    tmpCoord = getIsoCoord(map.getMaxX(), -1, tileSizeY, tileSizeX);
+    setIsoCoord(rendCoord, map.getMaxX(), -1, tileSizeY, tileSizeX);
     Point2D.Double topRight =
-        new Double(tmpCoord.getX() + MAP_BORDER + tileSizeX, tmpCoord.getY() + 0.5 * tileSizeY);
+        new Double(rendCoord.getX() + MAP_BORDER + tileSizeX, rendCoord.getY() + 0.5 * tileSizeY);
 
-    tmpCoord = getIsoCoord(-1, map.getMaxY(), tileSizeY, tileSizeX);
+    setIsoCoord(rendCoord, -1, map.getMaxY(), tileSizeY, tileSizeX);
     Point2D.Double bottomLeft =
-        new Double(tmpCoord.getX() - 0.5 * MAP_BORDER, tmpCoord.getY() + 0.5 * tileSizeY);
+        new Double(rendCoord.getX() - 0.5 * MAP_BORDER, rendCoord.getY() + 0.5 * tileSizeY);
 
-    tmpCoord = getIsoCoord(map.getMaxX(), map.getMaxY(), tileSizeY, tileSizeX);
+    setIsoCoord(rendCoord, map.getMaxX(), map.getMaxY(), tileSizeY, tileSizeX);
     Point2D.Double bottomRight =
         new Double(
-            tmpCoord.getX() + 0.5 * tileSizeX, tmpCoord.getY() + 0.5 * MAP_BORDER + tileSizeY);
+            rendCoord.getX() + 0.5 * tileSizeX, rendCoord.getY() + 0.5 * MAP_BORDER + tileSizeY);
 
     // get first colour from palette (lightest tone)
     gc.setFill(intRGBtoColour(palette.getRGB(0, 0)));
@@ -628,58 +687,6 @@ public class Renderer {
         4);
   }
 
-  /** @param entities playable entities to get their scores */
-  private void renderHUD(Entity[] entities) {
-    gc.setFill(Color.WHITE);
-    final double paddingRatio = 0.1;
-    final double offset = paddingRatio * yResolution;
-    double nameScoreGap = yResolution * paddingRatio;
-
-    // calculate corner coordinate to render other players scores from
-    Point2D.Double topLeft = new Double(offset, offset);
-    Point2D.Double topRight = new Double(xResolution - offset, offset);
-    Point2D.Double botLeft = new Double(offset, yResolution - offset - nameScoreGap);
-    Point2D.Double botRight = new Double(xResolution - offset, yResolution - offset - nameScoreGap);
-
-    ArrayList<Point2D.Double> scoreCoord =
-        new ArrayList<>(Arrays.asList(topLeft, topRight, botLeft, botRight));
-
-    // calculate number of other players
-    Entity[] otherPlayers = new Entity[entities.length - 1];
-    Entity self = null;
-    int playerCounter = 0;
-    for (Entity e : entities) {
-      if (e.getClientId() != clientID) {
-        otherPlayers[playerCounter] = e;
-        playerCounter++;
-      } else {
-        self = e;
-      }
-    }
-
-    // render own score
-    gc.setTextAlign(TextAlignment.CENTER);
-    gc.setFont(geoLarge);
-    gc.fillText("Score:" + self.getScore(), xResolution / 2, yResolution / 13);
-
-    // render other players scores
-    for (int i = 0; i < otherPlayers.length; i++) {
-      if ((i % 2 == 0)) {
-        gc.setTextAlign(TextAlignment.LEFT);
-      } else {
-        gc.setTextAlign(TextAlignment.RIGHT);
-      }
-      Point2D.Double cornerCoord = scoreCoord.get(i);
-      gc.setFont(geoSmall);
-      gc.fillText(
-          "Score:" + otherPlayers[i].getScore(),
-          cornerCoord.getX(),
-          cornerCoord.getY() + nameScoreGap);
-      gc.setFont(geoLarge);
-      gc.fillText("Player" + otherPlayers[i].getClientId(), cornerCoord.getX(), cornerCoord.getY());
-    }
-  }
-
   /** @return The top right corner coordinate to start rendering game map from */
   private Point2D.Double getMapRenderingCorner() {
 
@@ -690,7 +697,12 @@ public class Renderer {
     return new Point2D.Double((this.xResolution / (double) 2) - mapMidPointX, yResolution / 6);
   }
 
-  /** use to override settings given by the settings class */
+  /**
+   * use to override settings given by the settings class
+   *
+   * @param x new X resolution
+   * @param y new Y resolution
+   */
   public void setResolution(int x, int y) {
     r.refreshSettings(x, y, RenderingMode.SMOOTH_SCALING, Settings.getTheme());
     hudRender.setResolution(x, y);
@@ -706,6 +718,7 @@ public class Renderer {
     this.explosionManager.refreshSettings();
   }
 
+  /** refresh fields of renderer based on changes in Settings class */
   public void refreshSettings() {
     r.refreshSettings();
     hudRender.setResolution(Settings.getxResolution(), Settings.getyResolution());
@@ -719,6 +732,11 @@ public class Renderer {
     this.explosionManager.refreshSettings();
   }
 
+  /**
+   * set to true to reset map traversal
+   *
+   * @param b whether map should be refreshed
+   */
   public void setRefreshMap(boolean b) {
     this.refreshMap = b;
   }

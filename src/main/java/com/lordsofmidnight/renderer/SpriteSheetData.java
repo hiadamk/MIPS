@@ -41,10 +41,19 @@ public class SpriteSheetData {
     put(SpriteDimensions.POWERUP_ROCKET_HEIGHT.getIdentifier(),30);
   }};
 
+  /**
+   *
+   * @param s get width/height of a sprite
+   * @return pixel dimension of sprite
+   */
   public static int getDimension(SpriteDimensions s){
     return spriteSheetDimensions.get(s.getIdentifier());
   }
 
+  /**
+   *
+   * @param dimensionsFile file that contains the sprite data
+   */
   public static void updateSpriteDimensions(File dimensionsFile){
     BufferedReader reader;
     Set<String> dimensionKeys = spriteSheetDimensions.keySet();

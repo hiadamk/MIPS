@@ -1,4 +1,4 @@
-package com.lordsofmidnight.renderer;
+package com.lordsofmidnight.prototype;
 
 import java.awt.Point;
 import java.io.File;
