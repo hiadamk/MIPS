@@ -1,0 +1,257 @@
+@font-face {
+  src: url("../font/PressStart2P-Regular.ttf");
+}
+
+.root {
+  -fx-font-family: "Press Start 2P", cursive;
+}
+
+.jfx-tab-pane {
+
+  -fx-tab-min-height: 2em;
+  -fx-tab-max-height: 2em;
+}
+
+.tab .tab-label {
+  -fx-skin: "com.sun.javafx.scene.control.skin.LabelSkin";
+  -fx-background-color: transparent;
+  -fx-alignment: CENTER;
+  -fx-text-fill: white;
+}
+
+.tab-content-area {
+  -fx-background-color: transparent;
+  -fx-padding: 0.0em;
+}
+
+.tab {
+  -fx-background-insets: 0;
+  -fx-padding: 0;
+}
+
+.tab:top {
+  -fx-background-color: transparent;
+  -fx-background-insets: 0;
+}
+
+.jfx-tab:right {
+  -fx-background-color: transparent;
+  -fx-background-insets: 0;
+}
+
+.jfx-tab:bottom {
+  -fx-background-color: transparent;
+  -fx-background-insets: 0;
+}
+
+.jfx-tab:left {
+  -fx-background-color: transparent;
+  -fx-background-insets: 0;
+}
+
+.jfx-tab:hover {
+  -fx-color: -fx-hover-base;
+  -fx-background-insets: 0;
+}
+
+.jfx-tab:selected {
+  -fx-background-color: transparent;
+  -fx-background-insets: 0;
+}
+
+.jfx-tab:disabled {
+  -fx-opacity: -fx-disabled-opacity;
+}
+
+.jfx-tab:disabled:hover {
+  -fx-color: -fx-base;
+  -fx-opacity: -fx-disabled-opacity;
+}
+
+.jfx-tab-pane .tab-header-area .tab-header-background {
+  -fx-background-color: transparent;
+}
+
+.tab-pane *.tab-header-background {
+  -fx-background-color: transparent;
+}
+
+.tab-pane:top *.tab-header-area {
+  -fx-background-insets: 0, 0 0 1 0;
+  -fx-background-color: transparent;
+  -fx-padding: 0.416667em 0.166667em 0.0em 0.833em; /* 5 2 0 10 */
+}
+
+.tab-pane:bottom *.tab-header-area {
+  -fx-background-insets: 0, 1 0 0 0;
+  -fx-background-color: transparent;
+  -fx-padding: 0 0.166667em 0.416667em 0.833em; /* 0 2 5 0 */
+}
+
+.tab-pane:left *.tab-header-area {
+  -fx-background-insets: 0, 0 1 0 0;
+  -fx-background-color: transparent;
+  -fx-padding: 0.833em 0.0em 0.166667em 0.416667em; /* 10 0 2 5 */
+}
+
+.tab-pane:right *.tab-header-area {
+  -fx-background-insets: 0, 0 0 0 1;
+  -fx-background-color: transparent;
+  -fx-padding: 0.833em 0.416667em 0.166667em 0.0em; /* 10 5 2 0 */
+}
+
+.tab-pane .headers-region {
+  -fx-background-color: transparent;
+  -fx-effect: dropshadow(two-pass-box, rgba(0, 0, 0, 0.6), 4, 0.0, 0, 0);
+}
+
+/* TODO: scaling the shape seems to make it way too large */
+.tab-close-button {
+  -fx-background-color: -fx-mark-color;
+  -fx-shape: "M 0,0 H1 L 4,3 7,0 H8 V1 L 5,4 8,7 V8 H7 L 4,5 1,8 H0 V7 L 3,4 0,1 Z";
+  -fx-scale-shape: false;
+  -fx-effect: dropshadow(two-pass-box, rgba(255, 255, 255, 0.4), 1, 0.0, 0, 1);
+}
+
+.tab-close-button:hover {
+  -fx-background-color: derive(-fx-mark-color, -30%);
+}
+
+/* CONTROL BUTTONS */
+.control-buttons-tab {
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+  -fx-padding: 0;
+}
+
+.tab-down-button {
+  -fx-background-color: green;
+  -fx-padding: 0;
+}
+
+.tab-down-button .arrow {
+  -fx-background-insets: 0;
+  -fx-background: black;
+  -fx-width: 0;
+  -fx-padding: 0;
+  -fx-shape: " ";
+}
+
+.arrow {
+  -fx-background-insets: 0;
+  -fx-background: black;
+  -fx-width: 0;
+  -fx-padding: 0;
+  -fx-shape: " ";
+}
+
+/* FLOATING TABS CUSTOMISATION */
+.tab-pane.floating *.tab-header-background {
+  -fx-background-color: transparent;
+}
+
+.tab-pane.floating *.tab-header-area {
+  -fx-background-color: transparent;
+}
+
+.tab-pane.floating *.tab-content-area {
+  -fx-background-color: transparent;
+  -fx-background-insets: 0, 1;
+  -fx-background-radius: 5, 4;
+}
+
+.tab-pane.floating *.tab {
+  -fx-background-color: transparent;
+  -fx-background-insets: 0, 1, 2;
+  -fx-background-radius: 5 5 0 0, 4 4 0 0, 3 3 0 0;
+}
+
+.tab-pane.floating *.tab:selected {
+  -fx-background-color: transparent;
+  -fx-background-insets: 0 0 -1 0, 1 1 -1 1;
+  -fx-background-radius: 5 5 0 0, 4 4 0 0;
+}
+
+.combo-box .list-cell {
+  -fx-background: transparent;
+  -fx-background-color: transparent;
+  -fx-text-fill: -fx-text-base-color;
+  -fx-padding: 0;
+  -fx-cell-size: 1.66667em;
+}
+
+.combo-box-popup .list-view {
+  -fx-background-color: transparent;
+  -fx-background-insets: 0;
+}
+
+.combo-box-popup .list-view .list-cell {
+  -fx-padding: 0;
+  -fx-background-color: transparent;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected, .combo-box-popup .list-view .list-cell:filled:selected:hover {
+  -fx-background-color: transparent;
+  -fx-text-fill: white;
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover {
+  -fx-background-color: white;
+  -fx-text-fill: -fx-text-inner-color;
+}
+
+.combo-box .text-field {
+  -fx-text-alignment: center;
+}
+
+.combo-box .text-field:focused {
+  -fx-prompt-text-fill: transparent;
+}
+
+.jfx-combo-box {
+}
+
+.jfx-combo-box .label {
+  -fx-text-alignment: center;
+}
+
+.combo-box-base:focused {
+  -fx-background-color: silver;
+  -jfx-focus-color: rgba(255, 255, 255, .5);
+
+  -jfx-unfocus-color: silver;
+  -fx-background-radius: 0;
+  -fx-background-insets: 0;
+}
+
+.combo-box-base:disabled {
+  -fx-opacity: .4;
+}
+
+.jfx-combo-box {
+  -jfx-unfocus-color: silver;
+}
+
+.jfx-combo-box:focused {
+  -fx-background-color: transparent;
+}
+
+.jfx-slider .slider-value {
+  -fx-fill: transparent;
+  -fx-stroke: transparent;
+  -fx-background-color: transparent;
+}
+
+.jfx-slider .animated-thumb,
+.jfx-slider .animated-thumb:min {
+  -fx-background-color: transparent;
+}
+
+.toggle-button {
+  -fx-text-fill: black;
+  -fx-base: transparent;
+  -fx-background-color: transparent;
+  -fx-focus-color: transparent;
+  -fx-border-color: transparent;
+  -fx-effect: null;
+}

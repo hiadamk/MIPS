@@ -1,0 +1,145 @@
+package com.lordsofmidnight.objects;
+
+import com.lordsofmidnight.audio.AudioController;
+import com.lordsofmidnight.audio.Sounds;
+import com.lordsofmidnight.gamestate.points.Point;
+import com.lordsofmidnight.objects.powerUps.PowerUp;
+import com.lordsofmidnight.renderer.ResourceLoader;
+import com.lordsofmidnight.utils.Renderable;
+import com.lordsofmidnight.utils.enums.Direction;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import javafx.scene.image.Image;
+
+/**
+ * Class for the pellet items and base class for all items
+ *
+ * @author Matthew Jones
+ */
+public class Pellet implements Renderable {
+
+  protected Point location;
+  protected ArrayList<Image> currentImage;
+  protected int respawntime = 2000;
+  protected boolean active; // Whether or not the item is visible and able to be interacted with\
+  protected int value = 1;
+  protected com.lordsofmidnight.objects.powerUps.PowerUp trap;
+  protected boolean isTrap = false;
+  protected int respawnCount = 0;
+
+  public Pellet(double x, double y) {
+    this.location = new Point(x, y);
+    active = true;
+    Random r = new Random();
+    respawntime += r.nextInt(500);
+  }
+
+  public boolean isBox() {
+    return false;
+  }
+
+  public Pellet(Point p) {
+    this.location = p;
+    active = true;
+    Random r = new Random();
+    respawntime += r.nextInt(500);
+  }
+
+  public boolean canUse(Entity e) {
+    if (isTrap) {
+      return true;
+    }
+    return e.isMipsman();
+  }
+
+  public Point getLocation() {
+    return location;
+  }
+
+  public void setLocation(Point location) {
+    this.location = location;
+  }
+
+  @Override
+  public ArrayList<Image> getImage() {
+    return currentImage;
+  }
+
+  public Direction getDirection() {
+    return null;
+  }
+
+  public boolean isActive() {
+    return active;
+  }
+
+  public void setActive(boolean active) {
+    this.active = active;
+    if (!active) {
+      respawnCount = 0;
+    }
+  }
+
+  public void updateImages(ResourceLoader r) {
+    currentImage = r.getPellet();
+  }
+
+  public void interact(Entity entity, Entity[] agents,
+      ConcurrentHashMap<UUID, PowerUp> activePowerUps, AudioController audioController) {
+    if (isTrap) {
+      trap.trigger(entity, activePowerUps, audioController);
+      isTrap = false;
+      setActive(false);
+      return;
+    }
+    if (!active || !canUse(entity)) {
+      return;
+    }
+    entity.incrementScore(this.value);
+    audioController.playSound(Sounds.COIN, entity.getClientId());
+    setActive(false);
+  }
+
+  @Override
+  public String toString() {
+    String a = active ? "active" : "not active";
+    return "x = " + location.getX() + " y= " + location.getY() + " active = " + a;
+  }
+
+  /**
+   * Called every physics update to increment the counter for respawn
+   */
+  public void incrementRespawn() {
+    if (!active) {
+      respawnCount++;
+    }
+    if (respawnCount == respawntime) {
+      this.active = true;
+    }
+  }
+
+  /**
+   * @return If the pellet needs to be replaced
+   */
+  public boolean replace() {
+    return false;
+  }
+
+  public boolean isTrap() {
+    return isTrap;
+  }
+
+  public void setTrap(com.lordsofmidnight.objects.powerUps.PowerUp p) {
+    this.trap = p;
+    this.active = true;
+    this.isTrap = true;
+  }
+
+  /**@return True if the current pellet is a {@link PowerUpBox}
+   * @author Lewis Ackroyd*/
+  public boolean isPowerUpBox() {
+    return false;
+  }
+}
