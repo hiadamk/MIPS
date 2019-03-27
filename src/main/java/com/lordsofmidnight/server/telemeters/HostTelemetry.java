@@ -179,8 +179,9 @@ public class HostTelemetry extends Telemetry {
         usePowerUp(id);
         agents[id].setPowerUpUsedFlag(false);
       }else if(d.equals(Direction.STOP)){
-        ai.addClient(id);
-        agents[id].setName("Bot" + agents[id].getName());
+        if (ai.addClient(id)) {
+          agents[id].setName("Bot" + agents[id].getName());
+        }
       }
       else {
         if (Methods.validateDirection(d, agents[id].getLocation(), map)) {
