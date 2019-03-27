@@ -87,15 +87,17 @@ public class AudioController {
    * Plays the game music intro the after the looping music
    */
   public void gameIntro() {
+    stopPlayers();
     playMusic(Sounds.GAMEINTRO);
     new Thread() {
       @Override
       public void run() {
         try {
-          Thread.sleep(9000);
+          Thread.sleep(8000);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
+        System.out.println("go");
         playMusic(Sounds.GAMELOOP);
       }
     }.start();
@@ -108,20 +110,24 @@ public class AudioController {
    */
   public void playMusic(Sounds sound) {
     try {
+      System.out.println("new track");
       stopPlayers();
       MediaPlayer current;
       if (sound == Sounds.MENULOOP) {
         current = menuPlayer;
       } else if (sound == Sounds.GAMELOOP) {
         current = gamePlayer;
-      } else
-        current = new MediaPlayer(
-            new Media(getClass().getResource(sound.getPath()).toURI().toString()));
+      } else {
+        mediaPlayer =
+            new MediaPlayer(new Media(getClass().getResource(sound.getPath()).toURI().toString()));
+        current = mediaPlayer;
+      }
       current.setVolume(Settings.getMusicVolume());
       current.seek(Duration.ZERO);
       current.setOnEndOfMedia(new Runnable() {
         @Override
         public void run() {
+          System.out.println("restarting track");
           playMusic(sound);
         }
       });
