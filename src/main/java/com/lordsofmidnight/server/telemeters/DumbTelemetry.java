@@ -152,7 +152,7 @@ public class DumbTelemetry extends Telemetry {
       }
     }
 
-    for (int i = 0; i < positions.length - 1; i++) {
+    for (int i = 0; i < positions.length - 2; i++) {
       String[] ls = positions[i].split(":");
       int id = Integer.parseInt(ls[0]);
       int direction = Integer.parseInt(ls[1]);
