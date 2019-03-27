@@ -45,7 +45,16 @@ public class AudioController {
    */
   public void setMusicVolume(double musicVolume) {
     Settings.setMusicVolume(musicVolume);
-    mediaPlayer.setVolume(Settings.getMusicVolume());
+    if (mediaPlayer != null) {
+      mediaPlayer.setVolume(musicVolume);
+    }
+    if (menuPlayer != null) {
+      menuPlayer.setVolume(musicVolume);
+    }
+    if (gamePlayer != null) {
+      gamePlayer.setVolume(musicVolume);
+    }
+
   }
 
   private AudioClip[] loadClips() {
