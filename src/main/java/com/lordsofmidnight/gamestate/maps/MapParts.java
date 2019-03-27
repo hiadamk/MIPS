@@ -116,8 +116,7 @@ public class MapParts {
   protected static final int[][][] all = {upL, upM, upR, upDouble, sideT, sideM, sideB, cornerBL,
       cornerBR, cornerTL, cornerTR, cross, uB, uBs, uL, uLs, uR, uRs, uT, uTs};
 
-  protected static int[][] getRandom() {
-    Random r = new Random();
+  protected static int[][] getRandom(Random r) {
     return all[r.nextInt(all.length)];
   }
 }
