@@ -15,6 +15,8 @@ import javafx.util.Duration;
 public class AudioController {
   private int client;
   private MediaPlayer mediaPlayer;
+  private MediaPlayer menuPlayer;
+  private MediaPlayer gamePlayer;
   AudioClip[] clips;
   /**
    * @param clientId The ID of the client, this is used to know what sounds to play
@@ -25,6 +27,17 @@ public class AudioController {
     clips = loadClips();
   }
 
+  private void stopPlayers() {
+    if (mediaPlayer != null) {
+      mediaPlayer.stop();
+    }
+    if (menuPlayer != null) {
+      menuPlayer.stop();
+    }
+    if (gamePlayer != null) {
+      gamePlayer.stop();
+    }
+  }
   /**
    * Sets the music volume
    *
@@ -37,13 +50,17 @@ public class AudioController {
 
   private AudioClip[] loadClips() {
     AudioClip[] loaded = new AudioClip[Sounds.values().length];
-    for (Sounds sound : Sounds.values()) {
-      try {
+    try {
+      for (Sounds sound : Sounds.values()) {
         loaded[sound.id()] = new AudioClip(
             getClass().getResource(sound.getPath()).toURI().toString());
-      } catch (URISyntaxException e) {
-        e.printStackTrace();
       }
+      gamePlayer = new MediaPlayer(
+          new Media(getClass().getResource(Sounds.GAMELOOP.getPath()).toURI().toString()));
+      menuPlayer = new MediaPlayer(
+          new Media(getClass().getResource(Sounds.MENULOOP.getPath()).toURI().toString()));
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
     }
     return loaded;
   }
@@ -70,7 +87,6 @@ public class AudioController {
    * Plays the game music intro the after the looping music
    */
   public void gameIntro() {
-    mediaPlayer.stop();
     playMusic(Sounds.GAMEINTRO);
     new Thread() {
       @Override
@@ -92,20 +108,24 @@ public class AudioController {
    */
   public void playMusic(Sounds sound) {
     try {
-      if (mediaPlayer != null) {
-        mediaPlayer.stop();
-      }
-      mediaPlayer = new MediaPlayer(
-          new Media(getClass().getResource(sound.getPath()).toURI().toString()));
-      mediaPlayer.setVolume(Settings.getMusicVolume());
-      mediaPlayer.seek(Duration.ZERO);
-      mediaPlayer.setOnEndOfMedia(new Runnable() {
+      stopPlayers();
+      MediaPlayer current;
+      if (sound == Sounds.MENULOOP) {
+        current = menuPlayer;
+      } else if (sound == Sounds.GAMELOOP) {
+        current = gamePlayer;
+      } else
+        current = new MediaPlayer(
+            new Media(getClass().getResource(sound.getPath()).toURI().toString()));
+      current.setVolume(Settings.getMusicVolume());
+      current.seek(Duration.ZERO);
+      current.setOnEndOfMedia(new Runnable() {
         @Override
         public void run() {
           playMusic(sound);
         }
       });
-      mediaPlayer.play();
+      current.play();
     } catch (Exception e) {
       e.printStackTrace();
     }

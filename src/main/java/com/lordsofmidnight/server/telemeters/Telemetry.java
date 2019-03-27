@@ -185,7 +185,9 @@ public abstract class Telemetry {
     Point mipsmanCenter = mipsman.getLocation();
     Point ghoulFace = ghoul.getFaceLocation();
     if (mipsmanCenter.inRange(ghoulFace)) { // check temporary invincibility here
-      client.collisionDetected(ghoul);
+      if (mipsman.isMipsman()) {
+        client.collisionDetected(ghoul);
+      }
       /*mipsman.setMipsman(false);
       ghoul.setMipsman(true);
       mipsman.setDirection(Direction.UP);
@@ -262,7 +264,6 @@ public abstract class Telemetry {
     }
     for (Point p : replace) {
       pellets.put(p, new Pellet(p));
-      System.out.println("replaced 1");
     }
     ArrayList<UUID> toRemove = new ArrayList<>();
     for (PowerUp p : activePowerUps.values()) {
