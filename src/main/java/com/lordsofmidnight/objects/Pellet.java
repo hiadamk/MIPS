@@ -1,5 +1,7 @@
 package com.lordsofmidnight.objects;
 
+import com.lordsofmidnight.audio.AudioController;
+import com.lordsofmidnight.audio.Sounds;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
 import com.lordsofmidnight.renderer.ResourceLoader;
@@ -32,6 +34,10 @@ public class Pellet implements Renderable {
     active = true;
     Random r = new Random();
     respawntime += r.nextInt(500);
+  }
+
+  public boolean isBox() {
+    return false;
   }
 
   public Pellet(Point p) {
@@ -80,9 +86,10 @@ public class Pellet implements Renderable {
     currentImage = r.getPellet();
   }
 
-  public void interact(Entity entity, Entity[] agents, ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
+  public void interact(Entity entity, Entity[] agents,
+      ConcurrentHashMap<UUID, PowerUp> activePowerUps, AudioController audioController) {
     if (isTrap) {
-      trap.trigger(entity, activePowerUps);
+      trap.trigger(entity, activePowerUps, audioController);
       isTrap = false;
       setActive(false);
       return;
@@ -91,6 +98,7 @@ public class Pellet implements Renderable {
       return;
     }
     entity.incrementScore(this.value);
+    audioController.playSound(Sounds.COIN);
     setActive(false);
   }
 

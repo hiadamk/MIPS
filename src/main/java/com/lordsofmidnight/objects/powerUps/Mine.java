@@ -1,5 +1,6 @@
 package com.lordsofmidnight.objects.powerUps;
 
+import com.lordsofmidnight.audio.AudioController;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
@@ -22,7 +23,7 @@ public class Mine extends PowerUp {
       Entity user,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       PointMap<Pellet> pellets,
-      Entity[] agents) {
+      Entity[] agents, AudioController audioController) {
     this.user = user;
     this.onMap = true;
     Point loc = user.getMoveInDirection(1.1, user.getFacing().getInverse());
@@ -33,7 +34,8 @@ public class Mine extends PowerUp {
   }
 
   @Override
-  public void trigger(Entity victim, ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
+  public void trigger(Entity victim, ConcurrentHashMap<UUID, PowerUp> activePowerUps,
+      AudioController audioController) {
     Methods.kill(user, victim);
     counter = 0;
   }

@@ -1,5 +1,6 @@
 package com.lordsofmidnight.objects.powerUps;
 
+import com.lordsofmidnight.audio.AudioController;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
@@ -68,7 +69,8 @@ public abstract class PowerUp {
    * @param victim The entity effected by the powerUp
    * @param activePowerUps All active powerUps in the game
    */
-  public void trigger(Entity victim, ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
+  public void trigger(Entity victim, ConcurrentHashMap<UUID, PowerUp> activePowerUps,
+      AudioController audioController) {
   }
 
   /**
@@ -91,7 +93,7 @@ public abstract class PowerUp {
       Entity user,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       PointMap<Pellet> pellets,
-      Entity[] agents) {
+      Entity[] agents, AudioController audioController) {
   }
 
   /**

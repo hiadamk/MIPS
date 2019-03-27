@@ -1,5 +1,7 @@
 package com.lordsofmidnight.objects;
 
+import com.lordsofmidnight.audio.AudioController;
+import com.lordsofmidnight.audio.Sounds;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.objects.powerUps.Blueshell;
 import com.lordsofmidnight.objects.powerUps.Invincible;
@@ -18,6 +20,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PowerUpBox extends Pellet {
 
   private boolean toReplace = false;
+  private boolean isBox = true;
+
+  @Override
+  public boolean isBox() {
+    return isBox;
+  }
   private static PowerUps[] powerUps = {
       PowerUps.BLUESHELL, PowerUps.SPEED, PowerUps.WEB, PowerUps.INVINCIBLE
   };
@@ -148,19 +156,20 @@ public class PowerUpBox extends Pellet {
 
   @Override
   public void interact(Entity entity, Entity[] agents,
-      ConcurrentHashMap<UUID, com.lordsofmidnight.objects.powerUps.PowerUp> activePowerUps) {
+      ConcurrentHashMap<UUID, com.lordsofmidnight.objects.powerUps.PowerUp> activePowerUps,
+      AudioController audioController) {
     if (isTrap) {
-      trap.trigger(entity, activePowerUps);
+      trap.trigger(entity, activePowerUps, audioController);
       isTrap = false;
       setActive(false);
       toReplace = true;
-      return;
     }
     if (!active) {
       return;
     }
     com.lordsofmidnight.objects.powerUps.PowerUp newPowerUp = getPowerUp(entity, agents);
     entity.giveItem(newPowerUp);
+    audioController.playSound(Sounds.POWERUP);
     this.setActive(false);
   }
 

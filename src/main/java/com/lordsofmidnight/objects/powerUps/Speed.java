@@ -1,5 +1,7 @@
 package com.lordsofmidnight.objects.powerUps;
 
+import com.lordsofmidnight.audio.AudioController;
+import com.lordsofmidnight.audio.Sounds;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
@@ -20,11 +22,12 @@ public class Speed extends PowerUp {
       Entity user,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       PointMap<Pellet> pellets,
-      Entity[] agents) {
+      Entity[] agents, AudioController audioController) {
     this.user = user;
     user.changeBonusSpeed(0.03);
     activePowerUps.put(id, this);
     this.effected = user;
+    audioController.playSound(Sounds.SPEED);
     counter = 0;
   }
 

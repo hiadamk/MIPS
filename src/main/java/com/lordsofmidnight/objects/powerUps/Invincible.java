@@ -1,5 +1,7 @@
 package com.lordsofmidnight.objects.powerUps;
 
+import com.lordsofmidnight.audio.AudioController;
+import com.lordsofmidnight.audio.Sounds;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
@@ -19,12 +21,13 @@ public class Invincible extends PowerUp {
       Entity user,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       PointMap<Pellet> pellets,
-      Entity[] agents) {
+      Entity[] agents, AudioController audioController) {
     this.user = user;
     activePowerUps.put(id, this);
     this.effected = user;
     user.setInvincible(true);
     counter = 0;
+    audioController.playSound(Sounds.INVINCIBLE);
   }
 
   @Override

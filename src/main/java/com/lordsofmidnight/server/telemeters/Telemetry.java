@@ -1,6 +1,7 @@
 package com.lordsofmidnight.server.telemeters;
 
 import com.lordsofmidnight.audio.AudioController;
+import com.lordsofmidnight.audio.Sounds;
 import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.gamestate.points.PointMap;
@@ -118,12 +119,12 @@ public abstract class Telemetry {
    */
   private static void pelletCollision(
       Entity[] agents, PointMap<Pellet> pellets, ConcurrentHashMap<UUID, PowerUp> activePowerUps,
-      ResourceLoader resourceLoader) {
+      AudioController audioController) {
     for (Entity agent : agents) {
       Point p = agent.getLocation();
       Pellet pellet = pellets.get(p);
       if (pellet != null) {
-        pellet.interact(agent, agents, activePowerUps);
+        pellet.interact(agent, agents, activePowerUps, audioController);
       }
     }
   }
@@ -136,7 +137,7 @@ public abstract class Telemetry {
    * @author Alex Banks, Matthew Jones
    */
   private static void detectEntityCollision(
-      Entity mipsman, Entity ghoul) {
+      Entity mipsman, Entity ghoul, AudioController audioController) {
     if (mipsman.isDead() || ghoul.isDead()) {
       return;
     }
@@ -144,6 +145,7 @@ public abstract class Telemetry {
     Point ghoulFace = ghoul.getFaceLocation();
     if (mipsmanCenter.inRange(ghoulFace)) { // check temporary invincibility here
       client.collisionDetected(ghoul);
+      audioController.playSound(Sounds.MIPS);
       /*mipsman.setMipsman(false);
       ghoul.setMipsman(true);
       mipsman.setDirection(Direction.UP);
@@ -161,7 +163,7 @@ public abstract class Telemetry {
    *
    * @param agents array of entities in current state
    * @author Alex Banks, Matthew Jones
-   * @see this#detectEntityCollision(Entity, Entity)
+   * @see this#detectEntityCollision(Entity, Entity, AudioController)
    */
   void processPhysics(
       Entity[] agents,
@@ -198,19 +200,19 @@ public abstract class Telemetry {
       for (int j = (i + 1); j < AGENT_COUNT; j++) {
 
         if (agents[i].isMipsman() && !agents[j].isMipsman() && !agents[i].isInvincible()) {
-          detectEntityCollision(agents[i], agents[j]);
+          detectEntityCollision(agents[i], agents[j], audioController);
         } else if (!agents[i].isInvincible() && agents[j].isInvincible()) {
-          detectEntityCollision(agents[i], agents[j]);
+          detectEntityCollision(agents[i], agents[j], audioController);
         }
         if (agents[j].isMipsman() && !agents[i].isMipsman() && !agents[j].isInvincible()) {
-          detectEntityCollision(agents[j], agents[i]);
+          detectEntityCollision(agents[j], agents[i], audioController);
         } else if (!agents[j].isInvincible() && agents[i].isInvincible()) {
-          detectEntityCollision(agents[j], agents[i]);
+          detectEntityCollision(agents[j], agents[i], audioController);
         }
       }
     }
 
-    pelletCollision(agents, pellets, activePowerUps, resourceLoader);
+    pelletCollision(agents, pellets, activePowerUps, audioController);
     ArrayList<Point> replace = new ArrayList<>();
     for (Pellet p : pellets.values()) {
       p.incrementRespawn();

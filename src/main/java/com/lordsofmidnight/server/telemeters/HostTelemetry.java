@@ -215,7 +215,7 @@ public class HostTelemetry extends Telemetry {
   private void usePowerUp(int id) {
     PowerUp item;
     if ((item = agents[id].getFirstItem()) != null) {
-      item.use(agents[id], activePowerUps, pellets, agents);
+      item.use(agents[id], activePowerUps, pellets, agents, audioController);
       informPowerup(id, item, agents[id].getLocation());
     }
   }
