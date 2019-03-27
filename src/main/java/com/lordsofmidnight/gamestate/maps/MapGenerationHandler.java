@@ -8,6 +8,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class MapGenerationHandler {
 
+  private static final int MAX_MAP = 5;
+
   private BlockingQueue<Map> bigMaps = new LinkedBlockingQueue();
   private BlockingQueue<Map> smallMaps = new LinkedBlockingQueue();
   private Thread smallMapsThread;
@@ -22,7 +24,7 @@ public class MapGenerationHandler {
   Runnable smallMapGenerator =
       (() -> {
         while (!Thread.currentThread().isInterrupted()) {
-          if (smallMaps.size() < 20) {
+          if (smallMaps.size() < MAX_MAP) {
             smallMaps.add(new Map(MapGenerator.newRandomMap(-1, -1)));
           } else {
 
@@ -40,7 +42,7 @@ public class MapGenerationHandler {
    */
   Runnable bigMapGenerator = (() -> {
     while (!Thread.currentThread().isInterrupted()) {
-      if (bigMaps.size() < 20) {
+      if (bigMaps.size() < MAX_MAP) {
         bigMaps.add(new Map(MapGenerator.newRandomMap(2, 2)));
       } else {
 
@@ -97,7 +99,6 @@ public class MapGenerationHandler {
     bigMapsThread = new Thread(bigMapGenerator);
     smallMapsThread.start();
     bigMapsThread.start();
-
   }
 
 
