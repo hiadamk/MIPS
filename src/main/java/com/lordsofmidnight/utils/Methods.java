@@ -26,26 +26,6 @@ public class Methods {
    * @param killer The entity doing the killing
    * @param victim The entity being killed
    */
-  public static void kill(Entity killer, Entity victim) {
-    if (victim.isInvincible()) {
-      return;
-    }
-    if (!killer.isMipsman() && victim.isMipsman()) {
-      victim.setMipsman(false);
-      killer.setMipsman(true);
-    }
-    killer.increaseKills();
-    victim.setDead(true);
-    victim.setKilledBy(killer.getName()+killer.getClientId());
-    if (victim.getScore() > 0) {
-      int points = (int) (victim.getScore() * 0.1);
-      points = points < 1 ? 1 : points;
-      victim.incrementScore(-points);
-      killer.incrementScore(points);
-      killer.increasePointsStolen(points);
-    }
-  }
-
   public static void kill(Entity killer, Entity victim, AudioController audioController) {
     if (victim.isInvincible()) {
       return;

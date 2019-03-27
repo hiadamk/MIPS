@@ -1,8 +1,8 @@
 package com.lordsofmidnight.renderer;
 
 import com.lordsofmidnight.gamestate.points.Point;
-import com.lordsofmidnight.objects.powerUps.Blueshell;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
+import com.lordsofmidnight.objects.powerUps.Rocket;
 import com.lordsofmidnight.utils.enums.PowerUps;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
@@ -19,7 +19,7 @@ public class ProjectileFX {
   private final long animationInterval = secondInNanoseconds / animationSpeed;
   private long timeSinceLastFrame = 0;
   private final ResourceLoader r;
-  private ArrayList<Blueshell> rockets;
+  private ArrayList<Rocket> rockets;
   private ArrayList<Image> upwardRocketImages;
   private ArrayList<Image> downwardRocketImages;
   private final Renderer renderer;
@@ -54,8 +54,8 @@ public class ProjectileFX {
   public void render(long timeElapsed, ConcurrentHashMap<UUID, PowerUp> activePowerups) {
     rockets = new ArrayList<>();
     for (PowerUp p : activePowerups.values()) {
-      if (p.getType() == PowerUps.BLUESHELL) {
-        rockets.add((Blueshell) p);
+      if (p.getType() == PowerUps.ROCKET) {
+        rockets.add((Rocket) p);
       }
     }
 
@@ -64,14 +64,14 @@ public class ProjectileFX {
     }
 
     //render all active rockets
-    for (Blueshell r : rockets) {
+    for (Rocket r : rockets) {
       renderRocket(r);
     }
 
     //advance frames if necessary
     if (animationInterval < timeSinceLastFrame) {
       timeSinceLastFrame = 0;
-      for (Blueshell r : rockets) {
+      for (Rocket r : rockets) {
         r.incrementFrame();
       }
     } else {
@@ -93,7 +93,7 @@ public class ProjectileFX {
    *
    * @param r Rocket to be rendered
    */
-  private void renderRocket(Blueshell r) {
+  private void renderRocket(Rocket r) {
     //LAUNCH TIME
     if(r.getTime() < r.getMaxTime()*launchDuration){
       //tween towards top of screen

@@ -3,9 +3,9 @@ package com.lordsofmidnight.objects;
 import com.lordsofmidnight.audio.AudioController;
 import com.lordsofmidnight.audio.Sounds;
 import com.lordsofmidnight.gamestate.points.Point;
-import com.lordsofmidnight.objects.powerUps.Blueshell;
 import com.lordsofmidnight.objects.powerUps.Invincible;
 import com.lordsofmidnight.objects.powerUps.Mine;
+import com.lordsofmidnight.objects.powerUps.Rocket;
 import com.lordsofmidnight.objects.powerUps.Speed;
 import com.lordsofmidnight.objects.powerUps.Web;
 import com.lordsofmidnight.renderer.ResourceLoader;
@@ -27,7 +27,7 @@ public class PowerUpBox extends Pellet {
     return isBox;
   }
   private static PowerUps[] powerUps = {
-      PowerUps.BLUESHELL, PowerUps.SPEED, PowerUps.WEB, PowerUps.INVINCIBLE
+      PowerUps.ROCKET, PowerUps.SPEED, PowerUps.WEB, PowerUps.INVINCIBLE
   };
 
   private final HashMap<Integer, PowerUps>[] ghoulWeights = new HashMap[5];
@@ -54,22 +54,22 @@ public class PowerUpBox extends Pellet {
     map = new HashMap<>();
     map.put(60, PowerUps.SPEED);
     map.put(40, PowerUps.WEB);
-    map.put(10, PowerUps.BLUESHELL);
+    map.put(10, PowerUps.ROCKET);
     ghoulWeights[1] = map;
     map = new HashMap<>();
     map.put(75, PowerUps.SPEED);
     map.put(25, PowerUps.WEB);
-    map.put(20, PowerUps.BLUESHELL);
+    map.put(20, PowerUps.ROCKET);
     ghoulWeights[2] = map;
     map = new HashMap<>();
     map.put(75, PowerUps.SPEED);
     map.put(26, PowerUps.WEB);
-    map.put(25, PowerUps.BLUESHELL);
+    map.put(25, PowerUps.ROCKET);
     ghoulWeights[3] = map;
     map = new HashMap<>();
     map.put(75, PowerUps.SPEED);
     map.put(25, PowerUps.WEB);
-    map.put(40, PowerUps.BLUESHELL);
+    map.put(40, PowerUps.ROCKET);
     ghoulWeights[4] = map;
     // Init MIPsman weights
     map = new HashMap<>();
@@ -79,28 +79,28 @@ public class PowerUpBox extends Pellet {
     map.put(20, PowerUps.MINE);
     mipsmanWeights[0] = map;
     map = new HashMap<>();
-    map.put(5, PowerUps.BLUESHELL);
+    map.put(5, PowerUps.ROCKET);
     map.put(10, PowerUps.INVINCIBLE); //15
     map.put(40, PowerUps.WEB);
     map.put(30, PowerUps.MINE);
     map.put(30, PowerUps.SPEED);
     mipsmanWeights[1] = map;
     map = new HashMap<>();
-    map.put(10, PowerUps.BLUESHELL);
+    map.put(10, PowerUps.ROCKET);
     map.put(10, PowerUps.INVINCIBLE); //10
     map.put(30, PowerUps.WEB);
     map.put(40, PowerUps.SPEED);
     map.put(35, PowerUps.MINE);
     mipsmanWeights[2] = map;
     map = new HashMap<>();
-    map.put(15, PowerUps.BLUESHELL);
+    map.put(15, PowerUps.ROCKET);
     map.put(16, PowerUps.INVINCIBLE); //25
     map.put(30, PowerUps.WEB);
     map.put(40, PowerUps.SPEED);
     map.put(35, PowerUps.MINE);
     mipsmanWeights[3] = map;
     map = new HashMap<>();
-    map.put(20, PowerUps.BLUESHELL);
+    map.put(20, PowerUps.ROCKET);
     map.put(21, PowerUps.INVINCIBLE); //40
     map.put(30, PowerUps.WEB);
     map.put(31, PowerUps.MINE);
@@ -134,8 +134,8 @@ public class PowerUpBox extends Pellet {
         return new Speed();
       case WEB:
         return new Web();
-      case BLUESHELL:
-        return new Blueshell();
+      case ROCKET:
+        return new Rocket();
       case MINE:
         return new Mine();
       default:

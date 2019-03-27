@@ -7,7 +7,7 @@ package com.lordsofmidnight.utils.enums;
  * @author Matthew Jones
  */
 public enum PowerUps {
-  WEB("web"), SPEED("speed"), BLUESHELL("blueshell"), INVINCIBLE("invincible"), MINE("mine");
+  WEB("web"), SPEED("speed"), ROCKET("rocket"), INVINCIBLE("invincible"), MINE("mine");
 
   private final String NAME;
 
@@ -27,7 +27,7 @@ public enum PowerUps {
         return 0;
       case SPEED:
         return 1;
-      case BLUESHELL:
+      case ROCKET:
         return 2;
       case INVINCIBLE:
         return 3;

@@ -28,4 +28,9 @@ public class PowerupTests {
     powerUp.use(entity, activePowerups, pellets, agents, controller);
     assert (entity.isInvincible());
   }
+
+  @Test
+  void rocketTest() {
+
+  }
 }

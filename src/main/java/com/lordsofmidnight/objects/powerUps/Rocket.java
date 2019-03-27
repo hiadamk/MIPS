@@ -12,7 +12,7 @@ import java.awt.geom.Point2D.Double;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Blueshell extends PowerUp {
+public class Rocket extends PowerUp {
 
   private ConcurrentHashMap<UUID, PowerUp> activePowerUps;
 
@@ -22,9 +22,9 @@ public class Blueshell extends PowerUp {
   private Point2D.Double startLocation;
   private Point2D.Double endLocation;
 
-  public Blueshell() {
-    super(600, "blueshell");
-    this.type = PowerUps.BLUESHELL;
+  public Rocket() {
+    super(600, "rocket");
+    this.type = PowerUps.ROCKET;
   }
 
   @Override

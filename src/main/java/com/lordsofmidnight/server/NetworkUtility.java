@@ -2,8 +2,6 @@ package com.lordsofmidnight.server;
 
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.objects.Entity;
-import com.lordsofmidnight.objects.Pellet;
-import com.lordsofmidnight.objects.PowerUpBox;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
 import com.lordsofmidnight.utils.Input;
 import com.lordsofmidnight.utils.enums.Direction;
@@ -187,9 +185,9 @@ public class NetworkUtility {
   }
 
   /**
-   * Makes the packet for when there is a collision between Pac man and a ghoul
+   * Makes the packet for when there is a collision between MIPS man and a ghoul
    *
-   * @param mipsmanID Entity ID of pac man
+   * @param mipsmanID Entity ID of mips man
    * @param ghoulID Entity ID of the ghoul
    * @param position Position that the collision occurred
    * @return The packet representing the collision

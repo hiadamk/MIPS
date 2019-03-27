@@ -37,6 +37,9 @@ public class Web extends PowerUp {
   @Override
   public void trigger(Entity victim, ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       AudioController audioController) {
+    if (victim.isInvincible()) {
+      return;
+    }
     victim.setStunned(true);
     activePowerUps.put(id, this);
     this.effected = victim;

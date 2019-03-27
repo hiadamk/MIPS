@@ -47,7 +47,7 @@ public abstract class PowerUp {
       case 1:
         return new Speed();
       case 2:
-        return new Blueshell();
+        return new Rocket();
       case 3:
         return new Invincible();
       case 4:
@@ -107,7 +107,7 @@ public abstract class PowerUp {
         return 0;
       case SPEED:
         return 1;
-      case BLUESHELL:
+      case ROCKET:
         return 2;
       case INVINCIBLE:
         return 3;
