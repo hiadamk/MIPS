@@ -21,6 +21,8 @@ public class Map {
   private final int[][] MAP;
   private final ArrayList<Point> SPAWN_POINTS;
 
+  private final Random SPAWN_RANDOM;
+
   /**
    * basic constructor that takes raw ints and performs preprocessing
    *
@@ -33,6 +35,8 @@ public class Map {
     MAX_X = MAP.length;
     MAX_Y = MAP[0].length;
     SPAWN_POINTS = loadSpawnPoints();
+    SPAWN_RANDOM = new Random();
+
   }
 
   /**
@@ -158,11 +162,10 @@ public class Map {
    */
   public Point getRandomSpawnPoint(Entity[] agents) {
     final int MIN_DIST = 2;
-
     boolean found = false;
     Point p = null;
     while (!found) {
-      p = SPAWN_POINTS.get((new Random()).nextInt(SPAWN_POINTS.size()));
+      p = SPAWN_POINTS.get(SPAWN_RANDOM.nextInt(SPAWN_POINTS.size()));
       found = true;
       for (Entity agent : agents) {
         if (agent == null) {
