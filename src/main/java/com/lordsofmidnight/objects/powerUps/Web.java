@@ -41,7 +41,7 @@ public class Web extends PowerUp {
     activePowerUps.put(id, this);
     this.effected = victim;
     counter = 0;
-    audioController.playSound(Sounds.TRAPPED);
+    audioController.playSound(Sounds.TRAPPED, user.getClientId());
   }
 
   @Override

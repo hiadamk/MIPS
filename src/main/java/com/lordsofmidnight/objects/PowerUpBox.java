@@ -169,7 +169,7 @@ public class PowerUpBox extends Pellet {
     }
     com.lordsofmidnight.objects.powerUps.PowerUp newPowerUp = getPowerUp(entity, agents);
     entity.giveItem(newPowerUp);
-    audioController.playSound(Sounds.POWERUP);
+    audioController.playSound(Sounds.POWERUP, entity.getClientId());
     this.setActive(false);
   }
 

@@ -1,5 +1,7 @@
 package com.lordsofmidnight.utils;
 
+import com.lordsofmidnight.audio.AudioController;
+import com.lordsofmidnight.audio.Sounds;
 import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.objects.Entity;
@@ -44,6 +46,27 @@ public class Methods {
     }
   }
 
+  public static void kill(Entity killer, Entity victim, AudioController audioController) {
+    if (victim.isInvincible()) {
+      return;
+    }
+    if (!killer.isMipsman() && victim.isMipsman()) {
+      victim.setMipsman(false);
+      killer.setMipsman(true);
+      audioController.playSound(Sounds.MIPS);
+    }
+    killer.increaseKills();
+    victim.setDead(true);
+    audioController.playSound(Sounds.EXPLODE, victim.getClientId());
+    victim.setKilledBy(killer.getName() + killer.getClientId());
+    if (victim.getScore() > 0) {
+      int points = (int) (victim.getScore() * 0.1);
+      points = points < 1 ? 1 : points;
+      victim.incrementScore(-points);
+      killer.incrementScore(points);
+      killer.increasePointsStolen(points);
+    }
+  }
   /**
    * checks whether a movement in a certain direction is valid
    *

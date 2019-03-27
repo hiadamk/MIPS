@@ -27,7 +27,7 @@ public class Speed extends PowerUp {
     user.changeBonusSpeed(0.03);
     activePowerUps.put(id, this);
     this.effected = user;
-    audioController.playSound(Sounds.SPEED);
+    audioController.playSound(Sounds.SPEED, user.getClientId());
     counter = 0;
   }
 

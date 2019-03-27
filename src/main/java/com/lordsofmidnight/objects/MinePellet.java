@@ -21,6 +21,10 @@ public class MinePellet extends Pellet {
     this.placer = placer;
   }
 
+  @Override
+  public boolean replace() {
+    return detonated;
+  }
   public boolean isHidden() {
     return hidden;
   }
@@ -35,9 +39,11 @@ public class MinePellet extends Pellet {
       ConcurrentHashMap<UUID, PowerUp> activePowerUps, AudioController audioController) {
     if(!detonated){
       Methods.kill(placer, entity);
+      audioController.playSound(Sounds.EXPLODE, entity.getClientId());
+      detonated = true;
     }
-    audioController.playSound(Sounds.EXPLODE);
-    detonated = true;
+
+
   }
 
   public void incrementRespawn() {

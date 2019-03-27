@@ -98,7 +98,7 @@ public class Pellet implements Renderable {
       return;
     }
     entity.incrementScore(this.value);
-    audioController.playSound(Sounds.COIN);
+    audioController.playSound(Sounds.COIN, entity.getClientId());
     setActive(false);
   }
 

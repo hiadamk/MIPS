@@ -27,7 +27,7 @@ public class Invincible extends PowerUp {
     this.effected = user;
     user.setInvincible(true);
     counter = 0;
-    audioController.playSound(Sounds.INVINCIBLE);
+    audioController.playSound(Sounds.INVINCIBLE, user.getClientId());
   }
 
   @Override

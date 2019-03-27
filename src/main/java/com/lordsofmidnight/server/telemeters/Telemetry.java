@@ -1,7 +1,6 @@
 package com.lordsofmidnight.server.telemeters;
 
 import com.lordsofmidnight.audio.AudioController;
-import com.lordsofmidnight.audio.Sounds;
 import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.gamestate.points.PointMap;
@@ -145,7 +144,6 @@ public abstract class Telemetry {
     Point ghoulFace = ghoul.getFaceLocation();
     if (mipsmanCenter.inRange(ghoulFace)) { // check temporary invincibility here
       client.collisionDetected(ghoul);
-      audioController.playSound(Sounds.MIPS);
       /*mipsman.setMipsman(false);
       ghoul.setMipsman(true);
       mipsman.setDirection(Direction.UP);
@@ -153,7 +151,7 @@ public abstract class Telemetry {
       ghoul.updateImages(resourceLoader);
       System.out.println("~Ghoul" + ghoul.getClientId() + " captured Mipsman" +
       mipsman.getClientId()); */
-      Methods.kill(ghoul, mipsman);
+      Methods.kill(ghoul, mipsman, audioController);
     }
   }
 

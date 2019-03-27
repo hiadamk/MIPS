@@ -1,9 +1,9 @@
 package com.lordsofmidnight.audio;
 
 import com.lordsofmidnight.utils.Settings;
-import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import javafx.scene.media.AudioClip;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -20,11 +20,13 @@ public class AudioController {
   private Clip music;
   private ArrayList<Clip> openClips;
   private ClipCloser clipCloser;
+  private int client;
 
-  public AudioController() {
+  public AudioController(int clientId) {
     openClips = new ArrayList<>();
     clipCloser = new ClipCloser(openClips);
     clipCloser.start();
+    client = clientId;
   }
 
 
@@ -90,20 +92,30 @@ public class AudioController {
    *
    * @param sound the sound to play
    */
-  public void playSound(Sounds sound) {
-    if (Settings.getMute()) {
+  public void playSound(Sounds sound, int... id) {
+    if (Settings.getMute() || (id.length > 0 && id[0] != client)) {
       return; // IF the com.lordsofmidnight.main has muted its audio nothing will be played
     }
-    InputStream audio = AudioController.class.getResourceAsStream(sound.getPath());
-    File audioFile = new File(sound.getPath());
+    long time = System.nanoTime();
     try {
+      AudioClip newclip = new AudioClip(getClass().getResource(sound.getPath()).toURI().toString());
+      newclip.setVolume(Settings.getSoundVolume());
+      newclip.play();
+
+    /*InputStream audio = AudioController.class.getResourceAsStream(sound.getPath());
+    File audioFile = new File(sound.getPath());
+
       AudioInputStream stream = AudioSystem.getAudioInputStream(audio);
       DataLine.Info info = new DataLine.Info(Clip.class, stream.getFormat());
       Clip clip = (Clip) AudioSystem.getLine(info);
       clip.open(stream);
       setClipVolume(clip, Settings.getSoundVolume());
       clip.start();
-      openClips.add(clip);
+      openClips.add(clip); */
+      long oops = (System.nanoTime() - time);
+      if (oops > 4104100) {
+        System.out.println(oops + "       " + sound.getPath());
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -157,10 +169,12 @@ public class AudioController {
   public void playMusic(Sounds sound) {
     InputStream audio = AudioController.class.getResourceAsStream(sound.getPath());
     //		File audioFile=new File(sound.getPath());
+
     try {
       AudioInputStream stream = AudioSystem.getAudioInputStream(audio);
       DataLine.Info info = new DataLine.Info(Clip.class, stream.getFormat());
       Clip clip = (Clip) AudioSystem.getLine(info);
+      AudioSystem.getClip();
       clip.open(stream);
       if (music != null) {
         music.stop();
