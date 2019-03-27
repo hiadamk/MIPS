@@ -318,6 +318,10 @@ public class Client extends Application {
 
     if(singlePlayer){
       agents[0].setName(Settings.getName());
+      String[] botnames = Methods.getRandomNames(4);
+      for (int i = 1; i < 5; i++) {
+        agents[i].setName(botnames[i - 1]);
+      }
     }else{
       for (int i = 0; i < agents.length; i++) {
         if (!(playerNames[i] == null) && !playerNames[i].equals("null")) {

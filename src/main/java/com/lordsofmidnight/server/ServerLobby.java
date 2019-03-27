@@ -1,6 +1,7 @@
 package com.lordsofmidnight.server;
 
 import com.lordsofmidnight.gamestate.maps.Map;
+import com.lordsofmidnight.utils.Methods;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -126,6 +127,12 @@ public class ServerLobby {
         PrintWriter out = new PrintWriter(soc.getOutputStream());
         out.println(NetworkUtility.GAME_START);
         out.flush();
+        String[] botnames = Methods.getRandomNames(5 - playerCount.get());
+        for (int i = playerCount.get(); i < 5; i++) {
+          if (names[i].equals(null)) {
+            names[i] = botnames[i - playerCount.get()];
+          }
+        }
         for (String name : names) {
           out.println(name);
           out.flush();

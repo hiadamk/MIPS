@@ -75,10 +75,10 @@ public class HostTelemetry extends Telemetry {
     if (aiCount > 0) {
       int[] aiControlled = new int[aiCount];
       int highestId = AGENT_COUNT - 1;
-      String[] names = Methods.getRandomNames(aiCount);
+//      String[] names = Methods.getRandomNames(aiCount);
       for (int i = 0; i < aiCount; i++) {
         aiControlled[i] = highestId;
-        agents[highestId].setName(names[i]);
+//        agents[highestId].setName(names[i]);
         highestId--;
       }
       aiRunning = false;
