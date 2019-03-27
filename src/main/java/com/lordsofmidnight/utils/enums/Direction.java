@@ -46,11 +46,19 @@ public enum Direction {
 
   private int id;
 
+  /**
+   * @param id the id of the direction to create
+   */
   Direction(int id) {
     this.id = id;
   }
 
-  public static final Direction fromInt(int n) {
+  /**
+   * Returns a direction from an integer
+   * @param n The directions id
+   * @return the direction requested
+   */
+  public static Direction fromInt(int n) {
     switch (n) {
       case 0:
         return UP;
@@ -86,6 +94,10 @@ public enum Direction {
     }
   }
 
+  /**
+   * Gives the inverse of a movement direction
+   * @return The inverse of the direction this method is called on
+   */
   public Direction getInverse() {
     switch (this) {
       case UP:
@@ -101,6 +113,10 @@ public enum Direction {
     }
   }
 
+  /**
+   *
+   * @return The id of the direction
+   */
   public int toInt() {
     return id;
   }

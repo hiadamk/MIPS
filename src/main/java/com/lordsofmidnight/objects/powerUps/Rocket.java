@@ -52,6 +52,9 @@ public class Rocket extends PowerUp {
     return false;
   }
 
+  /**
+   * increments the current image frame
+   */
   public void incrementFrame(){
     this.currentFrame++;
   }

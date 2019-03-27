@@ -30,7 +30,12 @@ public class HostTelemetry extends Telemetry {
   private GameLoop inventoryUpdater;
 
   /**
-   * MultiPlayer Constructor
+   * The constructor for multiplayer
+   * @param playerCount The number of players
+   * @param inputQueue The Input queue
+   * @param outputQueue The output queue
+   * @param client The Client controlling the telemetry
+   * @param audioController The Clients Audio Controller
    */
   public HostTelemetry(
       int playerCount, Queue<Input> inputQueue, Queue<String> outputQueue, Client client,
@@ -45,7 +50,10 @@ public class HostTelemetry extends Telemetry {
   }
 
   /**
-   * Single Player Constructor
+   * The constructor for single player
+   * @param clientQueue The input queue
+   * @param client The client controlling the telemetry
+   * @param audioController The clients Audio Controller
    */
   public HostTelemetry(Queue<Input> clientQueue, Client client, AudioController audioController) {
     super(client, audioController);
@@ -172,6 +180,7 @@ public class HostTelemetry extends Telemetry {
         agents[id].setPowerUpUsedFlag(false);
       }else if(d.equals(Direction.STOP)){
         ai.addClient(id);
+        agents[id].setName("Bot" + agents[id].getName());
       }
       else {
         if (Methods.validateDirection(d, agents[id].getLocation(), map)) {
@@ -211,7 +220,11 @@ public class HostTelemetry extends Telemetry {
     }
   }
 
-
+  /**
+   * Uses the first item in the given entities inventory
+   *
+   * @param id The id of the client
+   */
   private void usePowerUp(int id) {
     PowerUp item;
     if ((item = agents[id].getFirstItem()) != null) {
@@ -220,6 +233,10 @@ public class HostTelemetry extends Telemetry {
     }
   }
 
+  /**
+   *
+   * @return The id of the player that is MIPSman
+   */
   private int getMipID() {
     for (Entity e : agents) {
       if (e.isMipsman()) {

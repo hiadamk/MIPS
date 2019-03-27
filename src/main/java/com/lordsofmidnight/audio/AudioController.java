@@ -15,6 +15,9 @@ public class AudioController {
   private int client;
   private MediaPlayer mediaPlayer;
 
+  /**
+   * @param clientId The ID of the client, this is used to know what sounds to play
+   */
   public AudioController(int clientId) {
     mediaPlayer = null;
     client = clientId;

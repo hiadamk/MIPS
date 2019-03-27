@@ -11,6 +11,11 @@ public enum PowerUps {
 
   private final String NAME;
 
+  /**
+   * Creates a new instance of the given powerup
+   *
+   * @param name The name of the powerup
+   */
   PowerUps(String name) {
     this.NAME = name;
   }
@@ -37,6 +42,10 @@ public enum PowerUps {
     return -1;
   }
 
+  /**
+   *
+   * @return the name of the powerup
+   */
   @Override
   public String toString() {
     return this.NAME;

@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+/**
+ * Class to hold misc methods
+ */
 public class Methods {
 
   /**
@@ -39,6 +42,7 @@ public class Methods {
       killer.increasePointsStolen(points);
     }
   }
+
   /**
    * checks whether a movement in a certain direction is valid
    *

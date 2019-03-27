@@ -39,6 +39,10 @@ public abstract class Telemetry {
   protected GameLoop scoreUpdater;
   protected AudioController audioController;
 
+  /**
+   * @param client The client it belongs to
+   * @param audioController The Audio Controller for the client
+   */
   Telemetry(Client client, AudioController audioController) {
     this.map = client.getMap();
     Telemetry.client = client;
@@ -50,38 +54,76 @@ public abstract class Telemetry {
   ConcurrentHashMap<UUID, PowerUp> activePowerUps = new ConcurrentHashMap<>();
   // abstract methods
 
+  /**
+   * Starts the AI controller
+   */
   abstract void startAI();
 
+  /**
+   * Adds an input to the queue
+   * @param in The input
+   */
   public abstract void addInput(Input in);
 
+  /**
+   * Starts the game
+   */
   public abstract void startGame();
 
+  /**
+   * Processes the inputs in the queue
+   */
   abstract void processInputs();
 
+  /**
+   * Initialises the pellets
+   */
   abstract void initialisePellets();
 
+  /**
+   * Stops the game
+   */
   public abstract void stopGame();
 
   // basic get/set methods
 
+  /**
+   *
+   * @return The agents array
+   */
   public Entity[] getAgents() {
     return agents;
   }
 
+  /**
+   *
+   * @return The map of the game
+   */
   public Map getMap() {
     return map;
   }
 
+  /**
+   *
+   * @return The map of pellets
+   */
   public PointMap<Pellet> getPellets() {
     return pellets;
   }
 
+  /**
+   * Sets the entity given by the id to MipsMan
+   * @param ID
+   */
   public void setMipID(int ID) {
     this.agents[ID].setMipsman(true);
   }
 
   // constructor methods
 
+  /**
+   * Creates all the entities
+   */
   void initialiseEntities() {
 
     agents = new Entity[AGENT_COUNT];
@@ -237,18 +279,34 @@ public abstract class Telemetry {
     }
   }
 
+  /**
+   * Sets the game time
+   * @param t the game time to set
+   */
   public void setTime(int t) {
     this.gameTimer = t;
   }
 
+  /**
+   *
+   * @return the input processor
+   */
   public GameLoop getInputProcessor() {
     return inputProcessor;
   }
 
+  /**
+   *
+   * @return The hashmap of the active powerups
+   */
   public ConcurrentHashMap<UUID, PowerUp> getActivePowerUps() {
     return activePowerUps;
   }
 
+  /**
+   * Sets the client id
+   * @param clientID the id to set
+   */
   public void setClientID(int clientID) {
     this.clientID = clientID;
   }
