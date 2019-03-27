@@ -257,6 +257,7 @@ public class MenuController {
     if (!socket.isClosed() && socket != null) {
       socket.close();
     }
+    numberOfPlayers = 0;
 
     System.out.println("Lobby players thread fully ended");
   });
@@ -519,8 +520,10 @@ public class MenuController {
     itemsOnScreen.add(homeOptions);
     isHome = true;
     isMultiplayer = false;
+    inLobby = false;
     backBtn.setVisible(false);
     showItemsOnScreen();
+    numberOfPlayers = 0;
     mapGenerationHandler.start();
   }
 
@@ -759,7 +762,6 @@ public class MenuController {
           isMultiplayer = true;
           audioController.playSound(Sounds.CLICK);
           moveItemsToBackTree();
-//          itemsOnScreen.add(nameEntryOptions);
           itemsOnScreen.add(multiplayerOptions);
           showItemsOnScreen();
         });
