@@ -1,7 +1,6 @@
 package com.lordsofmidnight.audio;
 
 import com.lordsofmidnight.utils.Settings;
-import java.net.URISyntaxException;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -17,12 +16,7 @@ public class AudioController {
   private MediaPlayer mediaPlayer;
 
   public AudioController(int clientId) {
-    try {
-      mediaPlayer = new MediaPlayer(
-          new Media(getClass().getResource(Sounds.MENULOOP.getPath()).toURI().toString()));
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    }
+    mediaPlayer = null;
     client = clientId;
   }
 
@@ -80,7 +74,9 @@ public class AudioController {
    */
   public void playMusic(Sounds sound) {
     try {
-      mediaPlayer.stop();
+      if (mediaPlayer != null) {
+        mediaPlayer.stop();
+      }
       mediaPlayer = new MediaPlayer(
           new Media(getClass().getResource(sound.getPath()).toURI().toString()));
       mediaPlayer.setVolume(Settings.getMusicVolume());

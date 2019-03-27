@@ -1,7 +1,8 @@
 package com.lordsofmidnight.renderer;
 
-import com.lordsofmidnight.renderer.ResourceLoader;
-import com.lordsofmidnight.utils.Methods;
+import com.lordsofmidnight.gamestate.maps.Map;
+import com.lordsofmidnight.gamestate.points.Point;
+import com.lordsofmidnight.objects.Entity;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import javafx.application.Application;
@@ -10,10 +11,6 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
-import com.lordsofmidnight.gamestate.maps.Map;
-import com.lordsofmidnight.gamestate.points.Point;
-import com.lordsofmidnight.objects.Entity;
-import com.lordsofmidnight.renderer.Renderer;
 
 public class ImageTester extends Application {
 
@@ -44,8 +41,6 @@ public class ImageTester extends Application {
     // ghoul.setDirection(Direction.RIGHT);
 
     Entity[] entities = new Entity[]{ghoul};
-    Methods.updateImages(entities, resourceLoader);
-
     r.render(map, entities, 0l, null, null, 0);
     stage.setScene(new Scene(new Group(canvas)));
     stage.show();
