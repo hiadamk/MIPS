@@ -1,5 +1,6 @@
 package com.lordsofmidnight.renderer;
 
+import com.lordsofmidnight.utils.Methods;
 import com.lordsofmidnight.utils.enums.Awards;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
@@ -78,10 +79,7 @@ public class EndGameScreen {
     this.animationFrame = 0;
     ArrayList<Entity> entityArr = new ArrayList<>(Arrays.asList(entities));
     Awards[] awards = Awards.getTwoRandomAwards();
-    this.gameWinner =
-        Collections.max(
-            entityArr,
-            Comparator.comparingInt(o -> o.getStatsTracker().getStat(Awards.MOST_POINTS)));
+    this.gameWinner = entities[Methods.findWinner(entities)];
 
     this.awardWinner1 =
         Collections.max(
