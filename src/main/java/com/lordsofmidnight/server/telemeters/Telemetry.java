@@ -8,10 +8,10 @@ import com.lordsofmidnight.main.Client;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
+import com.lordsofmidnight.renderer.ResourceLoader;
 import com.lordsofmidnight.utils.GameLoop;
 import com.lordsofmidnight.utils.Input;
 import com.lordsofmidnight.utils.Methods;
-import com.lordsofmidnight.renderer.ResourceLoader;
 import com.lordsofmidnight.utils.enums.Direction;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -93,15 +93,15 @@ public abstract class Telemetry {
           }
         }
       case 5:
-        agents[4] = new Entity(false, 4, map.getRandomSpawnPoint());
+        agents[4] = new Entity(false, 4, map.getRandomSpawnPoint(agents));
       case 4:
-        agents[3] = new Entity(false, 3, map.getRandomSpawnPoint());
+        agents[3] = new Entity(false, 3, map.getRandomSpawnPoint(agents));
       case 3:
-        agents[2] = new Entity(false, 2, map.getRandomSpawnPoint());
+        agents[2] = new Entity(false, 2, map.getRandomSpawnPoint(agents));
       case 2:
-        agents[1] = new Entity(false, 1, map.getRandomSpawnPoint());
+        agents[1] = new Entity(false, 1, map.getRandomSpawnPoint(agents));
       case 1:
-        agents[0] = new Entity(false, 0, map.getRandomSpawnPoint());
+        agents[0] = new Entity(false, 0, map.getRandomSpawnPoint(agents));
     }
 
     //Methods.updateImages(agents, resourceLoader);
@@ -187,7 +187,7 @@ public abstract class Telemetry {
         agents[i].countRespawn();
         int deathCounter = agents[i].getDeathCounter();
         if (deathCounter == 20) {
-          agents[i].setLocation(map.getRandomSpawnPoint());
+          agents[i].setLocation(map.getRandomSpawnPoint(agents));
         }
       }
     }
@@ -211,10 +211,17 @@ public abstract class Telemetry {
     }
 
     pelletCollision(agents, pellets, activePowerUps, resourceLoader);
+    ArrayList<Point> replace = new ArrayList<>();
     for (Pellet p : pellets.values()) {
       p.incrementRespawn();
+      if (p.replace()) {
+        replace.add(p.getLocation());
+      }
     }
-
+    for (Point p : replace) {
+      pellets.put(p, new Pellet(p));
+      System.out.println("replaced 1");
+    }
     ArrayList<UUID> toRemove = new ArrayList<>();
     for (PowerUp p : activePowerUps.values()) {
       if (p.incrementTime()) {
@@ -226,9 +233,12 @@ public abstract class Telemetry {
     }
     gameTimer--;
     if (gameTimer == 0) {
-      int winner = Methods.findWinner(agents);
       client.finishGame();
     }
+  }
+
+  public void setTime(int t) {
+    this.gameTimer = t;
   }
 
   public GameLoop getInputProcessor() {

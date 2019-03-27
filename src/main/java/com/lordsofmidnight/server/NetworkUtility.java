@@ -83,7 +83,7 @@ public class NetworkUtility {
   }
 
   /**
-   * Checks for a message in the group and gets the IP of the com.lordsofmidnight.server from that.
+   * Checks for a message in the group and gets the IP of the server from that.
    *
    * @return the IP of the com.lordsofmidnight.server
    * @throws IOException Thrown by use of multicast sockets.

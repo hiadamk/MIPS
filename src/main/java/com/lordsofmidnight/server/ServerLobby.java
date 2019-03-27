@@ -1,23 +1,19 @@
 package com.lordsofmidnight.server;
 
 import com.lordsofmidnight.gamestate.maps.Map;
+import com.lordsofmidnight.utils.Input;
+import com.lordsofmidnight.utils.Methods;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-import java.net.NetworkInterface;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-import com.lordsofmidnight.utils.Input;
 
 public class ServerLobby {
 
@@ -35,9 +31,6 @@ public class ServerLobby {
   private ArrayList<lobbyLeaverListener> lobbyLeavers = new ArrayList<>();
   private ServerSocket server;
   private boolean hostPresent = true;
-  private MulticastSocket socket;
-  private String message;
-  private byte[] buf;
 
   /**
    * Thread which sends messages to multicast group to make com.lordsofmidnight.server IP known but
@@ -49,11 +42,12 @@ public class ServerLobby {
         public void run() {
           super.run();
           try {
-            socket = new MulticastSocket();
+            MulticastSocket socket = new MulticastSocket();
             InetAddress group = NetworkUtility.GROUP;
 
             while (!isInterrupted()) {
-              message = playerCount.get() + "|" + (hostPresent ? 1 : 0);
+              byte[] buf;
+              String message = playerCount.get() + "|" + (hostPresent ? 1 : 0);
 
               buf = message.getBytes();
               DatagramPacket sending =
@@ -78,9 +72,7 @@ public class ServerLobby {
             }
 
           } catch (InterruptedException e) {
-            if (socket != null && (!socket.isClosed())) {
-              socket.close();
-            }
+            return;
           } catch (IOException e) {
             e.printStackTrace();
           }
@@ -130,6 +122,12 @@ public class ServerLobby {
         PrintWriter out = new PrintWriter(soc.getOutputStream());
         out.println(NetworkUtility.GAME_START);
         out.flush();
+        String[] botnames = Methods.getRandomNames(5 - playerCount.get());
+        for (int i = playerCount.get(); i < 5; i++) {
+          if (names[i] == null) {
+            names[i] = botnames[i - playerCount.get()];
+          }
+        }
         for (String name : names) {
           out.println(name);
           out.flush();

@@ -76,6 +76,9 @@ public class AudioController {
     }
   }
 
+  /**
+   * Updates the volume of the music
+   */
   private void refreshMusic() {
     if (music == null) {
       return;
@@ -129,6 +132,9 @@ public class AudioController {
     control.setValue((float) (Math.log(volume) / Math.log(10.0) * 20.0));
   }
 
+  /**
+   * Plays the game music intro the after the looping music
+   */
   public void gameIntro() {
     playMusic(Sounds.GAMEINTRO);
     new Thread() {

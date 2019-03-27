@@ -11,8 +11,6 @@ import com.lordsofmidnight.utils.enums.PowerUps;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import javafx.scene.image.Image;
 
 
@@ -57,7 +55,7 @@ public class Entity implements Renderable {
 
 
   private StatsTracker statsTracker;
-  private Queue<Point> deathLocation = new ConcurrentLinkedQueue();
+  private Point deathLocation;
 
   /**
    * Constructor
@@ -151,7 +149,7 @@ public class Entity implements Renderable {
     this.dead = dead;
     if (dead) {
       statsTracker.increaseDeaths();
-      deathLocation.add(new Point(location.getX(), location.getY()));
+      deathLocation = location.getCopy();
       velocity = 0;
       deathCounter = 0;
     } else {
@@ -165,7 +163,7 @@ public class Entity implements Renderable {
    * @return The location the entity died at
    */
   public Point getDeathLocation() {
-    return deathLocation.poll();
+    return deathLocation;
   }
 
   /**
@@ -643,5 +641,9 @@ public class Entity implements Renderable {
    */
   public void setKilledBy(String name){
     this.killedBy = name;
+  }
+
+  public void resetDeathLocation() {
+    this.deathLocation = null;
   }
 }

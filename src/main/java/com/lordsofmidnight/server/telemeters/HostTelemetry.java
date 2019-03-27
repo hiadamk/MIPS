@@ -28,7 +28,6 @@ public class HostTelemetry extends Telemetry {
   private AILoopControl ai;
   private boolean aiRunning;
   private GameLoop inventoryUpdater;
-  // GameLoop inputProcessor;
 
   /**
    * MultiPlayer Constructor
@@ -55,7 +54,6 @@ public class HostTelemetry extends Telemetry {
     this.playerCount = 1;
     singlePlayer = true;
     initialise();
-    //    startGame();
   }
 
   /**
@@ -77,10 +75,10 @@ public class HostTelemetry extends Telemetry {
     if (aiCount > 0) {
       int[] aiControlled = new int[aiCount];
       int highestId = AGENT_COUNT - 1;
-      String[] names = Methods.getRandomNames(aiCount);
+//      String[] names = Methods.getRandomNames(aiCount);
       for (int i = 0; i < aiCount; i++) {
         aiControlled[i] = highestId;
-        agents[highestId].setName(names[i]);
+//        agents[highestId].setName(names[i]);
         highestId--;
       }
       aiRunning = false;
@@ -88,17 +86,25 @@ public class HostTelemetry extends Telemetry {
     }
   }
 
+  /**
+   * Adds an input to the input queue
+   *
+   * @param in The input to add
+   */
   public void addInput(Input in) {
     inputs.add(in);
   }
 
+  /**
+   * Handles starting the game for the host
+   */
   public void startGame() {
     updateClients(agents); // set starting positions
     startAI();
     audioController.gameIntro();
     gameTimer = GAME_TIME;
     final long DELAY = (long) Math.pow(10, 7);
-    final long positionDELAY = (long) Math.pow(10, 9) / 2;
+    final long positionDELAY = (long) Math.pow(10, 8);
     final long scoreDELAY = (long) Math.pow(10, 9);
     inputProcessor =
         new GameLoop(DELAY) {
@@ -138,6 +144,9 @@ public class HostTelemetry extends Telemetry {
     scoreUpdater.start();
   }
 
+  /**
+   * Starts the AI-controlled agents
+   */
   public void startAI() {
     if (!aiRunning && ai != null) {
       ai.start();
@@ -177,7 +186,6 @@ public class HostTelemetry extends Telemetry {
       agents[id].setDirectionSetFlag(false);
     }
   }
-
 
 
   @Override
@@ -231,26 +239,53 @@ public class HostTelemetry extends Telemetry {
     ai.killAI();
   }
 
+  /**
+   * Informs clients that a powerup was used
+   * @param id The ID of the client who used the powerup
+   * @param powerup The powerup used
+   * @param location The location it was used at
+   */
   private void informPowerup(int id, PowerUp powerup, Point location) {
     outputs.add(NetworkUtility.makePowerUpPacket(id, powerup, location));
   }
 
+  /**
+   * Informs clients of a power up box appearing
+   * @param point The point where it is.
+   */
   private void informPowerupBox(Point point) {
     outputs.add(NetworkUtility.makePowerUpBoxPacket(point));
   }
 
+  /**
+   * Informs clients of the updated inventory of each of the agents.
+   * @param agents The game agents
+   */
   private void updateInventories(Entity[] agents){
     outputs.add(NetworkUtility.makeInventoryPacket(agents));
   }
 
+  /**
+   * Informs clients of the scores of each of the agents
+   * @param agents The game agents
+   */
   private void updateScores(Entity[] agents) {
     outputs.add(NetworkUtility.makeScorePacket(agents));
   }
 
+  /**
+   * Informs clients of where each agent is and their direction
+   * @param agents The game agents
+   */
   private void updateClients(Entity[] agents) {
-    outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents) + getMipID());
+    outputs.add(NetworkUtility.makeEntitiesPositionPacket(agents) + getMipID() + "|" + gameTimer);
   }
 
+  /**
+   * Inform clients that a client changed direction
+   * @param input The input to broadcast
+   * @param location The location which the input took place.
+   */
   private void informClients(Input input, Point location) {
     outputs.add(NetworkUtility.makeEntitiyMovementPacket(input, location, getMipID()));
   }

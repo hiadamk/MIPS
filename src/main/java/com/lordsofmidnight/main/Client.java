@@ -41,7 +41,6 @@ public class Client extends Application {
   private String name;
   private String[] playerNames = new String[5];
   private KeyController keyController;
-  //  private HostTelemetry telemetry;
   private Telemetry telemetry;
   private AudioController audioController;
   private Scene gameScene;
@@ -69,16 +68,28 @@ public class Client extends Application {
   private EndGameScreen endGameScreen;
   public boolean hostGone = false;
 
+  /**
+   * Gets the ID of the client
+   *
+   * @return the current client's ID.
+   */
   public int getId() {
     return id;
   }
 
+  /**
+   * Sets the id of the current client
+   * @param id The id of the client
+   */
   public void setId(int id) {
     this.id = id;
-   // this.telemetry.setClientID(id);
     this.renderer.setClientID(id);
   }
 
+  /**
+   * Sets the names of entities to use in multiplayer.
+   * @param names The array of names of entities
+   */
   public void setPlayerNames(String[] names) {
     this.playerNames = names;
   }
@@ -90,7 +101,6 @@ public class Client extends Application {
     keyController = new KeyController();
     resourceLoader = new ResourceLoader("src/main/resources/");
     this.primaryStage = primaryStage;
-    //    audioController.playMusic(Sounds.intro);
     menuController =
         new MenuController(audioController, primaryStage, this, resourceLoader);
     StackPane menuController = (StackPane) this.menuController.createMainMenu();
@@ -162,15 +172,13 @@ public class Client extends Application {
    * Allows a client to join a lobby
    */
   public void joinMultiplayerLobby() {
-    map = resourceLoader.getMap();
+    //map = resourceLoader.getMap();
     isHost = false;
-    BlockingQueue<String> clientIn = new LinkedBlockingQueue<>();
+    clientIn = new LinkedBlockingQueue<>();
     keypressQueue = new LinkedBlockingQueue<>();
     try {
       clientLobbySession = new ClientLobbySession(clientIn, keypressQueue, this,
           Settings.getName());
-      this.telemetry = new DumbTelemetry(clientIn, this, audioController);
-      this.telemetry.setMipID(MIPID);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -219,6 +227,8 @@ public class Client extends Application {
       gameScene.setOnKeyPressed(keyController);
       startGame();
     } else {
+      this.telemetry = new DumbTelemetry(clientIn, this, audioController);
+      this.telemetry.setMipID(MIPID);
       System.out.println("Starting multiplayer for non-host");
       this.primaryStage.setScene(gameScene);
       gameScene.setOnKeyPressed(keyController);
@@ -227,9 +237,9 @@ public class Client extends Application {
   }
 
   /**
-   * Sets the current map being used
+   * Sets the current map being used by the client
    *
-   * @param m the map to use
+   * @param m The map required.
    */
   public void setMap(Map m) {
     resourceLoader.setMap(m);
@@ -239,6 +249,10 @@ public class Client extends Application {
     renderer.refreshSettings();
   }
 
+  /**
+   * Sets the current map to use by map name
+   * @param mapName The map name desired.
+   */
   public void setMap(String mapName) {
     resourceLoader.loadMap(mapName);
     this.map = resourceLoader.getMap();
@@ -256,22 +270,16 @@ public class Client extends Application {
 
     canvas.setWidth(Settings.getxResolution());
     canvas.setHeight(Settings.getyResolution());
-
-    //old method to change resolution
-    //com.lordsofmidnight.renderer.setResolution(xRes, yRes, this.renderingMode);
-
     renderer.refreshSettings();
   }
 
+  /**
+   * Updates the current theme used by the client
+   */
   public void updateTheme(String themeName) {
     Settings.setTheme(themeName);
-    refresh();
-  }
-
-  public void refresh() {
     renderer.refreshSettings();
   }
-
 
   /**
    * Sets the name for the current client and checks that it contains letters
@@ -310,6 +318,10 @@ public class Client extends Application {
 
     if(singlePlayer){
       agents[0].setName(Settings.getName());
+      String[] botnames = Methods.getRandomNames(4);
+      for (int i = 1; i < 5; i++) {
+        agents[i].setName(botnames[i - 1]);
+      }
     }else{
       for (int i = 0; i < agents.length; i++) {
         if (!(playerNames[i] == null) && !playerNames[i].equals("null")) {
@@ -333,7 +345,7 @@ public class Client extends Application {
     //Methods.updateImages(agents, resourceLoader);
     renderer.setClientID(id);
     renderer.initMapTraversal(map);
-    map = resourceLoader.getMap();
+    //map = resourceLoader.getMap();
     this.primaryStage.setScene(gameScene);
   }
 
@@ -364,10 +376,16 @@ public class Client extends Application {
     }
   }
 
+  /**
+   * Informs the menu that there was no game found in multiplayer
+   */
   public void noGameFound() {
     menuController.gameNotFound();
   }
 
+  /**
+   * Handles the final sequence of events when the game ends.
+   */
   public void finishGame(){
     this.telemetry.stopGame();
     inputRenderLoop.stop();
@@ -387,7 +405,6 @@ public class Client extends Application {
     if (input == null || input == current) {
       return;
     }
-    //    System.out.println(input.toString() + "     " + current + " ID: " + id);
     if (!Methods.validateDirection(input, agents[id].getLocation(), map)) {
       return;
     }
@@ -408,7 +425,7 @@ public class Client extends Application {
   }
 
   /**
-   * Sends the user key press to telemetry (via com.lordsofmidnight.server in multiplayer)
+   * Sends the user key press to telemetry (via server in multiplayer)
    *
    * @param input the current keypress
    */
@@ -463,6 +480,10 @@ public class Client extends Application {
     return this.map;
   }
 
+  /**
+   * Informs that the host has left the game.
+   * @param b
+   */
   public void setHostGone(boolean b) {
     hostGone = true;
   }

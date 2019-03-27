@@ -1,7 +1,5 @@
 package com.lordsofmidnight.utils.enums;
 
-import com.lordsofmidnight.renderer.Renderer;
-
 public enum RenderingMode {
   NO_SCALING("no_scaling"),
   INTEGER_SCALING("integer_scaling"),

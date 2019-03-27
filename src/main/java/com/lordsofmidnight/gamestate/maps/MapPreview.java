@@ -69,7 +69,7 @@ public class MapPreview {
 
     gc.setFill(Color.TRANSPARENT);
     gc.fillRect(0, 0, xRes, yRes);
-    renderer.renderGameOnly(map, new Entity[]{}, 0, new PointMap<>(map), null);
+    renderer.renderGameOnly(new Entity[]{}, 0, new PointMap<>(map), null);
 
     SnapshotParameters parameters = new SnapshotParameters();
     parameters.setFill(Color.TRANSPARENT);

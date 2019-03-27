@@ -11,7 +11,6 @@ import java.net.MulticastSocket;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.Enumeration;
 import java.util.Queue;
@@ -69,7 +68,6 @@ public class ClientLobbySession {
               byte[] buf = new byte[256];
               DatagramPacket packet = new DatagramPacket(buf, buf.length);
               socket.receive(packet);
-              System.out.printf("Server Address: " + packet.getAddress());
               serverIP = packet.getAddress();
               socket.close();
 
@@ -80,9 +78,7 @@ public class ClientLobbySession {
 
               String str = NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX;
               out.println(str);
-              System.out.println("SENT CONNECT TO SERVER");
               out.println(clientName);
-              System.out.println("SENT CLIENT NAME: " + clientName);
               out.flush();
 
               String r = in.readLine();

@@ -24,7 +24,6 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,6 +84,7 @@ public class MenuController {
   private Button startMGameBtn;
   private Button settingsBtn;
   private Button quitBtn;
+  private Button setNameBtn;
   private ImageView logo;
   private VBox homeOptions;
 
@@ -150,19 +150,9 @@ public class MenuController {
   private boolean isHome = true;
   private boolean isMultiplayer = false;
   private boolean inLobby;
-
   private Thread playerNumberDiscovery;
   private MulticastSocket socket;
   private boolean gameFound = false;
-  private byte[] buf = new byte[256];
-  private int hostStatus;
-  private int players;
-  private String lobbyStatus;
-  private byte[] data;
-  private InetAddress group = NetworkUtility.GROUP;
-  private Enumeration<NetworkInterface> interfaces;
-  private DatagramPacket packet;
-  private String[] statusPackets;
 
   private MapGenerationHandler mapGenerationHandler;
 
@@ -181,32 +171,23 @@ public class MenuController {
     this.resourceLoader = resourceLoader;
     this.mapGenerationHandler = new MapGenerationHandler();
 
-    try {
-      this.interfaces = NetworkInterface.getNetworkInterfaces();
-    } catch (SocketException e) {
-      e.printStackTrace();
-    }
-
     Image icon = new Image("icon.png", false);
     primaryStage.getIcons().add(icon);
   }
 
   /**
-   * Thread to listen to the Server Lobby which is constantly pinging the number of players in the
+   * Runnable to listen to the Server Lobby which is constantly pinging the number of players in the
    * lobby.
    */
   private Runnable lobbyPlayers = (() -> {
     while (!Thread.currentThread().isInterrupted()) {
       try {
         Thread.sleep(1000);
-//        System.out.println("Listening for number of players...");
+        System.out.println("Listening for number of players...");
         socket = new MulticastSocket(NetworkUtility.CLIENT_M_PORT);
         socket.setSoTimeout(NetworkUtility.LOBBY_TIMEOUT);
-//        InetAddress group = NetworkUtility.GROUP;
-
-        if (interfaces == null) {
-          this.interfaces = NetworkInterface.getNetworkInterfaces();
-        }
+        InetAddress group = NetworkUtility.GROUP;
+        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
         while (interfaces.hasMoreElements()) {
           NetworkInterface iface = interfaces.nextElement();
           if (iface.isLoopback() || !iface.isUp()) {
@@ -221,16 +202,18 @@ public class MenuController {
           }
         }
 
-        buf = new byte[256];
-        packet = new DatagramPacket(buf, buf.length);
+        byte[] buf = new byte[256];
+        DatagramPacket packet = new DatagramPacket(buf, buf.length);
         socket.receive(packet);
         gameFound = true;
-        data = new byte[packet.getLength()];
+        byte[] data = new byte[packet.getLength()];
         System.arraycopy(buf, 0, data, 0, packet.getLength());
-        lobbyStatus = new String(data);
-        statusPackets = lobbyStatus.split("\\|");
-        players = Integer.parseInt(statusPackets[0]);
-        hostStatus = Integer.parseInt(statusPackets[1]);
+        String lobbyStatus = new String(data);
+        System.out.println(new String(data));
+        String[] statusPackets = lobbyStatus.split("\\|");
+        System.out.println("Array: " + Arrays.toString(statusPackets));
+        int players = Integer.parseInt(statusPackets[0]);
+        int hostStatus = Integer.parseInt(statusPackets[1]);
         if (hostStatus == 0) {
           System.out.println("Server left lobby");
           client.leaveLobby();
@@ -274,6 +257,7 @@ public class MenuController {
     if (!socket.isClosed() && socket != null) {
       socket.close();
     }
+    numberOfPlayers = 0;
 
     System.out.println("Lobby players thread fully ended");
   });
@@ -536,11 +520,16 @@ public class MenuController {
     itemsOnScreen.add(homeOptions);
     isHome = true;
     isMultiplayer = false;
+    inLobby = false;
     backBtn.setVisible(false);
     showItemsOnScreen();
-
+    numberOfPlayers = 0;
+    mapGenerationHandler.start();
   }
 
+  /**
+   * Updates the lobby label letting the user know that a game was not found.
+   */
   public void gameNotFound() {
     Platform.runLater(() -> {
       lobbyStatusLbl.setText("Game Not Found");
@@ -581,6 +570,7 @@ public class MenuController {
         e -> {
           audioController.playSound(Sounds.CLICK);
           client.startSinglePlayerGame();
+          mapGenerationHandler.stop();
         });
 
     String[] knownMaps = resourceLoader.getValidMaps();
@@ -772,7 +762,6 @@ public class MenuController {
           isMultiplayer = true;
           audioController.playSound(Sounds.CLICK);
           moveItemsToBackTree();
-//          itemsOnScreen.add(nameEntryOptions);
           itemsOnScreen.add(multiplayerOptions);
           showItemsOnScreen();
         });
@@ -792,12 +781,7 @@ public class MenuController {
           isHome = false;
           backBtn.setVisible(true);
           moveItemsToBackTree();
-//          System.out.println("NAME: " + Settings.getName());
-          if (Settings.getName().equals("null")) {
-            itemsOnScreen.add(nameEntryView);
-          } else {
-            itemsOnScreen.add(gameModeOptions);
-          }
+          itemsOnScreen.add(gameModeOptions);
           showItemsOnScreen();
         });
 
@@ -891,19 +875,17 @@ public class MenuController {
     VBox nameAndLine = new VBox(nameEntry, clear);
     nameAndLine.setAlignment(Pos.CENTER);
 
-    Button nameEntryBtn = ButtonGenerator.generate(true, root, "Next", UIColours.GREEN, 30);
+    Button nameEntryBtn = ButtonGenerator.generate(true, root, "Save", UIColours.GREEN, 30);
     nameEntryBtn.setOnAction(
         event -> {
           audioController.playSound(Sounds.CLICK);
           if (nameEntry.getText().equals("")) {
             nameEntryStatus.setVisible(true);
           } else {
-            moveItemsToBackTree();
             hideItemsOnScreen();
+            itemsOnScreen.clear();
             this.client.setName(nameEntry.getText());
-            itemsOnScreen.add(gameModeOptions);
-
-//          itemsOnScreen.add(multiplayerOptions);
+            backBtn.fire();
             showItemsOnScreen();
           }
 
@@ -996,6 +978,7 @@ public class MenuController {
     resolutionCombo.setEditable(false);
     resolutionCombo.setPromptText("Select a resolution...");
     resolutionCombo.setOnAction(event -> {
+      System.out.println(resolutionCombo.getValue());
       audioController.playSound(Sounds.CLICK);
       switch (resolutionCombo.getValue()) {
         case "1366x768":
@@ -1293,6 +1276,7 @@ public class MenuController {
         e -> {
           audioController.playSound(Sounds.CLICK);
           client.startMultiplayerGame();
+          mapGenerationHandler.stop();
         });
 
     ImageView instructionsGif = new ImageView("ui/preview.gif");
@@ -1313,7 +1297,7 @@ public class MenuController {
     StackPane.setMargin(instructionLbl, new Insets(200, 200, 0, 200));
 
     Button instructions = ButtonGenerator
-        .generate(true, root, "Instructions", UIColours.YELLOW, 30);
+        .generate(true, root, "Instructions", UIColours.WHITE, 30);
     instructions.setOnAction(event -> {
       isHome = false;
       audioController.playSound(Sounds.CLICK);
@@ -1329,14 +1313,20 @@ public class MenuController {
     StackPane.setAlignment(creditsBtn, Pos.BOTTOM_CENTER);
     StackPane.setMargin(creditsBtn, new Insets(0,0,50,0));
 
-    Text musicHeader = TextGenerator.generate("Music:", UIColours.YELLOW, 20);
-    Text musicBody = TextGenerator.generate("         OpenGamesArt\n\n", UIColours.WHITE, 20);
-    Text soundFXHeader = TextGenerator.generate("SoundFX", UIColours.YELLOW, 20);
-    Text soundFXBody = TextGenerator.generate("     SubspaceAudio \n\n", UIColours.WHITE, 20);
+    Text musicHeader = TextGenerator.generate("Game Music:", UIColours.YELLOW, 20);
+    Text musicBody = TextGenerator
+        .generate("           Trinnox - Fast Flow\n\n", UIColours.WHITE, 20);
+    Text bgMusicHeader = TextGenerator.generate("Background Music:", UIColours.YELLOW, 20);
+    Text bgMusicBody = TextGenerator
+        .generate("     Patrick de Arteaga - Chiptronical\n\n", UIColours.WHITE, 20);
+
+    Text soundFXHeader = TextGenerator.generate("SoundFX:", UIColours.YELLOW, 20);
+    Text soundFXBody = TextGenerator.generate("           SubspaceAudio \n\n", UIColours.WHITE, 20);
     Text developersHeader = TextGenerator.generate("Developers:", UIColours.YELLOW, 20);
     Text developersBody = TextGenerator.generate(" \n\nAdam Kona\n\nAlex Banks\n\nJames Weir\n\nLewis Ackroyd\n\nMatty Jones\n\nTim Cheung", UIColours.WHITE, 20);
 
-    TextFlow textFlow = new TextFlow(musicHeader, musicBody, soundFXHeader, soundFXBody, developersHeader, developersBody);
+    TextFlow textFlow = new TextFlow(musicHeader, musicBody, bgMusicHeader, bgMusicBody,
+        soundFXHeader, soundFXBody, developersHeader, developersBody);
     textFlow.setTextAlignment(TextAlignment.CENTER);
 
     Label creditsLbl = new Label(null, textFlow);
@@ -1356,7 +1346,15 @@ public class MenuController {
       showItemsOnScreen();
     });
 
-    homeOptions = new VBox(20, playBtn, instructions, creditsBtn);
+    setNameBtn = ButtonGenerator.generate(true, root, "Set Name", UIColours.YELLOW, 30);
+    setNameBtn.setOnAction(event -> {
+      isHome = false;
+      moveItemsToBackTree();
+      itemsOnScreen.add(nameEntryView);
+      showItemsOnScreen();
+    });
+
+    homeOptions = new VBox(20, playBtn, instructions, setNameBtn, creditsBtn);
     root.getChildren().add(homeOptions);
     homeOptions.setAlignment(Pos.CENTER);
     StackPane.setAlignment(homeOptions, Pos.CENTER);

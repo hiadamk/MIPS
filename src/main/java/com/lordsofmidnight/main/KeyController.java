@@ -1,10 +1,10 @@
 package com.lordsofmidnight.main;
 
-import javafx.event.EventHandler;
-import javafx.scene.input.KeyEvent;
 import com.lordsofmidnight.utils.Settings;
 import com.lordsofmidnight.utils.enums.Direction;
 import com.lordsofmidnight.utils.enums.InputKey;
+import javafx.event.EventHandler;
+import javafx.scene.input.KeyEvent;
 
 /**
  * Handles the key input from the keyboard
@@ -20,10 +20,17 @@ public class KeyController implements EventHandler<KeyEvent> {
     activeKey = null;
   }
 
+  /**
+   * @return the Direction that the player has selected by pressing the mapped key
+   */
   public Direction getActiveKey() {
     return activeKey;
   }
 
+  /**
+   * Handles the key press event for each of the mapped keys
+   * @param e They key event
+   */
   @Override
   public void handle(KeyEvent e) {
     if (e.getCode() == Settings.getKey(InputKey.UP)) {
@@ -39,6 +46,10 @@ public class KeyController implements EventHandler<KeyEvent> {
     }
   }
 
+  /**
+   *
+   * @return If the player has pressed the use item key
+   */
   public boolean UseItem() {
     if (useItem) {
       useItem = false;
