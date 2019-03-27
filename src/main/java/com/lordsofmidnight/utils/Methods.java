@@ -5,20 +5,12 @@ import com.lordsofmidnight.audio.Sounds;
 import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.objects.Entity;
-import com.lordsofmidnight.renderer.ResourceLoader;
 import com.lordsofmidnight.utils.enums.Direction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
 public class Methods {
-
-  @Deprecated //TODO remove
-  public static void updateImages(Entity[] entities, ResourceLoader r) {
-    for (Entity e : entities) {
-      e.updateImages(r);
-    }
-  }
 
   /**
    * Handles everything to do with an entity killing another
