@@ -174,6 +174,18 @@ public class PointMap<V> extends AbstractMap<Point, V> implements Map<Point, V>,
     return returnSet;
   }
 
+  /*@Override
+  public boolean equals(Object o) {
+    if (!(o instanceof PointMap)) {
+      return false;
+    }
+    PointMap pm = (PointMap) o;
+    if (this.MAX_X != pm.MAX_X) {
+      return false;
+    }
+    return this.map.equals(pm.map);
+  }*/
+
   /**Calculates the key value that will be used for a given point within the map.
    *
    * @param p The point being used as a key

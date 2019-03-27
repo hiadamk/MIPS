@@ -45,7 +45,7 @@ public class EmptyPowerUpBox extends Pellet {
   }
 
   @Override
-  public boolean isPowerPellet() {
+  public boolean isPowerUpBox() {
     return true;
   }
 

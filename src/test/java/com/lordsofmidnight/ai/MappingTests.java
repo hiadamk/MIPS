@@ -9,6 +9,7 @@ import com.lordsofmidnight.gamestate.points.Point;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -54,23 +55,23 @@ class MappingTests {
 
   @Test
   void testGetEdgesMap() {
-    HashMap<Point, HashSet<Point>> testEdges = new HashMap<Point, HashSet<Point>>();
-    HashSet<Point> nextPoint = new HashSet<Point>();
+    PointMap<PointSet> testEdges = new PointMap<>(testMap2);
+    PointSet nextPoint = new PointSet(testMap2);
     nextPoint.add(new Point(1, 4));
     nextPoint.add(new Point(3, 1));
     testEdges.put(new Point(1, 1), nextPoint);
 
-    nextPoint = new HashSet<Point>();
+    nextPoint = new PointSet(testMap2);
     nextPoint.add(new Point(3, 4));
     nextPoint.add(new Point(1, 1));
     testEdges.put(new Point(1, 4), nextPoint);
 
-    nextPoint = new HashSet<Point>();
+    nextPoint = new PointSet(testMap2);
     nextPoint.add(new Point(3, 4));
     nextPoint.add(new Point(1, 1));
     testEdges.put(new Point(3, 1), nextPoint);
 
-    nextPoint = new HashSet<Point>();
+    nextPoint = new PointSet(testMap2);
     nextPoint.add(new Point(1, 4));
     nextPoint.add(new Point(3, 1));
     testEdges.put(new Point(3, 4), nextPoint);
@@ -82,28 +83,31 @@ class MappingTests {
 
   @Test
   void testGetEdgesMapHashSetOfPoint() {
-    HashMap<Point, HashSet<Point>> testEdges = new HashMap<Point, HashSet<Point>>();
-    HashSet<Point> nextPoint = new HashSet<Point>();
-    nextPoint.add(new Point(1, 4));
+    PointMap<PointSet> testEdges = new PointMap<>(testMap2);
+    PointSet nextPoint = new PointSet(testMap2);
     nextPoint.add(new Point(3, 1));
+    nextPoint.add(new Point(1, 4));
     testEdges.put(new Point(1, 1), nextPoint);
 
-    nextPoint = new HashSet<Point>();
+    nextPoint = new PointSet(testMap2);
     nextPoint.add(new Point(3, 4));
     nextPoint.add(new Point(1, 1));
     testEdges.put(new Point(1, 4), nextPoint);
 
-    nextPoint = new HashSet<Point>();
+    nextPoint = new PointSet(testMap2);
+    nextPoint.add(new Point(1, 4));
+    nextPoint.add(new Point(3, 1));
+    testEdges.put(new Point(3, 4), nextPoint);
+
+
+    nextPoint = new PointSet(testMap2);
     nextPoint.add(new Point(3, 4));
     nextPoint.add(new Point(1, 1));
     testEdges.put(new Point(3, 1), nextPoint);
 
-    nextPoint = new HashSet<Point>();
-    nextPoint.add(new Point(1, 4));
-    nextPoint.add(new Point(3, 1));
-    testEdges.put(new Point(3, 4), nextPoint);
     PointSet junctions = Mapping.getJunctions(testMap2);
     PointMap<PointSet> result = Mapping.getEdges(testMap2, junctions);
+
     assertEquals(result, testEdges);
   }
 }

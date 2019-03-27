@@ -40,26 +40,6 @@ class RandomRouteFinderTests {
   }
 
   @Test
-  void getRouteNullPointer() {
-    RandomRouteFinder rrf = new RandomRouteFinder();
-    Entity[] gas = {
-        new Entity(true, 0, null),
-        new Entity(false, 1, null),
-        new Entity(false, 2, null),
-        new Entity(false, 3, null),
-        new Entity(false, 4, null)
-    };
-    Executable e = () -> rrf.getRoute(gas[1].getLocation(), gas[0].getLocation());
-    assertThrows(NullPointerException.class, e);
-    gas[0].setLocation(1, 1);
-    e = () -> rrf.getRoute(gas[1].getLocation(), gas[0].getLocation());
-    assertThrows(NullPointerException.class, e);
-
-    e = () -> rrf.getRoute(gas[0].getLocation(), gas[1].getLocation());
-    assertThrows(NullPointerException.class, e);
-  }
-
-  @Test
   void directionProbabilities() {
     RandomRouteFinder rrf = new RandomRouteFinder();
     Entity[] gas = {

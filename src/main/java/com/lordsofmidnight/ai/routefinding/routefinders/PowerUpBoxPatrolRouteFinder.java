@@ -44,25 +44,25 @@ public class PowerUpBoxPatrolRouteFinder implements RouteFinder {
   public Direction getRoute(Point myLocation, Point targetLocation) {
     SampleSearch sampleSearch = new SampleSearch(SEARCH_DEPTH, map);
 
-    class PowerPelletCountCondition implements SampleSearch.ConditionalInterface {
+    class PowerUpBoxCountCondition implements SampleSearch.ConditionalInterface {
       @Override
       public boolean condition(Point position) {
         if (pellets.containsKey(position)) {
           Pellet pellet = pellets.get(position);
-          if (pellet.isPowerPellet()) {
+          if (pellet.isPowerUpBox()) {
             return true;
           }
         }
         return false;
       }
     }
-    int[] powerPelletAllCounts = sampleSearch.getDirectionCounts(myLocation, new PowerPelletCountCondition());
+    int[] powerUpBoxAllCounts = sampleSearch.getDirectionCounts(myLocation, new PowerUpBoxCountCondition());
     sampleSearch = new SampleSearch(AVOID_DEPTH, map);
-    int[] powerPelletAvoidCounts = sampleSearch.getDirectionCounts(myLocation, new PowerPelletCountCondition());
+    int[] powerUpBoxAvoidCounts = sampleSearch.getDirectionCounts(myLocation, new PowerUpBoxCountCondition());
 
     int[] totals = {0, 0, 0, 0};
-    for (int i = 0; i<powerPelletAllCounts.length; i++) {
-      totals[i] = (powerPelletAvoidCounts[i]==0) ? powerPelletAllCounts[i] : 0;
+    for (int i = 0; i<powerUpBoxAllCounts.length; i++) {
+      totals[i] = (powerUpBoxAvoidCounts[i]==0) ? powerUpBoxAllCounts[i] : 0;
     }
 
     return maxDirection(totals);

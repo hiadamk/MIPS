@@ -57,7 +57,7 @@ public class RandomRouteFinder implements RouteFinder {
         break;
       }
       case 4: {
-        // makes ghost twice as likely to move towards mipsman as away from them
+        // makes ghoul twice as likely to move towards mipsman as away from them
         if (myLocation.getY() > targetLocation.getY()) {
           dir = Direction.UP;
         } else {

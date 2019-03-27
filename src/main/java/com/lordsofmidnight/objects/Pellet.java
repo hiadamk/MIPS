@@ -131,7 +131,7 @@ public class Pellet implements Renderable {
 
   /**@return True if the current pellet is a {@link PowerUpBox}
    * @author Lewis Ackroyd*/
-  public boolean isPowerPellet() {
+  public boolean isPowerUpBox() {
     return false;
   }
 }

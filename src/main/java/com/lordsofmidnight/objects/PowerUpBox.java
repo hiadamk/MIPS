@@ -22,7 +22,7 @@ public class PowerUpBox extends Pellet {
       PowerUps.BLUESHELL, PowerUps.SPEED, PowerUps.WEB, PowerUps.INVINCIBLE
   };
 
-  private final HashMap<Integer, PowerUps>[] ghostWeights = new HashMap[5];
+  private final HashMap<Integer, PowerUps>[] ghoulWeights = new HashMap[5];
   private final HashMap<Integer, PowerUps>[] mipsmanWeights = new HashMap[5];
 
   public PowerUpBox(double x, double y) {
@@ -38,31 +38,31 @@ public class PowerUpBox extends Pellet {
   private void init() {
     this.respawntime = 300;
     this.value = 0;
-    // Init ghost item weights
+    // Init ghoul item weights
     HashMap<Integer, PowerUps> map = new HashMap<>();
     map.put(50, PowerUps.WEB);
     map.put(51, PowerUps.SPEED);
-    ghostWeights[0] = map;
+    ghoulWeights[0] = map;
     map = new HashMap<>();
     map.put(60, PowerUps.SPEED);
     map.put(40, PowerUps.WEB);
     map.put(10, PowerUps.BLUESHELL);
-    ghostWeights[1] = map;
+    ghoulWeights[1] = map;
     map = new HashMap<>();
     map.put(75, PowerUps.SPEED);
     map.put(25, PowerUps.WEB);
     map.put(20, PowerUps.BLUESHELL);
-    ghostWeights[2] = map;
+    ghoulWeights[2] = map;
     map = new HashMap<>();
     map.put(75, PowerUps.SPEED);
     map.put(26, PowerUps.WEB);
     map.put(25, PowerUps.BLUESHELL);
-    ghostWeights[3] = map;
+    ghoulWeights[3] = map;
     map = new HashMap<>();
     map.put(75, PowerUps.SPEED);
     map.put(25, PowerUps.WEB);
     map.put(40, PowerUps.BLUESHELL);
-    ghostWeights[4] = map;
+    ghoulWeights[4] = map;
     // Init MIPsman weights
     map = new HashMap<>();
     map.put(5, PowerUps.INVINCIBLE);
@@ -109,7 +109,7 @@ public class PowerUpBox extends Pellet {
   public com.lordsofmidnight.objects.powerUps.PowerUp getPowerUp(Entity entity, Entity[] agents) {
     int rank = getRank(entity, agents);
     HashMap<Integer, PowerUps> baseWeights = mipsmanWeights[rank];
-    //   entity.isMipsman() ? mipsmanWeights[rank] : ghostWeights[rank];
+    //   entity.isMipsman() ? mipsmanWeights[rank] : ghoulWeights[rank];
     int totalWeights = 0;
     TreeMap<Integer, PowerUps> weights = new TreeMap<>();
     for (Entry<Integer, PowerUps> entry : baseWeights.entrySet()) {
@@ -165,7 +165,7 @@ public class PowerUpBox extends Pellet {
   }
 
   @Override
-  public boolean isPowerPellet() {
+  public boolean isPowerUpBox() {
     return true;
   }
 

@@ -202,6 +202,18 @@ public class PointSet extends AbstractSet<Point> implements Set<Point>, Cloneabl
     return new PointSetIterator(this);
   }
 
+  /*@Override
+  public boolean equals(Object o) {
+    if (!(o instanceof PointSet)) {
+      return false;
+    }
+    PointSet ps = (PointSet) o;
+    if (this.MAX_X != ps.MAX_X) {
+      return false;
+    }
+    return this.points.equals(ps.points);
+  }*/
+
   /**Calculates the key value that will be used for a given point within the map.
    *
    * @param p The point being used as a key
