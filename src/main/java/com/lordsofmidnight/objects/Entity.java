@@ -272,7 +272,12 @@ public class Entity implements Renderable {
    * @author Matty Jones, Alex Banks
    */
   public void setLocation(double x, double y) {
-    this.location.setLocation(x, y);
+    if (this.location==null) {
+      this.location = new Point(x, y);
+    }
+    else {
+      this.location.setLocation(x, y);
+    }
   }
 
   /**

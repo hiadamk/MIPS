@@ -100,11 +100,13 @@ public class AILoopControl extends Thread {
                     boolean atLastCoord = atPreviousCoordinate(ent, currentGridLocation);
                     if (!ent.getDirection().isMovementDirection()   //direction is not a movement direction
                             || !Methods.validateDirection(ent.getDirection(), currentLocation, map) ||  //movement direction is no longer valid
-                                (junctions.contains(currentGridLocation) && !atLastCoord)) {     //at a junction, but not the last coordinate
+                            (junctions.contains(currentGridLocation) && !atLastCoord)) {     //at a junction, but not the last coordinate
                         generateNewDirection(ent, currentLocation, currentGridLocation, atLastCoord);
                     }
+                    if (!atLastCoord) {
+                        processPowerUps(ent, currentGridLocation);
+                    }
                 }
-                processPowerUps(ent, currentGridLocation);
             }
 
             correctMipsmanRouteFinder();
