@@ -31,14 +31,13 @@ public class MinePellet extends Pellet {
   }
 
   @Override
-  public boolean interact(Entity entity, Entity[] agents,
+  public void interact(Entity entity, Entity[] agents,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps, AudioController audioController) {
     if(!detonated){
       Methods.kill(placer, entity);
     }
     audioController.playSound(Sounds.EXPLODE);
     detonated = true;
-    return false;
   }
 
   public void incrementRespawn() {

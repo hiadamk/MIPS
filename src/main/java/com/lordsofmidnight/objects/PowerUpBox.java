@@ -155,7 +155,7 @@ public class PowerUpBox extends Pellet {
   }
 
   @Override
-  public boolean interact(Entity entity, Entity[] agents,
+  public void interact(Entity entity, Entity[] agents,
       ConcurrentHashMap<UUID, com.lordsofmidnight.objects.powerUps.PowerUp> activePowerUps,
       AudioController audioController) {
     if (isTrap) {
@@ -163,16 +163,14 @@ public class PowerUpBox extends Pellet {
       isTrap = false;
       setActive(false);
       toReplace = true;
-      return false;
     }
     if (!active) {
-      return false;
+      return;
     }
     com.lordsofmidnight.objects.powerUps.PowerUp newPowerUp = getPowerUp(entity, agents);
     entity.giveItem(newPowerUp);
     audioController.playSound(Sounds.POWERUP);
     this.setActive(false);
-    return true;
   }
 
   @Override

@@ -37,14 +37,13 @@ public class EmptyPowerUpBox extends Pellet {
 
 
   @Override
-  public boolean interact(Entity entity, Entity[] agents,
+  public void interact(Entity entity, Entity[] agents,
       ConcurrentHashMap<UUID, com.lordsofmidnight.objects.powerUps.PowerUp> activePowerUps,
       AudioController audioController) {
     if (!active) {
-      return false;
+      return;
     }
     this.setActive(false);
-    return true;
   }
 
   @Override

@@ -6,16 +6,16 @@ public enum Sounds {
   GAMELOOP("/audio/game_loop.wav"),
   MENULOOP("/audio/menu_loop.wav"),
   CLICK("/audio/click.wav"),
-  EXPLODE("/audio/boomboom.wav"),
+  EXPLODE("/audio/boomboom2.wav"),
   COIN("/audio/coin.wav"),
-  TRAPPED("/audio/traooed.wav"),
+  TRAPPED("/audio/trapped.wav"),
   DEAD("/audio/dead.wav"),
   MIPS("/audio/mips.wav"),
   ROCKET("/audio/rocket.wav"),
-  POWERUP("audio/powerup.wav"),
-  ROCKETLAUNCH("audio/rocketlaunch.wav"),
-  SPEED("audio/powerup.wav"),
-  INVINCIBLE("audio/powerup.wav"); //TODO change
+  POWERUP("/audio/powerup.wav"),
+  ROCKETLAUNCH("/audio/rocketlaunch.wav"),
+  SPEED("/audio/zoom.wav"),
+  INVINCIBLE("/audio/invin.wav");
   private final String path;
 
   Sounds(String path) {

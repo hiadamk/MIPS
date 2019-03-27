@@ -86,21 +86,20 @@ public class Pellet implements Renderable {
     currentImage = r.getPellet();
   }
 
-  public boolean interact(Entity entity, Entity[] agents,
+  public void interact(Entity entity, Entity[] agents,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps, AudioController audioController) {
     if (isTrap) {
       trap.trigger(entity, activePowerUps, audioController);
       isTrap = false;
       setActive(false);
-      return false;
+      return;
     }
     if (!active || !canUse(entity)) {
-      return false;
+      return;
     }
     entity.incrementScore(this.value);
     audioController.playSound(Sounds.COIN);
     setActive(false);
-    return true;
   }
 
   @Override

@@ -4,7 +4,6 @@ import com.lordsofmidnight.utils.Settings;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -191,18 +190,23 @@ public class AudioController {
     @Override
     public void run() {
       running = true;
-      Collection<Clip> remove = new ArrayList<>();
+      ArrayList<Clip> remove = new ArrayList<>();
       while (running) { // closes any audio clips that have finished
         remove.clear();
         for (Clip clip : clips) {
           if (!clip.isRunning()) {
-            clip.close();
             remove.add(clip);
           }
         }
-        clips.removeAll(remove);
+        Clip x;
+        System.out.println("removing " + remove.size());
+        while (remove.size() > 0) {
+          x = remove.remove(0);
+          x.close();
+          clips.remove(x);
+        }
         try {
-          Thread.sleep(10000);
+          Thread.sleep(5000);
         } catch (Exception e) {
           running = false;
         }
