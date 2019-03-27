@@ -40,6 +40,7 @@ public class Renderer {
   private final long secondInNanoseconds = (long) Math.pow(10, 9);
   private final HeadsUpDisplay hudRender;
   private final ProjectileFX projectileManager;
+  private int[][] rawMap;
   private Map map;
   private ResourceLoader r;
   private int xResolution;
@@ -51,7 +52,6 @@ public class Renderer {
   private double tileSizeX;
   private double tileSizeY;
   private int clientID;
-  private Font geoSmall;
   private Font geoLarge;
   private long lastFrame;
   private int fps = 0;
@@ -61,6 +61,7 @@ public class Renderer {
   private BufferedImage playerColours;
   private ExplosionFX explosionManager;
   private int currentAnimationFrame = 0;
+
 
   private ArrayList<Point> traversalOrder = new ArrayList<>();
   private boolean refreshMap;
@@ -86,6 +87,7 @@ public class Renderer {
   public Renderer(GraphicsContext _gc, int _xResolution, int _yResolution, ResourceLoader r) {
     this.r = r;
     this.map = r.getMap();
+    this.rawMap = map.raw();
     this.gc = _gc;
     this.xResolution = _xResolution;
     this.yResolution = _yResolution;
@@ -113,6 +115,8 @@ public class Renderer {
       int gameTime) {
 
     if (refreshMap) {
+      this.map = r.getMap();
+      this.rawMap = map.raw();
       initMapTraversal(map);
       refreshMap = false;
     }
@@ -123,7 +127,7 @@ public class Renderer {
     // clear screen
     gc.clearRect(0, 0, xResolution, yResolution);
     renderBackground(map);
-    renderGameOnly(map, entityArr, now, pellets, activePowerUps);
+    renderGameOnly(entityArr, now, pellets, activePowerUps);
     hudRender.renderHUD(entityArr, gameTime);
     hudRender.renderInventory(this.clientEntity, timeElapsed);
     // showFPS(timeElapsed);
@@ -173,10 +177,6 @@ public class Renderer {
           Font.loadFont(
               new FileInputStream(new File("src/main/resources/font/Geo-Regular.ttf")),
               xResolution * fontRatio);
-      this.geoSmall =
-          Font.loadFont(
-              new FileInputStream(new File("src/main/resources/font/Geo-Regular.ttf")),
-              0.8 * xResolution * fontRatio);
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
@@ -195,20 +195,17 @@ public class Renderer {
   }
 
   /**
-   * @param map Game Map
    * @param entityArr Entities in the game
    * @param now current time (nanoseconds)
    * @param pellets pellets, powerupboxs, mines and traps on the map
    * @param activePowerUps powerups in use
    */
   public void renderGameOnly(
-      Map map,
       Entity[] entityArr,
       long now,
       PointMap<Pellet> pellets,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
 
-    int[][] rawMap = map.raw();
     ArrayList<Entity> entities = new ArrayList<>(Arrays.asList(entityArr));
 
     // sort entities to get depth rendering order
@@ -428,7 +425,7 @@ public class Renderer {
     gc.setTextAlign(TextAlignment.CENTER);
     gc.setFont(geoLarge);
     renderBackground(map);
-    renderGameOnly(map, entities, 0, new PointMap<>(map), null);
+    renderGameOnly(entities, 0, new PointMap<>(map), null);
     gc.setFill(new Color(0, 0, 0, backgroundOpacity));
     gc.fillRect(0, 0, xResolution, yResolution);
 
