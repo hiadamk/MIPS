@@ -99,9 +99,9 @@ public class MapGenerator {
     int[][] map = null;
     int c = 0;
     int half = (y + 1) / 2;
+    Random r = new Random();
     while (!validateMap(map)) {
       //System.out.println("attempt " + c++);
-      Random r = new Random();
       map = new int[x][y];
       for (int i = 0; i < x; i++) {
         for (int j = 0; j < y; j++) {
@@ -110,12 +110,12 @@ public class MapGenerator {
       }
       for (int i = 1; i < x - 3; i += 3) {
         for (int j = 1; j < half + 1; j += 3) {
-          map = apply(MapParts.getRandom(), map, i, j);
+          map = apply(MapParts.getRandom(r), map, i, j);
         }
       }
 
     }
-    smoothDiagonals(map);
+    smoothDiagonals(map, r);
     for (int i = 1; i < map.length; i++) { //Reflects the map
       for (int j = 1; j < map[0].length / 2; j++) {
         map[i][map[0].length - j - 1] = map[i][j];
@@ -190,8 +190,7 @@ public class MapGenerator {
     return true;
   }
 
-  private static void smoothDiagonals(int[][] map) {
-    Random r = new Random();
+  private static void smoothDiagonals(int[][] map, Random r) {
     for (int x = 1; x < map.length - 1; x++) {
       for (int y = 1; y < map[0].length - 1; y++) {
         if (map[x][y] == 0 && map[x + 1][y + 1] == 0 && map[x + 1][y] == 1 && map[x][y + 1] == 1) {

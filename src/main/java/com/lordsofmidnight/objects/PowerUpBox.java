@@ -5,6 +5,7 @@ import com.lordsofmidnight.audio.Sounds;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.objects.powerUps.Invincible;
 import com.lordsofmidnight.objects.powerUps.Mine;
+import com.lordsofmidnight.objects.powerUps.PowerUp;
 import com.lordsofmidnight.objects.powerUps.Rocket;
 import com.lordsofmidnight.objects.powerUps.Speed;
 import com.lordsofmidnight.objects.powerUps.Web;
@@ -12,7 +13,6 @@ import com.lordsofmidnight.renderer.ResourceLoader;
 import com.lordsofmidnight.utils.enums.PowerUps;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -114,7 +114,7 @@ public class PowerUpBox extends Pellet {
    * @return the PowerUps
    * @author Matthew Jones
    */
-  public com.lordsofmidnight.objects.powerUps.PowerUp getPowerUp(Entity entity, Entity[] agents) {
+  public PowerUp getPowerUp(Entity entity, Entity[] agents) {
     int rank = getRank(entity, agents);
     HashMap<Integer, PowerUps> baseWeights = mipsmanWeights[rank];
     //   entity.isMipsman() ? mipsmanWeights[rank] : ghoulWeights[rank];
@@ -124,7 +124,6 @@ public class PowerUpBox extends Pellet {
       weights.put(totalWeights, entry.getValue());
       totalWeights += entry.getKey();
     }
-    Random r = new Random();
     int i = (int) ((1 - r.nextDouble()) * totalWeights);
     this.setActive(false);
     switch (weights.floorEntry(i).getValue()) {

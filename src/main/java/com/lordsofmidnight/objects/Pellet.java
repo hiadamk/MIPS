@@ -20,6 +20,7 @@ import javafx.scene.image.Image;
  */
 public class Pellet implements Renderable {
 
+  static Random r = new Random();
   protected Point location;
   protected ArrayList<Image> currentImage;
   protected int respawntime = 2000;
@@ -29,22 +30,21 @@ public class Pellet implements Renderable {
   protected boolean isTrap = false;
   protected int respawnCount = 0;
 
+
   public Pellet(double x, double y) {
     this.location = new Point(x, y);
     active = true;
-    Random r = new Random();
     respawntime += r.nextInt(500);
-  }
-
-  public boolean isBox() {
-    return false;
   }
 
   public Pellet(Point p) {
     this.location = p;
     active = true;
-    Random r = new Random();
     respawntime += r.nextInt(500);
+  }
+
+  public boolean isBox() {
+    return false;
   }
 
   public boolean canUse(Entity e) {
