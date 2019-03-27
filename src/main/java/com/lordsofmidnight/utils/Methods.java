@@ -57,7 +57,7 @@ public class Methods {
     }
     killer.increaseKills();
     victim.setDead(true);
-    audioController.playSound(Sounds.EXPLODE, victim.getClientId());
+    audioController.playSound(Sounds.EXPLODE);
     victim.setKilledBy(killer.getName() + killer.getClientId());
     if (victim.getScore() > 0) {
       int points = (int) (victim.getScore() * 0.1);

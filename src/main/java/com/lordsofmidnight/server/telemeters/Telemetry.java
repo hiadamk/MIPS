@@ -224,7 +224,7 @@ public abstract class Telemetry {
     }
     ArrayList<UUID> toRemove = new ArrayList<>();
     for (PowerUp p : activePowerUps.values()) {
-      if (p.incrementTime()) {
+      if (p.incrementTime(audioController)) {
         toRemove.add(p.id);
       }
     }

@@ -27,12 +27,12 @@ public class Invincible extends PowerUp {
     this.effected = user;
     user.setInvincible(true);
     counter = 0;
-    audioController.playSound(Sounds.INVINCIBLE, user.getClientId());
+    audioController.playSound(Sounds.INVINCIBLE);
   }
 
   @Override
-  public boolean incrementTime() {
-    super.incrementTime();
+  public boolean incrementTime(AudioController audioController) {
+    super.incrementTime(audioController);
     if (counter == EFFECTTIME) {
       effected.setInvincible(false);
       return true;

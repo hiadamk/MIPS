@@ -42,7 +42,7 @@ public class AudioController {
    * @param sound the sound to play
    */
   public void playSound(Sounds sound, int... id) {
-    if (Settings.getMute() /*|| (id.length > 0 && id[0] != client)*/) {
+    if (Settings.getMute() || (id.length > 0 && id[0] != client)) {
       return; // IF the com.lordsofmidnight.main has muted its audio nothing will be played
     }
     try {
@@ -59,12 +59,12 @@ public class AudioController {
    */
   public void gameIntro() {
     mediaPlayer.stop();
-    playSound(Sounds.GAMEINTRO);
+    playMusic(Sounds.GAMEINTRO);
     new Thread() {
       @Override
       public void run() {
         try {
-          Thread.sleep(8000);
+          Thread.sleep(9000);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
@@ -85,6 +85,12 @@ public class AudioController {
           new Media(getClass().getResource(sound.getPath()).toURI().toString()));
       mediaPlayer.setVolume(Settings.getMusicVolume());
       mediaPlayer.seek(Duration.ZERO);
+      mediaPlayer.setOnEndOfMedia(new Runnable() {
+        @Override
+        public void run() {
+          playMusic(sound);
+        }
+      });
       mediaPlayer.play();
     } catch (Exception e) {
       e.printStackTrace();

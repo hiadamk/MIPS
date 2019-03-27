@@ -78,7 +78,7 @@ public abstract class PowerUp {
    *
    * @return if the powerUp has finished and should be removed
    */
-  public boolean incrementTime() {
+  public boolean incrementTime(AudioController audioController) {
     counter++;
     return false;
   }

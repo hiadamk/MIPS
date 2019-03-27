@@ -16,8 +16,6 @@ public class Blueshell extends PowerUp {
 
   private ConcurrentHashMap<UUID, PowerUp> activePowerUps;
 
-  private int currentFrame = 0;
-
   private boolean launched = false;
   private boolean targeted = false;
 
@@ -44,10 +42,11 @@ public class Blueshell extends PowerUp {
   }
 
   @Override
-  public boolean incrementTime() {
-    super.incrementTime();
+  public boolean incrementTime(AudioController audioController) {
+    super.incrementTime(audioController);
     if (counter == EFFECTTIME) {
-      Methods.kill(user, effected);
+      audioController.playSound(Sounds.ROCKET);
+      Methods.kill(user, effected, audioController);
       return true;
     }
     return false;

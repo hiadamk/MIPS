@@ -6,7 +6,7 @@ public enum Sounds {
   GAMELOOP("/audio/game_loop.wav"),
   MENULOOP("/audio/menu_loop.wav"),
   CLICK("/audio/click.wav"),
-  EXPLODE("/audio/boomboom3.wav"),
+  EXPLODE("/audio/boomboom.wav"),
   COIN("/audio/coin.wav"),
   TRAPPED("/audio/trapped.wav"),
   DEAD("/audio/dead.wav"),

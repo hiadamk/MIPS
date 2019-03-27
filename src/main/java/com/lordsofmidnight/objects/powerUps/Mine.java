@@ -36,7 +36,7 @@ public class Mine extends PowerUp {
   @Override
   public void trigger(Entity victim, ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       AudioController audioController) {
-    Methods.kill(user, victim);
+    Methods.kill(user, victim, audioController);
     counter = 0;
   }
 }

@@ -27,13 +27,13 @@ public class Speed extends PowerUp {
     user.changeBonusSpeed(0.03);
     activePowerUps.put(id, this);
     this.effected = user;
-    audioController.playSound(Sounds.SPEED, user.getClientId());
+    audioController.playSound(Sounds.SPEED);
     counter = 0;
   }
 
   @Override
-  public boolean incrementTime() {
-    super.incrementTime();
+  public boolean incrementTime(AudioController audioController) {
+    super.incrementTime(audioController);
     if (counter == EFFECTTIME) {
       user.changeBonusSpeed(-0.03);
       return true;

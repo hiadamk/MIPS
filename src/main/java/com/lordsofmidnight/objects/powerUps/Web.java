@@ -41,12 +41,12 @@ public class Web extends PowerUp {
     activePowerUps.put(id, this);
     this.effected = victim;
     counter = 0;
-    audioController.playSound(Sounds.TRAPPED, user.getClientId());
+    audioController.playSound(Sounds.TRAPPED);
   }
 
   @Override
-  public boolean incrementTime() {
-    super.incrementTime();
+  public boolean incrementTime(AudioController audioController) {
+    super.incrementTime(audioController);
     if (counter == EFFECTTIME) {
       effected.setStunned(false);
       return true;
