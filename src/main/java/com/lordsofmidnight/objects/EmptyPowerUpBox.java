@@ -1,5 +1,6 @@
 package com.lordsofmidnight.objects;
 
+import com.lordsofmidnight.audio.AudioController;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.renderer.ResourceLoader;
 import java.util.UUID;
@@ -36,12 +37,14 @@ public class EmptyPowerUpBox extends Pellet {
 
 
   @Override
-  public void interact(Entity entity, Entity[] agents,
-      ConcurrentHashMap<UUID, com.lordsofmidnight.objects.powerUps.PowerUp> activePowerUps) {
+  public boolean interact(Entity entity, Entity[] agents,
+      ConcurrentHashMap<UUID, com.lordsofmidnight.objects.powerUps.PowerUp> activePowerUps,
+      AudioController audioController) {
     if (!active) {
-      return;
+      return false;
     }
     this.setActive(false);
+    return true;
   }
 
   @Override

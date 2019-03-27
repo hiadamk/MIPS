@@ -1,5 +1,7 @@
 package com.lordsofmidnight.objects.powerUps;
 
+import com.lordsofmidnight.audio.AudioController;
+import com.lordsofmidnight.audio.Sounds;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.objects.Pellet;
@@ -32,12 +34,13 @@ public class Blueshell extends PowerUp {
       Entity user,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       PointMap<Pellet> pellets,
-      Entity[] agents) {
+      Entity[] agents, AudioController audioController) {
     effected = agents[Methods.findWinner(agents)];
     this.user = user;
     this.activePowerUps = activePowerUps;
     activePowerUps.put(id, this);
     this.effected = agents[Methods.findWinner(agents)];
+    audioController.playSound(Sounds.ROCKETLAUNCH);
   }
 
   @Override

@@ -1,5 +1,7 @@
 package com.lordsofmidnight.objects.powerUps;
 
+import com.lordsofmidnight.audio.AudioController;
+import com.lordsofmidnight.audio.Sounds;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.objects.Entity;
@@ -21,7 +23,7 @@ public class Web extends PowerUp {
       Entity user,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       PointMap<Pellet> pellets,
-      Entity[] agents) {
+      Entity[] agents, AudioController audioController) {
     this.user = user;
     this.onMap = true;
     Point loc = user.getMoveInDirection(1.1, user.getFacing().getInverse());
@@ -33,11 +35,13 @@ public class Web extends PowerUp {
   }
 
   @Override
-  public void trigger(Entity victim, ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
+  public void trigger(Entity victim, ConcurrentHashMap<UUID, PowerUp> activePowerUps,
+      AudioController audioController) {
     victim.setStunned(true);
     activePowerUps.put(id, this);
     this.effected = victim;
     counter = 0;
+    audioController.playSound(Sounds.TRAPPED);
   }
 
   @Override

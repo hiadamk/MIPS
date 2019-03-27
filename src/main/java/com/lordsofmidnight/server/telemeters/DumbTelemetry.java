@@ -255,7 +255,7 @@ public class DumbTelemetry extends Telemetry {
 
     agents[id].setLocation(x, y);
     PowerUp powerup = PowerUp.fromInt(powerint);
-    powerup.use(agents[id], activePowerUps, pellets, agents);
+    powerup.use(agents[id], activePowerUps, pellets, agents, audioController);
   }
 
   /**

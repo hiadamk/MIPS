@@ -1,5 +1,7 @@
 package com.lordsofmidnight.objects;
 
+import com.lordsofmidnight.audio.AudioController;
+import com.lordsofmidnight.audio.Sounds;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
 import com.lordsofmidnight.utils.Methods;
 import java.util.UUID;
@@ -29,13 +31,14 @@ public class MinePellet extends Pellet {
   }
 
   @Override
-  public void interact(Entity entity, Entity[] agents,
-      ConcurrentHashMap<UUID, PowerUp> activePowerUps) {
+  public boolean interact(Entity entity, Entity[] agents,
+      ConcurrentHashMap<UUID, PowerUp> activePowerUps, AudioController audioController) {
     if(!detonated){
       Methods.kill(placer, entity);
     }
-
+    audioController.playSound(Sounds.EXPLODE);
     detonated = true;
+    return false;
   }
 
   public void incrementRespawn() {
