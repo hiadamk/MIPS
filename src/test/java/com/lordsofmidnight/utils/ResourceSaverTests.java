@@ -1,13 +1,13 @@
 package com.lordsofmidnight.utils;
 
+import com.lordsofmidnight.gamestate.maps.Map;
 import java.io.File;
 import java.io.IOException;
-import com.lordsofmidnight.gamestate.maps.Map;
-//import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Test;
 
 public class ResourceSaverTests {
 
-  //@Test
+  @Test
   void saveTest() {
     int[][] map = {{1, 1, 1},
         {1, 0, 1},

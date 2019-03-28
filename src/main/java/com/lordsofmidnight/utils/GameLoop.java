@@ -1,11 +1,18 @@
 package com.lordsofmidnight.utils;
 
+/**
+ * @author Tim
+ */
 public abstract class GameLoop extends Thread {
 
   long gameSpeed;
   private boolean running;
   private boolean pause;
 
+  /**
+   * @param gameSpeed the length of time each loop should last e.g. gamespeed = 10^9 would mean the
+   * loop occurs 10 times per second
+   */
   public GameLoop(long gameSpeed) {
     this.gameSpeed = gameSpeed;
     running = true;
@@ -38,17 +45,29 @@ public abstract class GameLoop extends Thread {
     }
   }
 
+  /**
+   * pauses game loop - doesn't execute handle
+   */
   public void pause() {
     pause = true;
   }
 
+  /**
+   * unpauses game loop
+   */
   public void unpause() {
     pause = false;
   }
 
+  /**
+   * ends game loop
+   */
   public void close() {
     running = false;
   }
 
+  /**
+   * method that is called each game loop. OVERRIDE THIS
+   */
   public abstract void handle();
 }
