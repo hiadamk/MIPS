@@ -1,13 +1,13 @@
 /**
  *
  */
-package com.lordsofmidnight.ai;
+package com.lordsofmidnight.ai.routefinding.routefinders;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.lordsofmidnight.ai.routefinding.RouteFinder;
-import com.lordsofmidnight.ai.routefinding.routefinders.AStarRouteFinder;
 import com.lordsofmidnight.gamestate.maps.Map;
+import com.lordsofmidnight.gamestate.points.Point;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -16,8 +16,7 @@ import org.junit.jupiter.api.Test;
 class AStarRouteFinderTests {
 
   /**
-   * Test method for {@link AStarRouteFinder#AStarRouteFinder(java.util.HashSet,
-   * java.util.HashMap, Map)}.
+   * Test method for {@link AStarRouteFinder#AStarRouteFinder(Map)}.
    */
   @Test
   void testAStarRouteFinder() {
@@ -25,8 +24,7 @@ class AStarRouteFinderTests {
   }
 
   /**
-   * Test method for {@link RouteFinder#getRoute(java.awt.geom.Point2D.Double,
-   * java.awt.geom.Point2D.Double)}.
+   * Test method for {@link RouteFinder#getRoute(Point, Point)}.
    */
   @Test
   void testGetRoute() {

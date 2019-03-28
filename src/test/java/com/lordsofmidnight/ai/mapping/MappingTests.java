@@ -1,16 +1,10 @@
-package com.lordsofmidnight.ai;
+package com.lordsofmidnight.ai.mapping;
 
 import com.lordsofmidnight.gamestate.points.PointMap;
 import com.lordsofmidnight.gamestate.points.PointSet;
-import com.lordsofmidnight.ai.mapping.Mapping;
 import org.junit.jupiter.api.Test;
 import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.gamestate.points.Point;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

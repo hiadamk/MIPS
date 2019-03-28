@@ -1,14 +1,10 @@
-package com.lordsofmidnight.ai;
+package com.lordsofmidnight.ai.routefinding.routefinders;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import com.lordsofmidnight.ai.routefinding.routefinders.RandomRouteFinder;
 import com.lordsofmidnight.objects.Entity;
 import com.lordsofmidnight.utils.enums.Direction;
 import java.util.HashMap;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 /**
  * Unit tests for the {@link RandomRouteFinder} class.
