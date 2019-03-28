@@ -18,6 +18,11 @@ import javafx.application.Platform;
 import com.lordsofmidnight.main.Client;
 import com.lordsofmidnight.utils.Input;
 
+
+/**
+ * Handles joining and starting the game from the client's perspective
+ * through use of tcp sessions.
+ * */
 public class ClientLobbySession {
 
   private Queue<String> clientIn;
@@ -36,8 +41,9 @@ public class ClientLobbySession {
   private BufferedReader in;
 
   /**
-   * A thread which will look for the com.lordsofmidnight.server's IP address and then haandle the
-   * initial handshake between the client and the com.lordsofmidnight.server
+   * A thread which will look for the {@link ServerLobby}'s UDP broadcast for players to join,
+   * and then uses the IP address of the server to then start a TCP session
+   * where it joins the game lobby.
    */
   Thread joiner =
       new Thread() {

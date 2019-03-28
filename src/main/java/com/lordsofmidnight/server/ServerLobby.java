@@ -15,6 +15,12 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
+
+/**
+ * Creates a lobby, broadcasts it's status to other players, and handles players joining and leaving.
+ * Also tells players when the game starts. This class corresponds to {@link ClientLobbySession} on the
+ * client side.
+ * */
 public class ServerLobby {
 
   private Map map;
@@ -148,7 +154,9 @@ public class ServerLobby {
 
     return s;
   }
-
+/**
+ * Listens for TCP session requests, from players trying to join the lobby.
+ * */
   private Thread connectionAccepter(){
     Thread thread = new Thread() {
 
@@ -256,7 +264,7 @@ public class ServerLobby {
     }
   }
 
-  /** Private class which is listening for clients in the lobby who leave the game. */
+  /** Private class which is listening for clients in the lobby who leave. */
   private class lobbyLeaverListener extends Thread {
 
     private Socket client;

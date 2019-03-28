@@ -7,6 +7,9 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Queue;
 
+/**
+ * Packs and sends strings from feedqueue, as UDP packets to a specified IP.
+ * */
 public class PacketSender extends Thread {
 
   private int port;
