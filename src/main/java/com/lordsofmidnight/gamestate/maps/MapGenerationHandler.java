@@ -15,9 +15,6 @@ public class MapGenerationHandler {
   private Thread smallMapsThread;
   private Thread bigMapsThread;
 
-  public MapGenerationHandler() {
-  }
-
   /**
    * Runnable which maintains a buffer of 20 small generated maps
    */

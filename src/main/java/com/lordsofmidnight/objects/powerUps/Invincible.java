@@ -9,6 +9,9 @@ import com.lordsofmidnight.utils.enums.PowerUps;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * The invincible powerUp making the entity that uses it invincible for its duration
+ */
 public class Invincible extends PowerUp {
 
   public Invincible() {

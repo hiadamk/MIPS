@@ -11,6 +11,9 @@ import com.lordsofmidnight.utils.enums.PowerUps;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * The Mine powerup placing a mine behind the entity that uses it
+ */
 public class Mine extends PowerUp {
 
   public Mine() {

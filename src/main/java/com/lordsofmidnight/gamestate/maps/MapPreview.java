@@ -1,6 +1,9 @@
 package com.lordsofmidnight.gamestate.maps;
 
 import com.lordsofmidnight.gamestate.points.PointMap;
+import com.lordsofmidnight.objects.Entity;
+import com.lordsofmidnight.renderer.Renderer;
+import com.lordsofmidnight.renderer.ResourceLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
@@ -10,11 +13,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import com.lordsofmidnight.objects.Entity;
-import com.lordsofmidnight.renderer.Renderer;
-import com.lordsofmidnight.renderer.ResourceLoader;
 
 /**
+ * Generates a preview of a map
  * @author Tim Cheung
  */
 public class MapPreview {
@@ -47,11 +48,22 @@ public class MapPreview {
     return getScreenshot(resourceLoader.getMap());
   }
 
+  /**
+   * Method to get a image from a map
+   *
+   * @param map The map
+   * @return The image preview of the map
+   */
   public Image getMapPreview(Map map) {
     resourceLoader.loadMap(map);
     return getScreenshot(map);
   }
 
+  /**
+   *
+   * @param map The map to get a screenshot of
+   * @return The screenshot image
+   */
   private Image getScreenshot(Map map) {
     Canvas canvas = new Canvas(xRes, yRes);
     Group screenshotGroup = new Group();

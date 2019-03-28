@@ -123,10 +123,17 @@ public class Point {
     return new Point(this.x, this.y, this.MAX_X, this.MAX_Y, this.MAPPED);
   }
 
+  /**
+   * @return The x value
+   */
   public double getX() {
     return x;
   }
 
+  /**
+   *
+   * @return The y value
+   */
   public double getY() {
     return y;
   }
@@ -235,6 +242,11 @@ public class Point {
     return (abs(temp.getX()) <= 0.5 && abs(temp.getY()) <= 0.5);
   }
 
+  /**
+   *
+   * @return The point in string form
+   */
+  @Override
   public String toString() {
     return "[Point] ("
         + x

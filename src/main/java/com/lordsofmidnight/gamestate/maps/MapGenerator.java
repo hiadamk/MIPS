@@ -3,6 +3,9 @@ package com.lordsofmidnight.gamestate.maps;
 import java.util.Arrays;
 import java.util.Random;
 
+/**
+ * Used to generate the random maps
+ */
 public class MapGenerator {
   /*
    Rules:
@@ -90,11 +93,24 @@ public class MapGenerator {
     System.out.println(avg / 100000000);
   }
 
+  /**
+   * Creates a random map
+   *
+   * @param x_factor multiplier for the x axis
+   * @param y_factor multiplier for the y axis
+   * @return the new map
+   */
   public static int[][] newRandomMap(int x_factor, int y_factor) {
     //Run it on a new thread
     return generateNewMap(14 + 3 * x_factor, 14 + 3 * y_factor);
   }
 
+  /**
+   * Generates a new map
+   * @param x the x dimension of the map
+   * @param y the y dimension of the map
+   * @return the map
+   */
   public static int[][] generateNewMap(int x, int y) {
     int[][] map = null;
     int c = 0;
@@ -131,6 +147,10 @@ public class MapGenerator {
     return map;
   }
 
+  /**
+   * Adds the sections of the map that loop around
+   * @param map the new edited map
+   */
   private static void addLoops(int[][] map) {
     int x = map.length;
     int y = map[0].length;
@@ -144,10 +164,20 @@ public class MapGenerator {
     }
   }
 
+  /**
+   * Validates a given map
+   * @param map the map to validate
+   * @return True if map is valid
+   */
   public static boolean validateMap(int[][] map) {
     return map != null && checkConnected(map) && noDoubleLanes(map);
   }
 
+  /**
+   * Checks that the map is fully connected
+   * @param map The map to check
+   * @return True if map is fully connected
+   */
   private static boolean checkConnected(int[][] map) {
     for (int x = 0; x < map.length; x++) {
       for (int y = 0; y < map[0].length; y++) {
@@ -166,6 +196,11 @@ public class MapGenerator {
     return false;
   }
 
+  /**
+   * Checks that there are no "double lanes" in the map e.g. a two wide path
+   * @param map The map to check
+   * @return True if there are no double lanes
+   */
   private static boolean noDoubleLanes(int[][] map) {
     for (int x = 1; x < map.length - 1; x++) {
       for (int y = 1; y < map[0].length - 1; y++) {
@@ -190,6 +225,11 @@ public class MapGenerator {
     return true;
   }
 
+  /**
+   * This method removes any odd endings from the map where two tiles are diagonally connected
+   * @param map The map
+   * @param r A reference to the random number generator
+   */
   private static void smoothDiagonals(int[][] map, Random r) {
     for (int x = 1; x < map.length - 1; x++) {
       for (int y = 1; y < map[0].length - 1; y++) {
@@ -239,6 +279,11 @@ public class MapGenerator {
     }
   }
 
+  /**
+   * Simple check that there is empty space somewhere in the map
+   * @param map The map
+   * @return True if there is a space in the map
+   */
   private static boolean containsSpace(int[][] map) {
     for (int x = 0; x < map.length; x++) {
       for (int y = 0; y < map[0].length; y++) {
@@ -250,6 +295,12 @@ public class MapGenerator {
     return false;
   }
 
+  /**
+   * Fills the map with 1's in adjacent tiles used to check connectedness
+   * @param map The map
+   * @param x Current x coord in traversal
+   * @param y Current y coord in traversal
+   */
   private static void paint(int[][] map, int x, int y) {
     if (x == map.length || y == map[0].length || x < 0 || y < 0) {
       return;
@@ -264,6 +315,14 @@ public class MapGenerator {
     paint(map, x, y + 1);
   }
 
+  /**
+   * Puts the given part into the Map
+   * @param part The part to place
+   * @param map The Map
+   * @param x The X coord of reference point
+   * @param y The Y coord of reference point
+   * @return The new Map
+   */
   private static int[][] apply(int[][] part, int[][] map, int x, int y) {
     //System.out.println(part.length + " " + part[0].length + " " + map.length + " " + map[0].length + " " + x + " " + y);
     for (int i = 0; i < 3; i++) {

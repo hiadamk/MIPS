@@ -11,6 +11,10 @@ import com.lordsofmidnight.utils.enums.PowerUps;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * The Web powerup leaving a fake item box, that snares those who run into it, behind the entity
+ * that uses it
+ */
 public class Web extends PowerUp {
 
   public Web() {

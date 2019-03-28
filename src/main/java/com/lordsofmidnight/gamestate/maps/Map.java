@@ -69,10 +69,17 @@ public class Map {
     return spawnPoints;
   }
 
+  /**
+   * @return The max X value for the map
+   */
   public int getMaxX() {
     return MAX_X;
   }
 
+  /**
+   *
+   * @return The max Y value for the map
+   */
   public int getMaxY() {
     return MAX_Y;
   }

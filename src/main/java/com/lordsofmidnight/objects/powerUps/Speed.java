@@ -9,7 +9,9 @@ import com.lordsofmidnight.utils.enums.PowerUps;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-
+/**
+ * The Speed powerup giving the entity that uses it increased speed for the duration
+ */
 public class Speed extends PowerUp {
 
   public Speed() {

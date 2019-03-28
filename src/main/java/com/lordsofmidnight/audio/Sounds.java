@@ -1,5 +1,8 @@
 package com.lordsofmidnight.audio;
 
+/**
+ * Enum to represent the different sound files for soundFX and music
+ */
 public enum Sounds {
   // The filepaths of the sounds
   GAMEINTRO("/audio/game_intro.wav", 0),
@@ -19,6 +22,10 @@ public enum Sounds {
   private final String path;
   private int id;
 
+  /**
+   * @param path The path to the file
+   * @param id The ID of the sound
+   */
   Sounds(String path, int id) {
     this.path = path;
     this.id = id;
@@ -31,6 +38,10 @@ public enum Sounds {
     return path;
   }
 
+  /**
+   *
+   * @return The ID of the sound
+   */
   public int id() {
     return id;
   }

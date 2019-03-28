@@ -6,6 +6,9 @@ import com.lordsofmidnight.renderer.ResourceLoader;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * //TODO someone who gets this class please help
+ */
 public class EmptyPowerUpBox extends Pellet {
 
   public EmptyPowerUpBox(double x, double y) {

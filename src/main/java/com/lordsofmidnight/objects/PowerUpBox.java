@@ -17,32 +17,37 @@ import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Class for the powerup boxes
+ */
 public class PowerUpBox extends Pellet {
 
   private boolean toReplace = false;
-  private boolean isBox = true;
-
-  @Override
-  public boolean isBox() {
-    return isBox;
-  }
-  private static PowerUps[] powerUps = {
-      PowerUps.ROCKET, PowerUps.SPEED, PowerUps.WEB, PowerUps.INVINCIBLE
-  };
 
   private final HashMap<Integer, PowerUps>[] ghoulWeights = new HashMap[5];
   private final HashMap<Integer, PowerUps>[] mipsmanWeights = new HashMap[5];
 
+  /**
+   * @param x The X coordinate of the powerup
+   * @param y The y coordinate of the powerup
+   */
   public PowerUpBox(double x, double y) {
     super(x, y);
     init();
   }
 
+  /**
+   *
+   * @param p The location of the powerup
+   */
   public PowerUpBox(Point p) {
     super(p);
     init();
   }
 
+  /**
+   * initialises everything
+   */
   private void init() {
     this.respawntime = 300;
     this.value = 0;
@@ -177,6 +182,12 @@ public class PowerUpBox extends Pellet {
     return true;
   }
 
+  /**
+   * Returns the position in the leaderboard of the entity given
+   * @param entity The entity to rank
+   * @param agents The list of all entities
+   * @return The rank of the entity
+   */
   private int getRank(Entity entity, Entity[] agents) {
     int score = entity.getScore();
     int rank = 0;

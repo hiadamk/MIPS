@@ -2,6 +2,9 @@ package com.lordsofmidnight.gamestate.maps;
 
 import java.util.Random;
 
+/**
+ * Class holding all the pre made map parts
+ */
 public class MapParts {
 
   protected static final int[][] upL = {
@@ -116,6 +119,12 @@ public class MapParts {
   protected static final int[][][] all = {upL, upM, upR, upDouble, sideT, sideM, sideB, cornerBL,
       cornerBR, cornerTL, cornerTR, cross, uB, uBs, uL, uLs, uR, uRs, uT, uTs};
 
+  /**
+   * Gives a random part
+   *
+   * @param r The random number generator
+   * @return A part
+   */
   protected static int[][] getRandom(Random r) {
     return all[r.nextInt(all.length)];
   }

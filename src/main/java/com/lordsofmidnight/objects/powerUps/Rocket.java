@@ -12,6 +12,9 @@ import java.awt.geom.Point2D.Double;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * The rocket powerup Launched at and killing the player in first
+ */
 public class Rocket extends PowerUp {
 
   private ConcurrentHashMap<UUID, PowerUp> activePowerUps;

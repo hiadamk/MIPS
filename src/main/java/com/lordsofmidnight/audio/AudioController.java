@@ -27,6 +27,9 @@ public class AudioController {
     clips = loadClips();
   }
 
+  /**
+   * Stops all music players
+   */
   private void stopPlayers() {
     if (mediaPlayer != null) {
       mediaPlayer.stop();
@@ -57,6 +60,11 @@ public class AudioController {
 
   }
 
+  /**
+   * Loads all the clips in from the files
+   *
+   * @return The array of all Clips one for each sound in the Sounds enum
+   */
   private AudioClip[] loadClips() {
     AudioClip[] loaded = new AudioClip[Sounds.values().length];
     try {

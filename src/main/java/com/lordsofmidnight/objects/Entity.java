@@ -643,6 +643,9 @@ public class Entity implements Renderable {
     this.killedBy = name;
   }
 
+  /**
+   * resets the deathlocation to null
+   */
   public void resetDeathLocation() {
     this.deathLocation = null;
   }
