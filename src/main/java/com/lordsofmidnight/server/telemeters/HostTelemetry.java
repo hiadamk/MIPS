@@ -19,6 +19,11 @@ import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * This acts as the telemetry for the host of a multiplayer game,
+ * or for the user in a singleplayer game.
+ * It has authority over how a game is run.
+ * */
 public class HostTelemetry extends Telemetry {
 
   private final int playerCount;
@@ -179,6 +184,10 @@ public class HostTelemetry extends Telemetry {
         usePowerUp(id);
         agents[id].setPowerUpUsedFlag(false);
       }else if(d.equals(Direction.STOP)){
+        if (ai == null) {
+          ai = new AILoopControl(agents, new int[0], map, inputs, pellets);
+          startAI();
+        }
         if (ai.addClient(id)) {
           agents[id].setName("Bot" + agents[id].getName());
         }

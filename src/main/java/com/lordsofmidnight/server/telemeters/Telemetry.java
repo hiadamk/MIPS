@@ -17,7 +17,11 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-/** Parent class for DumbTelemetry and HostTelemetry */
+/** Parent class for DumbTelemetry and HostTelemetry
+ * A telemetry object is responsible for keeping track of all the
+ * entities and objects within the game,
+ * as well as running the physics.
+ * */
 public abstract class Telemetry {
 
   static final int AGENT_COUNT = 5;

@@ -17,7 +17,7 @@ import java.util.concurrent.BlockingQueue;
 
 /**
  * Behaves similar to Host Telemetry but relies on input from the server exclusively to know what is
- * happening with the entities rather than using AI
+ * happening with the other game entities, and for the usage or collection of powerups.
  */
 public class DumbTelemetry extends Telemetry {
 
