@@ -90,8 +90,6 @@ public class DumbTelemetry extends Telemetry {
    */
   void processInputs() {
     while (!inputs.isEmpty()) {
-      System.out.println("Dumb HostTelemetry received: " + inputs.peek());
-      System.out.println(inputs.peek().substring(0, 4));
       String input = inputs.poll();
 
       switch (input.substring(0, 4)) { // looks at first 4 characters

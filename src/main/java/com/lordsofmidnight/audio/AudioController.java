@@ -114,7 +114,6 @@ public class AudioController {
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
-        System.out.println("go");
         playMusic(Sounds.GAMELOOP);
       }
     }.start();
@@ -127,7 +126,6 @@ public class AudioController {
    */
   public void playMusic(Sounds sound) {
     try {
-      System.out.println("new track");
       stopPlayers();
       MediaPlayer current;
       if (sound == Sounds.MENULOOP) {
@@ -144,7 +142,6 @@ public class AudioController {
       current.setOnEndOfMedia(new Runnable() {
         @Override
         public void run() {
-          System.out.println("restarting track");
           playMusic(sound);
         }
       });

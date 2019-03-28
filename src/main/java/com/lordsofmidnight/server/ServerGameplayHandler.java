@@ -1,11 +1,11 @@
 package com.lordsofmidnight.server;
 
+import com.lordsofmidnight.utils.Input;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import com.lordsofmidnight.utils.Input;
 
 // input switched from string to input form in this stage
 public class ServerGameplayHandler {
@@ -57,7 +57,6 @@ public class ServerGameplayHandler {
               if (incomingQueue.isEmpty()) {
                 continue;
               }
-              System.out.println("SERVER RECEIVED -> " + incomingQueue.peek());
               inputQueue.add(Input.fromString(incomingQueue.poll()));
 
               try {
