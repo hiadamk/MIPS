@@ -1,5 +1,6 @@
 package com.lordsofmidnight.ui;
 
+import com.lordsofmidnight.main.Client;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
@@ -8,7 +9,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import com.lordsofmidnight.main.Client;
 
 /**
  * Class for composing the game screen from canvas and buttons.
@@ -36,30 +36,33 @@ public class GameSceneController {
     Button quit = ButtonGenerator.generate(true, root, "Quit", UIColours.QUIT_RED, 20);
     StackPane.setAlignment(quit, Pos.TOP_LEFT);
     StackPane.setMargin(quit, new Insets(20, 0, 0, 30));
-    quit.setOnAction(e -> {
-      quit.setVisible(false);
-      quitContainer.setVisible(true);
-    });
+    quit.setOnAction(
+        e -> {
+          quit.setVisible(false);
+          quitContainer.setVisible(true);
+        });
 
     quit.setFocusTraversable(false);
 
     Button yesBtn = ButtonGenerator.generate(true, quitBtns, "Yes", UIColours.GREEN, 15);
-    yesBtn.setOnAction(event -> {
-      client.closeGame();
-      quitContainer.setVisible(false);
-      quit.setVisible(true);
-    });
+    yesBtn.setOnAction(
+        event -> {
+          client.closeGame();
+          quitContainer.setVisible(false);
+          quit.setVisible(true);
+        });
 
     yesBtn.setFocusTraversable(false);
     Button noBtn = ButtonGenerator.generate(true, quitBtns, "No", UIColours.RED, 15);
-    noBtn.setOnAction(event -> {
-      quit.setVisible(true);
-      quitContainer.setVisible(false);
-    });
+    noBtn.setOnAction(
+        event -> {
+          quit.setVisible(true);
+          quitContainer.setVisible(false);
+        });
 
     noBtn.setFocusTraversable(false);
-    Label confirmLbl = LabelGenerator
-        .generate(true, quitContainer, "Are you sure?", UIColours.WHITE, 15);
+    Label confirmLbl =
+        LabelGenerator.generate(true, quitContainer, "Are you sure?", UIColours.WHITE, 15);
     quitContainer.getChildren().add(quitBtns);
     root.getChildren().add(quitContainer);
     StackPane.setAlignment(quitContainer, Pos.TOP_LEFT);
@@ -69,12 +72,8 @@ public class GameSceneController {
     root.requestFocus();
   }
 
-  /**
-   * Returns the root of the game scene
-   */
+  /** Returns the root of the game scene */
   public StackPane getGameRoot() {
     return root;
   }
-
-
 }

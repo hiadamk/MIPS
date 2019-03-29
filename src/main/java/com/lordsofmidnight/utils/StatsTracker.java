@@ -18,8 +18,8 @@ public class StatsTracker {
    * @param award The award to return the stat for
    * @return The number for that award
    */
-  public int getStat(Awards award){
-    switch (award){
+  public int getStat(Awards award) {
+    switch (award) {
       case MOST_KILLS:
         return kills;
       case MOST_DEATHS:
@@ -27,7 +27,7 @@ public class StatsTracker {
       case MOST_POINTS:
         return pointsGained;
       case MOST_POINTS_STOLEN:
-        return  pointsStolen;
+        return pointsStolen;
       case MOST_POINTS_LOST:
         return pointsLost;
       case MOST_ITEMS_USED:
@@ -38,6 +38,7 @@ public class StatsTracker {
 
   /**
    * Increases the number of kills by amount given or by 1
+   *
    * @param i optional variable for number to increase by
    */
   public void increaseKills(int... i) {
@@ -50,6 +51,7 @@ public class StatsTracker {
 
   /**
    * Increases the number of deaths by amount given or by 1
+   *
    * @param i optional variable for number to increase by
    */
   public void increaseDeaths(int... i) {
@@ -61,7 +63,8 @@ public class StatsTracker {
   }
 
   /**
-   * Increases the number of points gained  by amount given or by 1
+   * Increases the number of points gained by amount given or by 1
+   *
    * @param i optional variable for number to increase by
    */
   public void increasePointsGained(int... i) {
@@ -73,7 +76,8 @@ public class StatsTracker {
   }
 
   /**
-   * Increases the number of points stolen  by amount given or by 1
+   * Increases the number of points stolen by amount given or by 1
+   *
    * @param i optional variable for number to increase by
    */
   public void increasePointsStolen(int... i) {
@@ -85,7 +89,8 @@ public class StatsTracker {
   }
 
   /**
-   * Increases the number of points lost  by amount given or by 1
+   * Increases the number of points lost by amount given or by 1
+   *
    * @param i optional variable for number to increase by
    */
   public void increasePointsLost(int... i) {
@@ -98,6 +103,7 @@ public class StatsTracker {
 
   /**
    * Increases the number of items used by amount given or by 1
+   *
    * @param i optional variable for number to increase by
    */
   public void increaseItemsUsed(int... i) {

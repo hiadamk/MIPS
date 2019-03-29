@@ -21,6 +21,7 @@ public class KeyRemapping implements EventHandler<KeyEvent> {
 
   /**
    * Processes a KeyEvent
+   *
    * @param e the event
    */
   @Override
@@ -28,15 +29,14 @@ public class KeyRemapping implements EventHandler<KeyEvent> {
     this.activeKey = e.getCode();
   }
 
-  /**
-   * Resets the activeKey to null
-   */
+  /** Resets the activeKey to null */
   public void reset() {
     this.activeKey = null;
   }
 
   /**
    * Ensures that the key to be mapped is not already mapped
+   *
    * @param k the key to map
    * @return True if the key is already mapped
    */
@@ -49,5 +49,4 @@ public class KeyRemapping implements EventHandler<KeyEvent> {
 
     return use | up | left | right | down;
   }
-
 }

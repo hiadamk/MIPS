@@ -13,15 +13,12 @@ public enum MapElement {
       return "floor";
     }
   },
-  /**
-   * A tile that players can not move through
-   */
+  /** A tile that players can not move through */
   WALL(1, -16777216) {
     public String toString() {
       return "wall";
     }
   };
-
 
   private int id;
 
@@ -38,6 +35,7 @@ public enum MapElement {
 
   /**
    * Converts between a colour id and a MapElement id
+   *
    * @param colour the colour
    * @return the corresponding id
    */
@@ -52,6 +50,7 @@ public enum MapElement {
 
   /**
    * Converts between a MapElement id and a colour id
+   *
    * @param id the id
    * @return the corresponding colour
    */
@@ -66,6 +65,7 @@ public enum MapElement {
 
   /**
    * Converts the element to an int
+   *
    * @return the id of the element
    */
   public int toInt() {
@@ -74,6 +74,7 @@ public enum MapElement {
 
   /**
    * Converts the element to a colour number
+   *
    * @return the colour
    */
   public int toColour() {

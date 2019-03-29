@@ -36,7 +36,6 @@ public class MinePellet extends Pellet {
   }
 
   /**
-   *
    * @return If the mine is hidden from players
    */
   public boolean isHidden() {
@@ -49,14 +48,15 @@ public class MinePellet extends Pellet {
   }
 
   @Override
-  public void interact(Entity entity, Entity[] agents,
-      ConcurrentHashMap<UUID, PowerUp> activePowerUps, AudioController audioController) {
-    if(!detonated){
+  public void interact(
+      Entity entity,
+      Entity[] agents,
+      ConcurrentHashMap<UUID, PowerUp> activePowerUps,
+      AudioController audioController) {
+    if (!detonated) {
       Methods.kill(placer, entity, audioController);
       detonated = true;
     }
-
-
   }
 
   @Override

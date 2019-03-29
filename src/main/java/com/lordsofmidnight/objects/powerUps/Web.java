@@ -27,7 +27,8 @@ public class Web extends PowerUp {
       Entity user,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       PointMap<Pellet> pellets,
-      Entity[] agents, AudioController audioController) {
+      Entity[] agents,
+      AudioController audioController) {
     this.user = user;
     this.onMap = true;
     Point loc = user.getMoveInDirection(1.1, user.getFacing().getInverse());
@@ -39,7 +40,9 @@ public class Web extends PowerUp {
   }
 
   @Override
-  public void trigger(Entity victim, ConcurrentHashMap<UUID, PowerUp> activePowerUps,
+  public void trigger(
+      Entity victim,
+      ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       AudioController audioController) {
     if (victim.isInvincible()) {
       return;

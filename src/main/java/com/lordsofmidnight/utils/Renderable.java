@@ -15,15 +15,9 @@ public interface Renderable {
    */
   Point getLocation();
 
-  /**
-   *
-   * @return The images of the object
-   */
+  /** @return The images of the object */
   ArrayList<Image> getImage();
 
-  /**
-   *
-   * @return The direction the object is facing
-   */
+  /** @return The direction the object is facing */
   Direction getDirection();
 }

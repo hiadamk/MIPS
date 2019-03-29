@@ -24,7 +24,8 @@ public class Invincible extends PowerUp {
       Entity user,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       PointMap<Pellet> pellets,
-      Entity[] agents, AudioController audioController) {
+      Entity[] agents,
+      AudioController audioController) {
     this.user = user;
     activePowerUps.put(id, this);
     this.effected = user;

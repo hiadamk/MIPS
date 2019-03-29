@@ -28,13 +28,13 @@ public class EndGameScreen {
   private final Image background;
   private final int TARGET_FALL_FRAMES = 120;
   private final ResourceLoader resourceLoader;
+  private final long secondInNanoseconds = (long) Math.pow(10, 9);
   private Font geoVerySmall = null;
   private Font geoLarge = null;
   private Font geoSmall = null;
   private GraphicsContext gc;
   private int xResolution;
   private int yResolution;
-  private final long secondInNanoseconds = (long) Math.pow(10, 9);
   private Entity gameWinner;
   private Entity awardWinner1;
   private Entity awardWinner2;
@@ -61,7 +61,7 @@ public class EndGameScreen {
     this.background = r.getBackground();
     this.resourceLoader = r;
 
-    //initialise fonts
+    // initialise fonts
     final double fontRatio = 0.1;
     try {
       this.geoLarge =
@@ -213,6 +213,7 @@ public class EndGameScreen {
 
   /**
    * display on screen awards text and entities with their awards
+   *
    * @param awards
    */
   private void showAwards(Awards[] awards) {
@@ -282,17 +283,14 @@ public class EndGameScreen {
   }
 
   /**
-   *
    * get sizes of image to render so they fit to a ratio of the screen
+   *
    * @param img image to get width and height for
    * @return width and height of image to fit the screen at that ratio
    */
   private Point2D.Double getSpriteSize(double ratio, Image img) {
     int y = (int) (ratio * yResolution);
-    int x =
-        (int)
-            (((ratio * yResolution) / img.getHeight())
-                * img.getWidth());
+    int x = (int) (((ratio * yResolution) / img.getHeight()) * img.getWidth());
     return new Point2D.Double(x, y);
   }
 }

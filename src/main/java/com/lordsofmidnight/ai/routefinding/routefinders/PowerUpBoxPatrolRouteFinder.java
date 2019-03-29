@@ -9,7 +9,8 @@ import com.lordsofmidnight.objects.Pellet;
 import com.lordsofmidnight.utils.enums.Direction;
 
 /**
- * Route finding algorithm that will locate the nearest power pellet and patrol around it, but not collect it.
+ * Route finding algorithm that will locate the nearest power pellet and patrol around it, but not
+ * collect it.
  *
  * @author Lewis Ackroyd
  */
@@ -19,24 +20,25 @@ public class PowerUpBoxPatrolRouteFinder implements RouteFinder {
   private final Map map;
   private final PointMap<Pellet> pellets;
 
-  /**Initialises this {@link RouteFinder} with the current {@link Map} and {@link Pellet}s on it.
+  /**
+   * Initialises this {@link RouteFinder} with the current {@link Map} and {@link Pellet}s on it.
    *
    * @param map The map being used
    * @param pellets A mapping from every point containing a pellet, to that pellet
-   * @author Lewis Ackroyd*/
+   * @author Lewis Ackroyd
+   */
   public PowerUpBoxPatrolRouteFinder(Map map, PointMap<Pellet> pellets) {
     this.map = map;
     this.pellets = pellets;
   }
 
   /**
-   * Returns the direction to travel in until the next junction is reached such that the direction avoids
-   * collecting any {@link com.lordsofmidnight.objects.PowerUpBox} whilst also travelling towards the
-   * nearest {@link com.lordsofmidnight.objects.PowerUpBox PowerUpBox}.
+   * Returns the direction to travel in until the next junction is reached such that the direction
+   * avoids collecting any {@link com.lordsofmidnight.objects.PowerUpBox} whilst also travelling
+   * towards the nearest {@link com.lordsofmidnight.objects.PowerUpBox PowerUpBox}.
    *
    * @param myLocation The start point.
    * @param targetLocation The target point.
-   *
    * @return The direction to travel in, or DEFAULT if no direction could be produced.
    * @author Lewis Ackroyd
    */
@@ -56,43 +58,43 @@ public class PowerUpBoxPatrolRouteFinder implements RouteFinder {
         return false;
       }
     }
-    int[] powerUpBoxAllCounts = sampleSearch.getDirectionCounts(myLocation, new PowerUpBoxCountCondition());
+    int[] powerUpBoxAllCounts =
+        sampleSearch.getDirectionCounts(myLocation, new PowerUpBoxCountCondition());
     sampleSearch = new SampleSearch(AVOID_DEPTH, map);
-    int[] powerUpBoxAvoidCounts = sampleSearch.getDirectionCounts(myLocation, new PowerUpBoxCountCondition());
+    int[] powerUpBoxAvoidCounts =
+        sampleSearch.getDirectionCounts(myLocation, new PowerUpBoxCountCondition());
 
     int[] totals = {0, 0, 0, 0};
-    for (int i = 0; i<powerUpBoxAllCounts.length; i++) {
-      totals[i] = (powerUpBoxAvoidCounts[i]==0) ? powerUpBoxAllCounts[i] : 0;
+    for (int i = 0; i < powerUpBoxAllCounts.length; i++) {
+      totals[i] = (powerUpBoxAvoidCounts[i] == 0) ? powerUpBoxAllCounts[i] : 0;
     }
 
     return maxDirection(totals);
   }
 
-  /**Determines which direction has the highest preference and returns it.
+  /**
+   * Determines which direction has the highest preference and returns it.
    *
    * @param totals The array of values representing all directions for the conditions specified
-   *
    * @return The direction with the highest associated value
-   * @author Lewis Ackroyd*/
+   * @author Lewis Ackroyd
+   */
   private Direction maxDirection(int[] totals) {
     int firstTwoIndex;
-    if (totals[0]>totals[1]) {
+    if (totals[0] > totals[1]) {
       firstTwoIndex = 0;
-    }
-    else {
+    } else {
       firstTwoIndex = 1;
     }
     int secondTwoIndex;
-    if (totals[2]>totals[3]) {
+    if (totals[2] > totals[3]) {
       secondTwoIndex = 2;
-    }
-    else {
+    } else {
       secondTwoIndex = 3;
     }
-    if (totals[firstTwoIndex]>totals[secondTwoIndex]) {
+    if (totals[firstTwoIndex] > totals[secondTwoIndex]) {
       return Direction.fromInt(firstTwoIndex);
-    }
-    else {
+    } else {
       return Direction.fromInt(secondTwoIndex);
     }
   }

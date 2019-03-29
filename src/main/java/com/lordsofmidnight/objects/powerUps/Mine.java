@@ -26,7 +26,8 @@ public class Mine extends PowerUp {
       Entity user,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       PointMap<Pellet> pellets,
-      Entity[] agents, AudioController audioController) {
+      Entity[] agents,
+      AudioController audioController) {
     this.user = user;
     this.onMap = true;
     Point loc = user.getMoveInDirection(1.1, user.getFacing().getInverse());
@@ -37,7 +38,9 @@ public class Mine extends PowerUp {
   }
 
   @Override
-  public void trigger(Entity victim, ConcurrentHashMap<UUID, PowerUp> activePowerUps,
+  public void trigger(
+      Entity victim,
+      ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       AudioController audioController) {
     Methods.kill(user, victim, audioController);
     counter = 0;

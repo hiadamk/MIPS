@@ -1,13 +1,16 @@
 package com.lordsofmidnight.utils.enums;
 
-
 /**
  * An enum for the powerUps that both stores them and implements them
  *
  * @author Matthew Jones
  */
 public enum PowerUps {
-  WEB("web"), SPEED("speed"), ROCKET("rocket"), INVINCIBLE("invincible"), MINE("mine");
+  WEB("web"),
+  SPEED("speed"),
+  ROCKET("rocket"),
+  INVINCIBLE("invincible"),
+  MINE("mine");
 
   private final String NAME;
 
@@ -43,16 +46,10 @@ public enum PowerUps {
   }
 
   /**
-   *
    * @return the name of the powerup
    */
   @Override
   public String toString() {
     return this.NAME;
   }
-
 }
-
-
-
-

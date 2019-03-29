@@ -59,6 +59,7 @@ public class Methods {
 
   /**
    * Finds the player in first place
+   *
    * @param agents the list of game agents
    * @return the id of the entity with the highest score
    */
@@ -76,6 +77,7 @@ public class Methods {
 
   /**
    * Generates a list of random names for the AI players in the game
+   *
    * @param i The number of names to pick
    * @return The array of names
    */

@@ -36,7 +36,6 @@ public class Map {
     MAX_Y = MAP[0].length;
     SPAWN_POINTS = loadSpawnPoints();
     SPAWN_RANDOM = new Random();
-
   }
 
   /**
@@ -49,60 +48,6 @@ public class Map {
    */
   public static boolean withinBounds(Map map, Point point) {
     return withinBounds(map.getMaxX(), map.getMaxY(), point);
-  }
-
-  /**
-   * called on construction to find and load spawn point TODO: convert back to SPAWNPOINT.toInt()
-   *
-   * @return Array of Point2D.Double spawnPoint.
-   * @see this#Map(int[][])
-   */
-  private ArrayList<Point> loadSpawnPoints() {
-    ArrayList<Point> spawnPoints = new ArrayList<>();
-    for (int i = 0; i < MAX_X; i++) {
-      for (int j = 0; j < MAX_Y; j++) {
-        if (MAP[i][j] != MapElement.WALL.toInt()) { // SPAWNPOINT.toInt()
-          spawnPoints.add(new Point(i, j, this).centralise());
-        }
-      }
-    }
-    return spawnPoints;
-  }
-
-  /**
-   * @return The max X value for the map
-   */
-  public int getMaxX() {
-    return MAX_X;
-  }
-
-  /**
-   *
-   * @return The max Y value for the map
-   */
-  public int getMaxY() {
-    return MAX_Y;
-  }
-
-  /**
-   * calculates if point is out of bounds
-   *
-   * @param point com.lordsofmidnight.gamestate to be checked, assumed to be in range
-   * @return true if wall, false otherwise
-   */
-  public boolean isWall(Point point) {
-    Point p =
-        new Point(point.getX(), point.getY(), this); // TODO remove line once all points use mod
-    return MAP[(int) p.getX()][(int) p.getY()] == MapElement.WALL.toInt();
-  }
-
-  /**
-   * package method for raw processing
-   *
-   * @return 2D Array of ints
-   */
-  public int[][] raw() {
-    return MAP;
   }
 
   /**
@@ -159,6 +104,59 @@ public class Map {
       }
     }
     return new Map(deserialisedMap);
+  }
+
+  /**
+   * called on construction to find and load spawn point TODO: convert back to SPAWNPOINT.toInt()
+   *
+   * @return Array of Point2D.Double spawnPoint.
+   * @see this#Map(int[][])
+   */
+  private ArrayList<Point> loadSpawnPoints() {
+    ArrayList<Point> spawnPoints = new ArrayList<>();
+    for (int i = 0; i < MAX_X; i++) {
+      for (int j = 0; j < MAX_Y; j++) {
+        if (MAP[i][j] != MapElement.WALL.toInt()) { // SPAWNPOINT.toInt()
+          spawnPoints.add(new Point(i, j, this).centralise());
+        }
+      }
+    }
+    return spawnPoints;
+  }
+
+  /**
+   * @return The max X value for the map
+   */
+  public int getMaxX() {
+    return MAX_X;
+  }
+
+  /**
+   * @return The max Y value for the map
+   */
+  public int getMaxY() {
+    return MAX_Y;
+  }
+
+  /**
+   * calculates if point is out of bounds
+   *
+   * @param point com.lordsofmidnight.gamestate to be checked, assumed to be in range
+   * @return true if wall, false otherwise
+   */
+  public boolean isWall(Point point) {
+    Point p =
+        new Point(point.getX(), point.getY(), this); // TODO remove line once all points use mod
+    return MAP[(int) p.getX()][(int) p.getY()] == MapElement.WALL.toInt();
+  }
+
+  /**
+   * package method for raw processing
+   *
+   * @return 2D Array of ints
+   */
+  public int[][] raw() {
+    return MAP;
   }
 
   /**

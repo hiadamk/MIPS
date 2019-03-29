@@ -3,7 +3,7 @@ package com.lordsofmidnight.utils;
 /**
  * @param <E> the data type to store
  * @author Tim Iterates through objects in a circular manner. e.g. [1,2,3] would output
- * 1,2,3,1,2,3,1,2,3...
+ *     1,2,3,1,2,3,1,2,3...
  */
 public class CircularIterator<E> {
 

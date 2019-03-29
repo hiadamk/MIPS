@@ -17,31 +17,26 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-/** Parent class for DumbTelemetry and HostTelemetry
- * A telemetry object is responsible for keeping track of all the
- * entities and objects within the game,
- * as well as running the physics.
- * */
+/**
+ * Parent class for DumbTelemetry and HostTelemetry A telemetry object is responsible for keeping
+ * track of all the entities and objects within the game, as well as running the physics.
+ */
 public abstract class Telemetry {
 
   static final int AGENT_COUNT = 5;
   static final int GAME_TIME = 150 * 100; // Number of seconds *100
-
-  public int getGameTimer() {
-    return gameTimer;
-  }
-
+  static Client client;
   protected int gameTimer = GAME_TIME;
   protected int clientID;
   protected Map map;
-  Entity[] agents;
-  PointMap<Pellet> pellets;
-  ResourceLoader resourceLoader;
-  static Client client;
   protected GameLoop inputProcessor;
   protected GameLoop positionUpdater;
   protected GameLoop scoreUpdater;
   protected AudioController audioController;
+  Entity[] agents;
+  PointMap<Pellet> pellets;
+  ResourceLoader resourceLoader;
+  ConcurrentHashMap<UUID, PowerUp> activePowerUps = new ConcurrentHashMap<>();
 
   /**
    * @param client The client it belongs to
@@ -55,106 +50,6 @@ public abstract class Telemetry {
     this.audioController = audioController;
   }
 
-  ConcurrentHashMap<UUID, PowerUp> activePowerUps = new ConcurrentHashMap<>();
-  // abstract methods
-
-  /**
-   * Starts the AI controller
-   */
-  abstract void startAI();
-
-  /**
-   * Adds an input to the queue
-   * @param in The input
-   */
-  public abstract void addInput(Input in);
-
-  /**
-   * Starts the game
-   */
-  public abstract void startGame();
-
-  /**
-   * Processes the inputs in the queue
-   */
-  abstract void processInputs();
-
-  /**
-   * Initialises the pellets
-   */
-  abstract void initialisePellets();
-
-  /**
-   * Stops the game
-   */
-  public abstract void stopGame();
-
-  // basic get/set methods
-
-  /**
-   *
-   * @return The agents array
-   */
-  public Entity[] getAgents() {
-    return agents;
-  }
-
-  /**
-   *
-   * @return The map of the game
-   */
-  public Map getMap() {
-    return map;
-  }
-
-  /**
-   *
-   * @return The map of pellets
-   */
-  public PointMap<Pellet> getPellets() {
-    return pellets;
-  }
-
-  /**
-   * Sets the entity given by the id to MipsMan
-   * @param ID
-   */
-  public void setMipID(int ID) {
-    this.agents[ID].setMipsman(true);
-  }
-
-  // constructor methods
-
-  /**
-   * Creates all the entities
-   */
-  void initialiseEntities() {
-
-    agents = new Entity[AGENT_COUNT];
-    switch (AGENT_COUNT) {
-      default:
-        {
-          for (int i = AGENT_COUNT - 1; i >= 5; i--) {
-            agents[i] = new Entity(false, i, new Point(1.5, 1.5));
-          }
-        }
-      case 5:
-        agents[4] = new Entity(false, 4, map.getRandomSpawnPoint(agents));
-      case 4:
-        agents[3] = new Entity(false, 3, map.getRandomSpawnPoint(agents));
-      case 3:
-        agents[2] = new Entity(false, 2, map.getRandomSpawnPoint(agents));
-      case 2:
-        agents[1] = new Entity(false, 1, map.getRandomSpawnPoint(agents));
-      case 1:
-        agents[0] = new Entity(false, 0, map.getRandomSpawnPoint(agents));
-    }
-
-    //Methods.updateImages(agents, resourceLoader);
-  }
-
-  // physics engine
-
   /**
    * Static method to detect if the mipsman entity will eat a pellet
    *
@@ -163,7 +58,9 @@ public abstract class Telemetry {
    * @author Matthew Jones
    */
   private static void pelletCollision(
-      Entity[] agents, PointMap<Pellet> pellets, ConcurrentHashMap<UUID, PowerUp> activePowerUps,
+      Entity[] agents,
+      PointMap<Pellet> pellets,
+      ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       AudioController audioController) {
     for (Entity agent : agents) {
       Point p = agent.getLocation();
@@ -173,6 +70,7 @@ public abstract class Telemetry {
       }
     }
   }
+  // abstract methods
 
   /**
    * Static method for 'swapping' a mipsman and ghoul if they occupy the same area.
@@ -201,6 +99,92 @@ public abstract class Telemetry {
       mipsman.getClientId()); */
       Methods.kill(ghoul, mipsman, audioController);
     }
+  }
+
+  public int getGameTimer() {
+    return gameTimer;
+  }
+
+  /**
+   * Starts the AI controller
+   */
+  abstract void startAI();
+
+  /**
+   * Adds an input to the queue
+   *
+   * @param in The input
+   */
+  public abstract void addInput(Input in);
+
+  /**
+   * Starts the game
+   */
+  public abstract void startGame();
+
+  /** Processes the inputs in the queue */
+  abstract void processInputs();
+
+  // basic get/set methods
+
+  /** Initialises the pellets */
+  abstract void initialisePellets();
+
+  /** Stops the game */
+  public abstract void stopGame();
+
+  /** @return The agents array */
+  public Entity[] getAgents() {
+    return agents;
+  }
+
+  /** @return The map of the game */
+  public Map getMap() {
+    return map;
+  }
+
+  // constructor methods
+
+  /** @return The map of pellets */
+  public PointMap<Pellet> getPellets() {
+    return pellets;
+  }
+
+  // physics engine
+
+  /**
+   * Sets the entity given by the id to MipsMan
+   *
+   * @param ID
+   */
+  public void setMipID(int ID) {
+    this.agents[ID].setMipsman(true);
+  }
+
+  /** Creates all the entities */
+  void initialiseEntities() {
+
+    agents = new Entity[AGENT_COUNT];
+    switch (AGENT_COUNT) {
+      default:
+        {
+          for (int i = AGENT_COUNT - 1; i >= 5; i--) {
+            agents[i] = new Entity(false, i, new Point(1.5, 1.5));
+          }
+        }
+      case 5:
+        agents[4] = new Entity(false, 4, map.getRandomSpawnPoint(agents));
+      case 4:
+        agents[3] = new Entity(false, 3, map.getRandomSpawnPoint(agents));
+      case 3:
+        agents[2] = new Entity(false, 2, map.getRandomSpawnPoint(agents));
+      case 2:
+        agents[1] = new Entity(false, 1, map.getRandomSpawnPoint(agents));
+      case 1:
+        agents[0] = new Entity(false, 0, map.getRandomSpawnPoint(agents));
+    }
+
+    // Methods.updateImages(agents, resourceLoader);
   }
 
   /**
@@ -286,30 +270,26 @@ public abstract class Telemetry {
 
   /**
    * Sets the game time
+   *
    * @param t the game time to set
    */
   public void setTime(int t) {
     this.gameTimer = t;
   }
 
-  /**
-   *
-   * @return the input processor
-   */
+  /** @return the input processor */
   public GameLoop getInputProcessor() {
     return inputProcessor;
   }
 
-  /**
-   *
-   * @return The hashmap of the active powerups
-   */
+  /** @return The hashmap of the active powerups */
   public ConcurrentHashMap<UUID, PowerUp> getActivePowerUps() {
     return activePowerUps;
   }
 
   /**
    * Sets the client id
+   *
    * @param clientID the id to set
    */
   public void setClientID(int clientID) {

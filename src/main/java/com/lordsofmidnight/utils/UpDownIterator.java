@@ -10,13 +10,7 @@ public class UpDownIterator<E> {
 
   private Stack<E> stackA = new Stack();
   private Stack<E> stackB = new Stack();
-
-  private enum AorB {
-    A, B
-  }
-
   private AorB whichStack = AorB.A;
-
 
   /**
    * Iterator
@@ -48,5 +42,10 @@ public class UpDownIterator<E> {
       whichStack = AorB.A;
     }
     return nextItem;
+  }
+
+  private enum AorB {
+    A,
+    B
   }
 }

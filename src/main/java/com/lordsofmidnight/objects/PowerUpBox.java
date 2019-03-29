@@ -22,10 +22,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PowerUpBox extends Pellet {
 
-  private boolean toReplace = false;
-
   private final HashMap<Integer, PowerUps>[] ghoulWeights = new HashMap[5];
   private final HashMap<Integer, PowerUps>[] mipsmanWeights = new HashMap[5];
+  private boolean toReplace = false;
 
   /**
    * @param x The X coordinate of the powerup
@@ -37,7 +36,6 @@ public class PowerUpBox extends Pellet {
   }
 
   /**
-   *
    * @param p The location of the powerup
    */
   public PowerUpBox(Point p) {
@@ -45,9 +43,7 @@ public class PowerUpBox extends Pellet {
     init();
   }
 
-  /**
-   * initialises everything
-   */
+  /** initialises everything */
   private void init() {
     this.respawntime = 300;
     this.value = 0;
@@ -85,28 +81,28 @@ public class PowerUpBox extends Pellet {
     mipsmanWeights[0] = map;
     map = new HashMap<>();
     map.put(5, PowerUps.ROCKET);
-    map.put(10, PowerUps.INVINCIBLE); //15
+    map.put(10, PowerUps.INVINCIBLE); // 15
     map.put(40, PowerUps.WEB);
     map.put(30, PowerUps.MINE);
     map.put(30, PowerUps.SPEED);
     mipsmanWeights[1] = map;
     map = new HashMap<>();
     map.put(10, PowerUps.ROCKET);
-    map.put(10, PowerUps.INVINCIBLE); //10
+    map.put(10, PowerUps.INVINCIBLE); // 10
     map.put(30, PowerUps.WEB);
     map.put(40, PowerUps.SPEED);
     map.put(35, PowerUps.MINE);
     mipsmanWeights[2] = map;
     map = new HashMap<>();
     map.put(15, PowerUps.ROCKET);
-    map.put(16, PowerUps.INVINCIBLE); //25
+    map.put(16, PowerUps.INVINCIBLE); // 25
     map.put(30, PowerUps.WEB);
     map.put(40, PowerUps.SPEED);
     map.put(35, PowerUps.MINE);
     mipsmanWeights[3] = map;
     map = new HashMap<>();
     map.put(20, PowerUps.ROCKET);
-    map.put(21, PowerUps.INVINCIBLE); //40
+    map.put(21, PowerUps.INVINCIBLE); // 40
     map.put(30, PowerUps.WEB);
     map.put(31, PowerUps.MINE);
     map.put(36, PowerUps.SPEED);
@@ -145,7 +141,6 @@ public class PowerUpBox extends Pellet {
       default:
         return null;
     }
-
   }
 
   @Override
@@ -159,7 +154,9 @@ public class PowerUpBox extends Pellet {
   }
 
   @Override
-  public void interact(Entity entity, Entity[] agents,
+  public void interact(
+      Entity entity,
+      Entity[] agents,
       ConcurrentHashMap<UUID, com.lordsofmidnight.objects.powerUps.PowerUp> activePowerUps,
       AudioController audioController) {
     if (isTrap) {
@@ -184,6 +181,7 @@ public class PowerUpBox extends Pellet {
 
   /**
    * Returns the position in the leaderboard of the entity given
+   *
    * @param entity The entity to rank
    * @param agents The list of all entities
    * @return The rank of the entity

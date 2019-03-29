@@ -101,12 +101,13 @@ public class MapGenerator {
    * @return the new map
    */
   public static int[][] newRandomMap(int x_factor, int y_factor) {
-    //Run it on a new thread
+    // Run it on a new thread
     return generateNewMap(14 + 3 * x_factor, 14 + 3 * y_factor);
   }
 
   /**
    * Generates a new map
+   *
    * @param x the x dimension of the map
    * @param y the y dimension of the map
    * @return the map
@@ -117,7 +118,7 @@ public class MapGenerator {
     int half = (y + 1) / 2;
     Random r = new Random();
     while (!validateMap(map)) {
-      //System.out.println("attempt " + c++);
+      // System.out.println("attempt " + c++);
       map = new int[x][y];
       for (int i = 0; i < x; i++) {
         for (int j = 0; j < y; j++) {
@@ -129,15 +130,14 @@ public class MapGenerator {
           map = apply(MapParts.getRandom(r), map, i, j);
         }
       }
-
     }
     smoothDiagonals(map, r);
-    for (int i = 1; i < map.length; i++) { //Reflects the map
+    for (int i = 1; i < map.length; i++) { // Reflects the map
       for (int j = 1; j < map[0].length / 2; j++) {
         map[i][map[0].length - j - 1] = map[i][j];
       }
     }
-    addLoops(map);// Adds the loops round
+    addLoops(map); // Adds the loops round
 
     /*System.out.println("Map made ***************************************");
     for (int[] bit : map) {
@@ -149,6 +149,7 @@ public class MapGenerator {
 
   /**
    * Adds the sections of the map that loop around
+   *
    * @param map the new edited map
    */
   private static void addLoops(int[][] map) {
@@ -166,6 +167,7 @@ public class MapGenerator {
 
   /**
    * Validates a given map
+   *
    * @param map the map to validate
    * @return True if map is valid
    */
@@ -175,6 +177,7 @@ public class MapGenerator {
 
   /**
    * Checks that the map is fully connected
+   *
    * @param map The map to check
    * @return True if map is fully connected
    */
@@ -198,6 +201,7 @@ public class MapGenerator {
 
   /**
    * Checks that there are no "double lanes" in the map e.g. a two wide path
+   *
    * @param map The map to check
    * @return True if there are no double lanes
    */
@@ -227,6 +231,7 @@ public class MapGenerator {
 
   /**
    * This method removes any odd endings from the map where two tiles are diagonally connected
+   *
    * @param map The map
    * @param r A reference to the random number generator
    */
@@ -253,7 +258,9 @@ public class MapGenerator {
               }
             }
           }
-        } else if (map[x][y] == 0 && map[x - 1][y + 1] == 0 && map[x][y + 1] == 1
+        } else if (map[x][y] == 0
+            && map[x - 1][y + 1] == 0
+            && map[x][y + 1] == 1
             && map[x - 1][y] == 1) {
           if (r.nextInt(1) == 0) {
             map[x - 1][y] = 0;
@@ -281,6 +288,7 @@ public class MapGenerator {
 
   /**
    * Simple check that there is empty space somewhere in the map
+   *
    * @param map The map
    * @return True if there is a space in the map
    */
@@ -297,6 +305,7 @@ public class MapGenerator {
 
   /**
    * Fills the map with 1's in adjacent tiles used to check connectedness
+   *
    * @param map The map
    * @param x Current x coord in traversal
    * @param y Current y coord in traversal
@@ -317,6 +326,7 @@ public class MapGenerator {
 
   /**
    * Puts the given part into the Map
+   *
    * @param part The part to place
    * @param map The Map
    * @param x The X coord of reference point
@@ -324,7 +334,8 @@ public class MapGenerator {
    * @return The new Map
    */
   private static int[][] apply(int[][] part, int[][] map, int x, int y) {
-    //System.out.println(part.length + " " + part[0].length + " " + map.length + " " + map[0].length + " " + x + " " + y);
+    // System.out.println(part.length + " " + part[0].length + " " + map.length + " " +
+    // map[0].length + " " + x + " " + y);
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
         map[x][y] = part[i][j];

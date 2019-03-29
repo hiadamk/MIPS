@@ -9,7 +9,7 @@ import java.util.Queue;
 
 /**
  * Packs and sends strings from feedqueue, as UDP packets to a specified IP.
- * */
+ */
 public class PacketSender extends Thread {
 
   private int port;
@@ -34,7 +34,6 @@ public class PacketSender extends Thread {
     } catch (IOException e) {
       e.printStackTrace();
     }
-
   }
 
   /**
@@ -50,7 +49,7 @@ public class PacketSender extends Thread {
           continue;
         }
         String s = feedQueue.poll();
-        //System.out.println("About to send " + s);
+        // System.out.println("About to send " + s);
         send(s);
       }
 
@@ -90,9 +89,7 @@ public class PacketSender extends Thread {
     }
   }
 
-  /**
-   * Stops thread execution.
-   */
+  /** Stops thread execution. */
   public void shutdown() {
     this.running = false;
     if (ds != null && !ds.isClosed()) {

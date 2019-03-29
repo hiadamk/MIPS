@@ -36,8 +36,9 @@ public class ExplosionFX {
   }
 
   /**
-   * render all explosions in the explosion manager
-   * MUST be called from the javaFX application thread
+   * render all explosions in the explosion manager MUST be called from the javaFX application
+   * thread
+   *
    * @param timeElapsed time elapsed since last call
    */
   public void render(long timeElapsed) {

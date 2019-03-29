@@ -116,8 +116,11 @@ public class MapParts {
       {1, 0, 0}
   };
 
-  protected static final int[][][] all = {upL, upM, upR, upDouble, sideT, sideM, sideB, cornerBL,
-      cornerBR, cornerTL, cornerTR, cross, uB, uBs, uL, uLs, uR, uRs, uT, uTs};
+  protected static final int[][][] all = {
+      upL, upM, upR, upDouble, sideT, sideM, sideB, cornerBL, cornerBR, cornerTL, cornerTR, cross,
+      uB,
+      uBs, uL, uLs, uR, uRs, uT, uTs
+  };
 
   /**
    * Gives a random part

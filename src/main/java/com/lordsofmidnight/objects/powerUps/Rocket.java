@@ -35,7 +35,8 @@ public class Rocket extends PowerUp {
       Entity user,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       PointMap<Pellet> pellets,
-      Entity[] agents, AudioController audioController) {
+      Entity[] agents,
+      AudioController audioController) {
     effected = agents[Methods.findWinner(agents)];
     this.user = user;
     this.activePowerUps = activePowerUps;
@@ -58,27 +59,25 @@ public class Rocket extends PowerUp {
   /**
    * increments the current image frame
    */
-  public void incrementFrame(){
+  public void incrementFrame() {
     this.currentFrame++;
   }
 
   /**
    * @return the counter for the animation of the rocket
    */
-  public int getTime(){
+  public int getTime() {
     return this.counter;
   }
 
   /**
-   *
    * @return the effect time
    */
-  public int getMaxTime(){
+  public int getMaxTime() {
     return this.EFFECTTIME;
   }
 
   /**
-   *
    * @return if the rocket has been launched yet
    */
   public boolean isLaunched() {
@@ -87,64 +86,46 @@ public class Rocket extends PowerUp {
 
   /**
    * Sets weather the rocket has been launched or not
+   *
    * @param launched True if launched
    */
   public void setLaunched(boolean launched) {
     this.launched = launched;
   }
 
-  /**
-   *
-   * @return if the rocket has a target
-   */
+  /** @return if the rocket has a target */
   public boolean isTargeted() {
     return targeted;
   }
 
-  /**
-   *
-   * @return the location that the rocket was launched from
-   */
+  /** @return the location that the rocket was launched from */
   public Double getStartLocation() {
     return startLocation;
   }
 
-  /**
-   *
-   * @param startLocation the location that the rocket was launched from
-   */
+  /** @param startLocation the location that the rocket was launched from */
   public void setStartLocation(Double startLocation) {
     this.startLocation = startLocation;
   }
 
-  /**
-   *
-   * @return the target location of the rocket
-   */
+  /** @return the target location of the rocket */
   public Double getEndLocation() {
     return endLocation;
   }
 
-  /**
-   *
-   * @param endLocation the target location of the rocket
-   */
+  /** @param endLocation the target location of the rocket */
   public void setEndLocation(Double endLocation) {
     this.endLocation = endLocation;
   }
 
   /**
-   *
    * @return the target entity
    */
-  public Entity getTargeted(){
+  public Entity getTargeted() {
     return this.effected;
   }
 
-  /**
-   *
-   * @param targeted sets if the rocket has been targeted
-   */
+  /** @param targeted sets if the rocket has been targeted */
   public void setTargeted(boolean targeted) {
     this.targeted = targeted;
   }

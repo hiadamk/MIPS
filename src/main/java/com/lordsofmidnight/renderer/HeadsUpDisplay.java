@@ -28,33 +28,30 @@ public class HeadsUpDisplay {
   private final ResourceLoader resourceLoader;
   private final CircularIterator<Integer> iconIterator;
   private final ArrayList<Image> powerUpsIcon;
+  private final double secondaryInventoryRatio = 0.7;
+  private final int randomFrames = 180;
+  LinkedList<com.lordsofmidnight.objects.powerUps.PowerUp> items = null;
   private int xResolution;
   private int yResolution;
   private Font geoLarge = null;
   private Font geoSmall = null;
   private BufferedImage playerColours;
-  private final double secondaryInventoryRatio = 0.7;
-  LinkedList<com.lordsofmidnight.objects.powerUps.PowerUp> items = null;
   private Image inventory;
   private int id = 0;
   private boolean randomPrimary = false;
   private boolean randomSecondary = false;
-
-  private final int randomFrames = 180;
   private int primaryFrameCounter = 0;
   private int secondaryFrameCounter = 0;
   private long currentTime = 0;
   private int currentRandomFrame = 0;
 
   /**
-   *
    * @param gc
    * @param xResolution game X resolution
    * @param yResolution game Y resolution
    * @param r resource loader (for the same theme, pass the same one that is used for renderer)
    */
-  public HeadsUpDisplay(GraphicsContext gc, int xResolution, int yResolution,
-      ResourceLoader r) {
+  public HeadsUpDisplay(GraphicsContext gc, int xResolution, int yResolution, ResourceLoader r) {
     this.resourceLoader = r;
     this.gc = gc;
     this.xResolution = xResolution;
@@ -73,6 +70,7 @@ public class HeadsUpDisplay {
 
   /**
    * right pad string. if pad length is less than string length, take substring
+   *
    * @param s String to pad
    * @param n length to pad by
    * @return right padded string
@@ -86,6 +84,7 @@ public class HeadsUpDisplay {
 
   /**
    * left pad string. if pad length is less than string length, take substring
+   *
    * @param s String to pad
    * @param n length to pad by
    * @return left padded string
@@ -99,6 +98,7 @@ public class HeadsUpDisplay {
 
   /**
    * converts integer to ordinal - e.g. 1=1st,22=22nd,34=34th,etc
+   *
    * @param n Integer to convert to ordinal
    * @return
    */
@@ -121,13 +121,14 @@ public class HeadsUpDisplay {
 
   /**
    * MUST be called from the javaFX application thread
+   *
    * @param entities
    * @param time
    */
   public void renderHUD(Entity[] entities, int time) {
     Entity[] entities_ = entities.clone();
 
-    //sort entities by their score for leaderboard
+    // sort entities by their score for leaderboard
     Arrays.sort(entities_, (o1, o2) -> -Integer.compare(o1.getScore(), o2.getScore()));
 
     gc.setFill(new Color(1, 1, 1, 0.8));
@@ -137,20 +138,20 @@ public class HeadsUpDisplay {
     final double SCORE_BOARD_X = xResolution * 0.82;
     final double SCORE_BOARD_Y = 0.07 * yResolution;
 
-    //render each entities scoreboard line
+    // render each entities scoreboard line
     for (int i = 0; i < entities_.length; i++) {
 
       Entity e = entities_[i];
 
       gc.setFill(Renderer.intRGBtoColour(playerColours.getRGB(0, e.getClientId())));
 
-      //format score line
+      // format score line
       String place = padRight(integerToOrdinal(i + 1), 5);
       String name = padRight(e.getName(), 10);
       String score = padLeft(Integer.toString(e.getScore()), 4);
       String currentPlayerScoreLine = name + " " + score;
 
-      //render score and place
+      // render score and place
       gc.setFont(geoSmall);
       gc.setTextAlign(TextAlignment.LEFT);
       gc.fillText(currentPlayerScoreLine, SCORE_BOARD_X, SCORE_BOARD_Y + rowGap * i);
@@ -158,16 +159,14 @@ public class HeadsUpDisplay {
       gc.setFill(Color.WHITE);
       gc.setTextAlign(TextAlignment.RIGHT);
       gc.fillText(place, SCORE_BOARD_X, SCORE_BOARD_Y + rowGap * i);
-
     }
-    //render time
+    // render time
     gc.setFont(geoLarge);
     gc.setTextAlign(TextAlignment.CENTER);
     gc.fillText(Integer.toString(time), xResolution * 0.5, yResolution * 0.1);
   }
 
   /**
-   *
    * @param clientEntity the entity's inventory to render
    * @param timeElapsed time since last method call
    */
@@ -179,31 +178,32 @@ public class HeadsUpDisplay {
     }
     LinkedList currentItems = clientEntity.getItems();
 
-    Point2D.Double primaryInventoryCoord = new Point2D.Double(0.03 * xResolution,
-        0.9 * yResolution - inventory.getHeight());
-    Point2D.Double secondaryInventoryCoord = new Double(
-        primaryInventoryCoord.getX() + inventory.getWidth(),
-        0.90 * yResolution - inventory.getHeight() * secondaryInventoryRatio);
+    Point2D.Double primaryInventoryCoord =
+        new Point2D.Double(0.03 * xResolution, 0.9 * yResolution - inventory.getHeight());
+    Point2D.Double secondaryInventoryCoord =
+        new Double(
+            primaryInventoryCoord.getX() + inventory.getWidth(),
+            0.90 * yResolution - inventory.getHeight() * secondaryInventoryRatio);
 
-    //find if new item has been picked up
+    // find if new item has been picked up
     if (items == null) {
       items = (LinkedList<com.lordsofmidnight.objects.powerUps.PowerUp>) currentItems.clone();
     } else if (items.size() != currentItems.size()) {
-      //had one item then picked up another
+      // had one item then picked up another
       if (items.size() == 1 && currentItems.size() == 2) {
         randomSecondary = true;
       }
-      //had no items then picked up another
+      // had no items then picked up another
       else if (items.size() == 0 && currentItems.size() == 1) {
         randomPrimary = true;
       }
-      //first item used while second was still rolling random
+      // first item used while second was still rolling random
       else if (items.size() == 2 && currentItems.size() == 1 && randomSecondary) {
-        //transfer random to primary box
+        // transfer random to primary box
         randomSecondary = false;
         randomPrimary = true;
       }
-      //otherwise just render whatever is in the inventory
+      // otherwise just render whatever is in the inventory
       else {
         randomPrimary = false;
         randomSecondary = false;
@@ -211,7 +211,7 @@ public class HeadsUpDisplay {
       items = (LinkedList<com.lordsofmidnight.objects.powerUps.PowerUp>) currentItems.clone();
     }
 
-    //advance random frame
+    // advance random frame
     currentTime += timeElapsed;
     final long frameTime = (long) Math.pow(10, 9) / 10;
     if (currentTime > frameTime) {
@@ -219,44 +219,51 @@ public class HeadsUpDisplay {
       currentTime = 0;
     }
 
-    //render primary box item or random roll
+    // render primary box item or random roll
     if (randomPrimary) {
-      renderPrimaryInventoryBox(primaryInventoryCoord.getX(), primaryInventoryCoord.getY(),
+      renderPrimaryInventoryBox(
+          primaryInventoryCoord.getX(),
+          primaryInventoryCoord.getY(),
           powerUpsIcon.get(currentRandomFrame));
       primaryFrameCounter++;
     } else if (items.size() > 0) {
-      renderPrimaryInventoryBox(primaryInventoryCoord.getX(), primaryInventoryCoord.getY(),
+      renderPrimaryInventoryBox(
+          primaryInventoryCoord.getX(),
+          primaryInventoryCoord.getY(),
           powerUpsIcon.get(items.get(0).toInt()));
-
     }
 
-    //render secondary box item or random roll
+    // render secondary box item or random roll
     if (randomSecondary) {
-      renderSecondaryInventoryBox(secondaryInventoryCoord.getX(), secondaryInventoryCoord.getY(),
+      renderSecondaryInventoryBox(
+          secondaryInventoryCoord.getX(),
+          secondaryInventoryCoord.getY(),
           powerUpsIcon.get(currentRandomFrame));
       secondaryFrameCounter++;
     } else if (items.size() > 1) {
-      renderSecondaryInventoryBox(secondaryInventoryCoord.getX(), secondaryInventoryCoord.getY(),
+      renderSecondaryInventoryBox(
+          secondaryInventoryCoord.getX(),
+          secondaryInventoryCoord.getY(),
           powerUpsIcon.get(items.get(1).toInt()));
     }
 
-    //if there are less than two items, make sure secondary box shows empty
+    // if there are less than two items, make sure secondary box shows empty
     if (items.size() <= 1) {
-      renderSecondaryInventoryBox(secondaryInventoryCoord.getX(), secondaryInventoryCoord.getY(),
-          null);
+      renderSecondaryInventoryBox(
+          secondaryInventoryCoord.getX(), secondaryInventoryCoord.getY(), null);
     }
-    //if there are zero or less, make sure secondary and primary box shows empty
+    // if there are zero or less, make sure secondary and primary box shows empty
     if (items.size() <= 0) {
       renderPrimaryInventoryBox(primaryInventoryCoord.getX(), primaryInventoryCoord.getY(), null);
     }
 
-    //end random primary box if neccessary
+    // end random primary box if neccessary
     if (primaryFrameCounter > randomFrames) {
       primaryFrameCounter = 0;
       randomPrimary = false;
     }
 
-    //end random secondary box if neccessary
+    // end random secondary box if neccessary
     if (secondaryFrameCounter > randomFrames) {
       secondaryFrameCounter = 0;
       randomSecondary = false;
@@ -296,8 +303,8 @@ public class HeadsUpDisplay {
     if (item == null) {
       gc.fillRect(x + inventoryIconOffset * width, y + inventoryIconOffset * width, width, width);
     } else {
-      gc.drawImage(item, x + inventoryIconOffset * width, y + inventoryIconOffset * width, width,
-          width);
+      gc.drawImage(
+          item, x + inventoryIconOffset * width, y + inventoryIconOffset * width, width, width);
     }
   }
 
@@ -314,13 +321,11 @@ public class HeadsUpDisplay {
     try {
       this.geoLarge =
           Font.loadFont(
-              new FileInputStream(
-                  new File("src/main/resources/font/Geo-Regular.ttf")),
+              new FileInputStream(new File("src/main/resources/font/Geo-Regular.ttf")),
               xResolution * fontRatio);
       this.geoSmall =
           Font.loadFont(
-              new FileInputStream(
-                  new File("src/main/resources/font/Geo-Regular.ttf")),
+              new FileInputStream(new File("src/main/resources/font/Geo-Regular.ttf")),
               0.4 * xResolution * fontRatio);
     } catch (FileNotFoundException e) {
       e.printStackTrace();
@@ -329,12 +334,11 @@ public class HeadsUpDisplay {
   }
 
   /**
-   *
    * @param timeUntilRespawn time until entity will respawn
    * @param clientEntity entity which is dead
    */
-  public void renderDeathScreen(int timeUntilRespawn,Entity clientEntity) {
-    //dim game screen
+  public void renderDeathScreen(int timeUntilRespawn, Entity clientEntity) {
+    // dim game screen
     gc.setStroke(Color.BLACK);
     gc.setFill(new Color(0, 0, 0, 0.65));
     gc.fillRect(0, 0, xResolution, yResolution);
@@ -343,15 +347,15 @@ public class HeadsUpDisplay {
     gc.setTextAlign(TextAlignment.CENTER);
     gc.fillText("RESPAWNING IN: " + timeUntilRespawn, xResolution / 2, yResolution / 2);
 
-    //render who killed this player
+    // render who killed this player
     String killer = clientEntity.getKilledBy();
-    int killerID = Integer.parseInt(killer.substring(killer.length()-1));
-    killer = killer.substring(0,killer.length()-1);
-    //use colour scheme of killer
-    gc.setFill(Renderer.intRGBtoColour(playerColours.getRGB(1,killerID)));
-    gc.fillText("KILLED BY " + killer,xResolution/2,yResolution*0.4);
+    int killerID = Integer.parseInt(killer.substring(killer.length() - 1));
+    killer = killer.substring(0, killer.length() - 1);
+    // use colour scheme of killer
+    gc.setFill(Renderer.intRGBtoColour(playerColours.getRGB(1, killerID)));
+    gc.fillText("KILLED BY " + killer, xResolution / 2, yResolution * 0.4);
     gc.setStroke(Color.WHITE);
-    gc.setLineWidth(2*(yResolution/768));
-    gc.strokeText("KILLED BY " + killer,xResolution/2,yResolution*0.4);
+    gc.setLineWidth(2 * (yResolution / 768));
+    gc.strokeText("KILLED BY " + killer, xResolution / 2, yResolution * 0.4);
   }
 }

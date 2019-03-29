@@ -35,6 +35,7 @@ public class Input {
 
   /**
    * Creates an input from a string
+   *
    * @param s The string to create it from
    * @return the new input object
    */
@@ -52,23 +53,20 @@ public class Input {
   }
 
   /**
-   *
    * @return the id of the client that sent the input
    */
   public int getClientID() {
     return clientID;
   }
 
-  /**
-   *
-   * @return the Direction of the inputs move
-   */
+  /** @return the Direction of the inputs move */
   public Direction getMove() {
     return move;
   }
 
   /**
    * Converts the Input into a string
+   *
    * @return The string form of the input
    */
   @Override

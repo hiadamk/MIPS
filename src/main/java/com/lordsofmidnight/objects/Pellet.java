@@ -48,6 +48,7 @@ public class Pellet implements Renderable {
 
   /**
    * Checks if a given entity can use the item
+   *
    * @param e The entity to check
    * @return True if the entity can use the item
    */
@@ -59,7 +60,6 @@ public class Pellet implements Renderable {
   }
 
   /**
-   *
    * @return The location of the pellet
    */
   public Point getLocation() {
@@ -72,23 +72,20 @@ public class Pellet implements Renderable {
   }
 
   /**
-   *
    * @return The direction of the pellet
    */
   public Direction getDirection() {
     return null;
   }
 
-  /**
-   *
-   * @return If the pellet is active
-   */
+  /** @return If the pellet is active */
   public boolean isActive() {
     return active;
   }
 
   /**
    * Sets if the pellet is active or not
+   *
    * @param active If the pellet should be active
    */
   public void setActive(boolean active) {
@@ -100,6 +97,7 @@ public class Pellet implements Renderable {
 
   /**
    * Updates the pellets image
+   *
    * @param r The resource loader to get the image from
    */
   public void updateImages(ResourceLoader r) {
@@ -108,13 +106,17 @@ public class Pellet implements Renderable {
 
   /**
    * Handles the Pellet interacting with entities
+   *
    * @param entity The entity interacting with
    * @param agents The list of all Entities
    * @param activePowerUps The list of currently active powerups
    * @param audioController The Audio Controller for sounds
    */
-  public void interact(Entity entity, Entity[] agents,
-      ConcurrentHashMap<UUID, PowerUp> activePowerUps, AudioController audioController) {
+  public void interact(
+      Entity entity,
+      Entity[] agents,
+      ConcurrentHashMap<UUID, PowerUp> activePowerUps,
+      AudioController audioController) {
     if (isTrap) {
       trap.trigger(entity, activePowerUps, audioController);
       isTrap = false;
@@ -135,9 +137,7 @@ public class Pellet implements Renderable {
     return "x = " + location.getX() + " y= " + location.getY() + " active = " + a;
   }
 
-  /**
-   * Called every physics update to increment the counter for respawn
-   */
+  /** Called every physics update to increment the counter for respawn */
   public void incrementRespawn() {
     if (!active) {
       respawnCount++;
@@ -147,15 +147,14 @@ public class Pellet implements Renderable {
     }
   }
 
-  /**
-   * @return If the pellet needs to be replaced
-   */
+  /** @return If the pellet needs to be replaced */
   public boolean replace() {
     return false;
   }
 
   /**
    * Sets the pellet to a trap holding a given powerup
+   *
    * @param p
    */
   public void setTrap(com.lordsofmidnight.objects.powerUps.PowerUp p) {
@@ -164,8 +163,10 @@ public class Pellet implements Renderable {
     this.isTrap = true;
   }
 
-  /**@return True if the current pellet is a {@link PowerUpBox}
-   * @author Lewis Ackroyd*/
+  /**
+   * @return True if the current pellet is a {@link PowerUpBox}
+   * @author Lewis Ackroyd
+   */
   public boolean isPowerUpBox() {
     return false;
   }

@@ -20,13 +20,17 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
-
 /**
- * Creates a lobby, broadcasts it's status to other players, and handles players joining and leaving.
- * Also tells players when the game starts. This class corresponds to {@link ClientLobbySession} on the
- * client side.
- * */
+ * Creates a lobby, broadcasts it's status to other players, and handles players joining and
+ * leaving. Also tells players when the game starts. This class corresponds to {@link
+ * ClientLobbySession} on the client side.
+ */
 public class ServerLobby {
+
+  /**
+   * Accepts connections from clients
+   */
+  Thread acceptConnections;
 
   private Map map;
   private AtomicInteger playerCount;
@@ -42,7 +46,6 @@ public class ServerLobby {
   private ArrayList<lobbyLeaverListener> lobbyLeavers = new ArrayList<>();
   private ServerSocket server;
   private boolean hostPresent = true;
-
   /**
    * Thread which sends messages to multicast group to make com.lordsofmidnight.server IP known but
    * also includes number of players in the lobby
@@ -89,9 +92,6 @@ public class ServerLobby {
           }
         }
       };
-
-  /** Accepts connections from clients */
-  Thread acceptConnections;
 
   /**
    * Constructor
@@ -163,66 +163,69 @@ public class ServerLobby {
 
     return s;
   }
-/**
- * Listens for TCP session requests, from players trying to join the lobby.
- * */
-  private Thread connectionAccepter(){
-    Thread thread = new Thread() {
 
-      @Override
-      public void run() {
-        super.run();
+  /**
+   * Listens for TCP session requests, from players trying to join the lobby.
+   */
+  private Thread connectionAccepter() {
+    Thread thread =
+        new Thread() {
 
-        try {
-          server = new ServerSocket(NetworkUtility.SERVER_DGRAM_PORT);
-          while (!isInterrupted()) {
-            if (playerCount.get() < 5) {
-              Socket soc = server.accept();
-              BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
-              PrintWriter out = new PrintWriter(soc.getOutputStream());
-              activeInputStreams.add(in);
-              activeOutstreams.add(out);
-              activeClientSockets.add(soc);
-              System.out.println("Waiting for new connection...");
+          @Override
+          public void run() {
+            super.run();
 
-              String r = in.readLine();
-              String name = in.readLine();
-              names[playerCount.get()] = name;
+            try {
+              server = new ServerSocket(NetworkUtility.SERVER_DGRAM_PORT);
+              while (!isInterrupted()) {
+                if (playerCount.get() < 5) {
+                  Socket soc = server.accept();
+                  BufferedReader in =
+                      new BufferedReader(new InputStreamReader(soc.getInputStream()));
+                  PrintWriter out = new PrintWriter(soc.getOutputStream());
+                  activeInputStreams.add(in);
+                  activeOutstreams.add(out);
+                  activeClientSockets.add(soc);
+                  System.out.println("Waiting for new connection...");
 
-              if (r.equals(NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX)) {
-                InetAddress ip = soc.getInetAddress();
-                System.out.println("Connecting to: " + ip);
-                playerIPs.add(ip);
+                  String r = in.readLine();
+                  String name = in.readLine();
+                  names[playerCount.get()] = name;
 
-                int playerID = getNextID();
-                out.println("" + playerID);
-                out.flush();
-                System.out.println("Sent client " + playerID + " their ID...");
-                out.println(Map.serialiseMap(map));
-                out.println("" + MIPID);
-                out.flush();
-                out.println("SUCCESS");
-                out.flush();
-                System.out.println(
-                    "Sent client " + playerID + " a successful connection message...");
-                playerCount.set(playerCount.get() + 1);
-                lobbyLeaverListener l = new lobbyLeaverListener(soc, in, out, ip, playerID);
-                lobbyLeavers.add(l);
-                l.start();
+                  if (r.equals(NetworkUtility.PREFIX + "CONNECT" + NetworkUtility.SUFFIX)) {
+                    InetAddress ip = soc.getInetAddress();
+                    System.out.println("Connecting to: " + ip);
+                    playerIPs.add(ip);
+
+                    int playerID = getNextID();
+                    out.println("" + playerID);
+                    out.flush();
+                    System.out.println("Sent client " + playerID + " their ID...");
+                    out.println(Map.serialiseMap(map));
+                    out.println("" + MIPID);
+                    out.flush();
+                    out.println("SUCCESS");
+                    out.flush();
+                    System.out.println(
+                        "Sent client " + playerID + " a successful connection message...");
+                    playerCount.set(playerCount.get() + 1);
+                    lobbyLeaverListener l = new lobbyLeaverListener(soc, in, out, ip, playerID);
+                    lobbyLeavers.add(l);
+                    l.start();
+                  }
+
+                } else {
+                  return;
+                }
               }
-
-            } else {
-              return;
+              server.close();
+            } catch (SocketException e) {
+              System.out.println("Sockets were closed while waiting to accept");
+            } catch (IOException e) {
+              e.printStackTrace();
             }
           }
-          server.close();
-        } catch (SocketException e) {
-          System.out.println("Sockets were closed while waiting to accept");
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-    };
+        };
     return thread;
   }
 

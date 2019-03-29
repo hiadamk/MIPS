@@ -69,9 +69,10 @@ public abstract class PowerUp {
    * @param victim The entity effected by the powerUp
    * @param activePowerUps All active powerUps in the game
    */
-  public void trigger(Entity victim, ConcurrentHashMap<UUID, PowerUp> activePowerUps,
-      AudioController audioController) {
-  }
+  public void trigger(
+      Entity victim,
+      ConcurrentHashMap<UUID, PowerUp> activePowerUps,
+      AudioController audioController) {}
 
   /**
    * Called each physics update to increment the timers
@@ -93,8 +94,8 @@ public abstract class PowerUp {
       Entity user,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       PointMap<Pellet> pellets,
-      Entity[] agents, AudioController audioController) {
-  }
+      Entity[] agents,
+      AudioController audioController) {}
 
   /**
    * Used to communicate powerups to clients
@@ -117,34 +118,23 @@ public abstract class PowerUp {
     return -1;
   }
 
-  /**
-   *
-   * @return The entity that used the powerUp
-   */
+  /** @return The entity that used the powerUp */
   public Entity getUser() {
     return this.user;
   }
 
-  /**
-   *
-   * @return The Name of the powerUp
-   */
+  /** @return The Name of the powerUp */
   @Override
   public String toString() {
     return this.NAME;
   }
 
-  /**
-   * Increments the frame of the powerUp
-   */
+  /** Increments the frame of the powerUp */
   public void incrementFrame() {
     this.currentFrame++;
   }
 
-  /**
-   *
-   * @return The current frame of the powerUp
-   */
+  /** @return The current frame of the powerUp */
   public int getCurrentFrame() {
     return this.currentFrame;
   }

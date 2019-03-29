@@ -25,11 +25,9 @@ public class ServerGameplayHandler {
   private boolean running = true;
 
   /**
-   * Creates the appropriate senders and recievers for the running of the game and starts them.
-   * the reciever turns strings recieved into {@link Input}s
-   * the queues feed into telemetry.
+   * Creates the appropriate senders and recievers for the running of the game and starts them. the
+   * reciever turns strings recieved into {@link Input}s the queues feed into telemetry.
    */
-
   public ServerGameplayHandler(
       ArrayList<InetAddress> ips,
       int numPlayers,
@@ -74,14 +72,13 @@ public class ServerGameplayHandler {
           }
         };
   }
-/**
- * Closes the threads.
- * */
+
+  /**
+   * Closes the threads.
+   */
   public void close() {
     receiver.shutdown();
     sender.shutdown();
-    running = false; //shuts down incoming packet manager
+    running = false; // shuts down incoming packet manager
   }
 }
-
-

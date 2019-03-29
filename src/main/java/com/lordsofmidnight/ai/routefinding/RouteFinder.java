@@ -16,7 +16,6 @@ public interface RouteFinder {
    *
    * @param myLocation The start position for route finding.
    * @param targetLocation The target position for route finding.
-   *
    * @return The direction to travel in.
    * @author Lewis Ackroyd
    */

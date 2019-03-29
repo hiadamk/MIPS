@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 
 /**
  * Generates a preview of a map
+ *
  * @author Tim Cheung
  */
 public class MapPreview {
@@ -40,9 +41,10 @@ public class MapPreview {
    */
   public Image getMapPreview(String mapName) {
 
-    //create a separate instance of resource loader from the game to not overwrite its loaded themes
+    // create a separate instance of resource loader from the game to not overwrite its loaded
+    // themes
 
-    //load map name into resource loader
+    // load map name into resource loader
     resourceLoader.loadMap(mapName);
 
     return getScreenshot(resourceLoader.getMap());
@@ -60,7 +62,6 @@ public class MapPreview {
   }
 
   /**
-   *
    * @param map The map to get a screenshot of
    * @return The screenshot image
    */

@@ -13,11 +13,13 @@ import javafx.util.Duration;
  * class to control audio
  */
 public class AudioController {
+
+  AudioClip[] clips;
   private int client;
   private MediaPlayer mediaPlayer;
   private MediaPlayer menuPlayer;
   private MediaPlayer gamePlayer;
-  AudioClip[] clips;
+
   /**
    * @param clientId The ID of the client, this is used to know what sounds to play
    */
@@ -57,7 +59,6 @@ public class AudioController {
     if (gamePlayer != null) {
       gamePlayer.setVolume(musicVolume);
     }
-
   }
 
   /**
@@ -69,13 +70,15 @@ public class AudioController {
     AudioClip[] loaded = new AudioClip[Sounds.values().length];
     try {
       for (Sounds sound : Sounds.values()) {
-        loaded[sound.id()] = new AudioClip(
-            getClass().getResource(sound.getPath()).toURI().toString());
+        loaded[sound.id()] =
+            new AudioClip(getClass().getResource(sound.getPath()).toURI().toString());
       }
-      gamePlayer = new MediaPlayer(
-          new Media(getClass().getResource(Sounds.GAMELOOP.getPath()).toURI().toString()));
-      menuPlayer = new MediaPlayer(
-          new Media(getClass().getResource(Sounds.MENULOOP.getPath()).toURI().toString()));
+      gamePlayer =
+          new MediaPlayer(
+              new Media(getClass().getResource(Sounds.GAMELOOP.getPath()).toURI().toString()));
+      menuPlayer =
+          new MediaPlayer(
+              new Media(getClass().getResource(Sounds.MENULOOP.getPath()).toURI().toString()));
     } catch (URISyntaxException e) {
       e.printStackTrace();
     }
@@ -91,7 +94,8 @@ public class AudioController {
       return; // IF the com.lordsofmidnight.main has muted its audio nothing will be played
     }
     try {
-      //AudioClip newclip = new AudioClip(getClass().getResource(sound.getPath()).toURI().toString());
+      // AudioClip newclip = new
+      // AudioClip(getClass().getResource(sound.getPath()).toURI().toString());
       AudioClip newclip = clips[sound.id()];
       newclip.setVolume(Settings.getSoundVolume());
       newclip.play();
@@ -100,9 +104,7 @@ public class AudioController {
     }
   }
 
-  /**
-   * Plays the game music intro the after the looping music
-   */
+  /** Plays the game music intro the after the looping music */
   public void gameIntro() {
     stopPlayers();
     playMusic(Sounds.GAMEINTRO);
@@ -139,12 +141,13 @@ public class AudioController {
       }
       current.setVolume(Settings.getMusicVolume());
       current.seek(Duration.ZERO);
-      current.setOnEndOfMedia(new Runnable() {
-        @Override
-        public void run() {
-          playMusic(sound);
-        }
-      });
+      current.setOnEndOfMedia(
+          new Runnable() {
+            @Override
+            public void run() {
+              playMusic(sound);
+            }
+          });
       current.play();
     } catch (Exception e) {
       e.printStackTrace();

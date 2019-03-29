@@ -24,7 +24,8 @@ public class Speed extends PowerUp {
       Entity user,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       PointMap<Pellet> pellets,
-      Entity[] agents, AudioController audioController) {
+      Entity[] agents,
+      AudioController audioController) {
     this.user = user;
     user.changeBonusSpeed(0.03);
     activePowerUps.put(id, this);

@@ -41,20 +41,21 @@ public enum Direction {
     }
   };
 
-  /**All directions that can be used for movement.*/
+  /**
+   * All directions that can be used for movement.
+   */
   public static final Direction[] MOVEMENT_DIRECTIONS = {UP, DOWN, LEFT, RIGHT};
 
   private int id;
 
-  /**
-   * @param id the id of the direction to create
-   */
+  /** @param id the id of the direction to create */
   Direction(int id) {
     this.id = id;
   }
 
   /**
    * Returns a direction from an integer
+   *
    * @param n The directions id
    * @return the direction requested
    */
@@ -76,9 +77,11 @@ public enum Direction {
     return null;
   }
 
-  /**@return True if this direction is a movement direction
+  /**
+   * @return True if this direction is a movement direction
    * @see #MOVEMENT_DIRECTIONS
-   * @author Lewis Ackroyd*/
+   * @author Lewis Ackroyd
+   */
   public boolean isMovementDirection() {
     switch (this) {
       case UP:
@@ -96,6 +99,7 @@ public enum Direction {
 
   /**
    * Gives the inverse of a movement direction
+   *
    * @return The inverse of the direction this method is called on
    */
   public Direction getInverse() {
@@ -113,10 +117,7 @@ public enum Direction {
     }
   }
 
-  /**
-   *
-   * @return The id of the direction
-   */
+  /** @return The id of the direction */
   public int toInt() {
     return id;
   }

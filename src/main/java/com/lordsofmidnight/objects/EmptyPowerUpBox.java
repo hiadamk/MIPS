@@ -22,7 +22,6 @@ public class EmptyPowerUpBox extends Pellet {
   private void init() {
     this.respawntime = 300;
     this.value = 0;
-
   }
 
   @Override
@@ -35,9 +34,10 @@ public class EmptyPowerUpBox extends Pellet {
     currentImage = r.getPowerBox();
   }
 
-
   @Override
-  public void interact(Entity entity, Entity[] agents,
+  public void interact(
+      Entity entity,
+      Entity[] agents,
       ConcurrentHashMap<UUID, com.lordsofmidnight.objects.powerUps.PowerUp> activePowerUps,
       AudioController audioController) {
     if (!active) {
@@ -50,5 +50,4 @@ public class EmptyPowerUpBox extends Pellet {
   public boolean isPowerUpBox() {
     return true;
   }
-
 }

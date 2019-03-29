@@ -38,10 +38,7 @@ public enum Sounds {
     return path;
   }
 
-  /**
-   *
-   * @return The ID of the sound
-   */
+  /** @return The ID of the sound */
   public int id() {
     return id;
   }
