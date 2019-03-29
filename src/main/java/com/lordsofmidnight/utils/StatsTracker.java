@@ -2,6 +2,9 @@ package com.lordsofmidnight.utils;
 
 import com.lordsofmidnight.utils.enums.Awards;
 
+/**
+ * Class to track the entities statistics throught the game
+ */
 public class StatsTracker {
 
   private int kills;

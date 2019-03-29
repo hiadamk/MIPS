@@ -1,6 +1,8 @@
 package com.lordsofmidnight.server;
 
 import com.lordsofmidnight.gamestate.maps.Map;
+import com.lordsofmidnight.main.Client;
+import com.lordsofmidnight.utils.Input;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,8 +17,6 @@ import java.net.SocketTimeoutException;
 import java.util.Enumeration;
 import java.util.Queue;
 import javafx.application.Platform;
-import com.lordsofmidnight.main.Client;
-import com.lordsofmidnight.utils.Input;
 
 
 /**
@@ -167,6 +167,12 @@ public class ClientLobbySession {
 
   });
 
+  /**
+   * @param clientIn The input queue for the client
+   * @param keypressQueue The keypress queue from the client
+   * @param client The client
+   * @param clientName The name of the client
+   */
   public ClientLobbySession(
       Queue<String> clientIn, Queue<Input> keypressQueue, Client client, String clientName)
       throws IOException {
@@ -223,9 +229,5 @@ public class ClientLobbySession {
     } catch (IOException e) {
       e.printStackTrace();
     }
-  }
-
-  public boolean isGameStarted() {
-    return gameStarted;
   }
 }

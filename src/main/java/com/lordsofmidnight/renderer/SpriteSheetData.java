@@ -7,7 +7,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
 
+/**
+ * Class to hold the data on the sprite sheet
+ */
 public class SpriteSheetData {
+
+  /**
+   * Enumeration of the data
+   */
   public enum SpriteDimensions{
     PLAYABLE_SPRITE_WIDTH("PLAYABLE_SPRITE_WIDTH"),
     PLAYABLE_SPRITE_HEIGHT("PLAYABLE_SPRITE_HEIGHT"),
@@ -24,6 +31,9 @@ public class SpriteSheetData {
       this.identifier = identifier;
     }
 
+    /**
+     * @return The identifier
+     */
     public String getIdentifier() {
       return identifier;
     }

@@ -1,6 +1,7 @@
 package com.lordsofmidnight.utils;
 
 /**
+ * A game loop to run out game on
  * @author Tim
  */
 public abstract class GameLoop extends Thread {

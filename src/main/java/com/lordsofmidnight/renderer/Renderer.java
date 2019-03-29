@@ -34,6 +34,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
+/**
+ * Class to render the game to the screen
+ */
 public class Renderer {
 
   private final GraphicsContext gc;

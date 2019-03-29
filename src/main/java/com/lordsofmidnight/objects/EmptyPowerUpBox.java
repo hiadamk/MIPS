@@ -7,16 +7,13 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * //TODO someone who gets this class please help
+ * A blank powerup box used in multiplayer for clients
  */
 public class EmptyPowerUpBox extends Pellet {
 
-  public EmptyPowerUpBox(double x, double y) {
-    super(x, y);
-    init();
-  }
-
-
+  /**
+   * @param p The location of the box
+   */
   public EmptyPowerUpBox(Point p) {
     super(p);
     init();

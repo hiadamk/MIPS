@@ -22,6 +22,9 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
 
+/**
+ * Class to load the correct resources into the game based on the current theme
+ */
 public class ResourceLoader {
 
   private final String BASE_DIR;
@@ -350,26 +353,22 @@ public class ResourceLoader {
     switch (mode) {
       case NO_SCALING:
         return;
-      case INTEGER_SCALING:
-        {
-          ratio = Math.floor(ratio);
-          break;
-        }
-      case SMOOTH_SCALING:
-        {
-          smoothEdges = true;
-          break;
-        }
-      case STANDARD_SCALING:
-        {
-          smoothEdges = false;
-          break;
-        }
-      default:
-        {
-          System.out.println("invalid rendering mode");
-          return;
-        }
+      case INTEGER_SCALING: {
+        ratio = Math.floor(ratio);
+        break;
+      }
+      case SMOOTH_SCALING: {
+        smoothEdges = true;
+        break;
+      }
+      case STANDARD_SCALING: {
+        smoothEdges = false;
+        break;
+      }
+      default: {
+        System.out.println("invalid rendering mode");
+        return;
+      }
     }
     this.inventory = resizeSprite(inventory, hudRatio);
     resizeSprites(this.powerUpIcons, hudRatio);

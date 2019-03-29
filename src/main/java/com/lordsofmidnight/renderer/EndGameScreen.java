@@ -20,6 +20,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
+/**
+ * Class for the end game screen
+ */
 public class EndGameScreen {
 
   private final Image background;
@@ -47,6 +50,10 @@ public class EndGameScreen {
   private AnimationTimer awardScreen;
   private int animationFrame;
 
+  /**
+   * @param gc The graphics context to draw to
+   * @param r The resource loader to get images from
+   */
   public EndGameScreen(GraphicsContext gc, ResourceLoader r) {
     this.gc = gc;
     this.xResolution = Settings.getxResolution();

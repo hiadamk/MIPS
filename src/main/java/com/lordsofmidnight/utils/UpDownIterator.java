@@ -19,7 +19,7 @@ public class UpDownIterator<E> {
 
 
   /**
-   *
+   * Iterator
    */
   public UpDownIterator(E[] data) {
     for (E e : data) {

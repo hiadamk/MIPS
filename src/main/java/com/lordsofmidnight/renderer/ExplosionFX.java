@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
+/**
+ * Class to handel explosions
+ */
 public class ExplosionFX {
 
   private final GraphicsContext gc;

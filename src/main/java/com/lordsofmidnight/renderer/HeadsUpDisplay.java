@@ -18,6 +18,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
+/**
+ * Class to deal with the in game HUD
+ */
 public class HeadsUpDisplay {
 
   public static final double ROW_GAP = 0.06;

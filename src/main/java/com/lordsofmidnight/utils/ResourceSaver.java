@@ -7,6 +7,9 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
+/**
+ * The class used to save the resources
+ */
 public class ResourceSaver {
 
   private final String BASE_DIR;

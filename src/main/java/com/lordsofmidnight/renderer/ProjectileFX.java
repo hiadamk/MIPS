@@ -12,7 +12,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
+/**
+ * Class to handle the FX of projectiles
+ */
 public class ProjectileFX {
+
   private final GraphicsContext gc;
   private final int animationSpeed = 14;
   private final long secondInNanoseconds = (long) Math.pow(10, 9);

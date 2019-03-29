@@ -3,12 +3,17 @@ package com.lordsofmidnight.server;
 import com.lordsofmidnight.gamestate.maps.Map;
 import com.lordsofmidnight.utils.Input;
 import com.lordsofmidnight.utils.Methods;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.net.NetworkInterface;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Queue;
@@ -88,7 +93,11 @@ public class ServerLobby {
   /** Accepts connections from clients */
   Thread acceptConnections;
 
-
+  /**
+   * Constructor
+   *
+   * @param map The map for the game
+   */
   public ServerLobby(Map map) {
     this.map = map;
     this.playerCount = new AtomicInteger(0);
