@@ -279,7 +279,7 @@ public abstract class Telemetry {
       activePowerUps.remove(id);
     }
     gameTimer--;
-    if (gameTimer == 0) {
+    if (Math.round(gameTimer / 100) == 0) {
       client.finishGame();
     }
   }
