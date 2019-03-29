@@ -9,7 +9,9 @@ import com.lordsofmidnight.utils.enums.PowerUps;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-
+/**
+ * The Speed powerup giving the entity that uses it increased speed for the duration
+ */
 public class Speed extends PowerUp {
 
   public Speed() {
@@ -22,7 +24,8 @@ public class Speed extends PowerUp {
       Entity user,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       PointMap<Pellet> pellets,
-      Entity[] agents, AudioController audioController) {
+      Entity[] agents,
+      AudioController audioController) {
     this.user = user;
     user.changeBonusSpeed(0.03);
     activePowerUps.put(id, this);

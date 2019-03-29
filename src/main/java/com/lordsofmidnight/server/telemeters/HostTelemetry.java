@@ -19,6 +19,10 @@ import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * This acts as the telemetry for the host of a multiplayer game, or for the user in a singleplayer
+ * game. It has authority over how a game is run.
+ */
 public class HostTelemetry extends Telemetry {
 
   private final int playerCount;
@@ -30,10 +34,19 @@ public class HostTelemetry extends Telemetry {
   private GameLoop inventoryUpdater;
 
   /**
-   * MultiPlayer Constructor
+   * The constructor for multiplayer
+   *
+   * @param playerCount The number of players
+   * @param inputQueue The Input queue
+   * @param outputQueue The output queue
+   * @param client The Client controlling the telemetry
+   * @param audioController The Clients Audio Controller
    */
   public HostTelemetry(
-      int playerCount, Queue<Input> inputQueue, Queue<String> outputQueue, Client client,
+      int playerCount,
+      Queue<Input> inputQueue,
+      Queue<String> outputQueue,
+      Client client,
       AudioController audioController) {
     super(client, audioController);
     inputs = (BlockingQueue<Input>) inputQueue;
@@ -45,7 +58,11 @@ public class HostTelemetry extends Telemetry {
   }
 
   /**
-   * Single Player Constructor
+   * The constructor for single player
+   *
+   * @param clientQueue The input queue
+   * @param client The client controlling the telemetry
+   * @param audioController The clients Audio Controller
    */
   public HostTelemetry(Queue<Input> clientQueue, Client client, AudioController audioController) {
     super(client, audioController);
@@ -75,10 +92,10 @@ public class HostTelemetry extends Telemetry {
     if (aiCount > 0) {
       int[] aiControlled = new int[aiCount];
       int highestId = AGENT_COUNT - 1;
-//      String[] names = Methods.getRandomNames(aiCount);
+      //      String[] names = Methods.getRandomNames(aiCount);
       for (int i = 0; i < aiCount; i++) {
         aiControlled[i] = highestId;
-//        agents[highestId].setName(names[i]);
+        //        agents[highestId].setName(names[i]);
         highestId--;
       }
       aiRunning = false;
@@ -170,10 +187,15 @@ public class HostTelemetry extends Telemetry {
         }
         usePowerUp(id);
         agents[id].setPowerUpUsedFlag(false);
-      }else if(d.equals(Direction.STOP)){
-        ai.addClient(id);
-      }
-      else {
+      } else if (d.equals(Direction.STOP)) {
+        if (ai == null) {
+          ai = new AILoopControl(agents, new int[0], map, inputs, pellets);
+          startAI();
+        }
+        if (ai.addClient(id)) {
+          agents[id].setName("Bot" + agents[id].getName());
+        }
+      } else {
         if (Methods.validateDirection(d, agents[id].getLocation(), map)) {
           agents[id].setDirection(d);
           if (!singlePlayer) {
@@ -187,7 +209,6 @@ public class HostTelemetry extends Telemetry {
     }
   }
 
-
   @Override
   void initialisePellets() {
     Pellet pellet;
@@ -197,11 +218,10 @@ public class HostTelemetry extends Telemetry {
       for (int j = 0; j < map.getMaxY(); j++) {
         Point point = new Point(i + 0.5, j + 0.5);
         if (!map.isWall(point)) {
-          if (r.nextInt(30) == 1)  {
-            pellet =  new PowerUpBox(point);
+          if (r.nextInt(30) == 1) {
+            pellet = new PowerUpBox(point);
             informPowerupBox(point);
-          }
-          else{
+          } else {
             pellet = new Pellet(point);
           }
           pellet.updateImages(resourceLoader);
@@ -211,7 +231,11 @@ public class HostTelemetry extends Telemetry {
     }
   }
 
-
+  /**
+   * Uses the first item in the given entities inventory
+   *
+   * @param id The id of the client
+   */
   private void usePowerUp(int id) {
     PowerUp item;
     if ((item = agents[id].getFirstItem()) != null) {
@@ -220,6 +244,7 @@ public class HostTelemetry extends Telemetry {
     }
   }
 
+  /** @return The id of the player that is MIPSman */
   private int getMipID() {
     for (Entity e : agents) {
       if (e.isMipsman()) {
@@ -241,6 +266,7 @@ public class HostTelemetry extends Telemetry {
 
   /**
    * Informs clients that a powerup was used
+   *
    * @param id The ID of the client who used the powerup
    * @param powerup The powerup used
    * @param location The location it was used at
@@ -251,6 +277,7 @@ public class HostTelemetry extends Telemetry {
 
   /**
    * Informs clients of a power up box appearing
+   *
    * @param point The point where it is.
    */
   private void informPowerupBox(Point point) {
@@ -259,14 +286,16 @@ public class HostTelemetry extends Telemetry {
 
   /**
    * Informs clients of the updated inventory of each of the agents.
+   *
    * @param agents The game agents
    */
-  private void updateInventories(Entity[] agents){
+  private void updateInventories(Entity[] agents) {
     outputs.add(NetworkUtility.makeInventoryPacket(agents));
   }
 
   /**
    * Informs clients of the scores of each of the agents
+   *
    * @param agents The game agents
    */
   private void updateScores(Entity[] agents) {
@@ -275,6 +304,7 @@ public class HostTelemetry extends Telemetry {
 
   /**
    * Informs clients of where each agent is and their direction
+   *
    * @param agents The game agents
    */
   private void updateClients(Entity[] agents) {
@@ -283,11 +313,11 @@ public class HostTelemetry extends Telemetry {
 
   /**
    * Inform clients that a client changed direction
+   *
    * @param input The input to broadcast
    * @param location The location which the input took place.
    */
   private void informClients(Input input, Point location) {
     outputs.add(NetworkUtility.makeEntitiyMovementPacket(input, location, getMipID()));
   }
-
 }

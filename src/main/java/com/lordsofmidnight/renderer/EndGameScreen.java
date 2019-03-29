@@ -1,5 +1,8 @@
 package com.lordsofmidnight.renderer;
 
+import com.lordsofmidnight.objects.Entity;
+import com.lordsofmidnight.utils.Methods;
+import com.lordsofmidnight.utils.Settings;
 import com.lordsofmidnight.utils.enums.Awards;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
@@ -12,25 +15,26 @@ import java.util.Collections;
 import java.util.Comparator;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
-import com.lordsofmidnight.objects.Entity;
-import com.lordsofmidnight.utils.Settings;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
+/**
+ * Class for the end game screen
+ */
 public class EndGameScreen {
 
   private final Image background;
   private final int TARGET_FALL_FRAMES = 120;
   private final ResourceLoader resourceLoader;
+  private final long secondInNanoseconds = (long) Math.pow(10, 9);
   private Font geoVerySmall = null;
   private Font geoLarge = null;
   private Font geoSmall = null;
   private GraphicsContext gc;
   private int xResolution;
   private int yResolution;
-  private final long secondInNanoseconds = (long) Math.pow(10, 9);
   private Entity gameWinner;
   private Entity awardWinner1;
   private Entity awardWinner2;
@@ -46,6 +50,10 @@ public class EndGameScreen {
   private AnimationTimer awardScreen;
   private int animationFrame;
 
+  /**
+   * @param gc The graphics context to draw to
+   * @param r The resource loader to get images from
+   */
   public EndGameScreen(GraphicsContext gc, ResourceLoader r) {
     this.gc = gc;
     this.xResolution = Settings.getxResolution();
@@ -53,6 +61,7 @@ public class EndGameScreen {
     this.background = r.getBackground();
     this.resourceLoader = r;
 
+    // initialise fonts
     final double fontRatio = 0.1;
     try {
       this.geoLarge =
@@ -72,16 +81,18 @@ public class EndGameScreen {
     }
   }
 
+  /**
+   * call this method to display the awards screen
+   *
+   * @param entities entities to show awards for
+   */
   public void showEndSequence(Entity[] entities) {
     this.xResolution = Settings.getxResolution();
     this.yResolution = Settings.getyResolution();
     this.animationFrame = 0;
     ArrayList<Entity> entityArr = new ArrayList<>(Arrays.asList(entities));
     Awards[] awards = Awards.getTwoRandomAwards();
-    this.gameWinner =
-        Collections.max(
-            entityArr,
-            Comparator.comparingInt(o -> o.getStatsTracker().getStat(Awards.MOST_POINTS)));
+    this.gameWinner = entities[Methods.findWinner(entities)];
 
     this.awardWinner1 =
         Collections.max(
@@ -152,6 +163,12 @@ public class EndGameScreen {
     }.start();
   }
 
+  /**
+   * render an animation of entities falling
+   *
+   * @param currentFrame current frame to render
+   * @param falling set to True to render entities at the goal location
+   */
   private void renderFallFrame(int currentFrame, boolean falling) {
     if (currentFrame % 8 == 0) {
       animationFrame++;
@@ -194,6 +211,11 @@ public class EndGameScreen {
         awardSize.getY());
   }
 
+  /**
+   * display on screen awards text and entities with their awards
+   *
+   * @param awards
+   */
   private void showAwards(Awards[] awards) {
 
     this.awardScreen =
@@ -251,18 +273,24 @@ public class EndGameScreen {
     awardScreen.start();
   }
 
+  /**
+   * terminate end screen
+   */
   public void StopEndScreen() {
     if (this.awardScreen != null) {
       this.awardScreen.stop();
     }
   }
 
+  /**
+   * get sizes of image to render so they fit to a ratio of the screen
+   *
+   * @param img image to get width and height for
+   * @return width and height of image to fit the screen at that ratio
+   */
   private Point2D.Double getSpriteSize(double ratio, Image img) {
     int y = (int) (ratio * yResolution);
-    int x =
-        (int)
-            (((ratio * yResolution) / img.getHeight())
-                * img.getWidth());
+    int x = (int) (((ratio * yResolution) / img.getHeight()) * img.getWidth());
     return new Point2D.Double(x, y);
   }
 }

@@ -45,6 +45,7 @@ public class Settings {
 
   /**
    * Sets the value of mute.
+   *
    * @param mute True is the audio is muted, false otherwise
    */
   public static void setMute(Boolean mute) {
@@ -53,6 +54,7 @@ public class Settings {
 
   /**
    * Gets the current volume of music.
+   *
    * @return The current volume of music in the game
    */
   public static double getMusicVolume() {
@@ -61,6 +63,7 @@ public class Settings {
 
   /**
    * Sets the volume of music in the game
+   *
    * @param musicVolume The volume to set current volume to.
    */
   public static void setMusicVolume(double musicVolume) {
@@ -69,6 +72,7 @@ public class Settings {
 
   /**
    * Gets the volume of sound effects
+   *
    * @return The current volume of sound effects
    */
   public static double getSoundVolume() {
@@ -77,6 +81,7 @@ public class Settings {
 
   /**
    * Sets the volume of sound effects
+   *
    * @param soundVolume The volume which we want to set the sound effects volume to.
    */
   public static void setSoundVolume(double soundVolume) {
@@ -84,7 +89,17 @@ public class Settings {
   }
 
   /**
+   * Gets the name of the client
+   *
+   * @return Client's name
+   */
+  public static String getName() {
+    return name;
+  }
+
+  /**
    * Sets the name of the client.
+   *
    * @param name The client's name
    */
   public static void setName(String name) {
@@ -93,18 +108,11 @@ public class Settings {
   }
 
   /**
-   * Gets the name of the client
-   * @return Client's name
-   */
-  public static String getName() {
-    return name;
-  }
-
-  /**
    * Restores the game settings to system default
+   *
    * @param c the current client.
    */
-  public static void restoreDefaultSettings(Client c){
+  public static void restoreDefaultSettings(Client c) {
     up = KeyCode.UP;
     down = KeyCode.DOWN;
     left = KeyCode.LEFT;
@@ -126,6 +134,7 @@ public class Settings {
 
   /**
    * Gets the current Input Key key code
+   *
    * @param key the key we want to query
    * @return The keycode we want
    */
@@ -146,6 +155,7 @@ public class Settings {
 
   /**
    * Sets a key
+   *
    * @param key The input type
    * @param keyCode The keycode of the input.
    */
@@ -171,6 +181,7 @@ public class Settings {
 
   /**
    * Gets the horizontal resolution of the screen.
+   *
    * @return The number of pixels across
    */
   public static int getxResolution() {
@@ -179,6 +190,7 @@ public class Settings {
 
   /**
    * Sets the horizontal resolution of the game
+   *
    * @param xResolution The number of pixels axross
    */
   public static void setxResolution(int xResolution) {
@@ -187,6 +199,7 @@ public class Settings {
 
   /**
    * Gets the vertical resolution of the screen
+   *
    * @return the number of vertical pixels there are
    */
   public static int getyResolution() {
@@ -195,6 +208,7 @@ public class Settings {
 
   /**
    * Sets the number of vertical pixels in the game
+   *
    * @param yResolution The number of vertical pixels
    */
   public static void setyResolution(int yResolution) {
@@ -203,6 +217,7 @@ public class Settings {
 
   /**
    * Gets the current rendering mode being used
+   *
    * @return The rendering mode being used
    */
   public static RenderingMode getRenderingMode() {
@@ -211,6 +226,7 @@ public class Settings {
 
   /**
    * Sets the rendering mode
+   *
    * @param renderingMode The rendering mode we want to use
    */
   public static void setRenderingMode(RenderingMode renderingMode) {
@@ -219,6 +235,7 @@ public class Settings {
 
   /**
    * Gets the current theme
+   *
    * @return The theme being used
    */
   public static String getTheme() {
@@ -227,6 +244,7 @@ public class Settings {
 
   /**
    * Changes the theme being used
+   *
    * @param theme The theme to change the theme to
    */
   public static void setTheme(String theme) {
@@ -245,7 +263,7 @@ public class Settings {
       writeSetting("DOWN", down.getName(), bw);
       writeSetting("LEFT", left.getName(), bw);
       writeSetting("RIGHT", right.getName(), bw);
-      writeSetting("USE_ITEM",useItem.getName(),bw);
+      writeSetting("USE_ITEM", useItem.getName(), bw);
 
       writeSetting("X_RES", Integer.toString(xResolution), bw);
       writeSetting("Y_RES", Integer.toString(yResolution), bw);
@@ -272,6 +290,7 @@ public class Settings {
 
   /**
    * Writes a setting to the settings file
+   *
    * @param name The setting name
    * @param setting The setting value
    * @param bw The buffered writer.
@@ -283,9 +302,7 @@ public class Settings {
     bw.newLine();
   }
 
-  /**
-   * Loads the settings from a file
-   */
+  /** Loads the settings from a file */
   public static void loadSettings() {
     File settingsFile = new File(settingsDirectory);
     if (!settingsFile.exists()) {
@@ -306,7 +323,7 @@ public class Settings {
     } catch (IOException e) {
       e.printStackTrace();
       System.out.println(e.getMessage());
-    }finally {
+    } finally {
       if (br != null) {
         try {
           br.close();

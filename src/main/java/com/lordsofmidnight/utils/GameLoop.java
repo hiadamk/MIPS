@@ -1,11 +1,20 @@
 package com.lordsofmidnight.utils;
 
+/**
+ * A game loop to run out game on
+ *
+ * @author Tim
+ */
 public abstract class GameLoop extends Thread {
 
   long gameSpeed;
   private boolean running;
   private boolean pause;
 
+  /**
+   * @param gameSpeed the length of time each loop should last e.g. gamespeed = 10^9 would mean the
+   *     loop occurs 10 times per second
+   */
   public GameLoop(long gameSpeed) {
     this.gameSpeed = gameSpeed;
     running = true;
@@ -25,7 +34,7 @@ public abstract class GameLoop extends Thread {
         continue;
       }
       this.handle();
-      while(System.nanoTime() - currentTime  < gameSpeed){
+      while (System.nanoTime() - currentTime < gameSpeed) {
         try {
           Thread.sleep(1);
         } catch (InterruptedException e) {
@@ -33,22 +42,30 @@ public abstract class GameLoop extends Thread {
         }
       }
 
-      //correct over-run of thread sleep
-      currentTime = System.nanoTime()-(System.nanoTime() - currentTime - gameSpeed);
+      // correct over-run of thread sleep
+      currentTime = System.nanoTime() - (System.nanoTime() - currentTime - gameSpeed);
     }
   }
 
+  /**
+   * pauses game loop - doesn't execute handle
+   */
   public void pause() {
     pause = true;
   }
 
+  /**
+   * unpauses game loop
+   */
   public void unpause() {
     pause = false;
   }
 
+  /** ends game loop */
   public void close() {
     running = false;
   }
 
+  /** method that is called each game loop. OVERRIDE THIS */
   public abstract void handle();
 }

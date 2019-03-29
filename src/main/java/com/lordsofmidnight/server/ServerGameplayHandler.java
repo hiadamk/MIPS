@@ -1,11 +1,11 @@
 package com.lordsofmidnight.server;
 
+import com.lordsofmidnight.utils.Input;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import com.lordsofmidnight.utils.Input;
 
 // input switched from string to input form in this stage
 public class ServerGameplayHandler {
@@ -24,6 +24,10 @@ public class ServerGameplayHandler {
   private int playerCount;
   private boolean running = true;
 
+  /**
+   * Creates the appropriate senders and recievers for the running of the game and starts them. the
+   * reciever turns strings recieved into {@link Input}s the queues feed into telemetry.
+   */
   public ServerGameplayHandler(
       ArrayList<InetAddress> ips,
       int numPlayers,
@@ -49,7 +53,7 @@ public class ServerGameplayHandler {
    * Initialises the packet managers
    */
   private void initialisePacketManagers() {
-    // puts inputs from queues into the outgoing queue - not sure this one closes
+    // turns strings from incomingQueue into Inputs and adds them to the inputQueue
     this.incomingPacketManager =
         new Thread() {
           public void run() {
@@ -57,7 +61,6 @@ public class ServerGameplayHandler {
               if (incomingQueue.isEmpty()) {
                 continue;
               }
-              System.out.println("SERVER RECEIVED -> " + incomingQueue.peek());
               inputQueue.add(Input.fromString(incomingQueue.poll()));
 
               try {
@@ -70,11 +73,12 @@ public class ServerGameplayHandler {
         };
   }
 
+  /**
+   * Closes the threads.
+   */
   public void close() {
     receiver.shutdown();
     sender.shutdown();
-    running = false; //shuts down incoming packet manager
+    running = false; // shuts down incoming packet manager
   }
 }
-
-

@@ -2,12 +2,21 @@ package com.lordsofmidnight.utils;
 
 import com.lordsofmidnight.utils.enums.Direction;
 
+/**
+ * A class to hold the inputs being sent from the client to the telemetry
+ */
 public class Input {
 
   private int clientID;
   private Direction move;
   private Boolean useItem;
 
+  /**
+   * Creates a new input
+   *
+   * @param id The client id of the player sending the input
+   * @param move The Direction of the input
+   */
   public Input(int id, Direction move) {
     this.clientID = id;
     this.move = move;
@@ -24,6 +33,12 @@ public class Input {
     this.useItem = true;
   }
 
+  /**
+   * Creates an input from a string
+   *
+   * @param s The string to create it from
+   * @return the new input object
+   */
   public static Input fromString(String s) {
     if (s.length() == 1) {
       return new Input(Integer.parseInt(s));
@@ -37,14 +52,23 @@ public class Input {
     return useItem;
   }
 
+  /**
+   * @return the id of the client that sent the input
+   */
   public int getClientID() {
     return clientID;
   }
 
+  /** @return the Direction of the inputs move */
   public Direction getMove() {
     return move;
   }
 
+  /**
+   * Converts the Input into a string
+   *
+   * @return The string form of the input
+   */
   @Override
   public String toString() {
     if (useItem) {

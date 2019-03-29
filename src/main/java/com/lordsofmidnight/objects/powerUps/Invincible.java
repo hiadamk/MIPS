@@ -9,6 +9,9 @@ import com.lordsofmidnight.utils.enums.PowerUps;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * The invincible powerUp making the entity that uses it invincible for its duration
+ */
 public class Invincible extends PowerUp {
 
   public Invincible() {
@@ -21,7 +24,8 @@ public class Invincible extends PowerUp {
       Entity user,
       ConcurrentHashMap<UUID, PowerUp> activePowerUps,
       PointMap<Pellet> pellets,
-      Entity[] agents, AudioController audioController) {
+      Entity[] agents,
+      AudioController audioController) {
     this.user = user;
     activePowerUps.put(id, this);
     this.effected = user;

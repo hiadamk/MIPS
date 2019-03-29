@@ -1,15 +1,16 @@
 package com.lordsofmidnight.server;
 
+import com.lordsofmidnight.utils.Input;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import com.lordsofmidnight.utils.Input;
 
 /**
- * ClientGameplayHandler class which creates the appropriate senders and starts them.
+ * ClientGameplayHandler class which creates the appropriate senders and recievers and starts them.
+ * The sender turns {@link Input} into strings. they feed into telemetry.
  */
 public class ClientGameplayHandler {
 
@@ -55,7 +56,7 @@ public class ClientGameplayHandler {
    * Initialises the incoming and outgoing packet managers
    */
   private void initialisePacketManagers() {
-    // puts inputs from queues into the outgoing queue
+    // puts inputs from queues into the outgoing queue as strings
     this.outgoingPacketManager =
         new Thread() {
           public void run() {
@@ -115,5 +116,4 @@ public class ClientGameplayHandler {
     sender.shutdown();
     running = false;
   }
-
 }

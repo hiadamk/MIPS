@@ -2,20 +2,24 @@ package com.lordsofmidnight.utils;
 
 import com.lordsofmidnight.utils.enums.Awards;
 
+/**
+ * Class to track the entities statistics throught the game
+ */
 public class StatsTracker {
 
-  int kills;
-  int deaths;
-  int pointsGained;
-  int pointsStolen;
-  int pointsLost;
-  int itemsUsed;
+  private int kills;
+  private int deaths;
+  private int pointsGained;
+  private int pointsStolen;
+  private int pointsLost;
+  private int itemsUsed;
 
-  public StatsTracker() {
-  }
-
-  public int getStat(Awards award){
-    switch (award){
+  /**
+   * @param award The award to return the stat for
+   * @return The number for that award
+   */
+  public int getStat(Awards award) {
+    switch (award) {
       case MOST_KILLS:
         return kills;
       case MOST_DEATHS:
@@ -23,15 +27,20 @@ public class StatsTracker {
       case MOST_POINTS:
         return pointsGained;
       case MOST_POINTS_STOLEN:
-        return  pointsStolen;
-      case MOST_POINTS_LOST:
         return pointsStolen;
+      case MOST_POINTS_LOST:
+        return pointsLost;
       case MOST_ITEMS_USED:
         return itemsUsed;
     }
     return -1;
   }
 
+  /**
+   * Increases the number of kills by amount given or by 1
+   *
+   * @param i optional variable for number to increase by
+   */
   public void increaseKills(int... i) {
     if (i.length > 0) {
       kills += i[0];
@@ -40,6 +49,11 @@ public class StatsTracker {
     }
   }
 
+  /**
+   * Increases the number of deaths by amount given or by 1
+   *
+   * @param i optional variable for number to increase by
+   */
   public void increaseDeaths(int... i) {
     if (i.length > 0) {
       deaths += i[0];
@@ -48,6 +62,11 @@ public class StatsTracker {
     }
   }
 
+  /**
+   * Increases the number of points gained by amount given or by 1
+   *
+   * @param i optional variable for number to increase by
+   */
   public void increasePointsGained(int... i) {
     if (i.length > 0) {
       pointsGained += i[0];
@@ -56,6 +75,11 @@ public class StatsTracker {
     }
   }
 
+  /**
+   * Increases the number of points stolen by amount given or by 1
+   *
+   * @param i optional variable for number to increase by
+   */
   public void increasePointsStolen(int... i) {
     if (i.length > 0) {
       pointsStolen += i[0];
@@ -64,6 +88,11 @@ public class StatsTracker {
     }
   }
 
+  /**
+   * Increases the number of points lost by amount given or by 1
+   *
+   * @param i optional variable for number to increase by
+   */
   public void increasePointsLost(int... i) {
     if (i.length > 0) {
       pointsLost += i[0];
@@ -72,6 +101,11 @@ public class StatsTracker {
     }
   }
 
+  /**
+   * Increases the number of items used by amount given or by 1
+   *
+   * @param i optional variable for number to increase by
+   */
   public void increaseItemsUsed(int... i) {
     if (i.length > 0) {
       itemsUsed += i[0];

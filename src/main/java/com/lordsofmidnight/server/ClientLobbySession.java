@@ -1,6 +1,8 @@
 package com.lordsofmidnight.server;
 
 import com.lordsofmidnight.gamestate.maps.Map;
+import com.lordsofmidnight.main.Client;
+import com.lordsofmidnight.utils.Input;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,9 +17,10 @@ import java.net.SocketTimeoutException;
 import java.util.Enumeration;
 import java.util.Queue;
 import javafx.application.Platform;
-import com.lordsofmidnight.main.Client;
-import com.lordsofmidnight.utils.Input;
 
+/**
+ * Handles joining and starting the game from the client's perspective through use of tcp sessions.
+ */
 public class ClientLobbySession {
 
   private Queue<String> clientIn;
@@ -34,10 +37,63 @@ public class ClientLobbySession {
   private ServerSocket serverSocket;
   private PrintWriter out;
   private BufferedReader in;
-
   /**
-   * A thread which will look for the com.lordsofmidnight.server's IP address and then haandle the
-   * initial handshake between the client and the com.lordsofmidnight.server
+   * Thread which waits for the com.lordsofmidnight.server to start the game and send over the
+   * player names.
+   */
+  Thread gameStarter =
+      new Thread(
+          () -> {
+            try {
+              System.out.println("About to set up client game start channels");
+              serverSocket = new ServerSocket(NetworkUtility.CLIENT_DGRAM_PORT);
+              ss = serverSocket.accept();
+              ss.setReuseAddress(true);
+              BufferedReader gameIn =
+                  new BufferedReader(new InputStreamReader(ss.getInputStream()));
+              System.out.println("Waiting for game start message");
+              // get other player names
+              String r = gameIn.readLine();
+              System.out.println("Start game msg -> " + r);
+              if (r.equals(NetworkUtility.GAME_START)) {
+                for (int i = 0; i < 5; i++) {
+                  playerNames[i] = gameIn.readLine();
+                  System.out.println("NAME: " + playerNames[i]);
+                }
+                gameStarted = true;
+                handler = new ClientGameplayHandler(serverIP, keypressQueue, clientIn);
+                client.setPlayerNames(playerNames);
+                if (!client.isHost) {
+                  Platform.runLater(() -> client.startMultiplayerGame());
+                  shutdownTCP();
+                }
+              }
+
+              gameIn.close();
+              ss.close();
+            } catch (IOException e) {
+              if (ss != null && !ss.isClosed()) {
+                try {
+                  ss.close();
+                } catch (IOException err) {
+                  err.printStackTrace(System.err);
+                }
+              }
+
+              if (serverSocket != null && !serverSocket.isClosed()) {
+                try {
+                  serverSocket.close();
+                } catch (IOException err) {
+                  err.printStackTrace(System.err);
+                }
+              }
+              System.out.println("Sockets have been closed in lobby session: " + e.getMessage());
+            }
+          });
+  /**
+   * A thread which will look for the {@link ServerLobby}'s UDP broadcast for players to join, and
+   * then uses the IP address of the server to then start a TCP session where it joins the game
+   * lobby.
    */
   Thread joiner =
       new Thread() {
@@ -109,58 +165,11 @@ public class ClientLobbySession {
       };
 
   /**
-   * Thread which waits for the com.lordsofmidnight.server to start the game and send over the
-   * player names.
+   * @param clientIn The input queue for the client
+   * @param keypressQueue The keypress queue from the client
+   * @param client The client
+   * @param clientName The name of the client
    */
-  Thread gameStarter = new Thread(() -> {
-
-    try {
-      System.out.println("About to set up client game start channels");
-      serverSocket = new ServerSocket(NetworkUtility.CLIENT_DGRAM_PORT);
-      ss = serverSocket.accept();
-      ss.setReuseAddress(true);
-      BufferedReader gameIn = new BufferedReader(new InputStreamReader(ss.getInputStream()));
-      System.out.println("Waiting for game start message");
-      // get other player names
-      String r = gameIn.readLine();
-      System.out.println("Start game msg -> " + r);
-      if (r.equals(NetworkUtility.GAME_START)) {
-        for (int i = 0; i < 5; i++) {
-          playerNames[i] = gameIn.readLine();
-          System.out.println("NAME: " + playerNames[i]);
-        }
-        gameStarted = true;
-        handler = new ClientGameplayHandler(serverIP, keypressQueue, clientIn);
-        client.setPlayerNames(playerNames);
-        if (!client.isHost) {
-          Platform.runLater(() -> client.startMultiplayerGame());
-          shutdownTCP();
-        }
-      }
-
-      gameIn.close();
-      ss.close();
-    } catch (IOException e) {
-      if (ss != null && !ss.isClosed()) {
-        try {
-          ss.close();
-        } catch (IOException err) {
-          err.printStackTrace(System.err);
-        }
-      }
-
-      if (serverSocket != null && !serverSocket.isClosed()) {
-        try {
-          serverSocket.close();
-        } catch (IOException err) {
-          err.printStackTrace(System.err);
-        }
-      }
-      System.out.println("Sockets have been closed in lobby session: " + e.getMessage());
-    }
-
-  });
-
   public ClientLobbySession(
       Queue<String> clientIn, Queue<Input> keypressQueue, Client client, String clientName)
       throws IOException {
@@ -188,7 +197,6 @@ public class ClientLobbySession {
     if (handler != null) {
       handler.close();
     }
-
   }
 
   /**
@@ -217,9 +225,5 @@ public class ClientLobbySession {
     } catch (IOException e) {
       e.printStackTrace();
     }
-  }
-
-  public boolean isGameStarted() {
-    return gameStarted;
   }
 }

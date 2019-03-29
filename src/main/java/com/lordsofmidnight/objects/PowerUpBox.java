@@ -3,46 +3,47 @@ package com.lordsofmidnight.objects;
 import com.lordsofmidnight.audio.AudioController;
 import com.lordsofmidnight.audio.Sounds;
 import com.lordsofmidnight.gamestate.points.Point;
-import com.lordsofmidnight.objects.powerUps.Blueshell;
 import com.lordsofmidnight.objects.powerUps.Invincible;
 import com.lordsofmidnight.objects.powerUps.Mine;
+import com.lordsofmidnight.objects.powerUps.PowerUp;
+import com.lordsofmidnight.objects.powerUps.Rocket;
 import com.lordsofmidnight.objects.powerUps.Speed;
 import com.lordsofmidnight.objects.powerUps.Web;
 import com.lordsofmidnight.renderer.ResourceLoader;
 import com.lordsofmidnight.utils.enums.PowerUps;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Class for the powerup boxes
+ */
 public class PowerUpBox extends Pellet {
-
-  private boolean toReplace = false;
-  private boolean isBox = true;
-
-  @Override
-  public boolean isBox() {
-    return isBox;
-  }
-  private static PowerUps[] powerUps = {
-      PowerUps.BLUESHELL, PowerUps.SPEED, PowerUps.WEB, PowerUps.INVINCIBLE
-  };
 
   private final HashMap<Integer, PowerUps>[] ghoulWeights = new HashMap[5];
   private final HashMap<Integer, PowerUps>[] mipsmanWeights = new HashMap[5];
+  private boolean toReplace = false;
 
+  /**
+   * @param x The X coordinate of the powerup
+   * @param y The y coordinate of the powerup
+   */
   public PowerUpBox(double x, double y) {
     super(x, y);
     init();
   }
 
+  /**
+   * @param p The location of the powerup
+   */
   public PowerUpBox(Point p) {
     super(p);
     init();
   }
 
+  /** initialises everything */
   private void init() {
     this.respawntime = 300;
     this.value = 0;
@@ -54,22 +55,22 @@ public class PowerUpBox extends Pellet {
     map = new HashMap<>();
     map.put(60, PowerUps.SPEED);
     map.put(40, PowerUps.WEB);
-    map.put(10, PowerUps.BLUESHELL);
+    map.put(10, PowerUps.ROCKET);
     ghoulWeights[1] = map;
     map = new HashMap<>();
     map.put(75, PowerUps.SPEED);
     map.put(25, PowerUps.WEB);
-    map.put(20, PowerUps.BLUESHELL);
+    map.put(20, PowerUps.ROCKET);
     ghoulWeights[2] = map;
     map = new HashMap<>();
     map.put(75, PowerUps.SPEED);
     map.put(26, PowerUps.WEB);
-    map.put(25, PowerUps.BLUESHELL);
+    map.put(25, PowerUps.ROCKET);
     ghoulWeights[3] = map;
     map = new HashMap<>();
     map.put(75, PowerUps.SPEED);
     map.put(25, PowerUps.WEB);
-    map.put(40, PowerUps.BLUESHELL);
+    map.put(40, PowerUps.ROCKET);
     ghoulWeights[4] = map;
     // Init MIPsman weights
     map = new HashMap<>();
@@ -79,29 +80,29 @@ public class PowerUpBox extends Pellet {
     map.put(20, PowerUps.MINE);
     mipsmanWeights[0] = map;
     map = new HashMap<>();
-    map.put(5, PowerUps.BLUESHELL);
-    map.put(10, PowerUps.INVINCIBLE); //15
+    map.put(5, PowerUps.ROCKET);
+    map.put(10, PowerUps.INVINCIBLE); // 15
     map.put(40, PowerUps.WEB);
     map.put(30, PowerUps.MINE);
     map.put(30, PowerUps.SPEED);
     mipsmanWeights[1] = map;
     map = new HashMap<>();
-    map.put(10, PowerUps.BLUESHELL);
-    map.put(10, PowerUps.INVINCIBLE); //10
+    map.put(10, PowerUps.ROCKET);
+    map.put(10, PowerUps.INVINCIBLE); // 10
     map.put(30, PowerUps.WEB);
     map.put(40, PowerUps.SPEED);
     map.put(35, PowerUps.MINE);
     mipsmanWeights[2] = map;
     map = new HashMap<>();
-    map.put(15, PowerUps.BLUESHELL);
-    map.put(16, PowerUps.INVINCIBLE); //25
+    map.put(15, PowerUps.ROCKET);
+    map.put(16, PowerUps.INVINCIBLE); // 25
     map.put(30, PowerUps.WEB);
     map.put(40, PowerUps.SPEED);
     map.put(35, PowerUps.MINE);
     mipsmanWeights[3] = map;
     map = new HashMap<>();
-    map.put(20, PowerUps.BLUESHELL);
-    map.put(21, PowerUps.INVINCIBLE); //40
+    map.put(20, PowerUps.ROCKET);
+    map.put(21, PowerUps.INVINCIBLE); // 40
     map.put(30, PowerUps.WEB);
     map.put(31, PowerUps.MINE);
     map.put(36, PowerUps.SPEED);
@@ -114,7 +115,7 @@ public class PowerUpBox extends Pellet {
    * @return the PowerUps
    * @author Matthew Jones
    */
-  public com.lordsofmidnight.objects.powerUps.PowerUp getPowerUp(Entity entity, Entity[] agents) {
+  public PowerUp getPowerUp(Entity entity, Entity[] agents) {
     int rank = getRank(entity, agents);
     HashMap<Integer, PowerUps> baseWeights = mipsmanWeights[rank];
     //   entity.isMipsman() ? mipsmanWeights[rank] : ghoulWeights[rank];
@@ -124,7 +125,6 @@ public class PowerUpBox extends Pellet {
       weights.put(totalWeights, entry.getValue());
       totalWeights += entry.getKey();
     }
-    Random r = new Random();
     int i = (int) ((1 - r.nextDouble()) * totalWeights);
     this.setActive(false);
     switch (weights.floorEntry(i).getValue()) {
@@ -134,14 +134,13 @@ public class PowerUpBox extends Pellet {
         return new Speed();
       case WEB:
         return new Web();
-      case BLUESHELL:
-        return new Blueshell();
+      case ROCKET:
+        return new Rocket();
       case MINE:
         return new Mine();
       default:
         return null;
     }
-
   }
 
   @Override
@@ -155,7 +154,9 @@ public class PowerUpBox extends Pellet {
   }
 
   @Override
-  public void interact(Entity entity, Entity[] agents,
+  public void interact(
+      Entity entity,
+      Entity[] agents,
       ConcurrentHashMap<UUID, com.lordsofmidnight.objects.powerUps.PowerUp> activePowerUps,
       AudioController audioController) {
     if (isTrap) {
@@ -178,6 +179,13 @@ public class PowerUpBox extends Pellet {
     return true;
   }
 
+  /**
+   * Returns the position in the leaderboard of the entity given
+   *
+   * @param entity The entity to rank
+   * @param agents The list of all entities
+   * @return The rank of the entity
+   */
   private int getRank(Entity entity, Entity[] agents) {
     int score = entity.getScore();
     int rank = 0;

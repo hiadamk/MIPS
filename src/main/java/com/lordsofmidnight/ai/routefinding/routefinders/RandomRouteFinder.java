@@ -1,9 +1,9 @@
 package com.lordsofmidnight.ai.routefinding.routefinders;
 
 import com.lordsofmidnight.ai.routefinding.RouteFinder;
-import java.util.Random;
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.utils.enums.Direction;
+import java.util.Random;
 
 /**
  * Random direction generator. Twice as likely to produce a route towards the target as one away
@@ -28,7 +28,6 @@ public class RandomRouteFinder implements RouteFinder {
    *
    * @param myLocation The start point.
    * @param targetLocation The target point.
-   *
    * @return The direction to travel in, or DEFAULT if no direction could be produced.
    * @author Lewis Ackroyd
    */

@@ -1,7 +1,6 @@
 package com.lordsofmidnight.renderer;
 
 import com.lordsofmidnight.gamestate.maps.Map;
-import com.lordsofmidnight.renderer.SpriteSheetData;
 import com.lordsofmidnight.renderer.SpriteSheetData.SpriteDimensions;
 import com.lordsofmidnight.utils.Settings;
 import com.lordsofmidnight.utils.enums.MapElement;
@@ -23,6 +22,9 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
 
+/**
+ * Class to load the correct resources into the game based on the current theme
+ */
 public class ResourceLoader {
 
   private final String BASE_DIR;
@@ -73,7 +75,7 @@ public class ResourceLoader {
   private ArrayList<Image> upRocketImages;
   private ArrayList<BufferedImage> downRockets;
   private ArrayList<Image> downRocketImages;
-  private  ArrayList<BufferedImage> mine;
+  private ArrayList<BufferedImage> mine;
   private ArrayList<Image> mineImages;
 
   /** @param baseDir path to the resources folder */
@@ -81,6 +83,24 @@ public class ResourceLoader {
     BASE_DIR = baseDir;
     this.loadMap("default");
     this.init();
+  }
+
+  /**
+   * @param image image to flip
+   * @return an image flipped on the X-axis
+   */
+  private static BufferedImage flipImage(BufferedImage image) {
+    AffineTransform at = new AffineTransform();
+    at.concatenate(AffineTransform.getScaleInstance(1, -1));
+    at.concatenate(AffineTransform.getTranslateInstance(0, -image.getHeight()));
+
+    BufferedImage newImage =
+        new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+    Graphics2D g = newImage.createGraphics();
+    g.transform(at);
+    g.drawImage(image, 0, 0, null);
+    g.dispose();
+    return newImage;
   }
 
   private void init() {
@@ -114,21 +134,11 @@ public class ResourceLoader {
     return themes;
   }
 
+  /**
+   * @return get pellet images from the current theme set in Settings
+   */
   public BufferedImage getPlayerPalette() {
     return mipPalette;
-  }
-
-  public String[] getValidMaps() {
-    File[] maps = new File(BASE_DIR + "maps/").listFiles(File::isFile);
-    String[] mapNames = getFileNames(maps);
-    ArrayList<String> validMaps = new ArrayList<>();
-    for (String map : mapNames) {
-      if (map.endsWith(".png")) {
-        validMaps.add(map.substring(0, map.length() - 4));
-      }
-    }
-    Collections.sort(validMaps, Comparator.naturalOrder());
-    return validMaps.toArray(new String[validMaps.size()]);
   }
 
   private String[] getFileNames(File[] maps) {
@@ -161,10 +171,26 @@ public class ResourceLoader {
     // this.map = new Map(MapGenerator.generateNewMap());
   }
 
+  /** @return returns a String[] of valid map names */
+  public String[] getValidMaps() {
+    File[] maps = new File(BASE_DIR + "maps/").listFiles(File::isFile);
+    String[] mapNames = getFileNames(maps);
+    ArrayList<String> validMaps = new ArrayList<>();
+    for (String map : mapNames) {
+      if (map.endsWith(".png")) {
+        validMaps.add(map.substring(0, map.length() - 4));
+      }
+    }
+    Collections.sort(validMaps, Comparator.naturalOrder());
+    return validMaps.toArray(new String[validMaps.size()]);
+  }
+
+  /** loads a map into the resource loader */
   public void loadMap(Map map) {
     this.map = map;
   }
 
+  /** @return current map in resource loader */
   public Map getMap() {
     // return new Map(MapGenerator.generateNewMap());
     return map;
@@ -174,6 +200,12 @@ public class ResourceLoader {
     this.map = m;
   }
 
+  /**
+   * resizes images based on a ratio using nearest neighbour scaling
+   *
+   * @param sprites images to be resized
+   * @param ratio how much to resize by
+   */
   private void resizeSprites(ArrayList<BufferedImage> sprites, double ratio) {
     BufferedImage temp;
 
@@ -197,6 +229,12 @@ public class ResourceLoader {
     }
   }
 
+  /**
+   * resizes images based on a ratio using nearest bilinear scaling
+   *
+   * @param sprite image to be resized
+   * @param ratio how much to resize by
+   */
   private BufferedImage resizeSpriteSmooth(BufferedImage sprite, double ratio) {
     int newWidth = (int) (sprite.getWidth() * ratio);
     int newHeight = (int) (sprite.getHeight() * ratio);
@@ -213,6 +251,10 @@ public class ResourceLoader {
     return resizedSprite;
   }
 
+  /**
+   * @param sprites resize an array of BufferedImages using bilinear scaling
+   * @param ratio
+   */
   private void resizeSpritesSmooth(ArrayList<BufferedImage> sprites, double ratio) {
     for (BufferedImage s : sprites) {
       resizeSpriteSmooth(s, ratio);
@@ -222,6 +264,12 @@ public class ResourceLoader {
     }
   }
 
+  /**
+   * resizes images based on a ratio using nearest neighbour scaling
+   *
+   * @param sprite images to be resized
+   * @param ratio how much to resize by
+   */
   private BufferedImage resizeSprite(BufferedImage sprite, double ratio) {
     int newWidth = (int) (sprite.getWidth() * ratio);
     int newHeight = (int) (sprite.getHeight() * ratio);
@@ -240,6 +288,10 @@ public class ResourceLoader {
     return resizedSprite;
   }
 
+  /**
+   * Load settings from Settings class and apply it to the loaded images (called after
+   * resolution/theme is changed)
+   */
   public void refreshSettings() {
     this.xResolution = Settings.getxResolution();
     this.yResolution = Settings.getyResolution();
@@ -250,6 +302,14 @@ public class ResourceLoader {
     setResolution();
   }
 
+  /**
+   * used to force settings on the resource loader
+   *
+   * @param x xResolution
+   * @param y yResolution
+   * @param r Rendering mode
+   * @param theme theme to switch to
+   */
   public void refreshSettings(int x, int y, RenderingMode r, String theme) {
     this.xResolution = x;
     this.yResolution = y;
@@ -260,7 +320,7 @@ public class ResourceLoader {
     setResolution();
   }
 
-  /** */
+  /** resizes all assets to the correct size to fill the screen */
   private void setResolution() {
     init();
     double mapToScreenRatio = 0.7;
@@ -287,26 +347,22 @@ public class ResourceLoader {
     switch (mode) {
       case NO_SCALING:
         return;
-      case INTEGER_SCALING:
-        {
-          ratio = Math.floor(ratio);
-          break;
-        }
-      case SMOOTH_SCALING:
-        {
-          smoothEdges = true;
-          break;
-        }
-      case STANDARD_SCALING:
-        {
-          smoothEdges = false;
-          break;
-        }
-      default:
-        {
-          System.out.println("invalid rendering mode");
-          return;
-        }
+      case INTEGER_SCALING: {
+        ratio = Math.floor(ratio);
+        break;
+      }
+      case SMOOTH_SCALING: {
+        smoothEdges = true;
+        break;
+      }
+      case STANDARD_SCALING: {
+        smoothEdges = false;
+        break;
+      }
+      default: {
+        System.out.println("invalid rendering mode");
+        return;
+      }
     }
     this.inventory = resizeSprite(inventory, hudRatio);
     resizeSprites(this.powerUpIcons, hudRatio);
@@ -363,19 +419,6 @@ public class ResourceLoader {
     }
   }
 
-  /** */
-  public void loadPlayableMip() {
-    this.mipSprites = null;
-    BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "mip");
-    BufferedImage sprites = extractColour(spriteSheet, getOutlineColour(spriteSheet), true);
-    BufferedImage outlineSprites = extractColour(spriteSheet, getOutlineColour(spriteSheet), false);
-    int spriteWidth = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_WIDTH);
-    int spriteHeight = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_HEIGHT);
-    this.mipColourSprites = splitSpriteSheet(spriteWidth, spriteHeight, sprites);
-    this.mipOutlineSprites = splitSpriteSheet(spriteWidth, spriteHeight, outlineSprites);
-    this.mipPalette = loadImageFile("sprites/" + theme + "/playable/", "mip_palette");
-  }
-
   /**
    * creates coloured sprites of mip according to the colour id selected
    *
@@ -396,6 +439,27 @@ public class ResourceLoader {
     return this.mipSprites.get(_colourID);
   }
 
+  /** load MIPSman into the resource loader */
+  public void loadPlayableMip() {
+    this.mipSprites = null;
+    BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "mip");
+    BufferedImage sprites = extractColour(spriteSheet, getOutlineColour(spriteSheet), true);
+    BufferedImage outlineSprites = extractColour(spriteSheet, getOutlineColour(spriteSheet), false);
+    int spriteWidth = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_WIDTH);
+    int spriteHeight = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_HEIGHT);
+    this.mipColourSprites = splitSpriteSheet(spriteWidth, spriteHeight, sprites);
+    this.mipOutlineSprites = splitSpriteSheet(spriteWidth, spriteHeight, outlineSprites);
+    this.mipPalette = loadImageFile("sprites/" + theme + "/playable/", "mip_palette");
+  }
+
+  /**
+   * recolour MIPSman spritess
+   *
+   * @param _colourID row to pallete sheet to recolour to
+   * @param colourSprites image with colours to be recoloured
+   * @param outlineSprites outline to overlay to recoloured sprite
+   * @param palette pallette sheet
+   */
   private ArrayList<ArrayList<BufferedImage>> recolourPlayableSprites(
       int _colourID,
       ArrayList<ArrayList<BufferedImage>> colourSprites,
@@ -415,6 +479,11 @@ public class ResourceLoader {
     return recolouredSprites;
   }
 
+  /**
+   * @param id entityID and row of colour sheet
+   * @param isMip
+   * @return
+   */
   public ArrayList<Image> getEndScreenMip(int id, boolean isMip) {
 
     BufferedImage spriteSheet;
@@ -425,9 +494,9 @@ public class ResourceLoader {
               loadImageFile("sprites/" + theme + "/misc/GameEnd/", "mip"), this.mipPalette, 0, id);
       playerSprites =
           splitSpriteSheet(
-                  SpriteSheetData.getDimension(SpriteDimensions.END_SPRITE_WIDTH),
-                  SpriteSheetData.getDimension(SpriteDimensions.END_SPRITE_HEIGHT),
-                  spriteSheet)
+              SpriteSheetData.getDimension(SpriteDimensions.END_SPRITE_WIDTH),
+              SpriteSheetData.getDimension(SpriteDimensions.END_SPRITE_HEIGHT),
+              spriteSheet)
               .get(0);
     } else {
       spriteSheet =
@@ -438,26 +507,13 @@ public class ResourceLoader {
               id);
       playerSprites =
           splitSpriteSheet(
-                  SpriteSheetData.getDimension(SpriteDimensions.END_SPRITE_WIDTH),
-                  SpriteSheetData.getDimension(SpriteDimensions.END_SPRITE_HEIGHT),
-                  spriteSheet)
+              SpriteSheetData.getDimension(SpriteDimensions.END_SPRITE_WIDTH),
+              SpriteSheetData.getDimension(SpriteDimensions.END_SPRITE_HEIGHT),
+              spriteSheet)
               .get(0);
     }
 
     return bufferedToJavaFxImage(playerSprites);
-  }
-
-  /** */
-  public void loadPlayableGhoul() {
-    this.ghoulSprites = null;
-    BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "ghoul");
-    BufferedImage sprites = extractColour(spriteSheet, getOutlineColour(spriteSheet), true);
-    BufferedImage outlineSprites = extractColour(spriteSheet, getOutlineColour(spriteSheet), false);
-    int spriteWidth = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_WIDTH);
-    int spriteHeight = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_HEIGHT);
-    this.ghoulColourSprites = splitSpriteSheet(spriteWidth, spriteHeight, sprites);
-    this.ghoulOutlineSprites = splitSpriteSheet(spriteWidth, spriteHeight, outlineSprites);
-    this.ghoulPalette = loadImageFile("sprites/" + theme + "/playable/", "ghoul_palette");
   }
 
   /**
@@ -474,18 +530,27 @@ public class ResourceLoader {
         this.ghoulSprites.add(
             bufferedToJavaFxImage2D(
                 recolourPlayableSprites(
-                    i,
-                    this.ghoulColourSprites,
-                    this.ghoulOutlineSprites,
-                    this.ghoulPalette)));
+                    i, this.ghoulColourSprites, this.ghoulOutlineSprites, this.ghoulPalette)));
       }
     }
     return this.ghoulSprites.get(_colourID);
   }
 
+  /** get ghoul sprites */
+  public void loadPlayableGhoul() {
+    this.ghoulSprites = null;
+    BufferedImage spriteSheet = loadImageFile("sprites/" + theme + "/playable/", "ghoul");
+    BufferedImage sprites = extractColour(spriteSheet, getOutlineColour(spriteSheet), true);
+    BufferedImage outlineSprites = extractColour(spriteSheet, getOutlineColour(spriteSheet), false);
+    int spriteWidth = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_WIDTH);
+    int spriteHeight = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_HEIGHT);
+    this.ghoulColourSprites = splitSpriteSheet(spriteWidth, spriteHeight, sprites);
+    this.ghoulOutlineSprites = splitSpriteSheet(spriteWidth, spriteHeight, outlineSprites);
+    this.ghoulPalette = loadImageFile("sprites/" + theme + "/playable/", "ghoul_palette");
+  }
+
+  /** loads the pellet image into the resource loader */
   public void loadPellet() {
-    // this.pellets = splitSpriteSheet(14,34,loadImageFile("sprites/" + theme +
-    // "/consumable/","pellet")).get(0);
     this.pellets =
         new ArrayList<>(
             Arrays.asList(loadImageFile("sprites/" + theme + "/consumable/", "pellet")));
@@ -500,28 +565,43 @@ public class ResourceLoader {
     this.powerUpBoxImages = null;
   }
 
+  /**
+   * gets pellet images
+   *
+   * @return
+   */
   public ArrayList<Image> getPellet() {
-    if(this.pelletImages == null){
+    if (this.pelletImages == null) {
       this.pelletImages = bufferedToJavaFxImage(this.pellets);
     }
     return this.pelletImages;
   }
 
+  /**
+   * gets powerbox images
+   *
+   * @return
+   */
   public ArrayList<Image> getPowerBox() {
-    if(this.powerUpBoxImages == null){
+    if (this.powerUpBoxImages == null) {
       this.powerUpBoxImages = bufferedToJavaFxImage(this.powerUpBox);
     }
     return this.powerUpBoxImages;
   }
 
+  /**
+   * gets a translucent version of the pellet images
+   *
+   * @return
+   */
   public ArrayList<Image> getTranslucentPellet() {
-    if(this.translucentPelletImages == null){
+    if (this.translucentPelletImages == null) {
       this.translucentPelletImages = bufferedToJavaFxImage(this.translucentPellets);
     }
     return this.translucentPelletImages;
   }
 
-  /** */
+  /** loads floor and wall tiles of map in the current theme */
   public void loadMapTiles() {
     ArrayList<BufferedImage> _mapTiles = new ArrayList<>();
     for (MapElement m : MapElement.values()) {
@@ -531,56 +611,69 @@ public class ResourceLoader {
     this.mapTilesImages = null;
   }
 
+  /** @return returns floor and map images */
   public ArrayList<Image> getMapTiles() {
-    if(this.mapTilesImages == null){
+    if (this.mapTilesImages == null) {
       this.mapTilesImages = bufferedToJavaFxImage(this.mapTiles);
     }
     return this.mapTilesImages;
   }
 
+  /** loads the background image of the current theme into the resource loader */
   public void loadBackground() {
     this.background = loadImageFile("sprites/" + theme + "/backgrounds/", theme);
     this.backgroundPalette =
         loadImageFile("sprites/" + theme + "/backgrounds/", theme + "_palette");
   }
 
+  /** @return gets the background image */
   public Image getBackground() {
     return SwingFXUtils.toFXImage(this.background, null);
   }
 
+  /** @return gets the colour scheme used with the background */
   public BufferedImage getBackgroundPalette() {
     return this.backgroundPalette;
   }
 
+  /** loads marker for MIPSman */
   public void loadMipMarker() {
     this.mipMarker = loadImageFile("sprites/" + theme + "/misc/", "mip_marker");
     this.mipMarkerImages = null;
   }
 
+  /** @return gets marker for MIPSman */
   public Image getMipMarker() {
-    if(this.mipMarkerImages == null){
+    if (this.mipMarkerImages == null) {
       this.mipMarkerImages = SwingFXUtils.toFXImage(this.mipMarker, null);
     }
     return this.mipMarkerImages;
   }
 
+  /** loads marker for the Client */
   public void loadClientMarker() {
     this.clientMarker = loadImageFile("sprites/" + theme + "/misc/", "client_marker");
     this.clientMarkerImages = null;
   }
 
+  /** @return gets the marker for the client */
   public Image getMClientMarker() {
-    if(this.clientMarkerImages == null){
+    if (this.clientMarkerImages == null) {
       this.clientMarkerImages = SwingFXUtils.toFXImage(this.clientMarker, null);
     }
     return this.clientMarkerImages;
   }
 
+  /** loads the inventory box */
   public void loadInventory() {
     this.inventory = loadImageFile("sprites/" + theme + "/HUD/", "inventory");
     this.inventoryColourID = 0;
   }
 
+  /**
+   * @param colourID the row of the mip/ghoul palette
+   * @return the inventory box with the requessted colour
+   */
   public Image getInventory(int colourID) {
     Image recolouredInventory =
         (SwingFXUtils.toFXImage(
@@ -590,23 +683,25 @@ public class ResourceLoader {
     return recolouredInventory;
   }
 
+  /** loads powerup icons for the current theme */
   public void loadPowerUpIcons() {
     ArrayList<BufferedImage> powerUps = new ArrayList<>();
-    for (PowerUps powerUp :
-        PowerUps.values()) {
+    for (PowerUps powerUp : PowerUps.values()) {
       powerUps.add(loadImageFile("sprites/" + theme + "/misc/icon/", powerUp.toString()));
     }
     this.powerUpIcons = powerUps;
     this.powerUpIconImages = null;
   }
 
+  /** @return icons for powerup images */
   public ArrayList<Image> getPowerUpIcons() {
-    if(this.powerUpBoxImages == null){
+    if (this.powerUpBoxImages == null) {
       this.powerUpIconImages = bufferedToJavaFxImage(this.powerUpIcons);
     }
     return this.powerUpIconImages;
   }
 
+  /** loads powerup sprites for the current theme */
   public void loadPowerUps() {
     HashMap<PowerUps, ArrayList<BufferedImage>> powerUps = new HashMap<>();
 
@@ -616,7 +711,7 @@ public class ResourceLoader {
     powerUps.put(
         PowerUps.WEB,
         splitSpriteSheet(
-                webWidth, webHeight, loadImageFile("sprites/" + theme + "/powerups/", "web"))
+            webWidth, webHeight, loadImageFile("sprites/" + theme + "/powerups/", "web"))
             .get(0));
 
     // add speedup powerup
@@ -624,8 +719,8 @@ public class ResourceLoader {
     int spriteHeight = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_HEIGHT);
     BufferedImage speedAnimation =
         transparentizeSprite(loadImageFile("sprites/" + theme + "/powerups/", "speed"));
-    powerUps
-        .put(PowerUps.SPEED, splitSpriteSheet(spriteWidth, spriteHeight, speedAnimation).get(0));
+    powerUps.put(
+        PowerUps.SPEED, splitSpriteSheet(spriteWidth, spriteHeight, speedAnimation).get(0));
 
     // add invincible powerup
     BufferedImage invincibleAnimation =
@@ -637,10 +732,10 @@ public class ResourceLoader {
     this.powerUps = powerUps;
   }
 
+  /** @return powerup images */
   public HashMap<PowerUps, ArrayList<Image>> getPowerUps() {
-    if(this.powerUpImages == null){
-      HashMap<PowerUps, ArrayList<Image>> convertedSprites =
-          new HashMap<>();
+    if (this.powerUpImages == null) {
+      HashMap<PowerUps, ArrayList<Image>> convertedSprites = new HashMap<>();
 
       for (PowerUps key : this.powerUps.keySet()) {
         convertedSprites.put(key, bufferedToJavaFxImage(this.powerUps.get(key)));
@@ -650,23 +745,26 @@ public class ResourceLoader {
     return this.powerUpImages;
   }
 
+  /** loads explosion images from the current theme */
   public void loadExplosion() {
     this.explosions =
         splitSpriteSheet(
-                SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_WIDTH),
-                SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_HEIGHT),
-                loadImageFile("sprites/" + theme + "/fx/", "explosion"))
+            SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_WIDTH),
+            SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_HEIGHT),
+            loadImageFile("sprites/" + theme + "/fx/", "explosion"))
             .get(0);
     this.explosionImages = null;
   }
 
+  /** @return gets images of explosions */
   public ArrayList<Image> getExplosion() {
-    if(explosionImages == null){
+    if (explosionImages == null) {
       this.explosionImages = bufferedToJavaFxImage(this.explosions);
     }
     return this.explosionImages;
   }
 
+  /** loads images of rockets in the current theme (both facing upwards and downwards) */
   public void loadRocketImages() {
     BufferedImage rockets = loadImageFile("sprites/" + theme + "/fx/", "rocket");
     int rocketWidth = SpriteSheetData.getDimension(SpriteDimensions.POWERUP_ROCKET_WIDTH);
@@ -675,11 +773,15 @@ public class ResourceLoader {
     this.downRockets = splitSpriteSheet(rocketWidth, rocketHeight, flipImage(rockets)).get(0);
   }
 
+  /**
+   * @param flipped should the images be upside down?
+   * @return the rocket images
+   */
   public ArrayList<Image> getRocketImages(boolean flipped) {
-    if(this.upRocketImages == null){
+    if (this.upRocketImages == null) {
       this.upRocketImages = bufferedToJavaFxImage(this.upRockets);
     }
-    if(this.downRocketImages == null){
+    if (this.downRocketImages == null) {
       this.downRocketImages = bufferedToJavaFxImage(this.downRockets);
     }
 
@@ -689,18 +791,15 @@ public class ResourceLoader {
     return this.upRocketImages;
   }
 
-  public void loadMine(){
+  /** load mines images in the current theme */
+  public void loadMine() {
     int mineWidth = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_WIDTH);
     int mineHeight = SpriteSheetData.getDimension(SpriteDimensions.PLAYABLE_SPRITE_HEIGHT);
-    this.mine = splitSpriteSheet(mineWidth,mineHeight,loadImageFile("sprites/" + theme +"/consumable/","mine")).get(0);
+    this.mine =
+        splitSpriteSheet(
+            mineWidth, mineHeight, loadImageFile("sprites/" + theme + "/consumable/", "mine"))
+            .get(0);
     this.mineImages = null;
-  }
-
-  public ArrayList<Image> getMine() {
-    if(this.mineImages == null){
-      this.mineImages = bufferedToJavaFxImage(this.mine);
-    }
-    return this.mineImages;
   }
 
   /**
@@ -785,9 +884,9 @@ public class ResourceLoader {
    */
   private BufferedImage recolourSprite(
       BufferedImage sprite, BufferedImage palette, int oldPaletteRow, int newPaletteRow) {
-//    if (newPaletteRow == oldPaletteRow) {
-//      return sprite;
-//    }
+    //    if (newPaletteRow == oldPaletteRow) {
+    //      return sprite;
+    //    }
     BufferedImage recolouredSprite =
         new BufferedImage(sprite.getWidth(), sprite.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
     for (int i = 0; i < palette.getWidth(); i++) {
@@ -803,6 +902,18 @@ public class ResourceLoader {
     return mergeImage(sprite, recolouredSprite);
   }
 
+  /** @return gets mine images */
+  public ArrayList<Image> getMine() {
+    if (this.mineImages == null) {
+      this.mineImages = bufferedToJavaFxImage(this.mine);
+    }
+    return this.mineImages;
+  }
+
+  /**
+   * @param sprite image to make transparent
+   * @return a new image which is a transparent version of the sprite
+   */
   private BufferedImage transparentizeSprite(BufferedImage sprite) {
     BufferedImage translucentImage =
         new BufferedImage(sprite.getWidth(), sprite.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
@@ -815,6 +926,14 @@ public class ResourceLoader {
     return translucentImage;
   }
 
+  /**
+   * returns an
+   *
+   * @param img image to extract from
+   * @param colour colour to include/exclude
+   * @param subtract is the colour included or excluded
+   * @return an extracted image including only the colour or excluding the colour
+   */
   private BufferedImage extractColour(BufferedImage img, int colour, boolean subtract) {
     int currentColour;
     BufferedImage extractedImg =
@@ -836,6 +955,11 @@ public class ResourceLoader {
     return extractedImg;
   }
 
+  /**
+   * @param img1 image to put over image2
+   * @param img2 image to put under image1
+   * @return the merged image
+   */
   private BufferedImage mergeImage(BufferedImage img1, BufferedImage img2) {
     BufferedImage mergedImage =
         new BufferedImage(
@@ -849,22 +973,11 @@ public class ResourceLoader {
     return mergedImage;
   }
 
-  private static BufferedImage flipImage(BufferedImage image) {
-    AffineTransform at = new AffineTransform();
-    at.concatenate(AffineTransform.getScaleInstance(1, -1));
-    at.concatenate(AffineTransform.getTranslateInstance(0, -image.getHeight()));
-
-    BufferedImage newImage =
-        new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-    Graphics2D g = newImage.createGraphics();
-    g.transform(at);
-    g.drawImage(image, 0, 0, null);
-    g.dispose();
-    return newImage;
-  }
-
+  /**
+   * @param sprite
+   * @return colour of sprite outlines
+   */
   private int getOutlineColour(BufferedImage sprite) {
     return -16777216;
   }
-
 }

@@ -1,16 +1,24 @@
 package com.lordsofmidnight.utils.enums;
 
-
 /**
  * An enum for the powerUps that both stores them and implements them
  *
  * @author Matthew Jones
  */
 public enum PowerUps {
-  WEB("web"), SPEED("speed"), BLUESHELL("blueshell"), INVINCIBLE("invincible"), MINE("mine");
+  WEB("web"),
+  SPEED("speed"),
+  ROCKET("rocket"),
+  INVINCIBLE("invincible"),
+  MINE("mine");
 
   private final String NAME;
 
+  /**
+   * Creates a new instance of the given powerup
+   *
+   * @param name The name of the powerup
+   */
   PowerUps(String name) {
     this.NAME = name;
   }
@@ -27,7 +35,7 @@ public enum PowerUps {
         return 0;
       case SPEED:
         return 1;
-      case BLUESHELL:
+      case ROCKET:
         return 2;
       case INVINCIBLE:
         return 3;
@@ -37,13 +45,11 @@ public enum PowerUps {
     return -1;
   }
 
+  /**
+   * @return the name of the powerup
+   */
   @Override
   public String toString() {
     return this.NAME;
   }
-
 }
-
-
-
-

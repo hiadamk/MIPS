@@ -20,6 +20,7 @@ import javafx.scene.image.Image;
  */
 public class Pellet implements Renderable {
 
+  static Random r = new Random();
   protected Point location;
   protected ArrayList<Image> currentImage;
   protected int respawntime = 2000;
@@ -29,24 +30,28 @@ public class Pellet implements Renderable {
   protected boolean isTrap = false;
   protected int respawnCount = 0;
 
+  /**
+   * @param x The X coordinate of the pellet
+   * @param y The Y coordinate of the pellet
+   */
   public Pellet(double x, double y) {
     this.location = new Point(x, y);
     active = true;
-    Random r = new Random();
     respawntime += r.nextInt(500);
-  }
-
-  public boolean isBox() {
-    return false;
   }
 
   public Pellet(Point p) {
     this.location = p;
     active = true;
-    Random r = new Random();
     respawntime += r.nextInt(500);
   }
 
+  /**
+   * Checks if a given entity can use the item
+   *
+   * @param e The entity to check
+   * @return True if the entity can use the item
+   */
   public boolean canUse(Entity e) {
     if (isTrap) {
       return true;
@@ -54,12 +59,11 @@ public class Pellet implements Renderable {
     return e.isMipsman();
   }
 
+  /**
+   * @return The location of the pellet
+   */
   public Point getLocation() {
     return location;
-  }
-
-  public void setLocation(Point location) {
-    this.location = location;
   }
 
   @Override
@@ -67,14 +71,23 @@ public class Pellet implements Renderable {
     return currentImage;
   }
 
+  /**
+   * @return The direction of the pellet
+   */
   public Direction getDirection() {
     return null;
   }
 
+  /** @return If the pellet is active */
   public boolean isActive() {
     return active;
   }
 
+  /**
+   * Sets if the pellet is active or not
+   *
+   * @param active If the pellet should be active
+   */
   public void setActive(boolean active) {
     this.active = active;
     if (!active) {
@@ -82,12 +95,28 @@ public class Pellet implements Renderable {
     }
   }
 
+  /**
+   * Updates the pellets image
+   *
+   * @param r The resource loader to get the image from
+   */
   public void updateImages(ResourceLoader r) {
     currentImage = r.getPellet();
   }
 
-  public void interact(Entity entity, Entity[] agents,
-      ConcurrentHashMap<UUID, PowerUp> activePowerUps, AudioController audioController) {
+  /**
+   * Handles the Pellet interacting with entities
+   *
+   * @param entity The entity interacting with
+   * @param agents The list of all Entities
+   * @param activePowerUps The list of currently active powerups
+   * @param audioController The Audio Controller for sounds
+   */
+  public void interact(
+      Entity entity,
+      Entity[] agents,
+      ConcurrentHashMap<UUID, PowerUp> activePowerUps,
+      AudioController audioController) {
     if (isTrap) {
       trap.trigger(entity, activePowerUps, audioController);
       isTrap = false;
@@ -108,9 +137,7 @@ public class Pellet implements Renderable {
     return "x = " + location.getX() + " y= " + location.getY() + " active = " + a;
   }
 
-  /**
-   * Called every physics update to increment the counter for respawn
-   */
+  /** Called every physics update to increment the counter for respawn */
   public void incrementRespawn() {
     if (!active) {
       respawnCount++;
@@ -120,25 +147,26 @@ public class Pellet implements Renderable {
     }
   }
 
-  /**
-   * @return If the pellet needs to be replaced
-   */
+  /** @return If the pellet needs to be replaced */
   public boolean replace() {
     return false;
   }
 
-  public boolean isTrap() {
-    return isTrap;
-  }
-
+  /**
+   * Sets the pellet to a trap holding a given powerup
+   *
+   * @param p
+   */
   public void setTrap(com.lordsofmidnight.objects.powerUps.PowerUp p) {
     this.trap = p;
     this.active = true;
     this.isTrap = true;
   }
 
-  /**@return True if the current pellet is a {@link PowerUpBox}
-   * @author Lewis Ackroyd*/
+  /**
+   * @return True if the current pellet is a {@link PowerUpBox}
+   * @author Lewis Ackroyd
+   */
   public boolean isPowerUpBox() {
     return false;
   }

@@ -29,6 +29,7 @@ public class KeyController implements EventHandler<KeyEvent> {
 
   /**
    * Handles the key press event for each of the mapped keys
+   *
    * @param e They key event
    */
   @Override
@@ -47,7 +48,6 @@ public class KeyController implements EventHandler<KeyEvent> {
   }
 
   /**
-   *
    * @return If the player has pressed the use item key
    */
   public boolean UseItem() {
@@ -57,5 +57,4 @@ public class KeyController implements EventHandler<KeyEvent> {
     }
     return false;
   }
-
 }

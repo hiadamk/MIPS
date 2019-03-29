@@ -2,8 +2,6 @@ package com.lordsofmidnight.server;
 
 import com.lordsofmidnight.gamestate.points.Point;
 import com.lordsofmidnight.objects.Entity;
-import com.lordsofmidnight.objects.Pellet;
-import com.lordsofmidnight.objects.PowerUpBox;
 import com.lordsofmidnight.objects.powerUps.PowerUp;
 import com.lordsofmidnight.utils.Input;
 import com.lordsofmidnight.utils.enums.Direction;
@@ -29,23 +27,22 @@ public class NetworkUtility {
    * Networking constants
    */
   public static final int CLIENT_M_PORT = 4445;
+
+  public static final String STOP_CODE = "EXIT";
+  public static final int LOBBY_TIMEOUT = 3500;
   static final int SERVER_DGRAM_PORT = 3000;
   static final int CLIENT_DGRAM_PORT = 3001;
-
   static final String PREFIX = "SMSG";
   static final String SUFFIX = "EMSG";
   static final String POSITION_CODE = "POS";
   static final String SCORE_CODE = "SCOR";
   static final String COLLISIONS_CODE = "COL";
   static final String POWERUP_CODE = "POW";
-  public static final String STOP_CODE = "EXIT";
   static final String GAME_START = "START GAME";
   static final String DISCONNECT_HOST = "DISCONNECT_HOST";
   static final String DISCONNECT_NON_HOST = "DISCONNECT_NON_HOST";
   static final int STRING_LIMIT = 128;
   static final Charset CHARSET = StandardCharsets.US_ASCII;
-  public static final int LOBBY_TIMEOUT = 3500;
-
   public static InetAddress GROUP;
   private static DecimalFormat coordFormat = new DecimalFormat("000.000");
 
@@ -138,7 +135,8 @@ public class NetworkUtility {
    * @return The string packet.
    */
   public static String makeEntitiyMovementPacket(Input input, Point position, int mipID) {
-    return POSITION_CODE+1
+    return POSITION_CODE
+        + 1
         + input.toString()
         + "|"
         + coordFormat.format(position.getX())
@@ -171,7 +169,7 @@ public class NetworkUtility {
    * @return The string packet.
    */
   public static String makeEntitiesPositionPacket(Entity[] agents) {
-    String s = POSITION_CODE+3; // id:X:Y|id:X:Y|id:X:Y...
+    String s = POSITION_CODE + 3; // id:X:Y|id:X:Y|id:X:Y...
     for (int i = 0; i < agents.length; i++) {
       s +=
           i
@@ -187,9 +185,9 @@ public class NetworkUtility {
   }
 
   /**
-   * Makes the packet for when there is a collision between Pac man and a ghoul
+   * Makes the packet for when there is a collision between MIPS man and a ghoul
    *
-   * @param mipsmanID Entity ID of pac man
+   * @param mipsmanID Entity ID of mips man
    * @param ghoulID Entity ID of the ghoul
    * @param position Position that the collision occurred
    * @return The packet representing the collision
@@ -224,30 +222,23 @@ public class NetworkUtility {
         + coordFormat.format(position.getY());
   }
 
-
-
   /**
    * Makes the packet of all the clients's inventory contents
    *
-   * @param agents the list of players
-   * * @return The string packet.
+   * @param agents the list of players * @return The string packet.
    */
   public static String makeInventoryPacket(Entity[] agents) {
     String s = POWERUP_CODE + 0; // |0:2|.
     for (int i = 0; i < agents.length; i++) {
       LinkedList<PowerUp> items = agents[i].getItems();
 
-      s += "|"
-          + i;
+      s += "|" + i;
       for (PowerUp item : items) {
         s += ":" + item.toInt();
       }
     }
     return s;
   }
-
-
-
 
   /**
    * Makes the packet to send to the client that a powerup has been used
@@ -258,7 +249,8 @@ public class NetworkUtility {
    * @return The string packet.
    */
   public static String makePowerUpPacket(int id, PowerUp powerup, Point position) {
-    return POWERUP_CODE + 1
+    return POWERUP_CODE
+        + 1
         + id
         + "|"
         + powerup.toInt()
@@ -268,7 +260,6 @@ public class NetworkUtility {
         + coordFormat.format(position.getY());
   }
 
-
   /**
    * Makes the packet to send to the client that a powerup box exists somewhere
    *
@@ -276,12 +267,12 @@ public class NetworkUtility {
    * @return The string packet.
    */
   public static String makePowerUpBoxPacket(Point position) {
-    return POWERUP_CODE + 2
+    return POWERUP_CODE
+        + 2
         + coordFormat.format(position.getX())
         + "|"
         + coordFormat.format(position.getY());
   }
-
 
   /**
    * Makes the packet to send to the clients of the current scoreboard
@@ -296,5 +287,4 @@ public class NetworkUtility {
     }
     return s;
   }
-
 }

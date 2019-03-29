@@ -5,6 +5,10 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.Queue;
 
+/**
+ * Thread for recieving packets during the running game. It unpacks them from their UDP form into
+ * strings then adds them to feedQueue for further processing.
+ */
 public class PacketReceiver extends Thread {
 
   private boolean running = false;
@@ -47,6 +51,9 @@ public class PacketReceiver extends Thread {
     }
   }
 
+  /**
+   * closes the reciever thread.
+   */
   public void shutdown() {
     this.running = false;
     if (ds != null && !ds.isClosed()) {

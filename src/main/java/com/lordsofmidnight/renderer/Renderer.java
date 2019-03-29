@@ -34,16 +34,22 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
+/**
+ * Class to render the game to the screen
+ */
 public class Renderer {
 
   private final GraphicsContext gc;
   private final long secondInNanoseconds = (long) Math.pow(10, 9);
   private final HeadsUpDisplay hudRender;
   private final ProjectileFX projectileManager;
+  private int xResolution;
+  final double MAP_BORDER = xResolution * 0.005;
   private int[][] rawMap;
   private Map map;
   private ResourceLoader r;
-  private int xResolution;
+  Point deathLocation;
+  boolean isHidden;
   private int yResolution;
   private Point2D.Double mapRenderingCorner;
   private ArrayList<Image> mapTiles;
@@ -61,11 +67,8 @@ public class Renderer {
   private BufferedImage playerColours;
   private ExplosionFX explosionManager;
   private int currentAnimationFrame = 0;
-
-
   private ArrayList<Point> traversalOrder = new ArrayList<>();
   private boolean refreshMap;
-
   // multiple use variables to render the game
   // (uses less memory than re-creating these objects every time)
   private Pellet currentPellet;
@@ -74,9 +77,6 @@ public class Renderer {
   private ArrayList<Image> currentSprites = null;
   private Double rendCoord = new Point2D.Double(0, 0);
   private Point spriteCoord;
-  Point deathLocation;
-  final double MAP_BORDER = xResolution * 0.005;
-  boolean isHidden;
 
   /**
    * @param _gc Graphics context to render the game onto
@@ -98,6 +98,18 @@ public class Renderer {
     this.explosionManager = new ExplosionFX(gc, r);
     this.projectileManager = new ProjectileFX(gc, r, this);
     this.initMapTraversal(r.getMap());
+  }
+
+  /**
+   * @param colour intRGB colour
+   * @return colour java.scene.Paint Color object representing the intRGB colour
+   */
+  public static Color intRGBtoColour(int colour) {
+    return new Color(
+        (colour >> 16 & 0xFF) / (double) 255,
+        (colour >> 8 & 0xFF) / (double) 255,
+        (colour & 0xFF) / (double) 255,
+        1);
   }
 
   /**
@@ -180,18 +192,6 @@ public class Renderer {
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
-  }
-
-  /**
-   * @param colour intRGB colour
-   * @return colour java.scene.Paint Color object representing the intRGB colour
-   */
-  public static Color intRGBtoColour(int colour) {
-    return new Color(
-        (colour >> 16 & 0xFF) / (double) 255,
-        (colour >> 8 & 0xFF) / (double) 255,
-        (colour & 0xFF) / (double) 255,
-        1);
   }
 
   /**
@@ -571,7 +571,7 @@ public class Renderer {
         currentSprite.getHeight() + currentSprite.getHeight(),
         currentSprite.getWidth());
 
-    gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY()-currentSprite.getHeight()*2);
+    gc.drawImage(currentSprite, rendCoord.getX(), rendCoord.getY() - currentSprite.getHeight() * 2);
   }
 
   /**

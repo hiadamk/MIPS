@@ -17,7 +17,7 @@ import java.util.concurrent.BlockingQueue;
 
 /**
  * Behaves similar to Host Telemetry but relies on input from the server exclusively to know what is
- * happening with the entities rather than using AI
+ * happening with the other game entities, and for the usage or collection of powerups.
  */
 public class DumbTelemetry extends Telemetry {
 
@@ -37,7 +37,6 @@ public class DumbTelemetry extends Telemetry {
     initialiseEntities();
     initialisePellets();
   }
-
 
   /**
    * Populates the map with pellets
@@ -67,9 +66,7 @@ public class DumbTelemetry extends Telemetry {
     System.err.println("DumbTelemetry receiving inputs");
   }
 
-  /**
-   * Starts the main game loop for the client and processing of inputs.
-   */
+  /** Starts the main game loop for the client and processing of inputs. */
   public void startGame() {
     System.out.println("Started dumb telemetry");
     gameTimer = GAME_TIME;
@@ -86,12 +83,11 @@ public class DumbTelemetry extends Telemetry {
   }
 
   /**
-   * Removes each of the inputs in the queue and performs the appropriate action based on the contents.
+   * Removes each of the inputs in the queue and performs the appropriate action based on the
+   * contents.
    */
   void processInputs() {
     while (!inputs.isEmpty()) {
-      System.out.println("Dumb HostTelemetry received: " + inputs.peek());
-      System.out.println(inputs.peek().substring(0, 4));
       String input = inputs.poll();
 
       switch (input.substring(0, 4)) { // looks at first 4 characters
@@ -114,7 +110,7 @@ public class DumbTelemetry extends Telemetry {
           setScore(input.substring(5));
           break;
         case NetworkUtility.STOP_CODE:
-          //set client flag that server has left
+          // set client flag that server has left
           client.setHostGone(true);
           stopGame();
           break;
@@ -124,20 +120,17 @@ public class DumbTelemetry extends Telemetry {
     }
   }
 
-
-  /**
-   * Called when the server informs the client that the game needs to end.
-   */
+  /** Called when the server informs the client that the game needs to end. */
   @Override
   public void stopGame() {
     inputProcessor.close();
-
   }
 
   /**
    * Updates the positions each of the entities
+   *
    * @param s Packet containing the positions of each of the entities as defined by
-   * NetworkUtility.makeEntitiesPositionPacket(Entity[])
+   *     NetworkUtility.makeEntitiesPositionPacket(Entity[])
    */
   private void setEntityPositions(String s) {
     String[] positions = s.split("\\|");
@@ -165,6 +158,7 @@ public class DumbTelemetry extends Telemetry {
 
   /**
    * Updates the client od current movement status of a given entity
+   *
    * @param s String containing packet about where each of the entities are moving.
    */
   private void setEntityMovement(String s) {
@@ -187,6 +181,7 @@ public class DumbTelemetry extends Telemetry {
 
   /**
    * Sets the scores for each client to maintain consistency
+   *
    * @param scores Packet containing scores of each client
    */
   private void setScore(String scores) {
@@ -203,6 +198,7 @@ public class DumbTelemetry extends Telemetry {
 
   /**
    * Updates the inventories of all clients
+   *
    * @param s Packet containing the inventories of each of the clients
    */
   private void updateInventory(String s) {
@@ -228,13 +224,14 @@ public class DumbTelemetry extends Telemetry {
 
   /**
    * Adds a power up box to the pellets
+   *
    * @param s The packet used to relay the power up information
    */
   private void setPowerupBox(String s) {
     String[] ls = s.split("\\|");
     double x = Double.valueOf(ls[0]);
     double y = Double.valueOf(ls[1]);
-    Point point = new Point(x,y);
+    Point point = new Point(x, y);
     pellets.remove(point);
     EmptyPowerUpBox pellet = new EmptyPowerUpBox(point);
     pellet.updateImages(resourceLoader);
@@ -243,6 +240,7 @@ public class DumbTelemetry extends Telemetry {
 
   /**
    * Handles activation of a power up for a client
+   *
    * @param s Packet String as defined in NetworkUtility.makePowerUPPacket(Input, Point)
    */
   private void activatePowerup(String s) {
@@ -261,6 +259,5 @@ public class DumbTelemetry extends Telemetry {
   /**
    * Redundant method for a dumb telemeter as it doesn't control the AI
    */
-  public void startAI() { }
-
+  public void startAI() {}
 }

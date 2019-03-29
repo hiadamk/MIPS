@@ -17,28 +17,31 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-/** Parent class for DumbTelemetry and HostTelemetry */
+/**
+ * Parent class for DumbTelemetry and HostTelemetry A telemetry object is responsible for keeping
+ * track of all the entities and objects within the game, as well as running the physics.
+ */
 public abstract class Telemetry {
 
   static final int AGENT_COUNT = 5;
   static final int GAME_TIME = 150 * 100; // Number of seconds *100
-
-  public int getGameTimer() {
-    return gameTimer;
-  }
-
+  static Client client;
   protected int gameTimer = GAME_TIME;
   protected int clientID;
   protected Map map;
-  Entity[] agents;
-  PointMap<Pellet> pellets;
-  ResourceLoader resourceLoader;
-  static Client client;
   protected GameLoop inputProcessor;
   protected GameLoop positionUpdater;
   protected GameLoop scoreUpdater;
   protected AudioController audioController;
+  Entity[] agents;
+  PointMap<Pellet> pellets;
+  ResourceLoader resourceLoader;
+  ConcurrentHashMap<UUID, PowerUp> activePowerUps = new ConcurrentHashMap<>();
 
+  /**
+   * @param client The client it belongs to
+   * @param audioController The Audio Controller for the client
+   */
   Telemetry(Client client, AudioController audioController) {
     this.map = client.getMap();
     Telemetry.client = client;
@@ -47,41 +50,118 @@ public abstract class Telemetry {
     this.audioController = audioController;
   }
 
-  ConcurrentHashMap<UUID, PowerUp> activePowerUps = new ConcurrentHashMap<>();
+  /**
+   * Static method to detect if the mipsman entity will eat a pellet
+   *
+   * @param agents The entities
+   * @param pellets The pellets
+   * @author Matthew Jones
+   */
+  private static void pelletCollision(
+      Entity[] agents,
+      PointMap<Pellet> pellets,
+      ConcurrentHashMap<UUID, PowerUp> activePowerUps,
+      AudioController audioController) {
+    for (Entity agent : agents) {
+      Point p = agent.getLocation();
+      Pellet pellet = pellets.get(p);
+      if (pellet != null) {
+        pellet.interact(agent, agents, activePowerUps, audioController);
+      }
+    }
+  }
   // abstract methods
 
+  /**
+   * Static method for 'swapping' a mipsman and ghoul if they occupy the same area.
+   *
+   * @param mipsman Entity currently acting as mipsman
+   * @param ghoul Entity currently running as ghoul
+   * @author Alex Banks, Matthew Jones
+   */
+  private static void detectEntityCollision(
+      Entity mipsman, Entity ghoul, AudioController audioController) {
+    if (mipsman.isDead() || ghoul.isDead()) {
+      return;
+    }
+    Point mipsmanCenter = mipsman.getLocation();
+    Point ghoulFace = ghoul.getFaceLocation();
+    if (mipsmanCenter.inRange(ghoulFace)) { // check temporary invincibility here
+      if (mipsman.isMipsman()) {
+        client.collisionDetected(ghoul);
+      }
+      /*mipsman.setMipsman(false);
+      ghoul.setMipsman(true);
+      mipsman.setDirection(Direction.UP);
+      mipsman.updateImages(resourceLoader);
+      ghoul.updateImages(resourceLoader);
+      System.out.println("~Ghoul" + ghoul.getClientId() + " captured Mipsman" +
+      mipsman.getClientId()); */
+      Methods.kill(ghoul, mipsman, audioController);
+    }
+  }
+
+  public int getGameTimer() {
+    return gameTimer;
+  }
+
+  /**
+   * Starts the AI controller
+   */
   abstract void startAI();
 
+  /**
+   * Adds an input to the queue
+   *
+   * @param in The input
+   */
   public abstract void addInput(Input in);
 
+  /**
+   * Starts the game
+   */
   public abstract void startGame();
 
+  /** Processes the inputs in the queue */
   abstract void processInputs();
-
-  abstract void initialisePellets();
-
-  public abstract void stopGame();
 
   // basic get/set methods
 
+  /** Initialises the pellets */
+  abstract void initialisePellets();
+
+  /** Stops the game */
+  public abstract void stopGame();
+
+  /** @return The agents array */
   public Entity[] getAgents() {
     return agents;
   }
 
+  /** @return The map of the game */
   public Map getMap() {
     return map;
   }
 
+  // constructor methods
+
+  /** @return The map of pellets */
   public PointMap<Pellet> getPellets() {
     return pellets;
   }
 
+  // physics engine
+
+  /**
+   * Sets the entity given by the id to MipsMan
+   *
+   * @param ID
+   */
   public void setMipID(int ID) {
     this.agents[ID].setMipsman(true);
   }
 
-  // constructor methods
-
+  /** Creates all the entities */
   void initialiseEntities() {
 
     agents = new Entity[AGENT_COUNT];
@@ -104,55 +184,7 @@ public abstract class Telemetry {
         agents[0] = new Entity(false, 0, map.getRandomSpawnPoint(agents));
     }
 
-    //Methods.updateImages(agents, resourceLoader);
-  }
-
-  // physics engine
-
-  /**
-   * Static method to detect if the mipsman entity will eat a pellet
-   *
-   * @param agents The entities
-   * @param pellets The pellets
-   * @author Matthew Jones
-   */
-  private static void pelletCollision(
-      Entity[] agents, PointMap<Pellet> pellets, ConcurrentHashMap<UUID, PowerUp> activePowerUps,
-      AudioController audioController) {
-    for (Entity agent : agents) {
-      Point p = agent.getLocation();
-      Pellet pellet = pellets.get(p);
-      if (pellet != null) {
-        pellet.interact(agent, agents, activePowerUps, audioController);
-      }
-    }
-  }
-
-  /**
-   * Static method for 'swapping' a mipsman and ghoul if they occupy the same area.
-   *
-   * @param mipsman Entity currently acting as mipsman
-   * @param ghoul Entity currently running as ghoul
-   * @author Alex Banks, Matthew Jones
-   */
-  private static void detectEntityCollision(
-      Entity mipsman, Entity ghoul, AudioController audioController) {
-    if (mipsman.isDead() || ghoul.isDead()) {
-      return;
-    }
-    Point mipsmanCenter = mipsman.getLocation();
-    Point ghoulFace = ghoul.getFaceLocation();
-    if (mipsmanCenter.inRange(ghoulFace)) { // check temporary invincibility here
-      client.collisionDetected(ghoul);
-      /*mipsman.setMipsman(false);
-      ghoul.setMipsman(true);
-      mipsman.setDirection(Direction.UP);
-      mipsman.updateImages(resourceLoader);
-      ghoul.updateImages(resourceLoader);
-      System.out.println("~Ghoul" + ghoul.getClientId() + " captured Mipsman" +
-      mipsman.getClientId()); */
-      Methods.kill(ghoul, mipsman, audioController);
-    }
+    // Methods.updateImages(agents, resourceLoader);
   }
 
   /**
@@ -220,7 +252,6 @@ public abstract class Telemetry {
     }
     for (Point p : replace) {
       pellets.put(p, new Pellet(p));
-      System.out.println("replaced 1");
     }
     ArrayList<UUID> toRemove = new ArrayList<>();
     for (PowerUp p : activePowerUps.values()) {
@@ -232,23 +263,35 @@ public abstract class Telemetry {
       activePowerUps.remove(id);
     }
     gameTimer--;
-    if (gameTimer == 0) {
+    if (Math.round(gameTimer / (double) 100) == 0) {
       client.finishGame();
     }
   }
 
+  /**
+   * Sets the game time
+   *
+   * @param t the game time to set
+   */
   public void setTime(int t) {
     this.gameTimer = t;
   }
 
+  /** @return the input processor */
   public GameLoop getInputProcessor() {
     return inputProcessor;
   }
 
+  /** @return The hashmap of the active powerups */
   public ConcurrentHashMap<UUID, PowerUp> getActivePowerUps() {
     return activePowerUps;
   }
 
+  /**
+   * Sets the client id
+   *
+   * @param clientID the id to set
+   */
   public void setClientID(int clientID) {
     this.clientID = clientID;
   }

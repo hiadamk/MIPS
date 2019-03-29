@@ -2,18 +2,19 @@ package com.lordsofmidnight.utils;
 
 import java.util.Stack;
 
+/**
+ * @param <E> Type of data to store
+ * @author Tim iterates up and down a some data. e.g. [1,2,3] iterates to 1,2,3,3,2,1,1,2,3...
+ */
 public class UpDownIterator<E> {
 
   private Stack<E> stackA = new Stack();
   private Stack<E> stackB = new Stack();
-
-  private enum AorB {
-    A, B
-  }
-
   private AorB whichStack = AorB.A;
 
-
+  /**
+   * Iterator
+   */
   public UpDownIterator(E[] data) {
     for (E e : data) {
       stackA.push(e);
@@ -41,5 +42,10 @@ public class UpDownIterator<E> {
       whichStack = AorB.A;
     }
     return nextItem;
+  }
+
+  private enum AorB {
+    A,
+    B
   }
 }

@@ -41,7 +41,7 @@ public class Point {
       this.MAX_Y = defaultMaxY;
       this.MAPPED = true;
     } else {
-      //System.err.println("Warning: Point has no reference to map");
+      // System.err.println("Warning: Point has no reference to map");
       this.MAX_X = 0;
       this.MAX_Y = 0;
       this.MAPPED = false;
@@ -123,10 +123,16 @@ public class Point {
     return new Point(this.x, this.y, this.MAX_X, this.MAX_Y, this.MAPPED);
   }
 
+  /**
+   * @return The x value
+   */
   public double getX() {
     return x;
   }
 
+  /**
+   * @return The y value
+   */
   public double getY() {
     return y;
   }
@@ -235,6 +241,8 @@ public class Point {
     return (abs(temp.getX()) <= 0.5 && abs(temp.getY()) <= 0.5);
   }
 
+  /** @return The point in string form */
+  @Override
   public String toString() {
     return "[Point] ("
         + x
@@ -286,7 +294,6 @@ public class Point {
     }
   }
 
-
   /**
    * @return true if point is within central hitbox
    * @author Alex Banks
@@ -300,8 +307,8 @@ public class Point {
   /**
    * @param object The object being tested for equality.
    * @return If the {@link Object} cannot be cast to a {@link Point} then false. Otherwise if both x
-   * and y of both this and the given {@link Point} are within {@link #EQUALITY_TOLERANCE} of each
-   * other returns True.
+   *     and y of both this and the given {@link Point} are within {@link #EQUALITY_TOLERANCE} of
+   *     each other returns True.
    * @author Lewis Ackroyd
    */
   @Override

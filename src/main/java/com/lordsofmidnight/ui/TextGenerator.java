@@ -15,10 +15,9 @@ public class TextGenerator {
    * @param size The size of the text
    * @return The text object.
    */
-  public static Text generate(String text, UIColours colour, int size){
+  public static Text generate(String text, UIColours colour, int size) {
     Text result = new Text(text);
-    result.setStyle(" -fx-fill: " + colour.getHex() + ";"
-        + "-fx-font-size: " + size + ";");
+    result.setStyle(" -fx-fill: " + colour.getHex() + ";" + "-fx-font-size: " + size + ";");
     return result;
   }
 }
