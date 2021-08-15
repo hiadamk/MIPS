@@ -1,7 +1,5 @@
-# MIPS
-
-![MipsLogo](https://github.com/adamkona/MIPS/tree/master/src/main/resources/icon.png)
-![Gif of gameplay](https://github.com/adamkona/MIPS/tree/master/src/main/resources/ui/preview.gif)
+![MipsLogo](/src/main/resources/icon.png)
+![Gif of gameplay](/src/main/resources/ui/preview.gif)
 
 ## Intro
 MIPS is a game I made with 5 other people as part of a team project during my second year at university. 
